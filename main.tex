@@ -1,0 +1,40 @@
+\documentclass{article}
+
+% Contains all the packages used in the report
+\include{packages}
+
+% Contains all commands used in the report
+\include{commands}
+
+% Contains all abbreviations used in the report
+\include{abbreviations}
+
+% Make glossaries, needs to be done before begin{document}
+\makeglossaries
+
+\begin{document}
+  % Include everything that comes before the introduction chapter.
+  \include{front/front}
+
+  % Include every chapter
+  \include{introduction/introduction}
+  \include{background/background}
+  \include{methodology/methodology}
+  \include{results/results}
+  \include{conclusion/discussion}
+  \include{conclusion/conclusion}
+
+  % The bibliography can be generated from multiple sources.
+  % The 'web' is used exclusively for web-references
+  % \addcontentsline{toc}{chapter}{Bibliography}
+  \bibliographystyle{plain} %Alternative: apalike
+  %\bibpunct{[}{]}{;}{a}{,}{,} % Alternative citation format, probably not going to be used
+  \bibliography{refs/web,refs/library}
+
+  \cleardoublepage
+
+  \begin{appendices}
+    \include*{appendix}
+  \end{appendices}
+
+\end{document}

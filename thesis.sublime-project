@@ -1,0 +1,32 @@
+{
+  "folders":
+  [
+    {
+      "file_exclude_patterns":
+      [
+        "*.lot",
+        "*.bbl",
+        "*.aux",
+        "*.log",
+        "*.pdf",
+        "*.toc",
+        "*.lof",
+        "*.gz",
+        "*.fdb_latexmk",
+        "*.blg",
+        "*.acn",
+        "*.acr",
+        "*.alg",
+        "*.glg",
+        "*.glo",
+        "*.gls",
+        "*.glsdefs",
+        "*.ist"
+      ],
+      "follow_symlinks": true,
+      "path": "."
+    }
+  ],
+  "ruler": 100,
+  "wrap_width": 100
+}

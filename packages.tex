@@ -1,0 +1,66 @@
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lipsum}
+
+% For orange todos
+\usepackage{todonotes}
+
+% Multirow and multicolumn tables
+\usepackage{multirow}
+
+% Line break in tables
+\usepackage{pbox}
+
+% Create and format mathematical things
+\usepackage{amsmath}
+
+% For \checkbox and other symbols
+\usepackage{amssymb}
+\usepackage{tipa}
+% Provides frowny face \Frowny
+\usepackage{marvosym}
+
+% Rotate text sideways, might be used in tables
+\usepackage{rotating}
+
+% Generate urls
+\usepackage{url}
+
+% Nesting includes
+\usepackage{newclude}
+
+% Correct citations...? Not sure, doesn't hurt
+\usepackage{natbib}
+
+% Floating in tables and figures
+\usepackage{float}
+
+% Generate abbreviations, include after hypreref to link. Cite with \gls and \glspl
+% Define with: \newacronym{mac}{MAC}{Media Access Control}
+% Complile with 'makeglossaries main'
+% \usepackage[acronyms, nonumberlist]{glossaries}
+\usepackage[acronyms]{glossaries}
+
+% Double line shift instead of indentation for paragraphs
+\usepackage[parfill]{parskip}
+
+% Automatically include 'Figure' with \autoref
+\usepackage{hyperref}
+\newcommand*{\Appendixautorefname}{Appendix}
+% Has to be included after hyperref, makes numbering in pdf index
+\usepackage[numbered]{bookmark}
+
+% Makes the bibliography part of the contents
+\usepackage[nottoc,numbib]{tocbibind}
+
+% Per-chapter numbering of figures and tables
+\usepackage{chngcntr}
+% See: https://tex.stackexchange.com/questions/28333/continuous-v-per-chapter-section-numbering-of-figures-tables-and-other-docume
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+
+% To provide appendices in the contents
+\usepackage[toc,page]{appendix}
+
+% \usepackage{pgfplots}
+% \usepackage[nottoc]{tocbibind}

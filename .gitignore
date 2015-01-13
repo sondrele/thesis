@@ -1,0 +1,12 @@
+main.pdf
+*.acn
+*.aux
+*.bbl
+*.blg
+*.glo
+*.ist
+*.lof
+*.log
+*.lot
+*.toc
+*.sublime-workspace
