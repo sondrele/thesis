@@ -1,5 +1,12 @@
-LTX ?= pdflatex
-BTX ?= bibtex
+LTX ?= $(shell which pdflatex)
+BTX ?= $(shell which bibtex)
+GLS ?= $(shell which makeglossaries)
+OPEN ?= $(shell which open)
+PLATFORM ?= $(shell uname)
+
+ifeq ($(PLATFORM),Linux)
+include Makefile.linux
+endif
 
 OUTDIR=.
 LTX_FLAGS=-output-directory $(OUTDIR)
@@ -7,21 +14,22 @@ LTX_FLAGS=-output-directory $(OUTDIR)
 REPORT=main.tex
 
 report: setup
-	makeglossaries main
+	$(LTX) $(LTX_FLAGS) $(REPORT)
+	$(GLS) $(OUTDIR)/$(REPORT:.tex=)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 	$(BTX) $(OUTDIR)/$(REPORT:.tex=.aux)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	makeglossaries main
+	$(GLS) $(OUTDIR)/$(REPORT:.tex=)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 
 quick:
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 
 show: report
-	gnome-open $(OUTDIR)/$(REPORT:.tex=.pdf)
+	$(OPEN) $(OUTDIR)/$(REPORT:.tex=.pdf)
 
 showquick: quick
-	gnome-open $(OUTDIR)/$(REPORT:.tex=.pdf)
+	$(OPEN) $(OUTDIR)/$(REPORT:.tex=.pdf)
 
 setup:
 	@if [ ! -d $(OUTDIR) ]; then mkdir $(OUTDIR); fi
