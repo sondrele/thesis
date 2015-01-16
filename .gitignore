@@ -9,9 +9,12 @@
 *.log
 *.lot
 *.toc
-*.sublime-workspace
 *.tdo
+*.fdb_latexmk
 
 # Ignore pdfs, except the ones in figure
 *.pdf
 !figures/*.pdf
+
+# Project specific files
+*.sublime-workspace
