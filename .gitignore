@@ -1,4 +1,4 @@
-main.pdf
+# Generated files
 *.acn
 *.aux
 *.bbl
@@ -10,4 +10,8 @@ main.pdf
 *.lot
 *.toc
 *.sublime-workspace
-main.tdo
+*.tdo
+
+# Ignore pdfs, except the ones in figure
+*.pdf
+!figures/*.pdf
