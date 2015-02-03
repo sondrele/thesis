@@ -1,0 +1,19 @@
+\subsection{Startup}
+
+The \textbf{main} function is usually considered the starting point of a program.
+This is sometimes true from the point of view of the programmer, but as we will see in this section usually not.
+This section looks at what happens before the program reaches the main function.
+
+\subsubsection{Before main}
+
+Before the \textbf{main} function executes, all static data must be initialized.
+The data is divided into two categories; zero initialized and non-zero.
+The non-zero initialized data are contained either in the .text (read-only-data) or .data sections of the \textbf{elf} binary.
+On the chip the .data section resides in Flash memory, and must be copied into RAM.
+This process is handled in the \textbf{ResetHandler} function.
+The function is the entry point of the program and is executed when the CPU receives the reset signal.
+
+When the \textbf{ResetHandler} has copied the non-zero initialized data into RAM it calls the \textbf{\_start} in the C runtime.
+The \textbf{\_start} function finds the size of the .bss section which describes the size of zero-initialized area in RAM.
+It then calls on the \textbf{memset} function to zero out the RAM area.
+\textbf{\_start} then goes on to call the \textbf{main} function supplied by the programmer. 

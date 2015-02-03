@@ -1,0 +1,9 @@
+\subsection{Compiler Toolchain}
+
+Using an abstract view the build system uses two major components.
+The Rust compiler, built on LLVM, and the arm-none-eabi gcc toolchain.
+C files for the emlib sources are compiled into object files using arm-none-eabi-gcc.
+Rust source files are compiled to object files with the Rust compiler.
+Finally the object files are linked with arm-none-eabi-ld to produce a elf binary.
+The Rust compiler does not support the target architecture directly so a target specification is supplied.
+
