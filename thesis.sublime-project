@@ -5,6 +5,7 @@
       "file_exclude_patterns":
       [
         "*.lot",
+        "*.fls",
         "*.bbl",
         "*.aux",
         "*.log",
@@ -27,6 +28,6 @@
       "path": "."
     }
   ],
-  "ruler": 100,
+  "rulers": [100],
   "wrap_width": 100
 }
