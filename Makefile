@@ -5,34 +5,30 @@ OPEN ?= $(shell which open)
 PLATFORM ?= $(shell uname)
 
 ifeq ($(PLATFORM),Linux)
-include Makefile.linux
+override OPEN=$(shell which gnome-open)
 endif
 
-OUTDIR=.
-LTX_FLAGS=-output-directory $(OUTDIR)
+LTX_FLAGS=-shell-escape -pdf
 
 REPORT=main.tex
 
-report: setup
+report:
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	$(GLS) $(OUTDIR)/$(REPORT:.tex=)
+	$(GLS) $(REPORT:.tex=)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	$(BTX) $(OUTDIR)/$(REPORT:.tex=.aux)
+	$(BTX) $(REPORT:.tex=.aux)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	$(GLS) $(OUTDIR)/$(REPORT:.tex=)
+	$(GLS) $(REPORT:.tex=)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 
 quick:
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 
 show: report
-	$(OPEN) $(OUTDIR)/$(REPORT:.tex=.pdf)
+	$(OPEN) $(REPORT:.tex=.pdf)
 
 showquick: quick
-	$(OPEN) $(OUTDIR)/$(REPORT:.tex=.pdf)
-
-setup:
-	@if [ ! -d $(OUTDIR) ]; then mkdir $(OUTDIR); fi
+	$(OPEN) $(REPORT:.tex=.pdf)
 
 clean:
 	@rm -rf *.aux

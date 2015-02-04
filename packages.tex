@@ -1,9 +1,21 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage{lipsum}
+
+% More defined colors, used for custom todos
+\usepackage[pdftex,dvipsnames]{xcolor}
+
+% Used for new commands taking more than one argument
+\usepackage{xargs}
 
 % For orange todos
 \usepackage{todonotes}
+
+% Lorem ipsum
+\usepackage{lipsum}
+
+% For b5 papers instead of a4
+\usepackage{geometry}
+\geometry{b5paper}
 
 % Multirow and multicolumn tables
 \usepackage{multirow}
@@ -64,3 +76,7 @@
 
 % \usepackage{pgfplots}
 % \usepackage[nottoc]{tocbibind}
+
+% For listings. This package requires the pdf to be compiled with '-shell-escape' and that
+% python-pygments is found in the system path
+\usepackage{minted}
