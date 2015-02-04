@@ -1,0 +1,1 @@
+override OPEN=$(shell which gnome-open)

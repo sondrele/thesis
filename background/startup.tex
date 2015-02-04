@@ -1,0 +1,44 @@
+\subsection{Startup}
+
+The \textbf{main} function is usually considered the starting point of a program.
+This is sometimes true from the point of view of the programmer, but as we will see in this section usually it is not.
+This section looks at what happens before the program reaches the main function.
+
+\subsubsection{Before main}
+
+Before the \textbf{main} function executes, all static data must be initialized.
+The data is divided into two categories; zero initialized and non-zero.
+The non-zero initialized data are contained either in the .text (read-only-data) or .data sections of the \textbf{elf} binary.
+On the chip the .data section resides in Flash memory, and must be copied into RAM.
+The \textbf{.text} section contains the instructions and read-only data 
+This process is handled in the \textbf{ResetHandler} function.
+The function is the entry point of the program and is executed when the CPU receives the reset signal.
+
+When the \textbf{ResetHandler} has copied the non-zero initialized data into RAM it calls the \textbf{\_start} in the C runtime.
+The \textbf{\_start} function finds the size of the .bss section which describes the size of zero-initialized area in RAM.
+It then calls on the \textbf{memset} function to zero out the RAM area.
+\textbf{\_start} then goes on to call the \textbf{main} function supplied by the programmer.
+
+With an example we will now see how this maps to the storage qualifiers in Rust.
+\begin{figure}
+\begin{verbatim}
+const      RUST_CONST_ZERO: u32 = 0;      // not allocated
+const      RUST_CONST: u32 = 0xFEED;      // not allocated
+static     RUST_STATIC_ZERO: u32 = 0;     // .text
+static     RUST_STATIC: u32 = 0xDEAD;     // .text
+static mut RUST_STATIC_MUT_ZERO: u32 = 0; // .bss
+static mut RUST_STATIC_MUT: u32 = 0xBEEF; // .data
+
+fn main() { /* Use the variables */ }
+\end{verbatim}
+\caption{Rust static initialization}
+\label{fig:rust-static-init}
+\end{figure}
+In Figure \ref{fig:rust-static-init} the three different types of declaring globals in Rust are shown.
+Firstly Rust divides between two types of global declarations, constants and statics.
+A constant declaration, shown in lines 1 and 2 of Figure \ref{fig:rust-static-init}, represents a value.
+There is no need to allocate memory for globals declared as \textbf{const} and they behave like \textbf{\#define} in C.
+Variables on line 3 and 4 declares the variables to be \textbf{static}.
+As variables in Rust is immutable by default these two are allocated in the read-only section called \textbf{.text}.
+The values are read directly from Flash and need not be copied to RAM.
+On line 5 and 6 the declarations are marked with \textbf{static mut}. 
