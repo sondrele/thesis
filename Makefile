@@ -14,21 +14,21 @@ REPORT=main.tex
 
 report:
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	$(GLS) $(OUTDIR)/$(REPORT:.tex=)
+	$(GLS) $(REPORT:.tex=)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	$(BTX) $(OUTDIR)/$(REPORT:.tex=.aux)
+	$(BTX) $(REPORT:.tex=.aux)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
-	$(GLS) $(OUTDIR)/$(REPORT:.tex=)
+	$(GLS) $(REPORT:.tex=)
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 
 quick:
 	$(LTX) $(LTX_FLAGS) $(REPORT)
 
 show: report
-	$(OPEN) $(OUTDIR)/$(REPORT:.tex=.pdf)
+	$(OPEN) $(REPORT:.tex=.pdf)
 
 showquick: quick
-	$(OPEN) $(OUTDIR)/$(REPORT:.tex=.pdf)
+	$(OPEN) $(REPORT:.tex=.pdf)
 
 clean:
 	@rm -rf *.aux
