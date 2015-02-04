@@ -37,7 +37,7 @@ fn main() { /* Use the variables */ }
 In Figure \ref{fig:rust-static-init} the three different types of declaring globals in Rust are shown.
 Firstly Rust divides between two types of global declarations, constants and statics.
 A constant declaration, shown in lines 1 and 2 of Figure \ref{fig:rust-static-init}, represents a value.
-There is no need to allocate memory for globals declared as \textbf{const} and they behave like #define in C.
+There is no need to allocate memory for globals declared as \textbf{const} and they behave like \textbf{\#define} in C.
 Variables on line 3 and 4 declares the variables to be \textbf{static}.
 As variables in Rust is immutable by default these two are allocated in the read-only section called \textbf{.text}.
 The values are read directly from Flash and need not be copied to RAM.
