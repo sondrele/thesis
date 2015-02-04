@@ -102,13 +102,40 @@ unacceptable.
 
 Another approach to keeping track of the memory resources have been to give the programmer full
 control of every memory allocation and deallocation. This is the most common approach for systems
-programming languages like C and C++, where performance and predictability is important. However,
-it is easier to make the mistakes of referencing invalid memory, or forgetting to free up memory
-that might lead the program to spend all available resources over time, inevitably leading the
-program to crash when trying to allocate more memory, when there are no memory left to allocate.
+programming languages like C and C++, where performance and predictability is important. However, it
+is easier to make the mistakes of referencing invalid memory, or forgetting to free up memory that
+might lead the program to use all available resources over time. This will inevitably lead the
+program to crash when it tries to allocate more memory when there are no memory left to allocate.
 
-Rust operates a little different from C
+\todo{This subsection about GC and memory handling might be better suited in a different
+background chapter}
 
+It is important to always remember and deallocate all memory referenced by a pointer, before the
+pointer leaves the scope in the program. Rust operates a little different from C when it comes to
+freeing memory, any variables holding a reference to heap-allocated memory will automatically be
+freed when it leaves the scope it lives in. This is done statically without the interference of the
+programmer. When the compiler sees that the handle for the allocated memory leaves its scope, it
+knows that it is lost to the program, so it will insert a call to free the memory at the moment it
+leaves the scope and becomes unreachable. This eliminates the need for the programmer to do the
+bookkeeping of memory manually. These two aspects of memory allocation and deallocation is combined
+into the concept of ownership that Rust incorporates. When a handle that \textit{owns} a reference
+to a data-segment on the heap leaves it's scope, Rust knows that it can safely free the memory that
+is referenced by it since it is the \textit{owning handle} of the memory, that can no longer be
+used in the program.
+
+\begin{minted}{rust}
+fn foo(i: int) {
+  let x = i;
+  println!("{}", x);
+}
+\end{minted}
+
+\todo[inline]{Show code examples of rust and handle-ownerships}
+
+There can only exist one owned handle to either a heap- or a stack-allocated variable at any time
+during the program. This means that
+
+\todo[inline]{I have mixed the use of data-segments, variables, pointers and handles. They should be properly defined.}
 
 \subsubsection{Big-Stack allocation}
 \label{par:big_stack}
