@@ -9,7 +9,7 @@ include Makefile.linux
 endif
 
 OUTDIR=.
-LTX_FLAGS=-output-directory $(OUTDIR)
+LTX_FLAGS=-shell-escape -output-directory $(OUTDIR)
 
 REPORT=main.tex
 
