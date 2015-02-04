@@ -18,3 +18,7 @@
 
 # Project specific files
 *.sublime-workspace
+*.dvi
+*.fls
+*.out.ps
+*.pyg
