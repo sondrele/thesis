@@ -22,7 +22,10 @@
         "*.glo",
         "*.gls",
         "*.glsdefs",
-        "*.ist"
+        "*.ist",
+        "*.tdo",
+        "*.pyg",
+        "*.dvi",
       ],
       "follow_symlinks": true,
       "path": "."

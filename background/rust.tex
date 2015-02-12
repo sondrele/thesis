@@ -153,8 +153,12 @@ called \emph{lifetimes}, in which  the compiler with the help of \emph{lifetime 
 statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the
 programmer.
 
-Lifetime elisions is applied to structures and function definitions, among others, in order to tell
-Rust that the lifetime
+Lifetime elisions is applied to structures, function definitions, and trait declarations, among
+others, in order to tell Rust that the named lifetime is valid in the surrounding scope.
+
+\begin{minted}{rust}
+let x = y;
+\end{minted}
 
 \todo[inline]{Show code examples of lifetimes}
 
