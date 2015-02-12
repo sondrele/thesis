@@ -151,14 +151,61 @@ Rust needs a way to ensure that the memory used by all borrowed references to a 
 i.e. that the references does not point to any deallocated memory. Rust achieves this with a concept
 called \emph{lifetimes}, in which  the compiler with the help of \emph{lifetime elisions}, can
 statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the
-programmer.
+programmer. Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in \texttt{C}
+that returns a reference into a variable allocated in its own stackframe. The \texttt{C} compiler
+will issue a warning of such a serious mistake \todo{Error? Mistake? Fault?}, but it will still let
+you do it. A similar implementation of \texttt{get\_ref} in \rust is shown in
+\autoref{lst:invalid_ref_rust}, but this will issue a warning because \texttt{n}'s lifetime is only
+valid for the scope defined by \texttt{get\_ref} itself, but not in the surrounding scope.
 
-Lifetime elisions is applied to structures, function definitions, and trait declarations, among
-others, in order to tell Rust that the named lifetime is valid in the surrounding scope.
-
-\begin{minted}{rust}
-let x = y;
+\begin{listing}[tb]
+\begin{minted}{c}
+int *get_ref() {
+    int n = 3;
+    return &n;
+}
 \end{minted}
+\caption{Caption here}
+\label{lst:invalid_ref_c}
+\end{listing}
+
+\begin{listing}[tb]
+\begin{minted}{rust}
+fn get_ref() -> &i32 {
+    let n = 3;
+    &n
+}
+\end{minted}
+\caption{Caption here}
+\label{lst:invalid_ref_rust}
+\end{listing}
+
+Lifetime elisions are applied to structures and trait declarations, among others, and they are used
+in function definitions in order to tell Rust that the named lifetime is valid in the surrounding
+scope. \todo{Sentence is unclear. Needs rewrite} Such elisions are used extensively together with
+parameters and return values, and helps the compiler to reason about the liveliness of the
+references and whether they are valid or not. There are two kinds of lifetimes; the ones associated
+with \emph{input parameters} to a function, and the ones associated with the \emph{returned value}
+from a function. These are referred to as \emph{input-lifetimes} and \emph{output-lifetimes},
+respectively. We have an error if a function returns a value with an output lifetime that is not the
+same as the input lifetime, because this would have resulted in use-after-free.
+
+Consider an updated version of the \texttt{get\_ref} function shown in
+\autoref{lst:invalid_ref_rust2}, where the lifetime with the name \texttt{'a} is annotated by the
+function and tells the compiler that the value returned by the function has an output lifetime that
+lives longer than the function. \todo{Bad explanation. Should probably switch out the example.}
+
+
+\begin{listing}[tb]
+\begin{minted}{rust}
+fn get_ref<'a>() -> &'a i32 {
+    let n = 3;
+    &n
+}
+\end{minted}
+\caption{Caption here}
+\label{lst:invalid_ref_rust}
+\end{listing}
 
 \todo[inline]{Show code examples of lifetimes}
 
