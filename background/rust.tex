@@ -64,13 +64,13 @@ needs proper backing.}
 
 \subsubsection{Guaranteed memory safety}
 
-One of Rusts biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing
+One of Rust's biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing
 performance. The memory safety boils down to how Rust manages the variables and data-segments
 throughout the program. Rust introduces a few concepts that are all centered around the
-\emph{ownership} of these variables, how the variables are \emph{borrowed} and the
-\emph{lifetimes} of the variables and the borrowed references to them. Rusts ownership system are
-part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all
-borrow-checking and ownership- and lifetime-analysis is done statically at compile-time.
+\emph{ownership} of these variables, how the variables are \emph{borrowed} and the \emph{lifetimes}
+of the variables and the borrowed references to them. Rust's ownership system are part of all the
+zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking,
+and ownership- and lifetime-analysis are done statically at compile-time.
 
 \paragraph{Ownership and Move Semantics} \hfill
 
