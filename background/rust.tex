@@ -232,6 +232,18 @@ Rust has a concurrency model. Duh.
 
 % subsubsection concurrency_model (end)
 
+\subsubsection{Unsafe Code} % (fold)
+\label{ssub:unsafe_code}
 
+The strong type system along with lifetime inference and borrow-checking help Rust become a safe
+language. The language provides safe, zero-cost abstractions over the machine it is running on, but
+it is not always possible to guarantee full safety without sacrificing performance, or vice versa.
+Achieving good performance is often a synonym with direct memory access and pointer manipulation,
+which  in itself is not considered to be safe operations. \todo{At least by Rust. Depends on who
+considers it.}
+
+
+
+% subsubsection unsafe_code (end)
 
 % subsection the_rust_programming_language (end)
