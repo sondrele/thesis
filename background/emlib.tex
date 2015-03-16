@@ -6,7 +6,7 @@
 EFM32 refers to a family of 32-bit ARM microcontrollers that is developed by Silicon Labs. They are
 based on the ARM Cortex-M series of RISC processor cores, a range of different processor cores
 intended for microcrontrollers, that focuses on low cost and energy-usage. These factors are crucial
-in modern systems, and applications where energy efficiency is of great importance. For example with
+in modern systems and applications where energy efficiency is of great importance. For example with
 the \gls{iot}, where we predict a future where tens of billions of devices will be connected to the
 Internet, ranging from Super Computers down to small embedded devices that might be used to power up
 and control everything from cars to light bulbs via the Internet. The different processor cores of
@@ -54,14 +54,16 @@ Wonder Gecko  & ARM Cortex-M4  & 48
 \end{tabular}
 \end{centering}
 
+
+
 \subsection{Emlib} % (fold)
 \label{sub:emlib}
 
-\texttt{emlib} is a peripheral \gls{api} by Silicon Labs that provides a nice abstraction
+\emlib is a peripheral \gls{api} by Silicon Labs that provides a nice abstraction
 layer for their EFM32 series of ARM micro-controllers. It is a general library written in C that
 provides functions and modules to read, write and control the different peripherals that is
 supported by the EMF32 micro-controllers. With the \gls{api}, the application programmer can control
 and set up the different peripherals and easily control sleep modes and wakeup, and interrupt
 handlers among others. The library is built on the Cortex Microcontroller Software Interface Standard
 (CMSIS) provided by ARM. It is possible to control the EFM32's with these libraries as well, but
-emlib is designed to as a standalone library.
+\emlib is designed to as a standalone library.
