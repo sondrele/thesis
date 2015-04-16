@@ -7,3 +7,7 @@
 
 % Inserts 'Listing 4' when '\autoref{lst:listing}' a listing is referenced
 \providecommand*{\listingautorefname}{Listing}
+
+\renewcommand\thesection{\arabic{chapter}.\arabic{section}}
+\renewcommand\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\renewcommand\thesubsubsection{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
