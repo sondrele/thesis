@@ -30,6 +30,9 @@ show: report
 showquick: quick
 	$(OPEN) $(REPORT:.tex=.pdf)
 
+mk:
+	@latexmk -pdf -shell-escape main.tex
+
 clean:
 	@rm -rf *.aux
 	@rm -rf *.bbl
