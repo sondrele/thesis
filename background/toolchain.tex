@@ -1,8 +1,10 @@
-\subsection{Build System}
+\section{Build System}
+\label{sec:back:build}
 
 This section describes the build system.
 
-\subsubsection{Compiler Toolchain}
+\subsection{Compiler Toolchain}
+\label{sec:back:build:toolchain}
 
 Using an abstract view the compiler toolchain uses two major components.
 The \textbf{rustc} compiler, built on LLVM, and the \textbf{arm-none-eabi} gcc toolchain.
@@ -11,7 +13,7 @@ Rust source files are compiled to object files with the Rust compiler.
 Finally the object files are linked with arm-none-eabi-ld to produce an elf binary.
 The Rust compiler does not support the target architecture directly, so a custom target specification is supplied.
 
-\subsubsection{Cargo}
+\subsection{Cargo}
+\label{sec:back:build:cargo}
 
 \todo{Flesh out when cargo is used for building.}
-

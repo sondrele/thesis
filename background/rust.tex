@@ -1,6 +1,6 @@
 % !TEX root = ../main.tex
 
-\subsection{The Rust Programming Language} % (fold)
+\section{The Rust Programming Language} % (fold)
 \label{sub:the_rust_programming_language}
 
 Rust \cite{web:rust_lang} is a new open source systems programming language developed by the Mozilla
@@ -14,7 +14,7 @@ some of the more prominent language features, that all work together in order to
 main goals; mainly full memory safety without sacrificing performance.
 \todo{I've just been throwing out ideas and statements that are probably not very true.}
 
-\subsubsection{Zero-cost Abstractions}
+\subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
 
 Abstractions, in the form of references and pointers to objects or structures and how they are
@@ -62,7 +62,7 @@ needs proper backing.}
   \label{fig:cpp_abstractions}
 \end{figure}
 
-\subsubsection{Guaranteed memory safety}
+\subsection{Guaranteed memory safety}
 
 One of Rust's biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing
 performance. The memory safety boils down to how Rust manages the variables and data-segments
@@ -72,7 +72,7 @@ of the variables and the borrowed references to them. Rust's ownership system ar
 zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking,
 and ownership- and lifetime-analysis are done statically at compile-time.
 
-\paragraph{Ownership and Move Semantics} \hfill
+\subsubsection{Ownership and Move Semantics} \hfill
 
 In order to achieve full memory safety, we have to remove all form for memory leaks and dangling
 pointers to invalid memory. This implies one \emph{memory deallocation} for every respective
@@ -134,7 +134,7 @@ handles to the memory had existed at the same time it would have resulted in sev
 \emph{free}, one for every time the handle left the different scopes. The only way to continue using
 the handle in its original scope would have been to give the ownership back after using it.
 
-\paragraph{Borrowing} \hfill
+\subsubsection{Borrowing} \hfill
 
 \emph{Borrowing} is introduced as an alternative to moving the variable ownership across multiple
 scopes. Rust allows the programmer to \emph{lend} away access to handles by passing a reference to
@@ -145,7 +145,7 @@ working with a reference to the handle, or just borrowing the handle to the end 
 
 \todo[inline]{Show code examples of borrowing and references}
 
-\paragraph{Lifetimes} \hfill
+\subsubsection{Lifetimes} \hfill
 
 Rust needs a way to ensure that the memory used by all borrowed references to a handle is intact,
 i.e. that the references does not point to any deallocated memory. Rust achieves this with a concept
@@ -212,7 +212,7 @@ fn get_ref<'a>() -> &'a i32 {
 \todo[inline]{I have mixed the use of data-segments, variables, pointers and handles. They should be
 properly defined and used within the right contexts.}
 
-\subsubsection{Big-Stack allocation}
+\subsection{Big-Stack allocation}
 \label{par:big_stack}
 
 Rust uses "big stack" allocations \todocite{need big-stack citation. I've read about it somewhere}
@@ -225,7 +225,7 @@ garbage collectors and other runtime requirements is minimal (important for embe
 
 % subsubsection memory_safety (end)
 
-\subsubsection{Concurrency Model} % (fold)
+\subsection{Concurrency Model} % (fold)
 \label{ssub:concurrency_model}
 
 Rust has a concurrency model. Duh.
@@ -242,8 +242,345 @@ Achieving good performance is often a synonym with direct memory access and poin
 which  in itself is not considered to be safe operations. \todo{At least by Rust. Depends on who
 considers it.}
 
-
-
 % subsubsection unsafe_code (end)
 
-% subsection the_rust_programming_language (end)
+\subsection{Language Features}
+
+This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
+The language is multiparadigm and therefor offeres a wider range of language constructs
+
+\subsubsection{Sum types - Enum}
+
+The \textbf{enum} type of Rust is a powerfull construct.
+The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
+A canonical example of a Sum type is the representation of a linked list in \ref{lst:rust:linked-list}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    enum List<T> {
+      Cons(T, Box<List>),
+      Nil,
+    }
+  \end{minted}
+  \caption{Definition of Linked List}
+  \label{lst:rust:list}
+\end{listing}
+
+Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+
+\subsubsection{Case Study - Option}
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub enum Option<T> {
+      Some(T),
+      None,
+    }
+  \end{minted}
+  \caption{Definition of Option}
+  \label{lst:rust:option}
+\end{listing}
+
+\subsubsection{Pattern Matching and Destruction}
+
+Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerfull.
+In addition to choose the matching tag/value, as a conventional switch does, the matching contruct is able to desctruct the matching value.
+An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    let option: Option<int> = Some(42);
+
+    match option {
+      Some(number) => println!("{}", number),
+      None => (),
+    }
+  \end{minted}
+  \caption{Matching a Option}
+  \label{lst:rust:match}
+\end{listing}
+
+In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
+As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
+
+\subsubsection{Traits}
+
+A Trait defines behaviour for an object that implementents the Trait.
+Traits are used to facilitate code reuse and ploymophism.
+
+One integral trait in the Rust programming language is the Iterator trait defined in Listing \ref{lst:rust:iterator}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub trait Iterator {
+      type Item;
+      fn next(&mut self) -> Option<Self::Item>;
+      fn size_hint(&self) -> (usize, Option<usize) { (0, None) }
+      // ...
+    }
+  \end{minted}
+  \caption{}
+  \label{lst:rust:iterator}
+\end{listing}
+
+Implementing the Iterator trait for the List type in Listing \ref{lst:rust:list-iter} involves the discussed features enums, pattern matching and traits.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    impl<T: Clone> Iterator for List<T> {
+      type Item = T;
+
+      fn next(&mut self) -> Option<T> {
+        match self.clone() {
+          Cons(val, next) => {
+            *self = *next;
+            Some(val)
+          },
+          Nil => None
+        }
+      }
+    }
+  \end{minted}
+  \caption{Implementing the Iterator trait for the List type}
+  \label{lst:rust:list-iter}
+\end{listing}
+
+
+\subsubsection{Loops}
+
+Rust provides the two known loop constructs \textbf{for} and \textbf{while}, in addition to \textbf{loop} for infinite loops.
+The \textbf{for} loop is not the conventional \textit{for (initialize; condition; increment)}, it operates on iterators.
+To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in Listing \ref{lst:rust:for}
+
+
+\begin{minipage}[b]{0.5\linewidth}
+  \begin{listing}[H]
+  \begin{minted}{rust}
+
+    let values = vec![1, 2, 3];
+    for x in 0..10 {
+      println!("{}", x);
+    }
+
+  \end{minted}
+  \caption{Desugaring for loop}
+  \label{lst:rust:for}
+  \end{listing}
+  \end{minipage}
+
+\begin{minipage}[b]{0.5\linewidth}
+  \begin{listing}[H]
+    \begin{minted}{rust}
+
+      let mut it = values.into_iter();
+      loop {
+        match it.next() {
+          Some(x) => println!("{}", x),
+          None => break,
+        }
+      }
+
+    \end{minted}
+
+    \caption{Desugaring for loop}
+    \label{lst:rust:desugared-for}
+  \end{listing}
+\end{minipage}
+
+\subsubsection{Case Study - Result}
+
+The Result type is an integral type in the Rust library and in Rust code in general.
+The type is the base type for error handling.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    #[must_use]
+    pub enum Result<T, E> {
+      Ok(T),
+      Err(E),
+    }
+\end{minted}
+\caption{Definition of Result}
+\label{lst:rust:result}
+\end{listing}
+
+\subsection{Organization}
+\label{ssub:rust:organization}
+
+\subsubsection{Crates and Modules}
+
+Rust provides two main features to organizing code, crates and modules.
+A crate defines a collection of modules which constitues a library.
+The crate construct is a sharable part of rust code that can be included into other projects and libraries.
+The module is the hierarical means of organizing a crate.
+Figure \ref{fig:rust:collections} shows a few or the modules contained within the Rust collection library.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/libcollections.png}
+  \end{center}
+  \caption{Modules in collection crate.}
+  \label{fig:rust:collections}
+\end{figure}
+
+\subsubsection{Rust library}
+
+The Rust library is organized using crates.
+This ensures that the design is modular and provides the programmer the ability to import only the components of the library that is needed for a given program.
+The Cargo packages manager makes this feature easly exploitable.
+Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones this is integral to exploiting the standard library.
+As the standard library contains functionality that asumes a operating system the library as a whole cannot be utilized.
+Figure \ref{fig:rust:librust} depicts the crates of the standard library with their dependencies.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
+  \end{center}
+  \caption{Some crates of the rust library}
+  \label{fig:rust:librust}
+\end{figure}
+std* - The std crate depends nealy all of the crates in the lower right corner
+
+\section{Rust Embedded Library}
+
+This section describes the library facilities provided by Rust that are usable in an barebone embedded setting.
+From considering the dependencies for \textbf{std} in Figure \ref{fig:rust:librust} we see that this crate is not suitable for a barebones application.
+The dependency on either an Unix or Windows OS excludes \textbf{std} and all its dependents from being used without an OS.
+The remaining Rust Embedded Library, REL, is shown in Figure \ref{fig:rust:rel}.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/embedded-rust-lib.png}
+  \end{center}
+  \caption{Rust Embedded Library, REL}
+  \label{fig:rust:rel}
+\end{figure}
+
+The remainder of this section examines the contents of the different crate composed into REL.
+
+\subsection{Rust Core Library}
+
+The Rust Core Library, RCL, defines the platform independent non-dependent core of the Rust language.
+For normal usage the Rust Standard Library, RSL, augments RCL with platform dependent features and reexports the stable parts.
+In this way RCL is not interfaced with directly and can modified as long as the interface though RSL stays the same.
+With REL the programmer must interface with RCL directly.
+
+REL mainly defines the primitive types of Rust and operations on these in addition to memory management and some core language traits.
+
+\subsubsection{Primitive types}
+
+Table \ref{tab:rust:datatypes} lists the primitive datatypes available in Rust.
+RCL defines functions for manipulating these datatypes.
+
+\begin{table}[H]
+  \begin{tabular}{l|l}
+    array & fixed-length array type \\
+    bool & data type with value true or false \\
+    char & a unicode scalar value \\
+    f32, f64 & floating point number of single and double precision \\
+    i8, i16, i32, i64, u8, u16, u32, u64 & integers \\
+    isize, usize & integers of 'pointer-sized' size \\
+    pointer & raw unsafe pointers (*const T, *mut T) \\
+    slice & a view into a array \\
+    str & string \\
+    tuple & finite ordered list of elements
+  \end{tabular}
+
+  \caption{Primitive datatypes}
+  \label{tab:rust:datatypes}
+\end{table}
+
+Most of the datatypes in Table \ref{tab:rust:datatypes} brings no surprices with the when it comes to representation and functionalty.
+The ones who are not common place are discussed in below.
+
+\paragraph{Pointer}
+
+Rust exposes a few different pointer types.
+Within RCL is a raw pointer type.
+This pointer is not generally used in Rust code and is considered unsafe.
+These pointers are used for interfacing with C code and writing datastructure not premitted by safe pointers. \todo{Should probably show the restrictions related to doubly-linked lists}
+
+\paragraph{Slice}
+
+The slice type is simply a view into an array.
+The representation is a pointer and a length as shown in Listing \ref{lst:rust:slice}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub struct Slice<T> {
+      pub data: *const T,
+      pub len: usize
+    }
+\end{minted}
+\caption{Slice representation}
+\label{lst:rust:slice}
+\end{listing}
+
+Slices have special syntax denoted by \&[T] where T is a type.
+
+\paragraph{str}
+\label{par:rust:str}
+
+The Rust string type str can either be a statically allocated string defined as a literal or a borrowed reference into another string.
+A string in Rust is a sequence of Unicode scalar values and is not null terminated.
+The representation of the string type is closely related to slices as \&str is equivalent to \&[u8].
+
+\paragraph{tuple}
+
+A tuple type is a fixed size datatype of variable types.
+The type can be used to return multiple return values from a function.
+In addition the type supports tags just like the variants of an enum.
+
+\subsubsection{Memory Management}
+\subsubsection{Core Language Traits}
+
+\subsection{Allocation}
+\label{sec:rust:allocation}
+
+The RCL does not use or expose any heap allocation.
+Heap allocation is introduced through the \texttt{Box} type defined in the allocation library.
+
+\subsection{The Collection Library}
+
+The Rust collection library provides the data structures shown in Table \ref{tab:rust:collections}.
+
+\begin{table}[H]
+  \begin{tabular}{l}
+    Binary Heap \\
+    Binary Tree Map \\
+    Binary Tree Set \\
+    Bit Set \\
+    Bit Vector \\
+    Enum Set \\
+    Linked List \\
+    Vector \\
+    Vector Dequeue \\
+    Vector Map \\
+    String \\
+  \end{tabular}
+  \caption{Rust Collection Library}
+  \label{tab:rust:collections}
+\end{table}
+
+We look at some of the data structures in this section.
+
+\subsubsection{Vector}
+
+The Vector is an important data structure both in direct usage but also as a building block for other data structures.
+In essence it is a growable heap allocated list of values of the same type.
+
+\subsubsection{String}
+
+In section \ref{par:rust:str} we discussed the \textbf{string slice}.
+The \texttt{String} defined in the collection library is a heap allocated mutable string.
+
+\subsection{libc}
+
+The heap allocation library described in Section \ref{sec:rust:allocation} depends on the \texttt{libc} crate abstraction.
+The \texttt{libc} library provided in the standard library provides bindings for the C standard library and platform specific libraries.
+REL depends on \texttt{libc} for the low level memory operations \texttt{malloc}, \texttt{realloc} and \texttt{free}.
+The details of this implementation is found in Section \ref{sec:impl:libc}. \todo{Update reference to implementation chapter part about libc implementation}
+
+\subsection{Notable missing functionality in REL}
+
+- Reference Counted GC
