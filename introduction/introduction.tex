@@ -3,15 +3,31 @@
 \chapter{Introduction}
 \label{chap:intro}
 
-\section{Rust as Replacement To C} % (fold)
+\section{Rust Instead of C} % (fold)
 \label{sec:intro:rust_as_replacement_to_c}
 
 \todo{En løs tanke om at `C kan erstattes og at Rust kan klare dette` burde kanskje ligge i
 Introduction}
 
-Rust's low level of abstraction makes it a suitable programming language for embedded systems, and
-combined with it's guarantees about memory safety and absent of data races and other common errors
-like stack- and buffer-overflows, it makes for interesting research as replacement to C as the only
-viable programming language for embedded systems.
+Rust is a new programming language that reached a stable 1.0 in may 2015.
+Like most other programming languages it aims to solve a few specific problems better than other languages can.
+Mainly; its goal is `to design and implement a safe, concurrent, practical, static systems language \cite{web:rust_faq}.'
+With these goals in mind, Rust focuses on being a memory safe language without sacrificing performance, and it implements a few paradigms in order to provide a solid concurrency model that are suited for many modern applications that runs on the internet.
+
+C has become the industry standard for developing on embedded systems.
+It is a small, low-level language, at least considering todays standards, that has been adapted to virtually every target platform that exists on the market.
+It is an easy language without many language constructs that makes it easy to adapt it to different platforms, it has a minimal runtime system and does not require an operating system in order to utilize the underlying hardware.
+Rust have adapted many of the features that are available in C, among it are a minimal runtime, full control over the memory and a \gls{ffi} that is exactly the same as C's \cite{web:rust_run_once_run_everywhere}.
+
+Gradually, while the Rust programming language started to take shape, a few people in the community took a notice to Rust's low level of implementation and how it could be a suitable programming language for embedded systems.
+Combined with its strong guarantees about memory safety and absent of data races and other common errors like stack- and buffer-overflows, it makes for an interesting language to run on bare-metal systems.
+Early projects that worked with running Rust bare-metal on ARM microcontrollers had to do a few workarounds in order to make it work, but since the language is implemented in the open, with great influence from the community, it is now easy to rely on only the core functionality of the language that is platform independent.
+A few of these early projects has been the inspiration for this project itself and has been a great influence for the development of this project.
+
+The purpose of this project has been to try and give a rough comparison of Rust and C on a bare-metal system.
+In the process of doing this, we decided that the EFM32 microcontrollers from Silicon Labs would be well suited for the task, which gives us a couple of metrics where we can compare the two languages.
+Mainly, we want to compare the performance of the two languages against each other on a small system with limited computing power, and we want to compare energy usage, or power consumption, of programs written in the two languages.
+Typically, the two problems goes hand-in-hand; the best way to save power is to shut down the hardware, and in order to shut down the processor, the programs need to finish quickly - basically, executing as few instructions as possible.
+Rust claims to provide zero-cost abstractions, meaning that its high-level abstractions does not come at the cost of performance and program overhead.
 
 % subsection rust_as_replacement_to_c (end)

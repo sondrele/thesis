@@ -6,11 +6,20 @@
 % For orange todos. It needs to be here, otherwise the arrows will not be correct
 \usepackage{todonotes}
 
+
+% Generate abbreviations, include after hypreref to link. Cite with \gls and \glspl
+% Define with: \newacronym{mac}{MAC}{Media Access Control}
+% Complile with 'makeglossaries main'
+% \usepackage[acronyms, nonumberlist]{glossaries}
+\usepackage[acronyms]{glossaries}
+
 % Contains all commands used in the report
 \include{commands}
 
 % Contains all abbreviations used in the report
 \include{abbreviations}
+
+
 
 % Make glossaries, needs to be done before begin{document}
 \makeglossaries

@@ -22,12 +22,16 @@
         "*.glo",
         "*.gls",
         "*.glsdefs",
-        "*.ist"
+        "*.ist",
+        "*.tdo",
+        "*.pyg",
+        "*.dvi",
       ],
       "follow_symlinks": true,
       "path": "."
     }
   ],
   "rulers": [100],
-  "wrap_width": 100
+  "wrap_width": 100,
+  "word_wrap": true,
 }
