@@ -234,7 +234,7 @@ Rust has a concurrency model. Duh.
 
 % subsubsection concurrency_model (end)
 
-\subsubsection{Unsafe Code} % (fold)
+\subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
 
 The strong type system along with lifetime inference and borrow-checking help Rust become a safe language.
@@ -251,9 +251,9 @@ The language is multiparadigm and therefor offeres a wider range of language con
 
 \subsubsection{Sum types - Enum}
 
-The \textbf{enum} type of Rust is a powerfull construct.
+The \textbf{enum} type of Rust is a powerful construct.
 The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
-A canonical example of a Sum type is the representation of a linked list in \ref{lst:rust:linked-list}.
+A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -283,20 +283,20 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
 
 \subsubsection{Pattern Matching and Destruction}
 
-Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerfull.
-In addition to choose the matching tag/value, as a conventional switch does, the matching contruct is able to desctruct the matching value.
+Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerful.
+In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
 An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    let option: Option<int> = Some(42);
+    let option: Option<u32> = Some(42);
 
     match option {
       Some(number) => println!("{}", number),
       None => (),
     }
   \end{minted}
-  \caption{Matching a Option}
+  \caption{Matching an Option}
   \label{lst:rust:match}
 \end{listing}
 
@@ -305,8 +305,8 @@ As the first pattern matches the value, the number \texttt{42} is bound to the v
 
 \subsubsection{Traits}
 
-A Trait defines behaviour for an object that implementents the Trait.
-Traits are used to facilitate code reuse and ploymophism.
+A Trait defines behavior for an object that implements the Trait.
+Traits are used to facilitate code reuse and polymorphism.
 
 One integral trait in the Rust programming language is the Iterator trait defined in Listing \ref{lst:rust:iterator}.
 
@@ -319,7 +319,7 @@ One integral trait in the Rust programming language is the Iterator trait define
       // ...
     }
   \end{minted}
-  \caption{}
+  \caption{Definition of Iterator trait}
   \label{lst:rust:iterator}
 \end{listing}
 
@@ -410,9 +410,9 @@ The type is the base type for error handling.
 \subsubsection{Crates and Modules}
 
 Rust provides two main features to organizing code, crates and modules.
-A crate defines a collection of modules which constitues a library.
+A crate defines a collection of modules which constitutes a library.
 The crate construct is a sharable part of rust code that can be included into other projects and libraries.
-The module is the hierarical means of organizing a crate.
+The module is the hierarchical means of organizing a crate.
 Figure \ref{fig:rust:collections} shows a few or the modules contained within the Rust collection library.
 
 \begin{figure}[H]
@@ -427,9 +427,9 @@ Figure \ref{fig:rust:collections} shows a few or the modules contained within th
 
 The Rust library is organized using crates.
 This ensures that the design is modular and provides the programmer the ability to import only the components of the library that is needed for a given program.
-The Cargo packages manager makes this feature easly exploitable.
-Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones this is integral to exploiting the standard library.
-As the standard library contains functionality that asumes a operating system the library as a whole cannot be utilized.
+The Cargo packages manager makes this feature easily exploitable.
+Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones \todo{Bare metal?} this is integral to exploiting the standard library.
+As the standard library contains functionality that assumes a operating system the library as a whole cannot be utilized.
 Figure \ref{fig:rust:librust} depicts the crates of the standard library with their dependencies.
 
 \begin{figure}[H]
@@ -439,7 +439,7 @@ Figure \ref{fig:rust:librust} depicts the crates of the standard library with th
   \caption{Some crates of the rust library}
   \label{fig:rust:librust}
 \end{figure}
-std* - The std crate depends nealy all of the crates in the lower right corner
+std* - The std crate depends nearly all of the crates in the lower right corner
 
 \section{Rust Embedded Library}
 
@@ -490,7 +490,7 @@ RCL defines functions for manipulating these datatypes.
   \label{tab:rust:datatypes}
 \end{table}
 
-Most of the datatypes in Table \ref{tab:rust:datatypes} brings no surprices with the when it comes to representation and functionalty.
+Most of the datatypes in Table \ref{tab:rust:datatypes} brings no surprises with the when it comes to representation and functionality.
 The ones who are not common place are discussed in below.
 
 \paragraph{Pointer}
@@ -498,7 +498,7 @@ The ones who are not common place are discussed in below.
 Rust exposes a few different pointer types.
 Within RCL is a raw pointer type.
 This pointer is not generally used in Rust code and is considered unsafe.
-These pointers are used for interfacing with C code and writing datastructure not premitted by safe pointers. \todo{Should probably show the restrictions related to doubly-linked lists}
+These pointers are used for interfacing with C code and writing data structure not permitted by safe pointers. \todo{Should probably show the restrictions related to doubly-linked lists}
 
 \paragraph{Slice}
 
