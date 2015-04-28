@@ -33,6 +33,9 @@ showquick: quick
 mk:
 	@latexmk -pdf -shell-escape main.tex
 
+ls:
+	@tree -P "*.tex|*.bib"
+
 clean:
 	@rm -rf *.aux
 	@rm -rf *.bbl
