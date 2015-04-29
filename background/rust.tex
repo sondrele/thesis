@@ -235,7 +235,7 @@ Rust has a concurrency model. Duh.
 
 % subsubsection concurrency_model (end)
 
-\subsubsection{Unsafe Code} % (fold)
+\subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
 
 The strong type system along with lifetime inference and borrow-checking help Rust become a safe language.
@@ -253,9 +253,9 @@ The language is multiparadigm and therefor offeres a wider range of language con
 
 \subsubsection{Sum types - Enum}
 
-The \textbf{enum} type of Rust is a powerfull construct.
+The \textbf{enum} type of Rust is a powerful construct.
 The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
-A canonical example of a Sum type is the representation of a linked list in \ref{lst:rust:linked-list}.
+A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -285,20 +285,20 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
 
 \subsubsection{Pattern Matching and Destruction}
 
-Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerfull.
-In addition to choose the matching tag/value, as a conventional switch does, the matching contruct is able to desctruct the matching value.
+Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerful.
+In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
 An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    let option: Option<int> = Some(42);
+    let option: Option<u32> = Some(42);
 
     match option {
       Some(number) => println!("{}", number),
       None => (),
     }
   \end{minted}
-  \caption{Matching a Option}
+  \caption{Matching an Option}
   \label{lst:rust:match}
 \end{listing}
 
@@ -307,8 +307,8 @@ As the first pattern matches the value, the number \texttt{42} is bound to the v
 
 \subsubsection{Traits}
 
-A Trait defines behaviour for an object that implementents the Trait.
-Traits are used to facilitate code reuse and ploymophism.
+A Trait defines behavior for an object that implements the Trait.
+Traits are used to facilitate code reuse and polymorphism.
 
 One integral trait in the Rust programming language is the Iterator trait defined in Listing \ref{lst:rust:iterator}.
 
@@ -321,7 +321,7 @@ One integral trait in the Rust programming language is the Iterator trait define
       // ...
     }
   \end{minted}
-  \caption{}
+  \caption{Definition of Iterator trait}
   \label{lst:rust:iterator}
 \end{listing}
 
@@ -412,9 +412,9 @@ The type is the base type for error handling.
 \subsubsection{Crates and Modules}
 
 Rust provides two main features to organizing code, crates and modules.
-A crate defines a collection of modules which constitues a library.
+A crate defines a collection of modules which constitutes a library.
 The crate construct is a sharable part of rust code that can be included into other projects and libraries.
-The module is the hierarical means of organizing a crate.
+The module is the hierarchical means of organizing a crate.
 Figure \ref{fig:rust:collections} shows a few or the modules contained within the Rust collection library.
 
 \begin{figure}[H]
@@ -429,9 +429,9 @@ Figure \ref{fig:rust:collections} shows a few or the modules contained within th
 
 The Rust library is organized using crates.
 This ensures that the design is modular and provides the programmer the ability to import only the components of the library that is needed for a given program.
-The Cargo packages manager makes this feature easly exploitable.
-Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones this is integral to exploiting the standard library.
-As the standard library contains functionality that asumes a operating system the library as a whole cannot be utilized.
+The \texttt{Cargo} packages manager makes this feature easily exploitable.
+Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones \todo{Bare metal?} this is integral to exploiting the standard library.
+As the standard library contains functionality that assumes a operating system the library as a whole cannot be utilized.
 Figure \ref{fig:rust:librust} depicts the crates of the standard library with their dependencies.
 
 \begin{figure}[H]
@@ -441,7 +441,7 @@ Figure \ref{fig:rust:librust} depicts the crates of the standard library with th
   \caption{Some crates of the rust library}
   \label{fig:rust:librust}
 \end{figure}
-std* - The std crate depends nealy all of the crates in the lower right corner
+std* - The std crate depends nearly all of the crates in the lower right corner
 
 \section{Rust Embedded Library}
 
@@ -492,7 +492,7 @@ RCL defines functions for manipulating these datatypes.
   \label{tab:rust:datatypes}
 \end{table}
 
-Most of the datatypes in Table \ref{tab:rust:datatypes} brings no surprices with the when it comes to representation and functionalty.
+Most of the datatypes in Table \ref{tab:rust:datatypes} brings no surprises with the when it comes to representation and functionality.
 The ones who are not common place are discussed in below.
 
 \paragraph{Pointer}
@@ -500,7 +500,7 @@ The ones who are not common place are discussed in below.
 Rust exposes a few different pointer types.
 Within RCL is a raw pointer type.
 This pointer is not generally used in Rust code and is considered unsafe.
-These pointers are used for interfacing with C code and writing datastructure not premitted by safe pointers. \todo{Should probably show the restrictions related to doubly-linked lists}
+These pointers are used for interfacing with C code and writing data structure not permitted by safe pointers. \todo{Should probably show the restrictions related to doubly-linked lists}
 
 \paragraph{Slice}
 
@@ -586,3 +586,135 @@ The details of this implementation is found in Section \ref{sec:impl:libc}. \tod
 \subsection{Notable missing functionality in REL}
 
 - Reference Counted GC
+
+\subsection{Cargo}
+\label{sec:cargo}
+
+\texttt{Cargo} is Rust's package manager, a program that automates the process of building Rust programs.
+It comes bundled with the default installation of Rust.
+\texttt{Cargo} comes with a collection of tools that makes building, testing and running Rust programs a lot easier than invoking \texttt{rustc} directly.
+\texttt{Cargo} also defines a standard Rust project layout, in addition to downloading and updating package dependencies.
+This section will cover the most important features of \texttt{Cargo} and how it works that is required in order to understand the work that is described later in this project report.
+
+\subsubsection{Project Structure}
+
+Every crate, or package, built by \texttt{Cargo} requires a \texttt{Cargo.toml} file to be present in the root directory.
+This file is interpreted by \texttt{Cargo} and is used to determine the name of library and executables to be built in the package and what other packages that it depends on.
+It also includes information that tells \texttt{Cargo} how the package can be compiled for different target architectures, and it is used to define different \textit{features} of a package - a way to conditionally compile certain parts of the code present in the library.
+
+\begin{listing}
+\dirtree{%
+.1 hello\_world.
+.2 Cargo.lock.
+.2 Cargo.toml.
+.2 build.rs
+.2 src.
+.3 bin.
+.4 hello\_mars.rs.
+.4 hello\_jupiter.rs.
+.3 lib.rs.
+.3 main.rs.
+.2 examples.
+.3 hello\_venus.rs.
+.2 tests.
+.3 hello\_planets\_test.rs.
+}
+\caption{Cargo project structure}
+\label{lst:cargo_project_structure}
+\end{listing}
+
+\autoref{lst:cargo_project_structure} shows a standard \texttt{Cargo} project structure.
+The \texttt{lib.rs} file will be compiled into a crate with the project name, in this case it will be \texttt{hello\_world.rlib}.
+If a \texttt{main.rs} file is present, it will be compiled into an executable with the same name.
+Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the \texttt{hello\_world} library and all of the package dependencies with these executables.
+The \texttt{examples} directory contains different executables that demonstrates how to use the library, and finally the \texttt{tests} directory contains integration tests.
+A package can also have it's own build-routine by specifying a \texttt{build} file in \texttt{Cargo.toml}, in this case we have a \texttt{build.rs} file present in the project.
+This file is executed prior to building the library itself, and provides the possibility to e.g. compile and link third party C-libraries, or e.g. generated code prior to compilation.
+Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains information about every package that are used by the project library and executables.
+This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated or re-compiled in order for the package to behave correctly and be built consistently - independent on the target architecture it is built on, and for.
+
+\subsubsection{Building and testing (Or Tools?)}
+
+As mentioned earlier, \texttt{Cargo} comes with a collection of tools that makes it easy to build and test Rust projects.
+The most common commands are shown in \autoref{tab:common_cargo_commands}.
+Most of these tools are self explanatory, but the \texttt{build} and the \texttt{test} commands will be described a little more thoroughly in this section.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{r|l}
+\textbf{Command} & \textbf{Description}                           &
+\hline
+build  & Compile the current project                              &
+clean  & Remove the target directory                              &
+doc    & Build this project's and its dependencies' documentation &
+new    & Create a new cargo project                               &
+run    & Build and execute src/main.rs                            &
+test   & Run the tests                                            &
+bench  & Run the benchmarks                                       &
+update & Update dependencies listed in Cargo.lock                 &
+\hline
+\end{tabular}
+\caption{Common cargo commands}
+\label{tab:common_cargo_commands}
+\end{center}
+\end{table}
+
+By invoking the \texttt{cargo build} command, \texttt{Cargo} will download and resolve all package dependencies, and trigger \texttt{rustc} to compile them and link them with each other in the correct order.
+When all dependencies have been built, the build script will be invoked (if it is present in the package), before the library itself is compiled.
+Lastly, if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory, the projects executables will be compiled.
+
+The \texttt{cargo test} command will also trigger \texttt{rustc} to compile the library in the same manner as \texttt{cargo build}, but it will leave out compilation of the project executables.
+When the library is compiled, any function that is marked with \texttt{#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
+\texttt{Cargo} also treats all the sources found in the \texttt{examples} directory as tests, so these will be compiled instead of the other project executables, together with all the integration tests.
+When \texttt{Cargo} has finished compiling the library and its executables, it will by default run all the unit tests, including the integration tests, but it will not run the examples.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{r|l}
+\textbf{Flag} & \textbf{Description}                                   &
+\hline
+--features FEATURES   & Space-separated list of features to also build &
+--target TRIPLE       & Build for the target triple                    &
+\hline
+\end{tabular}
+\caption{Cargo flags to alter the package library and executables}
+\label{tab:cargo_flags}
+\end{center}
+\end{table}
+
+Both of these commands support several optional build-specific flags that are passed further on to the invocation of \texttt{rustc}, we will take extra notice to the two flags shown in \autoref{tab:cargo_flags}.
+The \texttt{--target} flag is used if the project should be compiled for a different target architecture than the machine it is invoked on, this is necessary when cross-compiling the package.
+The list following the \texttt{--features} flag will be used by \texttt{Cargo} and \texttt{rustc} to conditionally compile code that is present in the project.
+Consider the example shown in \autoref{lst:rust_features} and its output shown in \autoref{tab:rust_features_output}.
+We can see from this example that the definition of the \texttt{num} function will be different based on the feature flag that is passed together with \texttt{Cargo}.
+
+\begin{listing}[H]
+\begin{minted}{rust}
+// src/main.rs
+#[cfg(feature = "one")]
+fn num() -> u32 { 1 }
+
+#[cfg(feature = "two")]
+fn num() -> u32 { 2 }
+
+fn main() {
+    println!("num() + num() = {}", num() + num())
+}
+\end{minted}
+\caption{Example usage of features}
+\label{lst:rust_features}
+\end{listing}
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{r|l}
+\textbf{Command} & \textbf{Output}                          &
+\hline
+\texttt{\$ cargo build --features one}  & num() + num() = 2 &
+\texttt{\$ cargo build --features two}  & num() + num() = 4 &
+\hline
+\end{tabular}
+\caption{Example output of features}
+\label{tab:rust_features_output}
+\end{center}
+\end{table}
