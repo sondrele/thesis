@@ -8,6 +8,8 @@ ifeq ($(PLATFORM),Linux)
 override OPEN=$(shell which gnome-open)
 endif
 
+IF=background/objectoriented
+
 LTX_FLAGS=-shell-escape -pdf
 
 REPORT=main.tex
@@ -33,8 +35,14 @@ showquick: quick
 mk:
 	@latexmk -pdf -shell-escape main.tex
 
+
 ls:
 	@tree -P "*.tex|*.bib"
+
+standalone:
+	sed 's,INCLUDE,${IF},g' standalone.tex >.standalone.tex
+	$(LTX) $(LTX_FLAGS) .standalone.tex
+	$(OPEN) .standalone.pdf
 
 clean:
 	@rm -rf *.aux
