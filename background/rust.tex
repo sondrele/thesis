@@ -12,6 +12,167 @@ The language borrows many traits and features from other, already existing langu
 The following subsections discusses some of the more prominent language features, that all work together in order to achieves Rust's main goals; mainly full memory safety without sacrificing performance.
 \todo{I've just been throwing out ideas and statements that are probably not very true.}
 
+\subsection{Language Features}
+\label{ssub:rust:features}
+
+This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
+The language is multiparadigm and therefor offeres a wider range of language constructs.
+
+\subsubsection{Sum types - Enum}
+
+The \textbf{enum} type of Rust is a powerful construct.
+The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
+A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    enum List<T> {
+      Cons(T, Box<List>),
+      Nil,
+    }
+  \end{minted}
+  \caption{Definition of Linked List}
+  \label{lst:rust:list}
+\end{listing}
+
+Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+
+\subsubsection{Case Study - Option}
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub enum Option<T> {
+      Some(T),
+      None,
+    }
+  \end{minted}
+  \caption{Definition of Option}
+  \label{lst:rust:option}
+\end{listing}
+
+\subsubsection{Pattern Matching and Destruction}
+
+Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerful.
+In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
+An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    let option: Option<u32> = Some(42);
+
+    match option {
+      Some(number) => println!("{}", number),
+      None => (),
+    }
+  \end{minted}
+  \caption{Matching an Option}
+  \label{lst:rust:match}
+\end{listing}
+
+In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
+As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
+
+\subsubsection{Traits}
+
+A Trait defines behavior for an object that implements the Trait.
+Traits are used to facilitate code reuse and polymorphism.
+
+One integral trait in the Rust programming language is the Iterator trait defined in Listing \ref{lst:rust:iterator}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub trait Iterator {
+      type Item;
+      fn next(&mut self) -> Option<Self::Item>;
+      fn size_hint(&self) -> (usize, Option<usize) { (0, None) }
+      // ...
+    }
+  \end{minted}
+  \caption{Definition of Iterator trait}
+  \label{lst:rust:iterator}
+\end{listing}
+
+Implementing the Iterator trait for the List type in Listing \ref{lst:rust:list-iter} involves the discussed features enums, pattern matching and traits.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    impl<T: Clone> Iterator for List<T> {
+      type Item = T;
+
+      fn next(&mut self) -> Option<T> {
+        match self.clone() {
+          Cons(val, next) => {
+            *self = *next;
+            Some(val)
+          },
+          Nil => None
+        }
+      }
+    }
+  \end{minted}
+  \caption{Implementing the Iterator trait for the List type}
+  \label{lst:rust:list-iter}
+\end{listing}
+
+
+\subsubsection{Loops}
+
+Rust provides the two known loop constructs \textbf{for} and \textbf{while}, in addition to \textbf{loop} for infinite loops.
+The \textbf{for} loop is not the conventional \textit{for (initialize; condition; increment)}, it operates on iterators.
+To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in Listing \ref{lst:rust:for}
+
+
+\begin{minipage}[b]{0.5\linewidth}
+  \begin{listing}[H]
+  \begin{minted}{rust}
+
+    let values = vec![1, 2, 3];
+    for x in 0..10 {
+      println!("{}", x);
+    }
+
+  \end{minted}
+  \caption{Desugaring for loop}
+  \label{lst:rust:for}
+  \end{listing}
+  \end{minipage}
+
+\begin{minipage}[b]{0.5\linewidth}
+  \begin{listing}[H]
+    \begin{minted}{rust}
+
+      let mut it = values.into_iter();
+      loop {
+        match it.next() {
+          Some(x) => println!("{}", x),
+          None => break,
+        }
+      }
+
+    \end{minted}
+
+    \caption{Desugaring for loop}
+    \label{lst:rust:desugared-for}
+  \end{listing}
+\end{minipage}
+
+\subsubsection{Case Study - Result}
+
+The Result type is an integral type in the Rust library and in Rust code in general.
+The type is the base type for error handling.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    #[must_use]
+    pub enum Result<T, E> {
+      Ok(T),
+      Err(E),
+    }
+\end{minted}
+\caption{Definition of Result}
+\label{lst:rust:result}
+\end{listing}
+
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
 
@@ -244,167 +405,6 @@ Achieving good performance is often a synonym with direct memory access and poin
 \todo{At least by Rust. Depends on who considers it.}
 
 % subsubsection unsafe_code (end)
-
-\subsection{Language Features}
-\label{ssub:rust:features}
-
-This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
-The language is multiparadigm and therefor offeres a wider range of language constructs
-
-\subsubsection{Sum types - Enum}
-
-The \textbf{enum} type of Rust is a powerful construct.
-The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
-A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    enum List<T> {
-      Cons(T, Box<List>),
-      Nil,
-    }
-  \end{minted}
-  \caption{Definition of Linked List}
-  \label{lst:rust:list}
-\end{listing}
-
-Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
-
-\subsubsection{Case Study - Option}
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    pub enum Option<T> {
-      Some(T),
-      None,
-    }
-  \end{minted}
-  \caption{Definition of Option}
-  \label{lst:rust:option}
-\end{listing}
-
-\subsubsection{Pattern Matching and Destruction}
-
-Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerful.
-In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
-An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    let option: Option<u32> = Some(42);
-
-    match option {
-      Some(number) => println!("{}", number),
-      None => (),
-    }
-  \end{minted}
-  \caption{Matching an Option}
-  \label{lst:rust:match}
-\end{listing}
-
-In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
-As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
-
-\subsubsection{Traits}
-
-A Trait defines behavior for an object that implements the Trait.
-Traits are used to facilitate code reuse and polymorphism.
-
-One integral trait in the Rust programming language is the Iterator trait defined in Listing \ref{lst:rust:iterator}.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    pub trait Iterator {
-      type Item;
-      fn next(&mut self) -> Option<Self::Item>;
-      fn size_hint(&self) -> (usize, Option<usize) { (0, None) }
-      // ...
-    }
-  \end{minted}
-  \caption{Definition of Iterator trait}
-  \label{lst:rust:iterator}
-\end{listing}
-
-Implementing the Iterator trait for the List type in Listing \ref{lst:rust:list-iter} involves the discussed features enums, pattern matching and traits.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    impl<T: Clone> Iterator for List<T> {
-      type Item = T;
-
-      fn next(&mut self) -> Option<T> {
-        match self.clone() {
-          Cons(val, next) => {
-            *self = *next;
-            Some(val)
-          },
-          Nil => None
-        }
-      }
-    }
-  \end{minted}
-  \caption{Implementing the Iterator trait for the List type}
-  \label{lst:rust:list-iter}
-\end{listing}
-
-
-\subsubsection{Loops}
-
-Rust provides the two known loop constructs \textbf{for} and \textbf{while}, in addition to \textbf{loop} for infinite loops.
-The \textbf{for} loop is not the conventional \textit{for (initialize; condition; increment)}, it operates on iterators.
-To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in Listing \ref{lst:rust:for}
-
-
-\begin{minipage}[b]{0.5\linewidth}
-  \begin{listing}[H]
-  \begin{minted}{rust}
-
-    let values = vec![1, 2, 3];
-    for x in 0..10 {
-      println!("{}", x);
-    }
-
-  \end{minted}
-  \caption{Desugaring for loop}
-  \label{lst:rust:for}
-  \end{listing}
-  \end{minipage}
-
-\begin{minipage}[b]{0.5\linewidth}
-  \begin{listing}[H]
-    \begin{minted}{rust}
-
-      let mut it = values.into_iter();
-      loop {
-        match it.next() {
-          Some(x) => println!("{}", x),
-          None => break,
-        }
-      }
-
-    \end{minted}
-
-    \caption{Desugaring for loop}
-    \label{lst:rust:desugared-for}
-  \end{listing}
-\end{minipage}
-
-\subsubsection{Case Study - Result}
-
-The Result type is an integral type in the Rust library and in Rust code in general.
-The type is the base type for error handling.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    #[must_use]
-    pub enum Result<T, E> {
-      Ok(T),
-      Err(E),
-    }
-\end{minted}
-\caption{Definition of Result}
-\label{lst:rust:result}
-\end{listing}
 
 \subsection{Organization}
 \label{ssub:rust:organization}
