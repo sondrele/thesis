@@ -1,0 +1,83 @@
+\section{Libraries}
+\label{sec:back:lib}
+
+This section describes the software libraries utilized in for the implemenetation described in this thesis.
+The libraries are written in C and used through Rusts Foreign Function Interface as described in \autoref{} \todo{Write FFI section}.
+
+\autoref{tab:back:libs} lists the libraries that are used to run Rust on the Gecko.
+
+\begin{table}[H]
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Library & Description & Source \\
+    \hline
+    \hline
+    emdrv & The Energy Micro energyAware Drivers & SiliconLabs \\
+    emlib & The Energy Micro Peripheral Support library & SiliconLabs \\
+    CMSIS & The Cortex M HAL & ARM \\
+    newlib & C library for embedded systems & GNU ARM Toolchain \\
+    \hline
+  \end{tabular}
+  \caption{Underlying libraries}
+  \label{tab:back:libs}
+\end{table}
+
+\subsection{emdrv}
+\subsection{emlib}
+
+The Energy Micro Peripheral Support library exposes the vast range of peripherals that are possible to connect the Gecko.
+The emlib library is divided into separate file that defines modules such as \textbf{adc}, \textbf{dac}, \textbf{timer}, \textbf{dma}, et cetera.
+The library functions are exposed in three different API patterns.
+Either as standalone utility methods, singleton object methods or C object oriented fashion.
+To see these differnet patterns we consider the \textbf{timer}, \textbf{rtc} and \textbf{gpio} module.
+
+\begin{listing}[H]
+  \begin{minted}{c}
+    void TIMER_Init(TIMER_TypeDef *timer, const TIMER_Init_TypeDef *init);
+    void TIMER_Enable(TIMER_TypeDef *timer, bool enable);
+    void TIMER_TopGet(TIMER_TypeDef *timer);
+    void TIMER_TopSet(TIMER_TypeDef *timer, uint32_t val);
+  \end{minted}
+  \caption{Timer Module - C Object Oriented}
+  \label{lst:back:lib:timer}
+\end{listing}
+
+\begin{listing}[H]
+  \begin{minted}{c}
+    void RTC_Init(const RTC_Init_TypeDef *init);
+    void RTC_Enable(bool enable);
+    uint32_t RTC_CompareGet(unsinged int comp);
+    void RTC_CompareSet(unsigned int comp, uint32_t value);
+  \end{minted}
+  \caption{RTC Module - Singleton object}
+  \label{lst:back:lib:rtc}
+\end{listing}
+
+\begin{listing}[H]
+  \begin{minted}{c}
+    void GPIO_PinModeSet(GPIO_Port_TypeDef port, unsigned int pin,
+                        GPIO_Mode_TypeDef mode, unsigned int out);
+    void GPIO_PinOutSet(GPIO_Port_TypeDef port, unsigned int pin);
+    unsigned int GPIO_PinOutGet(GPIO_Port_TypeDef port, unsigned int pin);
+  \end{minted}
+  \caption{}
+  \label{lst:back:lib:gpio}
+\end{listing}
+
+
+
+\subsection{CMSIS}
+
+The ARM CMSIS, Cortex Microcontroller Software Interface Standard, is a Hardware Abstraction Layer for the Cortex-M series.
+The library is divided into a few subsections namely; Core, DSP, RTOS and SVD.
+Out of these only the Core section is used for our library.
+The Core library consists of functions to control Interrupts though NVIC, the system clock, program tracing through ITM and references to memory mapped registers.
+
+
+\subsection{newlib}
+
+Newlib is a implementation of a C library for embedded devices.
+Most notably this library defines heap memory management facilities through \textbf{malloc}, \textbf{realloc} and \textbf{free}.
+These base function are needed in order to compile both the \textbf{emlib}, \textbf{emdrv} and Rust \textbf{alloc} libraries.
+The functions in newlib is used directly by the C libraries or in Rust through the \textbf{libc} library which exposes the memory management symbols mentioned above.
+This library is distributed as a part of the GNU ARM Toolchain described in \autoref{} \todo{Refere to toolchain section}.
