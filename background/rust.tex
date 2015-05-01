@@ -16,28 +16,14 @@ The following subsections discusses some of the more prominent language features
 \label{ssub:rust:features}
 
 This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
-The language is multiparadigm and therefor offeres a wider range of language constructs.
+The language is multi-paradigm and therefore offers a wider range of language constructs.
 
 \subsubsection{Sum types - Enum}
 
-The \textbf{enum} type of Rust is a powerful construct.
-The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
-A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    enum List<T> {
-      Cons(T, Box<List>),
-      Nil,
-    }
-  \end{minted}
-  \caption{Definition of Linked List}
-  \label{lst:rust:list}
-\end{listing}
-
-Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
-
-\subsubsection{Case Study - Option}
+A sum type, also known as a tagged union, or an \texttt{enum} in Rust, is a data structure that is used to hold only one out of a small set of possible values.
+Rust's \texttt{enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
+This makes the \texttt{enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
+\autoref{lst:rust:option} shows the definition of one of Rust's most commonly used types that is used extensively throughout its standard library and other standalone libraries and applications.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -50,9 +36,32 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
   \label{lst:rust:option}
 \end{listing}
 
-\subsubsection{Pattern Matching and Destruction}
+Every \texttt{Option} variable is an \texttt{enum} that can either have the algebraic value \texttt{Some} or the \emph{named value} \texttt{None}.
+If the variable is is \texttt{Some}, the definition also says that it needs to contain any another type \texttt{T}.
+This is also an example of generics in Rust, \texttt{T} can be anything from an integer to a string.
+The \texttt{Option} type is analogous with a normal C pointer value, which either has the value 0, or \texttt{null} (analogous to \texttt{None}), or a value that that points to a structure at a place in memory (analogous to \texttt{Some}).
+The usage of \texttt{enum} types described in this section become very expressive in combination with \emph{match expressions}, as discussed in \autoref{sub:pattern_matching}.
 
-Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerful.
+\subsubsection{Case Study - List}
+
+A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
+Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    enum List<T> {
+      Cons(T, Box<List>),
+      Nil,
+    }
+  \end{minted}
+  \caption{Definition of Linked List}
+  \label{lst:rust:list}
+\end{listing}
+
+\subsubsection{Pattern Matching and Destruction}
+\label{sub:pattern_matching}
+
+Pattern matching is a language construct that resembles the switch statement of ``C-type'' languages, but it is more powerful.
 In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
 An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
 
