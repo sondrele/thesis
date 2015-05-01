@@ -589,7 +589,7 @@ The details of this implementation is found in Section \ref{sec:impl:libc}. \tod
 \subsection{Rust Timeline}
 \todo{I think it would be nice with a short summary of Rusts development over time, especially from the project start to end.}
 
-\subsection{Cargo}
+\section{Cargo}
 \label{sec:cargo}
 
 \texttt{Cargo} is Rust's package manager, a program that automates the process of building Rust programs.
@@ -598,7 +598,7 @@ It comes bundled with the default installation of Rust.
 \texttt{Cargo} also defines a standard Rust project layout, in addition to downloading and updating package dependencies.
 This section will cover the most important features of \texttt{Cargo} and how it works that is required in order to understand the work that is described later in this project report.
 
-\subsubsection{Project Structure}
+\subsection{Project Structure}
 
 Every crate, or package, built by \texttt{Cargo} requires a \texttt{Cargo.toml} file to be present in the root directory.
 This file is interpreted by \texttt{Cargo} and is used to determine the name of library and executables to be built in the package and what other packages that it depends on.
@@ -635,7 +635,7 @@ This file is executed prior to building the library itself, and provides the pos
 Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains information about every package that are used by the project library and executables.
 This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated or re-compiled in order for the package to behave correctly and be built consistently - independent on the target architecture it is built on, and for.
 
-\subsubsection{Building and testing (Or Tools?)}
+\subsection{Building and testing (Or Tools?)}
 
 As mentioned earlier, \texttt{Cargo} comes with a collection of tools that makes it easy to build and test Rust projects.
 The most common commands are shown in \autoref{tab:common_cargo_commands}.
