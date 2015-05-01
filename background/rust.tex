@@ -86,25 +86,33 @@ The \texttt{impl} keyword lets us implement member functions for the \texttt{Boo
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
 
-Pattern matching is a language construct that resembles the switch statement of ``C-type'' languages, but it is more powerful.
-In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
-An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
+Pattern matching is a powerful language construct of Rust that resembles the \texttt{switch} statement from C.
+It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \texttt{match}.
+Another important feature of the \texttt{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \texttt{match} need to be considered, otherwise Rust will make it a compile-time error.
+This is contrary to C, where only primitive values can be used in a \texttt{switch} statement, and there is no requirement to cover all switch cases, e.g. with the \texttt{default} keyword.
+
+An example of pattern matching on the \texttt{Option} type is given in \autoref{lst:rust:match}.
+We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
+We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, is being matched against.
+% In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
+% As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    let option: Option<u32> = Some(42);
+    // Bind the value `Some(42)' to the variable `num'
+    let num: Option<u32> = Some(42);
 
-    match option {
+    match num {
+      // Bind the Option's enclosing value to the variable
+      // `number' and print its value
       Some(number) => println!("{}", number),
+      // Otherwise do nothing
       None => (),
     }
   \end{minted}
   \caption{Matching an Option}
   \label{lst:rust:match}
 \end{listing}
-
-In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
-As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
 
 \subsubsection{Traits}
 
