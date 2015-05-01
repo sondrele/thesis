@@ -58,7 +58,32 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
   \label{lst:rust:list}
 \end{listing}
 
-\subsubsection{Pattern Matching and Destruction}
+\subsubsection{Structs}
+\label{ssub:structs}
+
+\texttt{structs} in Rust are similar to that of C, and is a way of creating more advanced data types than \texttt{primitives} or \texttt{enums}.
+With a \texttt{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
+An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, everyone that knows C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
+Everything in Rust is \emph{private} by default, the \texttt{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
+The \texttt{impl} keyword lets us implement member functions for the \texttt{Book}, similar to class-declarations in C++ and other object-oriented languages.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub struct Book {
+      pub name: String,
+      pub pages: u32,
+    }
+
+    impl Book {
+      pub fn info(&self) {
+        println!("{} has {} pages.", self.name, self.pages);
+      }
+    }
+  \end{minted}
+  \caption{Struct definition and implementation}
+\end{listing}
+
+\subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
 
 Pattern matching is a language construct that resembles the switch statement of ``C-type'' languages, but it is more powerful.
