@@ -1,0 +1,28 @@
+\section{Build System}
+\label{sec:build_system}
+
+Building the library and the EFM32 executables turned out to be a major part of the work done in this project.
+This section describes how building the project have changed over time.
+This includes managing dependencies, compiling the RCL and REL and the Silicon Labs EFM32 \texttt{emlib}.
+We have also utilized a continuous integration system that has helped us to that the project has as consistent build with the latest version of Rust.
+
+\subsection{Early days}
+\label{ssub:using_make}
+
+When the project first started out it was based upon the \texttt{armboot} \cite{web:neykov_armboot} git repository available on GitHub.
+\todo{Maybe mention more about armboot in background instead of here.}
+\texttt{armboot} is a small template project for using Rust on bare metal STM32 ARM \glspl{mcu}.
+These are, similarly with the EFM32 series, also based on the Cortex-M series of ARM processor cores.
+
+The project got up and running pretty fast based on how \texttt{armboot} was built.
+We looked at armboot's Makefile to figure out what flags to pass to \texttt{rustc} in order to make it cross-compile for an ARM target architecture.
+
+\begin{itemize}
+    \item armboot. Reference local rust src repository, rust compiler. Compiled deps and manually linked them with final executable. Every main executable had to implement a few functions required by rust, like rust_begin_unwind and so on..
+
+    \item the first sample program was a simple blink-demo. We looked up every necessary number in silabs emlib and compiled a minimal program.
+
+    \item When things was working, we started writing actual rust bindings for emlib. We started out with separate makefiles for both C and Rust code. One to compile rust-sources and another to compile c-sources and startup into libcompiler-rt.
+
+    \item
+\end{itemize}
