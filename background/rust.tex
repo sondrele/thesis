@@ -18,6 +18,34 @@ The following subsections discusses some of the more prominent language features
 This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
 The language is multi-paradigm and therefore offers a wider range of language constructs.
 
+\subsubsection{Variables and Bindings}
+
+Rust features a handful of different data types, all which can be assigned to a \emph{variable} by using a \emph{binding}.
+The most important types are described in the following sections, but we will first look at how variables work.
+A value gets bound to a variable by utilizing the \texttt{let} keyword.
+A variable in Rust has a name and a value, much like other programming languages, but there is a distinct difference between the \emph{mutability} of those variables.
+
+With a mutable variable binding, it is possible to change the value of the variable.
+However, if we try to change the value of an immutable variable binding, Rust will give us a compile-time error.
+The example code in \autoref{lst:rust_variable_bindings} shows how to declare both mutable and immutable variables and how to modify their values.
+The example will not work because we try to change the value of an immutable variable.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    // bind the value `5' to the immutable variable `a'
+    let a: i32 = 5;
+    // bind the value `10' to the mutable variable `a'
+    let mut b = 10;
+    b = a; // change the value of `b'
+    a = b; // <- error: re-assignment of immutable variable `a'
+  \end{minted}
+  \caption{Variable bindings}
+  \label{lst:rust_variable_bindings}
+\end{listing}
+
+An important part of variable bindings is Rust's way to automatically infer the data type of the variables.
+We can see from the example that \texttt{a} is defined to be a 32-bit integer with the value 5, and because the value \texttt{b} later gets assigned the \texttt{a}'s value, Rust will automatically infer \texttt{b} to be of the same type.
+
 \subsubsection{Sum types - Enum}
 
 A sum type, also known as a tagged union, or an \texttt{enum} in Rust, is a data structure that is used to hold only one out of a small set of possible values.
@@ -258,6 +286,7 @@ This is made possible with a strong notion of variable ownership in order for th
 \end{figure}
 
 \subsection{Guaranteed memory safety}
+\label{sec:guaranteed_memory_safety}
 
 One of Rust's biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing performance.
 The memory safety boils down to how Rust manages the variables and data-segments throughout the program.
