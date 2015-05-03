@@ -293,48 +293,53 @@ A Rust program will not successfully compile if the programmer is failing to pro
 \label{sec:guaranteed_memory_safety}
 
 One of Rust's biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing performance.
-The memory safety boils down to how Rust manages the variables and data-segments throughout the program.
-Rust introduces a few concepts that are all centered around the \emph{ownership} of these variables, how the variables are \emph{borrowed} and the \emph{lifetimes} of the variables and the borrowed references to them.
-Rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically at compile-time.
+The memory safety boils down to how Rust manages its variables and their memory throughout the course of a program.
+Rust introduces a few concepts that are all centered around the \emph{ownership} of these variables and their \emph{lifetimes}, and how references to these variables can be \emph{borrowed}.
+These concepts are defined in Rust, but a lot of the inspiration behind those rules comes from other type-safe languages, like Haskell and OCaml, and especially Cyclone's \cite{Grossman2002,Swamy2006} region-based memory management.
+Rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically during compilation.
 
 \subsubsection{Ownership and Move Semantics}
 \label{sec:back:rust:own}
 
 In order to achieve full memory safety, we have to remove all form for memory leaks and dangling pointers to invalid memory.
 This implies one \emph{memory deallocation} for every respective \emph{memory allocation}.
-Traditionally, when allocating memory for a variable, the programming language will return a \emph{pointer},  or a \emph{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store the record in memory.
-When there is no longer any need for the memory it have to be deallocated.
+Traditionally, when allocating memory for a variable, the programming language will return a \emph{pointer},  or a \emph{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store that record in memory.
+The memory can safely be deallocated when there is no longer any need for it, i.e. the variable holding the handle to the memory goes out of scope.
 
-Modern programming languages, like Java and Python, typically achieves this with a Garbage Collector that runs during program execution with the sole purpose of keeping the memory intact.
+Modern programming languages, like Java and Python, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
 A common implementation is a reference counted garbage collector that keeps a count over the number of references to the variables and deallocates them when there are no valid references to them.
-The downside of such an approach to memory safety is the continuous use of resources it requires to keep track all the references, every assignment and every time the variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
+The downside of such an approach to memory safety is the continuous use of resources it requires to keep track all the references.
+Every assignment to a variable and every time a variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
 
 Another common implementation is a stop-the-world garbage collector.
-It works differently, by regularly halting the executing program, and then tracing all references that are accessible from the root scope and the registers recursively.
+It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the root scope and the registers.
 The memory that are accessible from these references is then marked as valid, and all the invalid memory will then be freed and accessible through new calls to memory allocations.
 The downside of such an approach is the requirement of halting the entire program in order to release the invalid memory.
 There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
+\todo{Håvard: Husker du hvilke papers vi leste om dette med GC?}
 
 Another approach to keeping track of the memory resources have been to give the programmer full control of every memory allocation and deallocation.
 This is the most common approach for systems programming languages like C and C++, where performance and predictability is important.
-However, it is easier to make the mistakes of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
-This will inevitably lead the program to crash when it tries to allocate more memory when there are no memory left to allocate.
+However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
+Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
 
 \todo{This subsection about GC and memory handling might be better suited in a different
 background chapter}
 
 It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
 Rust operates a little different from C when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
-This is done statically without any interference of the programmer.
-When the compiler sees that the handle for the allocated memory leaves its scope, it knows that it is lost to the program, so it will insert a call to free the memory at the moment it leaves the scope and becomes unreachable.
+This is done statically without any interference by the programmer.
+When the compiler sees that the handle for the allocated memory leaves its scope, it knows that it is lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
 These two aspects of memory allocation and deallocation is combined into the concept of \emph{ownership} that Rust incorporates.
-When a handle that \emph{owns} a reference to a data-segment on the heap leaves its scope, Rust knows that it can safely free the memory that is referenced by it since it is the \emph{owning handle} of the memory, that can no longer be used in the program.
-An example this ownership is shown in \autoref{lst:owning_handle}.
+When a handle that \emph{owns} a reference to a data-segment on the heap leaves its scope, Rust knows that it can safely free the memory that is referenced by it, because it is the \emph{owning handle} to that memory.
+An example of this ownership is shown in \autoref{lst:owning_handle}.
 
 \begin{listing}[tb]
 \begin{minted}{c}
-struct Book { pages: u32 }
+fn read_book(b: Book) {
+  println!("You just read {} pages", b.pages);
+}
 
 fn main() {
   // `b' is the owning handle to a Book
