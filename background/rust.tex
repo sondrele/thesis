@@ -122,7 +122,7 @@ This is contrary to C, where only primitive values can be used in a \texttt{swit
 
 An example of pattern matching on the \texttt{Option} type is given in \autoref{lst:rust:match}.
 We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
-We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, are being matched against.
+We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, argument being matched against.
 % In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
 % As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
 
@@ -251,15 +251,10 @@ Abstractions, in the form of references and pointers to objects or structures an
 structured on the heap, is a common source of overhead in programming languages.
 \autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how Java lays out a vector of
 strings in memory.
-A reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that is placed elsewhere on the heap.
-Thus, if the programmer wants to access the first character of a string, two objects have to be found and dereferenced on the heap in order to read the value;
-
-\begin{enumerate}
-  \item the vector must be dereferenced so that a reference to the string can be returned, and
-  \item the string must be dereferenced so that character can be read.
-\end{enumerate}
-
-If the nesting of objects is deep it can result in many unnecessary heap-lookups in order to get the desired data.
+Fundamentally, a reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that is placed elsewhere on the heap.
+% There are four levels of indirection between the reference to the vector on stack, and the actual character data of its strings.
+If we want to access the first character of a string stored in the vector, we would have to go through four levels of indirection - two objects need to be both dereferenced and indexed.
+If the nesting of objects is deep it can result in many heap-lookups in order to get the desired data.
 
 \begin{figure}[tb]
   \begin{center}
@@ -269,14 +264,22 @@ If the nesting of objects is deep it can result in many unnecessary heap-lookups
   \label{fig:java_abstractions}
 \end{figure}
 
-Rust introduces the same zero-cost abstractions that are featured in C and C++, among others.
-This is both important for performance, and generally in order to have a deterministic and a common understanding of how the structures are laid out in the memory when working with embedded devices.
-\todocite{This is a bogus sentence. Also, need to cite zero-cost abstraction articles}
-\autoref{fig:cpp_abstractions} shows how C++ places the structures in memory.
-The main difference is that the structure data itself is placed on the stack and inside the vector, instead of the references to the structures, yet keeping the same level of abstraction.
-In Rust's case, all structures is allocated directly on the stack if it is not shared between threads (see the following paragraphs), allowing for faster data access.
-This is made possible with a strong notion of variable ownership in order for the compiler to statically keep track of live stack- and heap-references.
-\todo{Don't think this last section is entirely true. Leaving this as a statement for now, that needs proper backing.}
+An important part about zero-cost abstractions, is the ability to define new abstractions, like a vector, that optimize away to the bare minimal.
+Rust introduces the same zero-cost abstractions that are present in C++, among other programming languages.
+This is both important for performance, and in general, in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
+% when working with embedded devices.
+% \todocite{This is a bogus sentence. Also, need to cite zero-cost abstraction articles}
+\autoref{fig:cpp_abstractions} shows how C++ places a vector of strings in memory.
+The main difference is that the vector itself is placed on the stack, and the string data is placed directly inside the memory block owned by the vector.
+The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
+
+There is still one really important difference between the two examples; we can safely have multiple references to our vector in Java without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in C++ can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
+\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in c++ can lead to a dangling pointer?}.
+In Rust's case, all structures is allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
+References to such stack-allocated variables can be passed around and accessed, just like in C++,
+but Rust also introduces a set of rules that have to be followed in order to safely use these references.
+These rules are based upon variable ownership and lifetimes, which are discussed in \autoref{sec:guaranteed_memory_safety}.
+A Rust program will not successfully compile if the programmer is failing to properly maintain these rules.
 
 \begin{figure}[tb]
   \begin{center}
