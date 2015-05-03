@@ -44,7 +44,7 @@ The example will not work because we try to change the value of an immutable var
 \end{listing}
 
 An important part of variable bindings is Rust's way to automatically infer the data type of the variables.
-We can see from the example that \texttt{a} is defined to be a 32-bit integer with the value 5, and because the value \texttt{b} later gets assigned the \texttt{a}'s value, Rust will automatically infer \texttt{b} to be of the same type.
+We can see from the example that \texttt{a} is defined to be a 32-bit integer with the value 5, and because the variable \texttt{b} later gets assigned to \texttt{a}'s value, Rust will automatically infer \texttt{b} to be of the same type.
 
 \subsubsection{Sum types - Enum}
 
@@ -109,6 +109,7 @@ The \texttt{impl} keyword lets us implement member functions for the \texttt{Boo
     }
   \end{minted}
   \caption{Struct definition and implementation}
+  \label{lst:book_struct}
 \end{listing}
 
 \subsubsection{Pattern Matching and Destructuring}
@@ -121,7 +122,7 @@ This is contrary to C, where only primitive values can be used in a \texttt{swit
 
 An example of pattern matching on the \texttt{Option} type is given in \autoref{lst:rust:match}.
 We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
-We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, is being matched against.
+We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, are being matched against.
 % In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
 % As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
 
