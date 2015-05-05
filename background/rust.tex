@@ -3,14 +3,12 @@
 \section{The Rust Programming Language} % (fold)
 \label{sub:the_rust_programming_language}
 
-Rust \cite{web:rust_lang} is a new open source systems programming language developed by the Mozilla Foundation \cite{web:mozilla_foundation}.
-It is designed to support concurrency and parallelism and take full utilization of the underlying hardware.
-Rust makes strong guarantees about isolation and memory safety, while still focusing on performance.
-
+Rust \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
 Rust is a strongly and statically typed, multi-paradigm programming language.
-The language borrows many traits and features from other, already existing languages.
-The following subsections discusses some of the more prominent language features, that all work together in order to achieves Rust's main goals; mainly full memory safety without sacrificing performance.
-\todo{I've just been throwing out ideas and statements that are probably not very true.}
+The language borrows many traits and features from other programming languages, some of which is described in the following sections.
+
+Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency.
+It is designed to support concurrency and parallelism and take full utilization of the underlying hardware, while making strong guarantees about memory safety and isolation, without sacrificing performance.
 
 \subsection{Language Features}
 \label{ssub:rust:features}
@@ -449,21 +447,17 @@ fn main() {
 \label{lst:valid_ref_rust}
 \end{listing}
 
-% \subsection{Big-Stack allocation}
-% \label{par:big_stack}
-% Rust uses "big stack" allocations and does a good job of avoiding dynamic heap allocation of data.
-% Combined with Rust's strong lifetime semantics, it is possible to write larger programs that are fully stack-allocated, with little or no dynamic heap allocations.
-% This can significantly boost performance as the need for garbage collectors and other runtime requirements is minimal (important for embedded devices).
-
-% subsubsection memory_safety (end)
-
 \subsection{Concurrency Model} % (fold)
 \label{ssub:concurrency_model}
 
-Rust has a concurrency model. Duh.
-\todo {We should mention this shortly. This is not something that is very relevant for our project, but it is relevant for rust itself.}
+Solving both memory safety and concurrency might sound like two entirely different problems, but the ownership system described in \autoref{sec:guaranteed_memory_safety} actually turned out to go a long way of being the solution of them both \cite{web:fearless_concurrency_with_rust}.
+While we do not utilize or focus on the concurrency of Rust in this project, it is still a very important feature for the language, so it will shortly describe parts of it in this section.
 
-% subsubsection concurrency_model (end)
+As already mentioned, Rust's ownership system helps us to reason about the liveliness of variables, and it helps us to catch errors like use-after-free, and data races by not allowing us to have multiple references to the same mutable data.
+This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
+Thus, Rust's way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
+Indeed, the core concurrency functionality in Rust is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
+This is an important distinction, because it allows for any number 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms provided in the standard library.
 
 \subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
