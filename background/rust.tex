@@ -312,11 +312,10 @@ The downside of such an approach to memory safety is the continuous use of resou
 Every assignment to a variable and every time a variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
 
 Another common implementation is a stop-the-world garbage collector.
-It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the root scope and the registers.
-The memory that are accessible from these references is then marked as valid, and all the invalid memory will then be freed and accessible through new calls to memory allocations.
+It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the \emph{root} set of variables, i.e. global variables, local variables in the stack and any variable that may be accessible from the current state of the registers \cite{Wilson1992}.
+The memory that are accessible from these references are then marked as valid, and all the invalid memory will then be freed and accessible through new calls to the memory allocation function.
 The downside of such an approach is the requirement of halting the entire program in order to release the invalid memory.
 There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
-\todo{Håvard: Husker du hvilke papers vi leste om dette med GC?}
 
 Another approach to keeping track of the memory resources have been to give the programmer full control of every memory allocation and deallocation.
 This is the most common approach for systems programming languages like C and C++, where performance and predictability is important.
@@ -329,11 +328,10 @@ background chapter}
 It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
 Rust operates a little different from C when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
-When the compiler sees that the handle for the allocated memory leaves its scope, it knows that it is lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
+When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
 These two aspects of memory allocation and deallocation is combined into the concept of \emph{ownership} that Rust incorporates.
 When a handle that \emph{owns} a reference to a data-segment on the heap leaves its scope, Rust knows that it can safely free the memory that is referenced by it, because it is the \emph{owning handle} to that memory.
-An example of this ownership is shown in \autoref{lst:owning_handle}.
 
 \begin{listing}[tb]
 \begin{minted}{c}
@@ -353,27 +351,33 @@ fn main() {
   read_book(b); // <- error: use of moved value: `b'
  }
 \end{minted}
-\caption{Owning handle}
+\caption{Example of an owned handle}
 \label{lst:owning_handle}
 \end{listing}
 
+An example of this ownership is shown in \autoref{lst:owning_handle}.
 There can only exist one owning handle for any heap- or a stack-allocated variable at any time during program execution.
 This means that if the handle gets passed as an argument to a function, this function will take \emph{ownership} of the variable, by \emph{moving} it to the new scope defined by the function.
 This move prevents any further use of the handle in its original scope and is necessary because Rust only allows one owned handle to any memory-segment at any time.
-If two or more handles to the memory had existed at the same time it would have resulted in several calls to \emph{free}, one for every time the handle left the different scopes.
+If two or more handles to the memory had existed at the same time it would have resulted in several calls to \texttt{free}, one for every time the handle left the different scopes.
 The only way to continue using the handle in its original scope would have been to give the ownership back after using it.
 
 \subsubsection{Borrowing}
 
 \emph{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
-Rust allows the programmer to \emph{lend} away access to handles by passing a reference to the variable around instead of the actual handle itself.
-There can exist multiple \emph{references} to the same place in memory, as long there is only one \emph{owner} of the handle itself.
-A reference is denoted with an \texttt{\&} in front of the handle, this will tell Rust that we're working with a reference to the handle, or just borrowing the handle to the end of the active scope.
+Rust allows the programmer to \emph{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
+There can exist multiple \emph{references} to the same place in memory, as long there is only one \emph{owner} of the actual handle.
+A reference is denoted with an \texttt{\&} in front of the handle, this will tell Rust that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
 Consider a modification of the previous example shown in \autoref{lst:borrowing_handle}.
-Here, the the \texttt{read\_book} function is modified to accept references to book instead of taking ownership of it, this allows us to lend out the book to be read as many times as we want.
+Here, the the \texttt{read\_book} function is modified to accept a reference to a book instead of overtaking its ownership, this allows us to lend out the book to be read as many times as we want.
+Since the book's owning handle lives in the scope defined by the main function, the memory will be deallocated when the program exits.
 
 \begin{listing}[tb]
 \begin{minted}{c}
+fn read_book(b: &Book) {
+  println!("You just read {} pages", b.pages);
+}
+
 fn main() {
   // `b' is the owning handle to a Book
   let b = Book { pages: 150 };
@@ -383,26 +387,26 @@ fn main() {
 
   // it is possible to read the book two times, because `b'
   // still lives in the scope defined by the `main' function
-  read_book(&b); z
+  read_book(&b);
  }
 \end{minted}
-\caption{Borrowing handle}
+\caption{Example of borrowing}
 \label{lst:borrowing_handle}
 \end{listing}
 
 \subsubsection{Lifetimes}
 
 Rust needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
-Rust achieves this with a concept called \emph{lifetimes}, in which the compiler with the help of \emph{lifetime elisions}, can statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the programmer.
+Rust achieves this with a concept called \emph{lifetimes}, in which the compiler with the help of \emph{lifetime elisions} or \emph{lifetime specifiers}, can statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the programmer.
 Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in \texttt{C} that returns a reference into a variable allocated in its own stackframe.
-The \texttt{C} compiler will issue a warning of such a serious mistake \todo{Error? Mistake? Fault?}, but it will still let you do it.
-A similar implementation of \texttt{get\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because \texttt{n}'s lifetime is only valid for the scope defined by \texttt{get\_ref} itself, but not in the surrounding scope.
+The \texttt{C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
+A similar implementation of \texttt{name\_as\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
 
 \begin{listing}[tb]
 \begin{minted}{c}
-int *get_ref() {
-    int n = 3;
-    return &n;
+char *name_as_ref() {
+    Book b = { .name = "Gecko's", .pages = 150 };
+    return &b.name;
 }
 \end{minted}
 \caption{Returning an invalid reference in C}
@@ -411,60 +415,45 @@ int *get_ref() {
 
 \begin{listing}[tb]
 \begin{minted}{rust}
-fn get_ref() -> &i32 {
-    let n = 3;
-    &n // <- error: `n' does not live long enough
+fn name_as_ref() -> &str { // <- error: missing lifetime specifier
+    let b = Book { name: "Gecko's".to_string(), pages: 150 };
+    &b.name
 }
 \end{minted}
 \caption{Attempting to return an invalid reference in Rust}
 \label{lst:invalid_ref_rust}
 \end{listing}
 
-Lifetime elisions are applied to structures and trait declarations, among others, and they are used in function definitions in order to tell Rust that the named lifetime is valid in the surrounding scope.
-\todo{Sentence is unclear. Needs rewrite}
+\todo{Sentence is unclear? Needs rewrite?}
+Lifetime elisions are applied to structures and trait declarations, among others, and they are described in function definitions in order to tell Rust that the named lifetime is valid in the scope in which the function-call is issued.
 Such elisions are used extensively together with parameters and return values, and helps the compiler to reason about the liveliness of the references and whether they are valid or not.
 There are two kinds of lifetimes; the ones associated with \emph{input parameters} to a function, and the ones associated with the \emph{returned value} from a function.
 These are referred to as \emph{input-lifetimes} and \emph{output-lifetimes}, respectively.
-We have an error if a function returns a value with an output lifetime that is not the same as the input lifetime, because this would have resulted in use-after-free.
-
-Consider an updated version of the \texttt{get\_ref} function shown in \autoref{lst:invalid_ref_lifetimes_rust}, where the lifetime with the name \texttt{'a} is annotated by the function and tells the compiler that the value returned by the function has an output lifetime that lives longer than the function.
-We do however still have a problem, it is clear from the code that \texttt{n} is allocated within the scope of \texttt{get\_ref}, and clearly does not have the input lifetime \texttt{'a}
-As stated earlier, the only way we can return such a reference is if an input parameter has the same lifetime as the output-lifetime, a third, and working example of our problem is shown in \autoref{lst:valid_ref_rust}.
-
-\todo{Bad explanation. Should probably switch out the example to e.g. returning a reference to the number of pages in a book?}
+We have an error if a function attempts to return a value with an output lifetime that lives shorter than the input lifetime, because this would result in a use-after-free.
+As an example, consider the updated version of the \texttt{name\_as\_ref} function shown in \autoref{lst:valid_ref_rust}.
+Here we annotate a lifetime by giving it the name \texttt{'a}, the explicit name of the lifetime does not matter, what matters is that we tell Rust that our function is passed a reference to a book that is alive \emph{before} the function is called.
+Since Rust \emph{knows} that the book is alive before calling the function, it knows that it would be safe to return a reference to a field of that book because the returned value have the \emph{same} lifetime.
 
 \begin{listing}[tb]
 \begin{minted}{rust}
-fn get_ref<'a>() -> &'a i32 {
-    let n = 3;
-    &n
+fn name_as_ref<'a>(b: &'a Book) -> &'a str {
+    &b.name
 }
-\end{minted}
-\caption{Attempting to return a reference with lifetime elisions}
-\label{lst:invalid_ref_lifetimes_rust}
-\end{listing}
 
-\begin{listing}[tb]
-\begin{minted}{rust}
-fn get_ref<'a>(n: &'a i32) -> &'a i32 {
-    &n
+fn main() {
+  let b = Book { name: "Gecko's".to_string(), pages: 150 };
+  let n = name_as_ref(&b);
 }
 \end{minted}
 \caption{Retuning a reference with correct use of lifetime elisions}
 \label{lst:valid_ref_rust}
 \end{listing}
 
-\todo[inline]{I have mixed the use of data-segments, variables, pointers and handles. They should be properly defined and used within the right contexts.}
-
-\subsection{Big-Stack allocation}
-\label{par:big_stack}
-
-Rust uses "big stack" allocations and does a good job of avoiding dynamic heap allocation of data.
-\todocite{need big-stack citation. I think I've read about it somewhere}
-Combined with Rust's strong lifetime semantics, it is possible to write larger programs that are fully stack-allocated, with little or no dynamic heap allocations.
-This can significantly boost performance as the need for garbage collectors and other runtime requirements is minimal (important for embedded devices).
-
-\todo{Just rambling along to get an idea of something to write.}
+% \subsection{Big-Stack allocation}
+% \label{par:big_stack}
+% Rust uses "big stack" allocations and does a good job of avoiding dynamic heap allocation of data.
+% Combined with Rust's strong lifetime semantics, it is possible to write larger programs that are fully stack-allocated, with little or no dynamic heap allocations.
+% This can significantly boost performance as the need for garbage collectors and other runtime requirements is minimal (important for embedded devices).
 
 % subsubsection memory_safety (end)
 
