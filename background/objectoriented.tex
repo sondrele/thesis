@@ -5,6 +5,7 @@ The object oriented paradigm has proved to be an effective way to organize compu
 The paradigm focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
 Rust as a language exposes this paradigm through the language constructs of structs, traits and enum as described in \autoref{ssub:rust:features}.
 The C language does not provide any langauge constructs for dealing with object oriented programming directly, but this does not prevent the paradigm for being used.
+\todo{I think we need to mention that the \textbf{state} of objects are important in OO. Its objects with state and functions to read/modify its state}
 
 \subsection{The OO Paradigm}
 \label{sec:back:oo_paradigm}.
@@ -209,3 +210,4 @@ Each time we create a new object it is either allocated on the current stack fra
 This does not hold true for a memory mapped hardware device.
 The device does not have to be allocated or deallocated, its lifetime is static and exists from the program starts executing on the microcontroller.
 Instead of a constructor function we need a way to get a reference to the memory mapped device.
+\todo{Also mention that the peripherals still need to initialized, even though  they are memory mapped. They need clocks etc....}
