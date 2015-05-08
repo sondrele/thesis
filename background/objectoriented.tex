@@ -6,7 +6,8 @@ The paradigm focuses on organizing a computer program by looking at the data the
 Rust as a language exposes this paradigm through the language constructs of structs, traits and enum as described in \autoref{ssub:rust:features}.
 The C language does not provide any langauge constructs for dealing with object oriented programming directly, but this does not prevent the paradigm for being used.
 
-\subsection{The OO paradigme}
+\subsection{The OO Paradigm}
+\label{sec:back:oo_paradigm}.
 This section introduces the paradigm and shows how to apply it to Rust, C.
 
 \begin{listing}[H]
@@ -130,9 +131,9 @@ This paradigm can be directly applied to software components in a embedded syste
 
 Hardware components in a embedded system as the Gecko microcontroller are often exposed as memory mapped devices.
 This implies for instance that the control registers for a devices such as an Analog-To-Digital is located in the address space of the CPU and can be read from and written to with the same instruction and language constructs as the rest of the memory.
-\autoref{fig:back:memorymapped} shows the control registers for the device which are placed continuously in memory.
+\autoref{tab:back:memorymapped} shows the control registers for the device which are placed continuously in memory.
 
-\begin{figure}[H]
+\begin{table}[H]
   \centering
   \begin{tabular}{l|l|l|}
     &&\\
@@ -154,11 +155,11 @@ This implies for instance that the control registers for a devices such as an An
   \end{tabular}
   \caption{ADC0 Memory map for EFM32GG}
   \label{tab:back:memorymapped}
-\end{figure}
+\end{table}
 
-\autoref{fig:back:objectmemory} shows the memory layout for the objects defined in \autoref{sec:back:oo}.
+\autoref{tab:back:memlayout} shows the memory layout for the objects defined in \autoref{sec:back:oo_paradigm}.
 We see that the difference between the Java managed language and the C and Rust system languages is the tag field preceding the data fields for the object.
-\begin{figure}[H]
+\begin{table}[H]
 
   \centering
   \subfloat[Java]{
@@ -171,7 +172,7 @@ We see that the difference between the Java managed language and the C and Rust 
       0x4&data\\
       \hline
     \end{tabular}
-    \label{fig:back:memlayout:java}
+    \label{tab:back:memlayout:java}
   }
   \hfill
   \subfloat[Rust]{
@@ -182,7 +183,7 @@ We see that the difference between the Java managed language and the C and Rust 
       0x0&data\\
       \hline
     \end{tabular}
-    \label{fig:back:memlayout:rust}
+    \label{tab:back:memlayout:rust}
   }
   \hfill
   \subfloat[C]{
@@ -193,12 +194,12 @@ We see that the difference between the Java managed language and the C and Rust 
       0x0&data\\
       \hline
     \end{tabular}
-    \label{fig:back:memlayout:c}
+    \label{tab:back:memlayout:c}
   }
   \caption{Memory layout of objects}
-  \label{fig:back:memlayout}
+  \label{tab:back:memlayout}
 
-\end{figure}
+\end{table}
 
 And the control registers can be modified through fields and member methods.
 
