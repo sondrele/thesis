@@ -2,8 +2,8 @@
 \label{sec:back:oo}
 
 The object oriented paradigm has proved to be an effective way to organize computer programs in many different areas.
-The paradigm focues on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-Rust as a language exposes this paradigm through the language constructs of structs, traits and enum as described in Section \ref{ssub:rust:features}.
+The paradigm focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
+Rust as a language exposes this paradigm through the language constructs of structs, traits and enum as described in \autoref{ssub:rust:features}.
 The C language does not provide any langauge constructs for dealing with object oriented programming directly, but this does not prevent the paradigm for being used.
 
 \subsection{The OO paradigme}
@@ -33,10 +33,10 @@ This section introduces the paradigm and shows how to apply it to Rust, C.
 \end{listing}
 
 In \autoref{lst:back:oo:java} we define the class Sensor with one private field data, a constructor method to create the object and a measure method to get the sensor data.
-In the main function we create an instance of the Sensor, this allocates memory on the heap and saves a reference to the memory on the stack refered to by the  variable called sensor.
+In the main function we create an instance of the Sensor, this allocates memory on the heap and saves a reference to the memory on the stack referred to by the  variable called sensor.
 Inside the Sensor constructor method the implicit variable this is bound to the reference to the newly allocated heap memory set aside for the Sensor object.
 This is done automatically when calling a constructor method with the keyword new.
-With the this variable we can refere to the objects fields and methods.
+With the this variable we can refer to the objects fields and methods.
 When we hold a reference to an object as the sensor variable in the main method we can apply the methods of the object on the reference with the method call syntax.
 This causes the this variable in the method to be bound to the reference to the object the method is applied to.
 
@@ -70,9 +70,9 @@ This causes the this variable in the method to be bound to the reference to the 
 \end{listing}
 
 The object oriented pattern has special syntax in Rust.
-As \autoref{lst:back:oo:rust} shows, we create the Class definition by using a struct for specifing the data fields and an impl for implementing the methods.
+As \autoref{lst:back:oo:rust} shows, we create the Class definition by using a struct for specifying the data fields and an impl for implementing the methods.
 Rust does not define special mechanism for constructing objects.
-The object construction pattern shown in \autoref{lst:back:oo:rust}, is simply the ideomatic way to add a constructor to a object.
+The object construction pattern shown in \autoref{lst:back:oo:rust}, is simply the idiomatic way to add a constructor to a object.
 But the programmer is free to for instance return a reference to the created object if it is more suitable.
 The new method in \autoref{lst:back:oo:rust} is flexible enough to create both stack allocated and heap allocated objects of the Sensor type.
 This is shown in the main method where s1 is allocated on the stack while s2 is allocated on the heap.
@@ -115,10 +115,10 @@ The self parameter can be either a direct variable, an immutable reference or a 
 \end{listing}
 
 C does not provide any syntax for dealing with method calls on objects, but the object oriented paradigm can be used through convention.
-\autoref{lst:back:oo:c} shows a definiton for a Sensor class with constructor function and member function in the C programming language.
+\autoref{lst:back:oo:c} shows a definition for a Sensor class with constructor function and member function in the C programming language.
 Here we see the method call mechanism explicit in the main function where the a reference to the object has to be passed explicit as the first argument.
 Memory allocation is also handled explicit through malloc when allocating a object on the heap.
-The pattern can be changed to expose a New function that returns a reference to a heap allocated object, but this either prevents stack allocated objects or leads to alot of to to handle it.
+The pattern can be changed to expose a New function that returns a reference to a heap allocated object, but this either prevents stack allocated objects or leads to a lot of to to handle it.
 The main function also contains a explicit free of the heap allocated memory which is not present in \autoref{lst:back:oo:rust}.
 This is due to the ownership rules of Rust explained in \autoref{sec:back:rust:own}.
 
@@ -128,7 +128,7 @@ In the previous section we saw how the OO-paradigm is implemented in Java, Rust 
 We can see that in essence the paradigm consists of a datatype with a number of fields, a collection of function that operates on the fields given a reference to a object of this datatype.
 This paradigm can be directly applied to software components in a embedded system such as a circular buffer.
 
-Hardware components in a embedded system as the Gecko Mircocontroller are often exposed as memory mapped devices.
+Hardware components in a embedded system as the Gecko microcontroller are often exposed as memory mapped devices.
 This implies for instance that the control registers for a devices such as an Analog-To-Digital is located in the address space of the CPU and can be read from and written to with the same instruction and language constructs as the rest of the memory.
 \autoref{fig:back:memorymapped} shows the control registers for the device which are placed continuously in memory.
 
@@ -157,7 +157,7 @@ This implies for instance that the control registers for a devices such as an An
 \end{figure}
 
 \autoref{fig:back:objectmemory} shows the memory layout for the objects defined in \autoref{sec:back:oo}.
-We see that the difference between the Java managed language and the C and Rust system langauges is the tag field preciding the data fields for the object.
+We see that the difference between the Java managed language and the C and Rust system languages is the tag field preceding the data fields for the object.
 \begin{figure}[H]
 
   \centering
@@ -200,11 +200,11 @@ We see that the difference between the Java managed language and the C and Rust 
 
 \end{figure}
 
-And the control registers can be modified thru fields and member methods.
+And the control registers can be modified through fields and member methods.
 
 In order to do so we need to modify the object story defined above.
 In the usual object oriented case the object is created, used, passed around and deallocated.
-Each time we create a new object it is either allocated on the current stack frame or at som arbirary heap location.
+Each time we create a new object it is either allocated on the current stack frame or at some arbitrary heap location.
 This does not hold true for a memory mapped hardware device.
 The device does not have to be allocated or deallocated, its lifetime is static and exists from the program starts executing on the microcontroller.
 Instead of a constructor function we need a way to get a reference to the memory mapped device.
