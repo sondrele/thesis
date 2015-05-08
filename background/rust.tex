@@ -544,7 +544,7 @@ This section will cover the most important features of \texttt{Cargo} and how it
 \subsubsection{Project Structure}
 
 Every crate, or package, built by \texttt{Cargo} requires a \texttt{Cargo.toml} file to be present in the root directory.
-This file is interpreted by \texttt{Cargo} and is used to determine the name of library and executables to be built in the package and what other packages that it depends on.
+This file is interpreted by \texttt{Cargo} and is used to determine the name of the library and executables to be built in the package and what other packages that it depends on.
 It also includes information that tells \texttt{Cargo} how the package can be compiled for different target architectures, and it is used to define different \textit{features} of a package - a way to conditionally compile certain parts of the code present in the library.
 
 \begin{listing}
@@ -552,7 +552,7 @@ It also includes information that tells \texttt{Cargo} how the package can be co
 .1 hello\_world.
 .2 Cargo.lock.
 .2 Cargo.toml.
-.2 build.rs
+.2 build.rs.
 .2 src.
 .3 bin.
 .4 hello\_mars.rs.
@@ -572,11 +572,12 @@ It also includes information that tells \texttt{Cargo} how the package can be co
 The \texttt{lib.rs} file will be compiled into a crate with the project name, in this case it will be \texttt{hello\_world.rlib}.
 If a \texttt{main.rs} file is present, it will be compiled into an executable with the same name.
 Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the \texttt{hello\_world} library and all of the package dependencies with these executables.
+
 The \texttt{examples} directory contains different executables that demonstrates how to use the library, and finally the \texttt{tests} directory contains integration tests.
 A package can also have it's own build-routine by specifying a \texttt{build} file in \texttt{Cargo.toml}, in this case we have a \texttt{build.rs} file present in the project.
-This file is executed prior to building the library itself, and provides the possibility to e.g. compile and link third party C-libraries, or e.g. generated code prior to compilation.
+This file is executed prior to building the library itself, and provides the possibility to e.g. compile and link third party C-libraries, or generate code prior to compilation.
 Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains information about every package that are used by the project library and executables.
-This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated or re-compiled in order for the package to behave correctly and be built consistently - independent on the target architecture it is built on, and for.
+This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated or re-compiled in order for the package to behave correctly and be built consistently - independent on the target architecture it is built on and for.
 
 \subsubsection{Building and testing (Or Tools?)}
 
@@ -606,10 +607,10 @@ update & Update dependencies listed in Cargo.lock                 &
 
 By invoking the \texttt{cargo build} command, \texttt{Cargo} will download and resolve all package dependencies, and trigger \texttt{rustc} to compile them and link them with each other in the correct order.
 When all dependencies have been built, the build script will be invoked (if it is present in the package), before the library itself is compiled.
-Lastly, if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory, the projects executables will be compiled.
+Lastly, the projects executables will be compiled if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory.
 
 The \texttt{cargo test} command will also trigger \texttt{rustc} to compile the library in the same manner as \texttt{cargo build}, but it will leave out compilation of the project executables.
-When the library is compiled, any function that is marked with \texttt{#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
+When the library is compiled, any function that is marked with \texttt{\#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
 \texttt{Cargo} also treats all the sources found in the \texttt{examples} directory as tests, so these will be compiled instead of the other project executables, together with all the integration tests.
 When \texttt{Cargo} has finished compiling the library and its executables, it will by default run all the unit tests, including the integration tests, but it will not run the examples.
 
