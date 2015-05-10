@@ -1,0 +1,131 @@
+\section{Build System}
+\label{sec:build_system}
+
+Building the library and the EFM32 executables turned out to be one of the major parts of the work done in this project.
+This section describes how building the project have changed over time.
+This includes managing dependencies, compiling the RCL and REL and the Silicon Labs EFM32 \texttt{emlib}.
+We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of Rust and making sure that the builds have been consistent across the systems it has been built on.
+
+\subsection{Early days}
+\label{ssub:using_make}
+
+\todo{Maybe mention more about armboot in background instead of here.}
+When the project first started out it was based upon the \texttt{armboot} \cite{github:armboot} git repository available on GitHub.
+\texttt{armboot} is a small template project for using Rust bare metal on a STM32 ARM \glspl{mcu}.
+These are, similarly with the EFM32 series, also based on the Cortex-M series of ARM processor cores.
+
+\todo{Håvard: Skriv denne seksjonen}
+The project got up and running pretty fast based on how \texttt{armboot} was built.
+We looked at armboot's Makefile to figure out what flags to pass to \texttt{rustc} in order to make it cross-compile for an ARM target architecture.
+
+\subsection{Transitioning to Cargo}
+\label{ssub:transitioning_to_cargo}
+
+It was always a goal to use Cargo for building, distributing and managing the packages and dependencies that would become part of this project.
+When the project first started out it was built by compiling Rust's core library and Silabs' emlib C sources separately, and then linking them with the \gls{ffi} bindings for emlib by hand.
+While this approach worked, it was far from optimal for a number of reasons:
+
+\begin{itemize}
+    \item Rust was in active development and many of it's unstable \glspl{api} were going through rapid changes. Ensuring that versions of rustc and the Rust source code stayed up to date across different systems was not easy.
+    \item Compiling and ensuring that all dependencies were consistent across builds and systems for the bindings were a tedious task. A lot of the troubles concerning this came back to the point above.
+    \item Linking dependencies with the library required each system to have set up several different \$PATHS to point to the right directories, what worked for one developer on one system might not have worked for different developer on another system.
+    \item The Cargo package manager was developed for exactly these purposes among others.
+\end{itemize}
+
+As already described, Cargo is a tool that provides many operations to build Rust projects that has a certain project structure.
+It is designed to integrate with other existing tools, like GNU Make, which has been important in  building this project.
+When the transition to Cargo started, we focused on structuring the main library and its modules into the directory structure described in \autoref{ssub:project_structure}.
+By invoking the \texttt{cargo build --verbose} command, it was possible to see the output from what Cargo attempted to build when it failed, and then structure the project accordingly.
+
+A big priority was to to shrink the size of the makefiles that was in the project by making them a part of the standard build process for \texttt{emlib} instead, doing this would help us get a long way of ensuring that the builds done by Cargo could be consistent across systems.
+By defining a Rust build script and utilizing a Rust build-dependency called \texttt{gcc} \cite{web:cargo_gcc} (not to be mistaken with the C-compiler with the same name), we were able to compile the C sources from Silabs' emlib and link them with our bindings directly as part of the build process.
+By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies like the \texttt{core} and \texttt{collections} libraries.
+
+Because the project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard Rust libraries that we wanted to utilize for the ARM Cortex-M3.
+We could not utilize the pre-compiled libraries that are already included with \texttt{rustc}, since these only works for the current system architecture.
+We solved this problem by implementing a new Cargo build-dependency, called \texttt{rust-src} \cite{github:rust_src}, whose purpose is to download the entire Rust source code that is compliant with the instance of \texttt{rustc} that is currently compiling the library.
+By making it a task for each build to fetch its own source code, we were guaranteed that the dependencies we used for the project would always compile, independent of the current instance of \texttt{rustc} that was installed on the system.
+\autoref{tab:compiled_libraries} summarizes the different crates that we have fetched from Rust's standard library in order to use them with our project.
+\todo{May not need this table here. Need to synchronize with the section that presents REL and such..}
+
+\todo{We need to write about the \texttt{rlibc} crate, and the need to define our own \texttt{memmove} and \texttt{memalign} functions in order to use alloc (Box, Vector, ...)}
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{r|p{8cm}}
+\textbf{Rust library} & \textbf{Purpose} \\
+\hline
+core        & Rust's core library that declares basic types. \\
+libc        & Types to use with Rust's \gls{ffi}. \\
+alloc       & Allows for heap-allocated variables. \\
+collections & Provides common collections like dynamically allocated Strings and Vectors. \\
+unicode     & Required by collections for e.g. Strings. \\
+rand        & Generate random values. \\
+\hline
+\end{tabular}
+\caption{Rust libraries conditionally compiled for the Cortex-M3 architecture.}
+\label{tab:compiled_libraries}
+\end{center}
+\end{table}
+
+By design Cargo only supported passing two flags further on to \texttt{rustc}, those were \texttt{-L} and \texttt{-l}, their purpose is to tell \texttt{rustc} to link with an external library by looking in a directory (specified with the \texttt{-L} flag), for a library with the specified name (specified with the \texttt{-l} flag).
+The last step in the build process involved linking \texttt{emlib} and the other libraries with an actual executable for the Cortex-M3.
+This was not possible to do with Cargo since it required us to pass a couple of extra linker-flags further on to \texttt{rustc}.
+\todo{Håvard: Jeg har ingen anelse over hvor riktig dette er. Noe av dette blir vel beskrevet et annet sted, vi får finne en måte å referere til riktig seksjon her, uten å gå altfor mye i detalj...}
+The flags were needed by \texttt{rustc} in order to tell it to link with an external library for a different architecture and to include a separate linker-script that took care of booting up the executable on this architecture.
+
+Another issue that was introduced by automatic compilation with Cargo, was how it structured the packages it compiled.
+When Cargo builds a project and its dependencies it structures all the generated metadata and the compiled libraries within a \texttt{target} directory, and an extra filename gets appended to all of these libraries.
+This extra filename is part of a hash that is generated based on the code in the library, and ensures that each and every build is consistent and it resolves any problems that might arise if several dependencies within a project depends on different versions of the same library.
+This works when Cargo handles the entire build process, but it our case, where we had to manually compile the final executable, it turned out to be a problem because the name of the library would change every time some of its content changed.
+We worked around this problem by modifying the build script to store the hash generated by Cargo for \texttt{emlib} to a text file, every time the library was built, and then included it in the makefile for the project.
+
+\subsection{Conditional linking with Cargo}
+
+The build process described in the previous section made it simpler to use third party libraries, but it did not solve all of our issues, the main problem that persisted was to have a good way of making \texttt{emlib} itself, portable.
+With the setup that we had, it was easy to create new executables \emph{within} the project, but it was hard to create new executables that \emph{depended} on \texttt{emlib}.
+Basically, because we had to work around Cargo in the final part of the build process, it also meant that \emph{every} project that wanted to depend on \texttt{emlib} also had implement the same workarounds.
+Thus, we needed to solve the problem of knowing where Cargo would store the project metadata, and we needed a way to get Cargo to compile the final executables with the extra linker-arguments needed by \texttt{rustc} in order to compile the binary for the Cortex-M3.
+
+Cargo does not have much documentation over how its internal works, or how to interfere with the build process, but the documentation does mention that if Cargo is to be invoked with a command that it does not have by default, it will query the system for this command.
+This means that if Cargo is invoked with e.g. the command \texttt{cargo foo <args>...}, it will query the system for an executable with the name \texttt{cargo-foo} and it will invoke this command with the trailing arguments if it exists.
+By looking at Cargo's source code, we could see that every triggered build included a structure called \texttt{CompileOptions}.
+The arguments passed to Cargo's different build commands are then used to compose this structure and trigger an internal compilation process, this process handles the compilation of all dependencies and generates all the different targets for the current package to be compiled.
+\todo{Would it be nice with some kind of figure that describes the build process?}
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{r|p{8cm}}
+\textbf{Flags} & \textbf{Purpose} \\
+\hline
+\texttt{[$<$args$>$]} &
+The trailing argument to the command was the linker-arguments that was to be passed further on to the invocation of \texttt{rustc}.
+If any \texttt{args} are present, Cargo will append \texttt{-C link-args="$<$args$>$"} when any executables from the package package is being built. \\
+
+\texttt{--examples NAME} &
+The library had many executables located in the projects \texttt{examples} directory.
+This flag made it easier to compile one of these examples by specifying its name. \\
+
+\texttt{--build-examples} &
+This flag filtered out every executable marked as an example and compiled all of them. \\
+
+\texttt{--print-link-args} &
+This flag was included for debugging purposes. \\
+
+\hline
+\end{tabular}
+\caption{}
+\label{tab:cargo_linkargs}
+\end{center}
+\end{table}
+
+
+In order to solve the problems we had with building the project, we created a new subcommand called \texttt{cargo-linkargs} \cite{github:cargo_linkargs} that depends on Cargo itself.
+This subcommand was created specifically with \texttt{emlib} in mind, and supports all the flags that the \texttt{cargo-build} command supports, including the flags shown in \autoref{tab:cargo_linkargs}.
+We got rid of the two problems we had with building \texttt{emlib} once \texttt{cargo-linkargs} were working.
+The problem with resolving the location of generated metadata were solved implicitly just by utilizing Cargo, and the extra linker-arguments could easily be passed on to the invocation of \texttt{cargo-linkargs} via the project's makefile.
+
+\subsection{Contributing to Cargo}
+
+As already mentioned, the ability to pass arbitrary flags down to the invocation of \texttt{rustc} was by design not supported by Cargo, but many people in the Rust community have wanted the ability to do so.
+
