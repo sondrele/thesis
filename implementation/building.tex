@@ -126,6 +126,22 @@ We got rid of the two problems we had with building \texttt{emlib} once \texttt{
 The problem with resolving the location of generated metadata were solved implicitly just by utilizing Cargo, and the extra linker-arguments could easily be passed on to the invocation of \texttt{cargo-linkargs} via the project's makefile.
 
 \subsection{Contributing to Cargo}
+\label{ssub:contributing_to_cargo}
 
 As already mentioned, the ability to pass arbitrary flags down to the invocation of \texttt{rustc} was by design not supported by Cargo, but many people in the Rust community have wanted the ability to do so.
+The reasoning for not allowing arbitrary flags to be passed down is pretty obvious.
+A compilation can go awry very quickly if it is up to the package \emph{author} what flags should be passed to \texttt{rustc} instead of the package \emph{builder}.
+This would give the author the ability to set the restriction for a library, not the user.
+Different systems do not necessarily support all flags and possibilities, so if a package dependency says that it is to be built in a specific way it might not work for the system that is building it.
+\todo{Should we include references to the issues?}
 
+There have been an issue on Cargo's project page about implementing a new subcommand (called \texttt{cargo-rustc}) for the package manager.
+This subcommand would allowed for passing arbitrary flags further on to \texttt{rustc}, but with the restriction of only compiling a \emph{single} target at a time.
+This means that only \emph{either} the library, a binary, an example or a test (or a package dependency), may be compiled with the extra flags, and \emph{not} the entire package.
+These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our \texttt{emlib}, can depend on it for completing the build.
+Indeed, the functionality proposed with this subcommand was exactly the same as was solved with our implementation of \texttt{cargo-linkargs}.
+
+After gaining insight into Cargo's internals during the development of \texttt{cargo-linkargs}, it was interesting to see if we could get this same functionality into Cargo itself by implementing \texttt{cargo-rustc}.
+Not only would it benefit our project, it would also give many other Rust projects the ability to use Cargo for the entire compilation process.
+Since both Rust and Cargo are open source projects, it was easy to get in contact with the project maintainers about the issue, and eventually submit a pull-request with the new subcommand.
+After it was reviewed by one of the project maintainers, the pull-request was accepted and merged into Cargo's code base.
