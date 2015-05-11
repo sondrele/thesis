@@ -125,6 +125,24 @@ This subcommand was created specifically with \texttt{emlib} in mind, and suppor
 We got rid of the two problems we had with building \texttt{emlib} once \texttt{cargo-linkargs} were working.
 The problem with resolving the location of generated metadata were solved implicitly just by utilizing Cargo, and the extra linker-arguments could easily be passed on to the invocation of \texttt{cargo-linkargs} via the project's makefile.
 
+\subsection{Continuous Integration}
+\label{ssub:continuous_integration}
+
+When we first started this project, Rust had reached a 1.0-alpha version.
+This meant that the programming language had reached a relatively stable state, but there was still big parts of the language and its standard libraries that was marked as unstable and up for review before the planned 1.0 release.
+The standard libraries, and third party Rust libraries that has evolved in the Rust community, have made little guarantee about their stability, and the \glspl{api} have been subject to change without much notice.
+
+\todo{Is this section relevant? Too much information? Move elsewhere?}
+
+Many Rust projects have utilized a continuous integration system called Travis CI for ensuring that the code in the project have been compatible with the nightly builds of Rust.
+By registering our projects with Travis CI, and a community-developed service called Rust CI, we had automatic, daily builds of our projects on a third-party server.
+Builds were triggered every time we made a change to the code and every time a new nightly release of Rust was published, and if a build failed we would get notified of the error.
+By making continuous integration part of the normal build routine and review-process for new project code, we had an extra step of verification that the project would build on other systems then the one it was developed on.
+
+It is important to note that continuous integration only helped us to verify that the project could be \emph{built}, it could not help us to verify that the compiled code would actually \emph{work} for its target architecture.
+In order to verify that the code would work for on the Cortex-M3 we had to actually run in on one of the microcontrollers that we had a available for this project.
+An experimental process of testing and mocking the \texttt{emlib} \gls{api} bindings is described in greater detail in \autoref{ssub:testing}.
+
 \subsection{Contributing to Cargo}
 \label{ssub:contributing_to_cargo}
 
