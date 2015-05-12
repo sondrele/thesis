@@ -5,7 +5,7 @@
 
 Rust \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
 Rust is a strongly and statically typed, multi-paradigm programming language.
-The language borrows many traits and features from other programming languages, some of which is described in the following sections.
+The language borrows many constructs and features from other programming languages, some of which is described in the following sections.
 
 Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency.
 It is designed to support concurrency and parallelism and take full utilization of the underlying hardware, while making strong guarantees about memory safety and isolation, without sacrificing performance.
@@ -489,7 +489,7 @@ It is important to notice that Rust's borrow checker is still active across the 
   \raggedleft{Dereference raw pointers} &
   Raw pointers introduces memory aliasing to mutable data \\
 
-  \raggedleft{Call unsafe functions \\ (e.g. over \gls{ffi})} &
+  \raggedleft{Call unsafe functions, e.g. \\ \gls{ffi} or compiler intrinsics} &
   Rust can make no guarantees about the safety of \texttt{unsafe functions}. If a \gls{ffi} function is called we are leaving Rust and entering another language domain, it is not possible for Rust to verify the safety of such code. \\
 
 \hline
