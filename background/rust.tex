@@ -117,12 +117,12 @@ The \texttt{impl} keyword lets us implement member functions for the \texttt{Boo
 
 Pattern matching is a powerful language construct of Rust that resembles the \texttt{switch} statement from C.
 It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \texttt{match}.
-Another important feature of the \texttt{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \texttt{match} need to be considered, otherwise Rust will make it a compile-time error.
-This is contrary to C, where only primitive values can be used in a \texttt{switch} statement, and there is no requirement to cover all switch cases, e.g. with the \texttt{default} keyword.
+Another important feature of the \texttt{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \texttt{match} need to be considered, otherwise Rust will issue an error during compilation.
+This is contrary to C, where only primitive values can be used in a \texttt{switch} statement, and there is no requirement to cover all switch cases, i.e. the \texttt{default} keyword is not required.
 
 An example of pattern matching on the \texttt{Option} type is given in \autoref{lst:rust:match}.
 We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
-We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, argument being matched against.
+We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, are being matched against.
 % In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
 % As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
 
