@@ -466,12 +466,14 @@ This is an important distinction, because it allows for any number 3rd party con
 
 Rust's strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
 There exists many programs that are indeed safe, but still not possible for the compiler to verify.
-Examples of code that the compiler cannot verify is code that utilize \emph{raw pointers}, i.e. pointers to mutable data (like a C pointer), code that call directly \emph{into} external C libraries through Rust's \gls{ffi}, or code that can be called \emph{from} \gls{ffi}.
+Examples of code that the compiler cannot verify is code that dereference \emph{raw pointers}, code that call directly \emph{into} external C libraries through Rust's \gls{ffi}, or code that can be called \emph{from} \gls{ffi}.
+Raw pointers in Rust are similar to a normal pointer in C, which means that they are not constrained by Rust's ownership rules, and thus allows for aliasing to mutable data and are not guaranteed to be non-null.
+The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
 The ability to make new abstractions that optimize away to essentially nothing is an important feature of Rust.
 Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
 For these tasks, Rust provides a new keyword, \texttt{unsafe}.
-It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} Rust's semantics about memory safety, when the compiler can no longer guarantee it, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
+It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} Rust's semantics about memory safety, when the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
 \autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \texttt{unsafe} block, and why the operations are considered unsafe.
 It is important to notice that Rust's borrow checker is still active across the unsafe code, and that it will still issue errors during compilation if the rules about ownership is not withheld.
 
