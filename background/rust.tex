@@ -3,41 +3,53 @@
 \section{The Rust Programming Language} % (fold)
 \label{sub:the_rust_programming_language}
 
-Rust \cite{web:rust_lang} is a new open source systems programming language developed by the Mozilla Foundation \cite{web:mozilla_foundation}.
-It is designed to support concurrency and parallelism and take full utilization of the underlying hardware.
-Rust makes strong guarantees about isolation and memory safety, while still focusing on performance.
-
+Rust \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
 Rust is a strongly and statically typed, multi-paradigm programming language.
-The language borrows many traits and features from other, already existing languages.
-The following subsections discusses some of the more prominent language features, that all work together in order to achieves Rust's main goals; mainly full memory safety without sacrificing performance.
-\todo{I've just been throwing out ideas and statements that are probably not very true.}
+The language borrows many constructs and features from other programming languages, some of which is described in the following sections.
+
+Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency.
+It is designed to support concurrency and parallelism and take full utilization of the underlying hardware, while making strong guarantees about memory safety and isolation, without sacrificing performance.
 
 \subsection{Language Features}
 \label{ssub:rust:features}
 
 This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
-The language is multiparadigm and therefor offeres a wider range of language constructs.
+The language is multi-paradigm and therefore offers a wider range of language constructs.
 
-\subsubsection{Sum types - Enum}
+\subsubsection{Variables and Bindings}
 
-The \textbf{enum} type of Rust is a powerful construct.
-The type is based on sum types and can hold tagged data in addition to named values as enumerated types as found in C.
-A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
+Rust features a handful of different data types, all which can be assigned to a \emph{variable} by using a \emph{binding}.
+The most important types are described in the following sections, but we will first look at how variables work.
+A value gets bound to a variable by utilizing the \texttt{let} keyword.
+A variable in Rust has a name and a value, much like other programming languages, but there is a distinct difference between the \emph{mutability} of those variables.
+
+With a mutable variable binding, it is possible to change the value of the variable.
+However, if we try to change the value of an immutable variable binding, Rust will give us a compile-time error.
+The example code in \autoref{lst:rust_variable_bindings} shows how to declare both mutable and immutable variables and how to modify their values.
+The example will not work because we try to change the value of an immutable variable.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    enum List<T> {
-      Cons(T, Box<List>),
-      Nil,
-    }
+    // bind the value `5' to the immutable variable `a'
+    let a: i32 = 5;
+    // bind the value `10' to the mutable variable `a'
+    let mut b = 10;
+    b = a; // change the value of `b'
+    a = b; // <- error: re-assignment of immutable variable `a'
   \end{minted}
-  \caption{Definition of Linked List}
-  \label{lst:rust:list}
+  \caption{Variable bindings}
+  \label{lst:rust_variable_bindings}
 \end{listing}
 
-Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+An important part of variable bindings is Rust's way to automatically infer the data type of the variables.
+We can see from the example that \texttt{a} is defined to be a 32-bit integer with the value 5, and because the variable \texttt{b} later gets assigned to \texttt{a}'s value, Rust will automatically infer \texttt{b} to be of the same type.
 
-\subsubsection{Case Study - Option}
+\subsubsection{Sum types - Enum}
+
+A sum type, also known as a tagged union, or an \texttt{enum} in Rust, is a data structure that is used to hold only one out of a small set of possible values.
+Rust's \texttt{enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
+This makes the \texttt{enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
+\autoref{lst:rust:option} shows the definition of one of Rust's most commonly used types that is used extensively throughout its standard library and other third party libraries and applications.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -50,27 +62,86 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
   \label{lst:rust:option}
 \end{listing}
 
-\subsubsection{Pattern Matching and Destruction}
+Every \texttt{Option} variable is an \texttt{enum} that can either have the algebraic value \texttt{Some} or the \emph{named value} \texttt{None}.
+If the variable is is \texttt{Some}, the definition also says that it needs to contain another type \texttt{T}.
+This is also an example of generics in Rust, \texttt{T} can be anything, e.g. an integer, a string, or a user defined type.
+The \texttt{Option} type is analogous with a normal C pointer value, which either has the value 0, or \texttt{null} (analogous to \texttt{None}), or a value that that points to a structure at a place in memory (analogous to \texttt{Some}).
+Even though the \texttt{Option} is analogous to a C pointer, it is important to note their differences.
+It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \texttt{None}.
+The usage of \texttt{enum} types described in this section become very expressive in combination with \emph{match expressions}, as discussed in \autoref{sub:pattern_matching}.
 
-Pattern matching is a language construct that resembles the switch statement of "C-type" languages, but it is more powerful.
-In addition to choose the matching tag/value, as a conventional switch does, the matching construct is able to destruct the matching value.
-An example using the pattern matching on a Option type is given in Listing \ref{lst:rust:match}.
+\subsubsection{Case Study - List}
+
+A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
+Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    let option: Option<u32> = Some(42);
+    enum List<T> {
+      Cons(T, Box<List>),
+      Nil,
+    }
+  \end{minted}
+  \caption{Definition of Linked List}
+  \label{lst:rust:list}
+\end{listing}
 
-    match option {
+\subsubsection{Structs}
+\label{ssub:structs}
+
+\texttt{structs} in Rust are similar to that of C, and is a way of creating more advanced data types than \texttt{primitives} or \texttt{enums}.
+With a \texttt{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
+An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, everyone that knows C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
+Everything in Rust is \emph{private} by default, the \texttt{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
+The \texttt{impl} keyword lets us implement member functions for the \texttt{Book}, similar to class-declarations in C++ and other object-oriented languages.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub struct Book {
+      pub name: String,
+      pub pages: u32,
+    }
+
+    impl Book {
+      pub fn info(&self) {
+        println!("{} has {} pages.", self.name, self.pages);
+      }
+    }
+  \end{minted}
+  \caption{Struct definition and implementation}
+  \label{lst:book_struct}
+\end{listing}
+
+\subsubsection{Pattern Matching and Destructuring}
+\label{sub:pattern_matching}
+
+Pattern matching is a powerful language construct of Rust that resembles the \texttt{switch} statement from C.
+It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \texttt{match}.
+Another important feature of the \texttt{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \texttt{match} need to be considered, otherwise Rust will issue an error during compilation.
+This is contrary to C, where only primitive values can be used in a \texttt{switch} statement, and there is no requirement to cover all switch cases, i.e. the \texttt{default} keyword is not required.
+
+An example of pattern matching on the \texttt{Option} type is given in \autoref{lst:rust:match}.
+We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
+We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, are being matched against.
+% In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
+% As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    // Bind the value `Some(42)' to the variable `num'
+    let num: Option<u32> = Some(42);
+
+    match num {
+      // Bind the Option's enclosing value to the variable
+      // `number' and print its value
       Some(number) => println!("{}", number),
+      // Otherwise do nothing
       None => (),
     }
   \end{minted}
   \caption{Matching an Option}
   \label{lst:rust:match}
 \end{listing}
-
-In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
-As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
 
 \subsubsection{Traits}
 
@@ -180,15 +251,10 @@ Abstractions, in the form of references and pointers to objects or structures an
 structured on the heap, is a common source of overhead in programming languages.
 \autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how Java lays out a vector of
 strings in memory.
-A reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that is placed elsewhere on the heap.
-Thus, if the programmer wants to access the first character of a string, two objects have to be found and dereferenced on the heap in order to read the value;
-
-\begin{enumerate}
-  \item the vector must be dereferenced so that a reference to the string can be returned, and
-  \item the string must be dereferenced so that character can be read.
-\end{enumerate}
-
-If the nesting of objects is deep it can result in many unnecessary heap-lookups in order to get the desired data.
+Fundamentally, a reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that is placed elsewhere on the heap.
+% There are four levels of indirection between the reference to the vector on stack, and the actual character data of its strings.
+If we want to access the first character of a string stored in the vector, we would have to go through four levels of indirection - two objects need to be both dereferenced and indexed.
+If the nesting of objects is deep it can result in many heap-lookups in order to get the desired data.
 
 \begin{figure}[tb]
   \begin{center}
@@ -198,14 +264,22 @@ If the nesting of objects is deep it can result in many unnecessary heap-lookups
   \label{fig:java_abstractions}
 \end{figure}
 
-Rust introduces the same zero-cost abstractions that are featured in C and C++, among others.
-This is both important for performance, and generally in order to have a deterministic and a common understanding of how the structures are laid out in the memory when working with embedded devices.
-\todocite{This is a bogus sentence. Also, need to cite zero-cost abstraction articles}
-\autoref{fig:cpp_abstractions} shows how C++ places the structures in memory.
-The main difference is that the structure data itself is placed on the stack and inside the vector, instead of the references to the structures, yet keeping the same level of abstraction.
-In Rust's case, all structures is allocated directly on the stack if it is not shared between threads (see the following paragraphs), allowing for faster data access.
-This is made possible with a strong notion of variable ownership in order for the compiler to statically keep track of live stack- and heap-references.
-\todo{Don't think this last section is entirely true. Leaving this as a statement for now, that needs proper backing.}
+An important part about zero-cost abstractions, is the ability to define new abstractions, like a vector, that optimize away to the bare minimal.
+Rust introduces the same zero-cost abstractions that are present in C++, among other programming languages.
+This is both important for performance, and in general, in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
+% when working with embedded devices.
+% \todocite{This is a bogus sentence. Also, need to cite zero-cost abstraction articles}
+\autoref{fig:cpp_abstractions} shows how C++ places a vector of strings in memory.
+The main difference is that the vector itself is placed on the stack, and the string data is placed directly inside the memory block owned by the vector.
+The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
+
+There is still one really important difference between the two examples; we can safely have multiple references to our vector in Java without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in C++ can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
+\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in c++ can lead to a dangling pointer?}.
+In Rust's case, all structures is allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
+References to such stack-allocated variables can be passed around and accessed, just like in C++,
+but Rust also introduces a set of rules that have to be followed in order to safely use these references.
+These rules are based upon variable ownership and lifetimes, which are discussed in \autoref{sec:guaranteed_memory_safety}.
+A Rust program will not successfully compile if the programmer is failing to properly maintain these rules.
 
 \begin{figure}[tb]
   \begin{center}
@@ -216,50 +290,54 @@ This is made possible with a strong notion of variable ownership in order for th
 \end{figure}
 
 \subsection{Guaranteed memory safety}
+\label{sec:guaranteed_memory_safety}
 
 One of Rust's biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing performance.
-The memory safety boils down to how Rust manages the variables and data-segments throughout the program.
-Rust introduces a few concepts that are all centered around the \emph{ownership} of these variables, how the variables are \emph{borrowed} and the \emph{lifetimes} of the variables and the borrowed references to them.
-Rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically at compile-time.
+The memory safety boils down to how Rust manages its variables and their memory throughout the course of a program.
+Rust introduces a few concepts that are all centered around the \emph{ownership} of these variables and their \emph{lifetimes}, and how references to these variables can be \emph{borrowed}.
+These concepts are defined in Rust, but a lot of the inspiration behind those rules comes from other type-safe languages, like Haskell and OCaml, and especially Cyclone's \cite{Grossman2002,Swamy2006} region-based memory management.
+Rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically during compilation.
 
 \subsubsection{Ownership and Move Semantics}
 \label{sec:back:rust:own}
 
 In order to achieve full memory safety, we have to remove all form for memory leaks and dangling pointers to invalid memory.
 This implies one \emph{memory deallocation} for every respective \emph{memory allocation}.
-Traditionally, when allocating memory for a variable, the programming language will return a \emph{pointer},  or a \emph{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store the record in memory.
-When there is no longer any need for the memory it have to be deallocated.
+Traditionally, when allocating memory for a variable, the programming language will return a \emph{pointer},  or a \emph{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store that record in memory.
+The memory can safely be deallocated when there is no longer any need for it, i.e. the variable holding the handle to the memory goes out of scope.
 
-Modern programming languages, like Java and Python, typically achieves this with a Garbage Collector that runs during program execution with the sole purpose of keeping the memory intact.
+Modern programming languages, like Java and Python, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
 A common implementation is a reference counted garbage collector that keeps a count over the number of references to the variables and deallocates them when there are no valid references to them.
-The downside of such an approach to memory safety is the continuous use of resources it requires to keep track all the references, every assignment and every time the variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
+The downside of such an approach to memory safety is the continuous use of resources it requires to keep track all the references.
+Every assignment to a variable and every time a variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
 
 Another common implementation is a stop-the-world garbage collector.
-It works differently, by regularly halting the executing program, and then tracing all references that are accessible from the root scope and the registers recursively.
-The memory that are accessible from these references is then marked as valid, and all the invalid memory will then be freed and accessible through new calls to memory allocations.
+It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the \emph{root} set of variables, i.e. global variables, local variables in the stack and any variable that may be accessible from the current state of the registers \cite{Wilson1992}.
+The memory that are accessible from these references are then marked as valid, and all the invalid memory will then be freed and accessible through new calls to the memory allocation function.
 The downside of such an approach is the requirement of halting the entire program in order to release the invalid memory.
 There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
 
 Another approach to keeping track of the memory resources have been to give the programmer full control of every memory allocation and deallocation.
 This is the most common approach for systems programming languages like C and C++, where performance and predictability is important.
-However, it is easier to make the mistakes of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
-This will inevitably lead the program to crash when it tries to allocate more memory when there are no memory left to allocate.
+However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
+Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
 
 \todo{This subsection about GC and memory handling might be better suited in a different
 background chapter}
 
 It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
 Rust operates a little different from C when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
-This is done statically without any interference of the programmer.
-When the compiler sees that the handle for the allocated memory leaves its scope, it knows that it is lost to the program, so it will insert a call to free the memory at the moment it leaves the scope and becomes unreachable.
+This is done statically without any interference by the programmer.
+When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
 These two aspects of memory allocation and deallocation is combined into the concept of \emph{ownership} that Rust incorporates.
-When a handle that \emph{owns} a reference to a data-segment on the heap leaves its scope, Rust knows that it can safely free the memory that is referenced by it since it is the \emph{owning handle} of the memory, that can no longer be used in the program.
-An example this ownership is shown in \autoref{lst:owning_handle}.
+When a handle that \emph{owns} a reference to a data-segment on the heap leaves its scope, Rust knows that it can safely free the memory that is referenced by it, because it is the \emph{owning handle} to that memory.
 
 \begin{listing}[tb]
 \begin{minted}{c}
-struct Book { pages: u32 }
+fn read_book(b: Book) {
+  println!("You just read {} pages", b.pages);
+}
 
 fn main() {
   // `b' is the owning handle to a Book
@@ -273,27 +351,34 @@ fn main() {
   read_book(b); // <- error: use of moved value: `b'
  }
 \end{minted}
-\caption{Owning handle}
+\caption{Example of an owned handle}
 \label{lst:owning_handle}
 \end{listing}
 
+An example of this ownership is shown in \autoref{lst:owning_handle}.
 There can only exist one owning handle for any heap- or a stack-allocated variable at any time during program execution.
 This means that if the handle gets passed as an argument to a function, this function will take \emph{ownership} of the variable, by \emph{moving} it to the new scope defined by the function.
 This move prevents any further use of the handle in its original scope and is necessary because Rust only allows one owned handle to any memory-segment at any time.
-If two or more handles to the memory had existed at the same time it would have resulted in several calls to \emph{free}, one for every time the handle left the different scopes.
+If two or more handles to the memory had existed at the same time it would have resulted in several calls to \texttt{free}, one for every time the handle left the different scopes.
 The only way to continue using the handle in its original scope would have been to give the ownership back after using it.
 
 \subsubsection{Borrowing}
+\label{ssec:borrowing}
 
 \emph{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
-Rust allows the programmer to \emph{lend} away access to handles by passing a reference to the variable around instead of the actual handle itself.
-There can exist multiple \emph{references} to the same place in memory, as long there is only one \emph{owner} of the handle itself.
-A reference is denoted with an \texttt{\&} in front of the handle, this will tell Rust that we're working with a reference to the handle, or just borrowing the handle to the end of the active scope.
+Rust allows the programmer to \emph{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
+There can exist multiple \emph{references} to the same place in memory, as long there is only one \emph{owner} of the actual handle.
+A reference is denoted with an \texttt{\&} in front of the handle, this will tell Rust that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
 Consider a modification of the previous example shown in \autoref{lst:borrowing_handle}.
-Here, the the \texttt{read\_book} function is modified to accept references to book instead of taking ownership of it, this allows us to lend out the book to be read as many times as we want.
+Here, the the \texttt{read\_book} function is modified to accept a reference to a book instead of overtaking its ownership, this allows us to lend out the book to be read as many times as we want.
+Since the book's owning handle lives in the scope defined by the main function, the memory will be deallocated when the program exits.
 
 \begin{listing}[tb]
 \begin{minted}{c}
+fn read_book(b: &Book) {
+  println!("You just read {} pages", b.pages);
+}
+
 fn main() {
   // `b' is the owning handle to a Book
   let b = Book { pages: 150 };
@@ -303,26 +388,27 @@ fn main() {
 
   // it is possible to read the book two times, because `b'
   // still lives in the scope defined by the `main' function
-  read_book(&b); z
+  read_book(&b);
  }
 \end{minted}
-\caption{Borrowing handle}
+\caption{Example of borrowing}
 \label{lst:borrowing_handle}
 \end{listing}
 
 \subsubsection{Lifetimes}
+\label{ssec:lifetimes}
 
 Rust needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
-Rust achieves this with a concept called \emph{lifetimes}, in which the compiler with the help of \emph{lifetime elisions}, can statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the programmer.
+Rust achieves this with a concept called \emph{lifetimes}, in which the compiler with the help of \emph{lifetime elisions} or \emph{lifetime specifiers}, can statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the programmer.
 Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in \texttt{C} that returns a reference into a variable allocated in its own stackframe.
-The \texttt{C} compiler will issue a warning of such a serious mistake \todo{Error? Mistake? Fault?}, but it will still let you do it.
-A similar implementation of \texttt{get\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because \texttt{n}'s lifetime is only valid for the scope defined by \texttt{get\_ref} itself, but not in the surrounding scope.
+The \texttt{C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
+A similar implementation of \texttt{name\_as\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
 
 \begin{listing}[tb]
 \begin{minted}{c}
-int *get_ref() {
-    int n = 3;
-    return &n;
+char *name_as_ref() {
+    Book b = { .name = "Gecko's", .pages = 150 };
+    return &b.name;
 }
 \end{minted}
 \caption{Returning an invalid reference in C}
@@ -331,80 +417,96 @@ int *get_ref() {
 
 \begin{listing}[tb]
 \begin{minted}{rust}
-fn get_ref() -> &i32 {
-    let n = 3;
-    &n // <- error: `n' does not live long enough
+fn name_as_ref() -> &str { // <- error: missing lifetime specifier
+    let b = Book { name: "Gecko's".to_string(), pages: 150 };
+    &b.name
 }
 \end{minted}
 \caption{Attempting to return an invalid reference in Rust}
 \label{lst:invalid_ref_rust}
 \end{listing}
 
-Lifetime elisions are applied to structures and trait declarations, among others, and they are used in function definitions in order to tell Rust that the named lifetime is valid in the surrounding scope.
-\todo{Sentence is unclear. Needs rewrite}
+\todo{Sentence is unclear? Needs rewrite?}
+Lifetime elisions are applied to structures and trait declarations, among others, and they are described in function definitions in order to tell Rust that the named lifetime is valid in the scope in which the function-call is issued.
 Such elisions are used extensively together with parameters and return values, and helps the compiler to reason about the liveliness of the references and whether they are valid or not.
 There are two kinds of lifetimes; the ones associated with \emph{input parameters} to a function, and the ones associated with the \emph{returned value} from a function.
 These are referred to as \emph{input-lifetimes} and \emph{output-lifetimes}, respectively.
-We have an error if a function returns a value with an output lifetime that is not the same as the input lifetime, because this would have resulted in use-after-free.
-
-Consider an updated version of the \texttt{get\_ref} function shown in \autoref{lst:invalid_ref_lifetimes_rust}, where the lifetime with the name \texttt{'a} is annotated by the function and tells the compiler that the value returned by the function has an output lifetime that lives longer than the function.
-We do however still have a problem, it is clear from the code that \texttt{n} is allocated within the scope of \texttt{get\_ref}, and clearly does not have the input lifetime \texttt{'a}
-As stated earlier, the only way we can return such a reference is if an input parameter has the same lifetime as the output-lifetime, a third, and working example of our problem is shown in \autoref{lst:valid_ref_rust}.
-
-\todo{Bad explanation. Should probably switch out the example to e.g. returning a reference to the number of pages in a book?}
+We have an error if a function attempts to return a value with an output lifetime that lives shorter than the input lifetime, because this would result in a use-after-free.
+As an example, consider the updated version of the \texttt{name\_as\_ref} function shown in \autoref{lst:valid_ref_rust}.
+Here we annotate a lifetime by giving it the name \texttt{'a}, the explicit name of the lifetime does not matter, what matters is that we tell Rust that our function is passed a reference to a book that is alive \emph{before} the function is called.
+Since Rust \emph{knows} that the book is alive before calling the function, it knows that it would be safe to return a reference to a field of that book because the returned value have the \emph{same} lifetime.
 
 \begin{listing}[tb]
 \begin{minted}{rust}
-fn get_ref<'a>() -> &'a i32 {
-    let n = 3;
-    &n
+fn name_as_ref<'a>(b: &'a Book) -> &'a str {
+    &b.name
 }
-\end{minted}
-\caption{Attempting to return a reference with lifetime elisions}
-\label{lst:invalid_ref_lifetimes_rust}
-\end{listing}
 
-\begin{listing}[tb]
-\begin{minted}{rust}
-fn get_ref<'a>(n: &'a i32) -> &'a i32 {
-    &n
+fn main() {
+  let b = Book { name: "Gecko's".to_string(), pages: 150 };
+  let n = name_as_ref(&b);
 }
 \end{minted}
 \caption{Retuning a reference with correct use of lifetime elisions}
 \label{lst:valid_ref_rust}
 \end{listing}
 
-\todo[inline]{I have mixed the use of data-segments, variables, pointers and handles. They should be properly defined and used within the right contexts.}
-
-\subsection{Big-Stack allocation}
-\label{par:big_stack}
-
-Rust uses "big stack" allocations and does a good job of avoiding dynamic heap allocation of data.
-\todocite{need big-stack citation. I think I've read about it somewhere}
-Combined with Rust's strong lifetime semantics, it is possible to write larger programs that are fully stack-allocated, with little or no dynamic heap allocations.
-This can significantly boost performance as the need for garbage collectors and other runtime requirements is minimal (important for embedded devices).
-
-\todo{Just rambling along to get an idea of something to write.}
-
-% subsubsection memory_safety (end)
-
 \subsection{Concurrency Model} % (fold)
 \label{ssub:concurrency_model}
 
-Rust has a concurrency model. Duh.
-\todo {We should mention this shortly. This is not something that is very relevant for our project, but it is relevant for rust itself.}
+Solving both memory safety and concurrency might sound like two entirely different problems, but the ownership system described in \autoref{sec:guaranteed_memory_safety} actually turned out to go a long way of being the solution of them both \cite{web:fearless_concurrency_with_rust}.
+While we do not utilize or focus on the concurrency of Rust in this project, it is still a very important feature for the language, so it will shortly describe parts of it in this section.
 
-% subsubsection concurrency_model (end)
+As already mentioned, Rust's ownership system helps us to reason about the liveliness of variables, and it helps us to catch errors like use-after-free, and data races by not allowing us to have multiple references to the same mutable data.
+This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
+Thus, Rust's way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
+Indeed, the core concurrency functionality in Rust is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
+This is an important distinction, because it allows for any number 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms provided in the standard library.
 
 \subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
 
-The strong type system along with lifetime inference and borrow-checking help Rust become a safe language.
-The language provides safe, zero-cost abstractions over the machine it is running on, but it is not always possible to guarantee full safety without sacrificing performance, or vice versa.
-Achieving good performance is often a synonym with direct memory access and pointer manipulation, which in itself is not considered to be safe operations.
-\todo{At least by Rust. Depends on who considers it.}
+Rust's strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
+There exists many programs that are indeed safe, but still not possible for the compiler to verify.
+Examples of code that the compiler cannot verify is code that dereference \emph{raw pointers}, or code that utilize Rust's \gls{ffi} or directly call any of the compiler intrinsics functions.
+Raw pointers in Rust are similar to a normal pointer in C, which means that they are not constrained by Rust's ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
+The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
-% subsubsection unsafe_code (end)
+The ability to make new abstractions that optimize away to essentially nothing is an important feature of Rust.
+Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
+For these tasks, Rust provides the keyword \texttt{unsafe}.
+It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} Rust's semantics about memory safety.
+When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
+\todo{Maybe add reference for this? Don't really think its necessary}
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{p{4cm}|p{7cm}}
+  \raggedleft{\textbf{Unsafe Operation}} &
+  \textbf{Why it is considered unsafe}} \\
+  \hline
+  \raggedleft{Access and update static mutable variables} &
+  Writing and reading to and from global state can lead to race conditions because every thread and scope in the program has direct access to these global variables at the same time. \\
+
+  \raggedleft{Dereference raw pointers} &
+  There are no variable bindings between a raw pointer and the data it points to, thus the normal ownership rules provided by the borrow-checker does not apply for them. This means that Rust cannot resolve issues with race conditions or dangling pointers. \\
+
+  \raggedleft{Call unsafe functions, e.g. \\ \gls{ffi} or compiler intrinsics} &
+  Rust can make no guarantees about the safety of \texttt{unsafe} functions. If a \gls{ffi} function is called we are leaving Rust's scope and entering another language domain, it is not possible for Rust to verify the safety of such code. \\
+
+\hline
+\end{tabular}
+\caption{Unsafe operations exposed through an \texttt{unsafe} block}
+\label{tab:reasons_for_unsafe}
+\end{center}
+\end{table}
+
+\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \texttt{unsafe} block, and some examples of why the operations are considered unsafe.
+Compiler intrinsics are functions that are provided by the compiler itself, not Rust, and are functions that are closely related with raw pointers.
+These are all considered unsafe and provides core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
+It is important to note that Rust's borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.
+The borrow-checker can can never be disabled, but for for certain operations it will simply not work.
+As an example, it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues, as described in \autoref{ssec:lifetimes}.
 
 \subsection{Organization}
 \label{ssub:rust:organization}
@@ -446,16 +548,17 @@ std* - The std crate depends nearly all of the crates in the lower right corner
 \subsection{Cargo}
 \label{sec:cargo}
 
-\texttt{Cargo} is Rust's package manager, a program that automates the process of building Rust programs.
+\texttt{Cargo} is Rust's package manager, a program that automates the process of building and distributing Rust programs.
 It comes bundled with the default installation of Rust.
 \texttt{Cargo} comes with a collection of tools that makes building, testing and running Rust programs a lot easier than invoking \texttt{rustc} directly.
-\texttt{Cargo} also defines a standard Rust project layout, in addition to downloading and updating package dependencies.
-This section will cover the most important features of \texttt{Cargo} and how it works that is required in order to understand the work that is described later in this project report.
+\texttt{Cargo} also defines a standard Rust project layout, in addition to downloading and maintaining package dependencies.
+This section will cover the most important features of \texttt{Cargo} and how it works, enough of what is required in order to understand the work that is described later in this project report.
 
 \subsubsection{Project Structure}
 
 Every crate, or package, built by \texttt{Cargo} requires a \texttt{Cargo.toml} file to be present in the root directory.
-This file is interpreted by \texttt{Cargo} and is used to determine the name of library and executables to be built in the package and what other packages that it depends on.
+This file is interpreted by \texttt{Cargo} and is used to determine the name of the library and executables to be built in the package.
+Any dependencies that the package might depend on is also specified in this file, \texttt{Cargo} will automatically download, compile, and link these dependencies with the project.
 It also includes information that tells \texttt{Cargo} how the package can be compiled for different target architectures, and it is used to define different \textit{features} of a package - a way to conditionally compile certain parts of the code present in the library.
 
 \begin{listing}
@@ -463,31 +566,51 @@ It also includes information that tells \texttt{Cargo} how the package can be co
 .1 hello\_world.
 .2 Cargo.lock.
 .2 Cargo.toml.
-.2 build.rs
 .2 src.
-.3 bin.
-.4 hello\_mars.rs.
-.4 hello\_jupiter.rs.
-.3 lib.rs.
 .3 main.rs.
-.2 examples.
-.3 hello\_venus.rs.
-.2 tests.
-.3 hello\_planets\_test.rs.
 }
-\caption{Cargo project structure}
-\label{lst:cargo_project_structure}
+\caption{Minimal Cargo project structure}
+\label{lst:standard_cargo_project_structure}
 \end{listing}
 
-\autoref{lst:cargo_project_structure} shows a standard \texttt{Cargo} project structure.
-The \texttt{lib.rs} file will be compiled into a crate with the project name, in this case it will be \texttt{hello\_world.rlib}.
-If a \texttt{main.rs} file is present, it will be compiled into an executable with the same name.
-Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the \texttt{hello\_world} library and all of the package dependencies with these executables.
-The \texttt{examples} directory contains different executables that demonstrates how to use the library, and finally the \texttt{tests} directory contains integration tests.
-A package can also have it's own build-routine by specifying a \texttt{build} file in \texttt{Cargo.toml}, in this case we have a \texttt{build.rs} file present in the project.
-This file is executed prior to building the library itself, and provides the possibility to e.g. compile and link third party C-libraries, or e.g. generated code prior to compilation.
-Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains information about every package that are used by the project library and executables.
-This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated or re-compiled in order for the package to behave correctly and be built consistently - independent on the target architecture it is built on, and for.
+\autoref{lst:standard_cargo_project_structure} shows a standard \texttt{Cargo} project structure for an executable target.
+If a project contains a \texttt{main.rs} file, it will be compiled into an executable with the same name as the project (\texttt{hello\_world} for this example).
+It is required by \texttt{Cargo} that this file also contains the \texttt{main} function for the program.
+Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains \emph{specific} information about every package that are used in the project.
+This information includes the name and version of the package and its dependencies, including any transitive dependencies they might have.
+This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated, or re-compiled in order for the project to be built consistently - independent on the target architecture it is built on and for.
+
+\begin{listing}
+\dirtree{%
+.1 cargo.
+.2 Cargo.lock.
+.2 Cargo.toml.
+.2 src.
+.3 bin.
+.4 build.rs.
+.4 test.rs.
+.4 ....
+.3 lib.rs.
+.3 compile.rs.
+.3 ....
+.2 tests.
+.3 test\_cargo\_build.rs.
+.3 test\_cargo\_test.rs.
+.3 ....
+}
+\caption{Expanded Cargo project structure}
+\label{lst:expanded_cargo_project_structure}
+\end{listing}
+
+\autoref{lst:expanded_cargo_project_structure} shows an example of a library project structure, and is in fact a simplified version of \texttt{Cargo's} actual structure.
+If the intended use of a project is as a library for other applications, they include a \texttt{lib.rs}.
+This file, including its submodules like \texttt{src/compile.rs} in this example, will be compiled into a Rust crate with the same name as the project, in this case it will be \texttt{cargo.rlib}.
+Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the library and all of the its dependencies with these executables.
+In \texttt{Cargo's} case, every command shown in \autoref{tab:common_cargo_commands} has its own dedicated executable target in this directory.
+
+A package can also contain a \texttt{tests} directory with integration tests, like in the above example, and finally an \texttt{examples} directory with different executables that demonstrates how to use the library (this has not been included in the above example).
+A package can also have it's own build-routine by specifying a \texttt{build} script in the \texttt{Cargo.toml}.
+This file is executed prior to building the package itself, and provides the possibility to e.g. compile and link third party C-libraries, or generate code prior to compilation.
 
 \subsubsection{Building and testing (Or Tools?)}
 
@@ -517,10 +640,10 @@ update & Update dependencies listed in Cargo.lock                 &
 
 By invoking the \texttt{cargo build} command, \texttt{Cargo} will download and resolve all package dependencies, and trigger \texttt{rustc} to compile them and link them with each other in the correct order.
 When all dependencies have been built, the build script will be invoked (if it is present in the package), before the library itself is compiled.
-Lastly, if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory, the projects executables will be compiled.
+Lastly, the projects executables will be compiled if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory.
 
 The \texttt{cargo test} command will also trigger \texttt{rustc} to compile the library in the same manner as \texttt{cargo build}, but it will leave out compilation of the project executables.
-When the library is compiled, any function that is marked with \texttt{#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
+When the library is compiled, any function that is marked with \texttt{\#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
 \texttt{Cargo} also treats all the sources found in the \texttt{examples} directory as tests, so these will be compiled instead of the other project executables, together with all the integration tests.
 When \texttt{Cargo} has finished compiling the library and its executables, it will by default run all the unit tests, including the integration tests, but it will not run the examples.
 
