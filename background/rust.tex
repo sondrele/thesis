@@ -363,6 +363,7 @@ If two or more handles to the memory had existed at the same time it would have 
 The only way to continue using the handle in its original scope would have been to give the ownership back after using it.
 
 \subsubsection{Borrowing}
+\label{ssec:borrowing}
 
 \emph{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
 Rust allows the programmer to \emph{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
@@ -395,6 +396,7 @@ fn main() {
 \end{listing}
 
 \subsubsection{Lifetimes}
+\label{ssec:lifetimes}
 
 Rust needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
 Rust achieves this with a concept called \emph{lifetimes}, in which the compiler with the help of \emph{lifetime elisions} or \emph{lifetime specifiers}, can statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the programmer.
@@ -466,17 +468,16 @@ This is an important distinction, because it allows for any number 3rd party con
 
 Rust's strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
 There exists many programs that are indeed safe, but still not possible for the compiler to verify.
-Examples of code that the compiler cannot verify is code that dereference \emph{raw pointers}, code that call directly \emph{into} external C libraries through Rust's \gls{ffi}, or code that can be called \emph{from} \gls{ffi}.
-Raw pointers in Rust are similar to a normal pointer in C, which means that they are not constrained by Rust's ownership rules, and thus allows for aliasing to mutable data and are not guaranteed to be non-null.
+Examples of code that the compiler cannot verify is code that dereference \emph{raw pointers}, or code that utilize Rust's \gls{ffi} or directly call any of the compiler intrinsics functions.
+Raw pointers in Rust are similar to a normal pointer in C, which means that they are not constrained by Rust's ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
 The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
 The ability to make new abstractions that optimize away to essentially nothing is an important feature of Rust.
 Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
 For these tasks, Rust provides the keyword \texttt{unsafe}.
-It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} Rust's semantics about memory safety, when the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
+It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} Rust's semantics about memory safety.
+When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
 \todo{Maybe add reference for this? Don't really think its necessary}
-\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \texttt{unsafe} block, and why the operations are considered unsafe.
-It is important to notice that Rust's borrow checker is still active across the unsafe code, and that it will still issue errors during compilation if the rules about ownership is not withheld.
 
 \begin{table}[ht]
 \begin{center}
@@ -485,13 +486,13 @@ It is important to notice that Rust's borrow checker is still active across the 
   \textbf{Why it is considered unsafe}} \\
   \hline
   \raggedleft{Access and update static mutable variables} &
-  Writing and reading to and from global state can lead to race conditions \\
+  Writing and reading to and from global state can lead to race conditions because every thread and scope in the program has direct access to these global variables at the same time. \\
 
   \raggedleft{Dereference raw pointers} &
-  Raw pointers introduces memory aliasing to mutable data \\
+  There are no variable bindings between a raw pointer and the data it points to, thus the normal ownership rules provided by the borrow-checker does not apply for them. This means that Rust cannot resolve issues with race conditions or dangling pointers. \\
 
   \raggedleft{Call unsafe functions, e.g. \\ \gls{ffi} or compiler intrinsics} &
-  Rust can make no guarantees about the safety of \texttt{unsafe functions}. If a \gls{ffi} function is called we are leaving Rust and entering another language domain, it is not possible for Rust to verify the safety of such code. \\
+  Rust can make no guarantees about the safety of \texttt{unsafe} functions. If a \gls{ffi} function is called we are leaving Rust's scope and entering another language domain, it is not possible for Rust to verify the safety of such code. \\
 
 \hline
 \end{tabular}
@@ -499,6 +500,13 @@ It is important to notice that Rust's borrow checker is still active across the 
 \label{tab:reasons_for_unsafe}
 \end{center}
 \end{table}
+
+\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \texttt{unsafe} block, and some examples of why the operations are considered unsafe.
+Compiler intrinsics are functions that are provided by the compiler itself, not Rust, and are functions that are closely related with raw pointers.
+These are all considered unsafe and provides core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
+It is important to note that Rust's borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.
+The borrow-checker can can never be disabled, but for for certain operations it will simply not work.
+As an example, it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues, as described in \autoref{ssec:lifetimes}.
 
 \subsection{Organization}
 \label{ssub:rust:organization}
