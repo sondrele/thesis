@@ -1,10 +1,147 @@
 \section{Object Oriented Embedded Programming}
 \label{sec:back:oo}
 
-The object oriented paradigm has proved to be an effective way to organize computer programs in many different areas.
-The paradigm focues on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-Rust as a language exposes this paradigm through the language constructs of structs, traits and enum as described in Section \ref{ssub:rust:features}.
-The C language does not provide any langauge constructs for dealing with object oriented programming directly, but this does not prevent the paradigm for being used.
+In its essense Object Oriented programming focuses on focues on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
+The paradigm has been used in embedded C programming even though the language does not define language features to aid the design.
+This section looks at how Object Oriented programming is used in conjunction with memory mapped I/O.
+
+\subsection{Memory Mapped I/O}
+Memory Mapped I/0, MMIO is a method for interfacing with peripheral devices in a computer system.
+The method entailes connecting the control registers of hardware devices to the same address bus as RAM.
+This results in a programming model where the programmer can use common memory operations to control the devices.
+
+Lets consider the Analoge-To-Digital, ADC, converter on the Gecko.
+The ADC converts an analoge signal to a digital representation.
+The ADC on the Gecko is memory mapped to the location \textbf{0x40002000}.
+This means that writing to a pointer pointing to this address will write to the control registers in the ADC device.
+An subsection of the ADC control register layout is given in \autoref{tab:back:memorymapped}.
+\begin{figure}[H]
+  \centering
+  \begin{tabular}{l|l|l|}
+    Location&Offset&Name\\
+    \hline
+    &...&...\\
+    \hline
+    \hline
+    0x40002000&0x0&CTRL\\
+    \hline
+    &0x4&CMD\\
+    \hline
+    &...&...\\
+    \hline
+    &0xC&SINGLECTRL\\
+    \hline
+    &...&...\\
+    \hline
+    &0x24&SINGLEDATA\\
+    \hline
+    &...&...\\
+    \hline
+    \hline
+    &&\\
+  \end{tabular}
+  \caption{Subsection of ADC0 Memory map for EFM32GG}
+  \label{tab:back:memorymapped}
+\end{figure}
+
+\autoref{tab:back:memorymapped} shows the control register needed to perform a single ADC convertion.
+The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like stop and start.
+We see that the CTRL register is at offset 0x0 from the base address of the ADC and that the CMD register is at offest 0x4 bytes.
+The two other register are for initializing the single conversion and reading the results of a conversion.
+All registers in the ADC register file is aligned on a 4 byte boundry.
+
+\subsection{Memory Layout of Objects}
+
+The traditional memory layout of an object in an object oriented language is an implementation detail.
+This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
+Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object.
+
+In the C programming language where classes and objectes are not part of the langauge, structs are used to create the representations for objects.
+By using structs the programmer has full control over the memory layout of the object in memory.
+
+\autoref{fig:back:adc-objects}
+
+\begin{figure}[H]
+
+  \centering
+  \subfloat[Java]{
+    \begin{tabular}{|l|l|}
+      \hline
+      \multicolumn{2}{|l|}{Adc} \\
+      \hline \hline
+      0x0&Object tag \\
+      \hline
+      0x4&CTRL\\
+      \hline
+      0x8&CMD\\
+      \hline
+      ...&...\\
+      \hline
+      0x10&SINGLECTRL\\
+      \hline
+      ...&...\\
+      \hline
+      0x28&SINGLEDATA\\
+      \hline
+      ...&...\\
+      \hline
+    \end{tabular}
+    \label{fig:back:memlayout:java}
+  }
+  \hfill
+  \subfloat[Rust]{
+    \begin{tabular}{|l|l|}
+      \hline
+      \multicolumn{2}{|l|}{Adc} \\
+      \hline \hline
+      0x0&CTRL\\
+      \hline
+      0x4&CMD\\
+      \hline
+      ...&...\\
+      \hline
+      0xC&SINGLECTRL\\
+      \hline
+      ...&...\\
+      \hline
+      0x24&SINGLEDATA\\
+      \hline
+      ...&...\\
+      \hline
+    \end{tabular}
+    \label{fig:back:memlayout:rust}
+  }
+  \hfill
+  \subfloat[C]{
+    \begin{tabular}{|l|l|}
+      \hline
+      \multicolumn{2}{|l|}{Sensor} \\
+      \hline \hline
+      0x0&CTRL\\
+      \hline
+      0x4&CMD\\
+      \hline
+      ...&...\\
+      \hline
+      0xC&SINGLECTRL\\
+      \hline
+      ...&...\\
+      \hline
+      0x24&SINGLEDATA\\
+      \hline
+      ...&...\\
+      \hline
+    \end{tabular}
+    \label{fig:back:memlayout:c}
+  }
+  \caption{Memory layout of objects}
+  \label{fig:back:memlayout}
+
+\end{figure}
+
+By comparing \autoref{tab:back:memorymapped} and \autoref{fib:back:memlayout:c} we see that the memory layout of a struct defined in C has same exact layout as the memory mapped control register of the ADC.
+This fact also holds for the memory layout of structures in Rust when annotating the structure to use C representation.
+This suggests that
 
 \subsection{The OO paradigme}
 This section introduces the paradigm and shows how to apply it to Rust, C.
@@ -132,73 +269,9 @@ Hardware components in a embedded system as the Gecko Mircocontroller are often 
 This implies for instance that the control registers for a devices such as an Analog-To-Digital is located in the address space of the CPU and can be read from and written to with the same instruction and language constructs as the rest of the memory.
 \autoref{fig:back:memorymapped} shows the control registers for the device which are placed continuously in memory.
 
-\begin{figure}[H]
-  \centering
-  \begin{tabular}{l|l|l|}
-    &&\\
-    \hline
-    Location&Offset&Name\\
-    \hline
-    0x40002000&0x0&CTRL\\
-    \hline
-    &0x4&CMD\\
-    \hline
-    &0x8&STATUS\\
-    \hline
-    &...&... \\
-    \hline
-    &0x3C&BIASPROG\\
-    \hline
-    &&\\
-
-  \end{tabular}
-  \caption{ADC0 Memory map for EFM32GG}
-  \label{tab:back:memorymapped}
-\end{figure}
-
 \autoref{fig:back:objectmemory} shows the memory layout for the objects defined in \autoref{sec:back:oo}.
 We see that the difference between the Java managed language and the C and Rust system langauges is the tag field preciding the data fields for the object.
-\begin{figure}[H]
 
-  \centering
-  \subfloat[Java]{
-    \begin{tabular}{|l|l|}
-      \hline
-      \multicolumn{2}{|l|}{Sensor} \\
-      \hline \hline
-      0x0&Object tag \\
-      \hline
-      0x4&data\\
-      \hline
-    \end{tabular}
-    \label{fig:back:memlayout:java}
-  }
-  \hfill
-  \subfloat[Rust]{
-    \begin{tabular}{|l|l|}
-      \hline
-      \multicolumn{2}{|l|}{Sensor} \\
-      \hline \hline
-      0x0&data\\
-      \hline
-    \end{tabular}
-    \label{fig:back:memlayout:rust}
-  }
-  \hfill
-  \subfloat[C]{
-    \begin{tabular}{|l|l|}
-      \hline
-      \multicolumn{2}{|l|}{Sensor} \\
-      \hline \hline
-      0x0&data\\
-      \hline
-    \end{tabular}
-    \label{fig:back:memlayout:c}
-  }
-  \caption{Memory layout of objects}
-  \label{fig:back:memlayout}
-
-\end{figure}
 
 And the control registers can be modified thru fields and member methods.
 
