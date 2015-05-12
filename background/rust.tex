@@ -472,7 +472,7 @@ The compiler can not protect against use-after-free errors or dangling pointers 
 
 The ability to make new abstractions that optimize away to essentially nothing is an important feature of Rust.
 Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
-For these tasks, Rust provides a new keyword, \texttt{unsafe}.
+For these tasks, Rust provides the keyword \texttt{unsafe}.
 It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} Rust's semantics about memory safety, when the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
 \autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \texttt{unsafe} block, and why the operations are considered unsafe.
 It is important to notice that Rust's borrow checker is still active across the unsafe code, and that it will still issue errors during compilation if the rules about ownership is not withheld.
