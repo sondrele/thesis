@@ -549,7 +549,8 @@ This section will cover the most important features of \texttt{Cargo} and how it
 \subsubsection{Project Structure}
 
 Every crate, or package, built by \texttt{Cargo} requires a \texttt{Cargo.toml} file to be present in the root directory.
-This file is interpreted by \texttt{Cargo} and is used to determine the name of the library and executables to be built in the package and what other packages that it depends on.
+This file is interpreted by \texttt{Cargo} and is used to determine the name of the library and executables to be built in the package.
+Any dependencies that the package might depend on is also specified in this file, \texttt{Cargo} will automatically download, compile, and link these dependencies with the project.
 It also includes information that tells \texttt{Cargo} how the package can be compiled for different target architectures, and it is used to define different \textit{features} of a package - a way to conditionally compile certain parts of the code present in the library.
 
 \begin{listing}
@@ -557,32 +558,51 @@ It also includes information that tells \texttt{Cargo} how the package can be co
 .1 hello\_world.
 .2 Cargo.lock.
 .2 Cargo.toml.
-.2 build.rs.
 .2 src.
-.3 bin.
-.4 hello\_mars.rs.
-.4 hello\_jupiter.rs.
-.3 lib.rs.
 .3 main.rs.
-.2 examples.
-.3 hello\_venus.rs.
-.2 tests.
-.3 hello\_planets\_test.rs.
 }
-\caption{Cargo project structure}
-\label{lst:cargo_project_structure}
+\caption{Minimal Cargo project structure}
+\label{lst:standard_cargo_project_structure}
 \end{listing}
 
-\autoref{lst:cargo_project_structure} shows a standard \texttt{Cargo} project structure.
-The \texttt{lib.rs} file will be compiled into a crate with the project name, in this case it will be \texttt{hello\_world.rlib}.
-If a \texttt{main.rs} file is present, it will be compiled into an executable with the same name.
-Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the \texttt{hello\_world} library and all of the package dependencies with these executables.
+\autoref{lst:standard_cargo_project_structure} shows a standard \texttt{Cargo} project structure for an executable target.
+If a project contains a \texttt{main.rs} file, it will be compiled into an executable with the same name as the project (\texttt{hello\_world} for this example).
+It is required by \texttt{Cargo} that this file also contains the \texttt{main} function for the program.
+Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains \emph{specific} information about every package that are used in the project.
+This information includes the name and version of the package and its dependencies, including any transitive dependencies they might have.
+This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated, or re-compiled in order for the project to be built consistently - independent on the target architecture it is built on and for.
 
-The \texttt{examples} directory contains different executables that demonstrates how to use the library, and finally the \texttt{tests} directory contains integration tests.
-A package can also have it's own build-routine by specifying a \texttt{build} file in \texttt{Cargo.toml}, in this case we have a \texttt{build.rs} file present in the project.
-This file is executed prior to building the library itself, and provides the possibility to e.g. compile and link third party C-libraries, or generate code prior to compilation.
-Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains information about every package that are used by the project library and executables.
-This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated or re-compiled in order for the package to behave correctly and be built consistently - independent on the target architecture it is built on and for.
+\begin{listing}
+\dirtree{%
+.1 cargo.
+.2 Cargo.lock.
+.2 Cargo.toml.
+.2 src.
+.3 bin.
+.4 build.rs.
+.4 test.rs.
+.4 ....
+.3 lib.rs.
+.3 compile.rs.
+.3 ....
+.2 tests.
+.3 test\_cargo\_build.rs.
+.3 test\_cargo\_test.rs.
+.3 ....
+}
+\caption{Expanded Cargo project structure}
+\label{lst:expanded_cargo_project_structure}
+\end{listing}
+
+\autoref{lst:expanded_cargo_project_structure} shows an example of a library project structure, and is in fact a simplified version of \texttt{Cargo's} actual structure.
+If the intended use of a project is as a library for other applications, they include a \texttt{lib.rs}.
+This file, including its submodules like \texttt{src/compile.rs} in this example, will be compiled into a Rust crate with the same name as the project, in this case it will be \texttt{cargo.rlib}.
+Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the library and all of the its dependencies with these executables.
+In \texttt{Cargo's} case, every command shown in \autoref{tab:common_cargo_commands} has its own dedicated executable target in this directory.
+
+A package can also contain a \texttt{tests} directory with integration tests, like in the above example, and finally an \texttt{examples} directory with different executables that demonstrates how to use the library (this has not been included in the above example).
+A package can also have it's own build-routine by specifying a \texttt{build} script in the \texttt{Cargo.toml}.
+This file is executed prior to building the package itself, and provides the possibility to e.g. compile and link third party C-libraries, or generate code prior to compilation.
 
 \subsubsection{Building and testing (Or Tools?)}
 
