@@ -49,7 +49,7 @@ We can see from the example that \texttt{a} is defined to be a 32-bit integer wi
 A sum type, also known as a tagged union, or an \texttt{enum} in Rust, is a data structure that is used to hold only one out of a small set of possible values.
 Rust's \texttt{enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
 This makes the \texttt{enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
-\autoref{lst:rust:option} shows the definition of one of Rust's most commonly used types that is used extensively throughout its standard library and other standalone libraries and applications.
+\autoref{lst:rust:option} shows the definition of one of Rust's most commonly used types that is used extensively throughout its standard library and other third party libraries and applications.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -63,9 +63,11 @@ This makes the \texttt{enum} a powerful feature of the language that can be used
 \end{listing}
 
 Every \texttt{Option} variable is an \texttt{enum} that can either have the algebraic value \texttt{Some} or the \emph{named value} \texttt{None}.
-If the variable is is \texttt{Some}, the definition also says that it needs to contain any another type \texttt{T}.
-This is also an example of generics in Rust, \texttt{T} can be anything from an integer to a string.
+If the variable is is \texttt{Some}, the definition also says that it needs to contain another type \texttt{T}.
+This is also an example of generics in Rust, \texttt{T} can be anything, e.g. an integer, a string, or a user defined type.
 The \texttt{Option} type is analogous with a normal C pointer value, which either has the value 0, or \texttt{null} (analogous to \texttt{None}), or a value that that points to a structure at a place in memory (analogous to \texttt{Some}).
+Even though the \texttt{Option} is analogous to a C pointer, it is important to note their differences.
+It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \texttt{None}.
 The usage of \texttt{enum} types described in this section become very expressive in combination with \emph{match expressions}, as discussed in \autoref{sub:pattern_matching}.
 
 \subsubsection{Case Study - List}
