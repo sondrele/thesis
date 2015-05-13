@@ -92,7 +92,8 @@ With the setup that we had, it was easy to create new executables \emph{within} 
 Basically, because we had to work around Cargo in the final part of the build process, it also meant that \emph{every} project that wanted to depend on \texttt{emlib} also had implement the same workarounds.
 Thus, we needed to solve the problem of knowing where Cargo would store the project metadata, and we needed a way to get Cargo to compile the final executables with the extra linker-arguments needed by \texttt{rustc} in order to compile the binary for the Cortex-M3.
 
-Cargo does not have much documentation over how its internal works, or how to interfere with the build process, but the documentation does mention that if Cargo is to be invoked with a command that it does not have by default, it will query the system for this command.
+Cargo does not have much documentation over how its internal works, or how to interfere with the build process, but the documentation does mention that Cargo can be extended with additional \emph{plugins}.
+If Cargo is to be invoked with a command that it does not have by default, it will query the system for this command.
 This means that if Cargo is invoked with e.g. the command \texttt{cargo foo <args>...}, it will query the system for an executable with the name \texttt{cargo-foo} and it will invoke this command with the trailing arguments if it exists.
 By looking at Cargo's source code, we could see that every triggered build included a structure called \texttt{CompileOptions}.
 The arguments passed to Cargo's different build commands are then used to compose this structure and trigger an internal compilation process, this process handles the compilation of all dependencies and generates all the different targets for the current package to be compiled.
