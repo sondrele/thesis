@@ -621,16 +621,16 @@ Most of these tools are self explanatory, but the \texttt{build} and the \texttt
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{r|l}
-\textbf{Command} & \textbf{Description}                           &
+\textbf{Command} & \textbf{Description}                           \\
 \hline
-build  & Compile the current project                              &
-clean  & Remove the target directory                              &
-doc    & Build this project's and its dependencies' documentation &
-new    & Create a new cargo project                               &
-run    & Build and execute src/main.rs                            &
-test   & Run the tests                                            &
-bench  & Run the benchmarks                                       &
-update & Update dependencies listed in Cargo.lock                 &
+build  & Compile the current project                              \\
+clean  & Remove the target directory                              \\
+doc    & Build this project's and its dependencies' documentation \\
+new    & Create a new cargo project                               \\
+run    & Build and execute src/main.rs                            \\
+test   & Run the tests                                            \\
+bench  & Run the benchmarks                                       \\
+update & Update dependencies listed in Cargo.lock                 \\
 \hline
 \end{tabular}
 \caption{Common cargo commands}
@@ -650,10 +650,10 @@ When \texttt{Cargo} has finished compiling the library and its executables, it w
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{r|l}
-\textbf{Flag} & \textbf{Description}                                   &
+\textbf{Flag} & \textbf{Description}                                   \\
 \hline
---features FEATURES   & Space-separated list of features to also build &
---target TRIPLE       & Build for the target triple                    &
+--features FEATURES   & Space-separated list of features to also build \\
+--target TRIPLE       & Build for the target triple                    \\
 \hline
 \end{tabular}
 \caption{Cargo flags to alter the package library and executables}
@@ -687,10 +687,10 @@ fn main() {
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{r|l}
-\textbf{Command} & \textbf{Output}                          &
+\textbf{Command} & \textbf{Output}                          \\
 \hline
-\texttt{\$ cargo build --features one}  & num() + num() = 2 &
-\texttt{\$ cargo build --features two}  & num() + num() = 4 &
+\texttt{\$ cargo build --features one}  & num() + num() = 2 \\
+\texttt{\$ cargo build --features two}  & num() + num() = 4 \\
 \hline
 \end{tabular}
 \caption{Example output of features}
