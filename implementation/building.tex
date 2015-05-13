@@ -152,11 +152,11 @@ An experimental process of testing and mocking the \texttt{emlib} \gls{api} bind
 \subsection{Contributing to Cargo}
 \label{ssub:contributing_to_cargo}
 
-As already mentioned, the ability to pass arbitrary flags down to the invocation of \texttt{rustc} was by design not supported by Cargo, but many people in the Rust community have wanted the ability to do so.
+As already mentioned, the ability to pass arbitrary flags further on to the invocation of \texttt{rustc} was by design not supported by Cargo, but many people in the Rust community have wanted the ability to do so.
 The reasoning for not allowing arbitrary flags to be passed down is pretty obvious.
-A compilation can go awry very quickly if it is up to the package \emph{author} what flags should be passed to \texttt{rustc} instead of the package \emph{builder}.
-This would give the author the ability to set the restriction for a library, not the user.
-Different systems do not necessarily support all flags and possibilities, so if a package dependency says that it is to be built in a specific way it might not work for the system that is building it.
+A compilation can go awry very quickly if it is up to the package \emph{author} what flags should be passed to \texttt{rustc}, instead it should be up to the one \emph{building} the package.
+This would have given the author the ability to set the restriction for a library, and limit the possibilities of what a user could have done with it.
+Different systems do not necessarily support all flags and possibilities, so if a package dependency says that it is to be built in a specific way it might not work for the system that is trying building it.
 
 There have been an issue on Cargo's project page about implementing a new subcommand (called \texttt{cargo-rustc}) for the package manager.
 This subcommand would have allowed for passing arbitrary flags further on to \texttt{rustc}, but with the restriction of only compiling a \emph{single} target at a time.
