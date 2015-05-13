@@ -41,11 +41,13 @@ When the transition to Cargo started, we focused on structuring the main library
 By invoking the \texttt{cargo build --verbose} command, it was possible to see the output from what Cargo attempted to build when it failed, and then structure the project accordingly.
 
 A big priority was to to shrink the size of the makefiles that was in the project by making them a part of the standard build process for \texttt{emlib} instead, doing this would help us get a long way of ensuring that the builds done by Cargo could be consistent across systems.
-By defining a Rust build script and utilizing a Rust build-dependency called \texttt{gcc} \cite{web:cargo_gcc} (not to be mistaken with the C-compiler with the same name), we were able to compile the C sources from Silabs' emlib and link them with our bindings directly as part of the build process.
+By defining a Rust build script and utilizing a Rust build-dependency called \texttt{gcc} \cite{web:cargo_gcc}, we were able to compile the C sources from Silabs' emlib and link them with our bindings directly as part of the build process.
+Note that the \texttt{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the \texttt{arm-none-eabi-gcc} compiler.
 By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies like the \texttt{core} and \texttt{collections} libraries.
 
 Because the project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard Rust libraries that we wanted to utilize for the ARM Cortex-M3.
 We could not utilize the pre-compiled libraries that are already included with \texttt{rustc}, since these only works for the current system architecture.
+\todo{Mention this in discussion. Is there a better way of solving this? Currently it fetches a release tarball of the language. It fetches more than it needs to for each library, but it's quicker/easier than using e.g. git to do it. It does however take a little while to compile all the dependencies on smaller machines.}
 We solved this problem by implementing a new Cargo build-dependency, called \texttt{rust-src} \cite{github:rust_src}, whose purpose is to download the entire Rust source code that is compliant with the instance of \texttt{rustc} that is currently compiling the library.
 By making it a task for each build to fetch its own source code, we were guaranteed that the dependencies we used for the project would always compile, independent of the current instance of \texttt{rustc} that was installed on the system.
 \autoref{tab:compiled_libraries} summarizes the different crates that we have fetched from Rust's standard library in order to use them with our project.
