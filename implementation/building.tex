@@ -76,8 +76,8 @@ rand        & Generate random values. \\
 By design Cargo only supported passing two flags further on to \texttt{rustc}, those were \texttt{-L} and \texttt{-l}, their purpose is to tell \texttt{rustc} to link with an external library by looking in a directory (specified with the \texttt{-L} flag), for a library with the specified name (specified with the \texttt{-l} flag).
 The last step in the build process involved linking \texttt{emlib} and the other libraries with an actual executable for the Cortex-M3.
 This was not possible to do with Cargo since it required us to pass a couple of extra linker-flags further on to \texttt{rustc}.
-\todo{Håvard: Jeg har ingen anelse over hvor riktig dette er. Noe av dette blir vel beskrevet et annet sted, vi får finne en måte å referere til riktig seksjon her, uten å gå altfor mye i detalj...}
 The flags were needed by \texttt{rustc} in order to tell it to link with an external library for a different architecture and to include a separate linker-script that took care of booting up the executable on this architecture.
+\todo{Reference section explaining these flags in detail?}
 
 Another issue that was introduced by automatic compilation with Cargo, was how it structured the packages it compiled.
 When Cargo builds a project and its dependencies it structures all the generated metadata and the compiled libraries within a \texttt{target} directory, and an extra filename gets appended to all of these libraries.
