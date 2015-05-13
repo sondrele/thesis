@@ -1,210 +1,335 @@
 \section{Object Oriented Embedded Programming}
 \label{sec:back:oo}
 
-The object oriented paradigm has proved to be an effective way to organize computer programs in many different areas.
-The paradigm focues on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-Rust as a language exposes this paradigm through the language constructs of structs, traits and enum as described in Section \ref{ssub:rust:features}.
-The C language does not provide any langauge constructs for dealing with object oriented programming directly, but this does not prevent the paradigm for being used.
+In its essense Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
+The paradigms essensial concept can be applied to embedded C programming even though the language does not define language features to aid the design.
+This section looks at how Object Oriented programming is used in conjunction with memory mapped I/O in embedded programming.
+We look at the memory layout of a memory mapped \gls{adc} and see how this can be represented as an object.
 
-\subsection{The OO paradigme}
-This section introduces the paradigm and shows how to apply it to Rust, C.
+\subsection{Memory Mapped I/O}
+\gls{mmio} is a method for interfacing with peripheral devices in a computer system.
+The method entails connecting the control registers of hardware devices to the same address bus as RAM.
+This results in a programming model where the programmer can use common memory operations to control the devices.
 
-\begin{listing}[H]
-  \begin{minted}{java}
-    class Sensor {
-      private int data;
-
-      Sensor() {
-        this.data = 0;
-      }
-
-      int measure() {
-        return this.data;
-      }
-
-      static void main(String[] args) {
-        Sensor sensor = new Sensor();
-        System.out.println(sensor.measure());
-      }
-    }
-  \end{minted}
-  \caption{Sensor defined in Java}
-  \label{lst:back:oo:java}
-\end{listing}
-
-In \autoref{lst:back:oo:java} we define the class Sensor with one private field data, a constructor method to create the object and a measure method to get the sensor data.
-In the main function we create an instance of the Sensor, this allocates memory on the heap and saves a reference to the memory on the stack refered to by the  variable called sensor.
-Inside the Sensor constructor method the implicit variable this is bound to the reference to the newly allocated heap memory set aside for the Sensor object.
-This is done automatically when calling a constructor method with the keyword new.
-With the this variable we can refere to the objects fields and methods.
-When we hold a reference to an object as the sensor variable in the main method we can apply the methods of the object on the reference with the method call syntax.
-This causes the this variable in the method to be bound to the reference to the object the method is applied to.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    struct Sensor {
-      data: u32
-    }
-
-    impl Sensor {
-
-      fn new() -> Sensor {
-        Sensor { data: 0 }
-      }
-
-      fn measure(&self) -> u32 {
-        self.data
-      }
-    }
-
-    fn main() {
-      let s1 = Sensor::new();
-      println!("{}", s1.measure());
-
-      let s2 = Box::new(Sensor::new());
-      println!("{}", s2.measure());
-    }
-  \end{minted}
-  \caption{Sensor defined in Rust}
-  \label{lst:back:oo:rust}
-\end{listing}
-
-The object oriented pattern has special syntax in Rust.
-As \autoref{lst:back:oo:rust} shows, we create the Class definition by using a struct for specifing the data fields and an impl for implementing the methods.
-Rust does not define special mechanism for constructing objects.
-The object construction pattern shown in \autoref{lst:back:oo:rust}, is simply the ideomatic way to add a constructor to a object.
-But the programmer is free to for instance return a reference to the created object if it is more suitable.
-The new method in \autoref{lst:back:oo:rust} is flexible enough to create both stack allocated and heap allocated objects of the Sensor type.
-This is shown in the main method where s1 is allocated on the stack while s2 is allocated on the heap.
-The Box::new function allocates heap memory in Rust.
-When the method measure is called on the reference to the object the self variable is bound to the reference.
-This is analogous to the this variable in \autoref{lst:back:oo:java}.
-The self parameter appears explicit in the method signature and is here in the for of an immutable reference.
-The self parameter can be either a direct variable, an immutable reference or a mutable reference in Rust.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    typedef struct {
-      uint32_t data;
-    } Sensor;
-
-    void Sensor_New(Sensor *self) {
-      self->data = 0;
-    }
-
-    uint32_t Sensor_Measure(Sensor *self) {
-      return self.data;
-    }
-
-    int main() {
-
-      Sensor s1;
-      Sensor_New(&s1);
-      printf("%d\n", Sensor_Measure(&s1));
-
-      Sensor* s2 = (Sensor*)malloc(sizeof(Sensor));
-      Sensor_New(s2);
-      printf("%d\n", Sensor_Measure(s2));
-      free(s2);
-
-      return 0;
-    }
-  \end{minted}
-  \caption{Sensor defined in C}
-  \label{lst:back:oo:c}
-\end{listing}
-
-C does not provide any syntax for dealing with method calls on objects, but the object oriented paradigm can be used through convention.
-\autoref{lst:back:oo:c} shows a definiton for a Sensor class with constructor function and member function in the C programming language.
-Here we see the method call mechanism explicit in the main function where the a reference to the object has to be passed explicit as the first argument.
-Memory allocation is also handled explicit through malloc when allocating a object on the heap.
-The pattern can be changed to expose a New function that returns a reference to a heap allocated object, but this either prevents stack allocated objects or leads to alot of to to handle it.
-The main function also contains a explicit free of the heap allocated memory which is not present in \autoref{lst:back:oo:rust}.
-This is due to the ownership rules of Rust explained in \autoref{sec:back:rust:own}.
-
-\subsection{Object Oriented Hardware components}
-
-In the previous section we saw how the OO-paradigm is implemented in Java, Rust and C.
-We can see that in essence the paradigm consists of a datatype with a number of fields, a collection of function that operates on the fields given a reference to a object of this datatype.
-This paradigm can be directly applied to software components in a embedded system such as a circular buffer.
-
-Hardware components in a embedded system as the Gecko Mircocontroller are often exposed as memory mapped devices.
-This implies for instance that the control registers for a devices such as an Analog-To-Digital is located in the address space of the CPU and can be read from and written to with the same instruction and language constructs as the rest of the memory.
-\autoref{fig:back:memorymapped} shows the control registers for the device which are placed continuously in memory.
-
+Lets consider the \gls{adc} on the Gecko.
+The \gls{adc} converts an analoge signal to a digital representation.
+The \gls{adc} on the Gecko is memory mapped to the location \textbf{0x40002000}.
+This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
+A subsection of the \gls{adc} control register layout is given in \autoref{tab:back:memorymapped}.
 \begin{figure}[H]
   \centering
   \begin{tabular}{l|l|l|}
-    &&\\
-    \hline
     Location&Offset&Name\\
+    \hline
+    &...&...\\
+    \hline
     \hline
     0x40002000&0x0&CTRL\\
     \hline
     &0x4&CMD\\
     \hline
-    &0x8&STATUS\\
+    &...&...\\
     \hline
-    &...&... \\
+    &0xC&SINGLECTRL\\
     \hline
-    &0x3C&BIASPROG\\
+    &...&...\\
+    \hline
+    &0x24&SINGLEDATA\\
+    \hline
+    &...&...\\
+    \hline
     \hline
     &&\\
-
   \end{tabular}
-  \caption{ADC0 Memory map for EFM32GG}
+  \caption{Subsection of ADC0 Memory map for EFM32GG}
   \label{tab:back:memorymapped}
 \end{figure}
 
-\autoref{fig:back:objectmemory} shows the memory layout for the objects defined in \autoref{sec:back:oo}.
-We see that the difference between the Java managed language and the C and Rust system langauges is the tag field preciding the data fields for the object.
+A subsection of the \gls{adc} control register is given in \autoref{fig:back:memorymapped}
+It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
+The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
+We see that the CTRL register is at offset 0x0 from the base address of the \gls{adc} and that the CMD register is at offest 0x4 bytes.
+The two registers SINGLECTRL and SINGLEDATA are for initializing the single conversion and reading the results of a conversion respectively.
+
+\subsection{Memory Layout of Objects}
+
+The traditional memory layout of an object in an object oriented language is an implementation detail.
+This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
+The layout is aslo a implementation detail of Rust for the same reasons but annotating the struct with \textbf{#[repr(C)]} ensures C compatible arrangement.
+Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
+
+In the C programming language where classes and objectes are not part of the langauge, structs are used to create the representations for objects.
+By using structs the programmer has full control over the memory layout of the object in memory.
+The Object Oriented concepts used for \gls{mmio} used static dispatch and the structs does not include tag fields or references to virtual tables.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.31\textwidth}
+    \begin{minted}{java}
+class ADC {
+  int CTRL;
+  int CMD;
+  // ...
+  int SINGLECTRL;
+  // ...
+  int SINGLEDATA;
+  // ...
+}
+    \end{minted}
+    \caption{Java}
+    \label{fig:back:adc-objects:java}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.31\textwidth}
+    \begin{minted}{rust}
+#[repr(C)]
+struct ADC {
+  CTRL: u32,
+  CMD: u32,
+  // ...
+  SINGLECTRL: u32,
+  // ...
+  SINGLEDATA: u32,
+  // ...
+}
+    \end{minted}
+    \caption{Rust}
+    \label{fig:back:adc-objects:rust}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.31\textwidth}
+    \begin{minted}{c}
+typedef struct {
+  uint32_t CTRL;
+  uint32_t CMD;
+  // ...
+  uint32_t SINGLECTRL;
+  // ...
+  uint32_t SINGLEDATA;
+  // ...
+} ADC;
+    \end{minted}
+    \caption{C}
+    \label{fig:back:adc-objects:c}
+  \end{subfigure}
+
+  \caption{Definition of \gls{adc}}
+  \label{lst:back:adc-objects}
+\end{figure}
+
+\autoref{lst:back:adc-objects} shows how to define a Java class and Rust and C structs for the \gls{adc} on the Gecko.
+The memory layout of objects based on the definitions in \autoref{lst:back:adc-objects} are given in \label{fig:back:memlayout}.
+
 \begin{figure}[H]
 
   \centering
-  \subfloat[Java]{
+  \begin{subfigure}{0.31\textwidth}
     \begin{tabular}{|l|l|}
       \hline
-      \multicolumn{2}{|l|}{Sensor} \\
-      \hline \hline
-      0x0&Object tag \\
-      \hline
-      0x4&data\\
-      \hline
+      0x0&Object tag \\ \hline
+      0x4&CTRL       \\ \hline
+      0x8&CMD        \\ \hline
+      ...&...        \\ \hline
+      0x10&SINGLECTRL\\ \hline
+      ...&...        \\ \hline
+      0x28&SINGLEDATA\\ \hline
+      ...&...        \\ \hline
     \end{tabular}
+    \caption{Java}
     \label{fig:back:memlayout:java}
-  }
+  \end{subfigure}
   \hfill
-  \subfloat[Rust]{
+  \begin{subfigure}{0.31\textwidth}
     \begin{tabular}{|l|l|}
       \hline
-      \multicolumn{2}{|l|}{Sensor} \\
-      \hline \hline
-      0x0&data\\
-      \hline
+      0x0&CTRL       \\ \hline
+      0x4&CMD        \\ \hline
+      ...&...        \\ \hline
+      0xC&SINGLECTRL \\ \hline
+      ...&...        \\ \hline
+      0x24&SINGLEDATA\\ \hline
+      ...&...        \\ \hline
     \end{tabular}
+    \caption{Rust}
     \label{fig:back:memlayout:rust}
-  }
+  \end{subfigure}
   \hfill
-  \subfloat[C]{
+  \begin{subfigure}{0.31\textwidth}
     \begin{tabular}{|l|l|}
       \hline
-      \multicolumn{2}{|l|}{Sensor} \\
-      \hline \hline
-      0x0&data\\
-      \hline
+      0x0&CTRL       \\ \hline
+      0x4&CMD        \\ \hline
+      ...&...        \\ \hline
+      0xC&SINGLECTRL \\ \hline
+      ...&...        \\ \hline
+      0x24&SINGLEDATA\\ \hline
+      ...&...        \\ \hline
     \end{tabular}
+        \caption{C}
     \label{fig:back:memlayout:c}
-  }
+  \end{subfigure}
   \caption{Memory layout of objects}
   \label{fig:back:memlayout}
 
 \end{figure}
 
-And the control registers can be modified thru fields and member methods.
+By comparing \autoref{tab:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in Rust and C has same exact layout as the memory mapped control register of the \gls{adc}.
+This suggests that if a pointer to the memory mapped I/O device is considered as a reference to an \gls{adc} object the object oriented pattern can be used to interface with the \gls{mmio}.
 
-In order to do so we need to modify the object story defined above.
-In the usual object oriented case the object is created, used, passed around and deallocated.
-Each time we create a new object it is either allocated on the current stack frame or at som arbirary heap location.
-This does not hold true for a memory mapped hardware device.
-The device does not have to be allocated or deallocated, its lifetime is static and exists from the program starts executing on the microcontroller.
-Instead of a constructor function we need a way to get a reference to the memory mapped device.
+\subsection{Adding Object Functionality}
+
+This sections shows how we add functionality called methods to the \gls{mmio} objects.
+Both languages uses static dispatch where the compiler knows the address of the function to apply at compile time.
+This ensures that C and Rust provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
+
+\subsubsection{Static Dispatch in C}
+
+Implementing objects with static dispatch is a straight forward process in C.
+Here we define a function which takes a reference to the object as the first parameter.
+The function then uses the object reference in the same manner as the implicit \emph{this} parameter in conventional object oriented languages such as Java.
+\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using a object oriented pattern.
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}{0.47\textwidth}
+      \begin{minted}{c}
+// ADC Member function with exlicit
+// object reference
+uint32_t ADC_DataSingleGet(
+           ADC *const adc) {
+  // The adc pointer is used as
+  // a reference to the this object
+  return adc.SINGLEDATA;
+}
+
+void main() {
+  // The next section describes
+  // how to instantiate MMIOs
+  ADC adc;
+  // Call the member function
+  // passing in an explicit
+  // reference to the object
+  ADC_DataSingleGet(&adc);
+}
+      \end{minted}
+      \caption{C}
+      \label{lst:back:adc:get:c}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.47\textwidth}
+      \begin{minted}{rust}
+impl Adc {
+  // Rust lets the programmer
+  // specify how to accept the
+  // object when invoked with
+  // the dot notation
+  pub fn data_single_get(&self) -> u32 {
+    // self now is a refence to the ADC MMIO
+    self.SINGLEDATA
+  }
+}
+
+fn main() {
+  // Instantiation of MMIOs
+  // is handled in the next section
+  let adc = Adc;
+
+  // The Rust compiler issues
+  // a static call to the
+  // member method and passes
+  // in the reference to the MMIO
+  adc.data_single_get();
+}
+      \end{minted}
+      \caption{Rust}
+      \label{lst:back:adc:get:rust}
+  \end{subfigure}
+  \caption{Member methods}
+  \label{lst:back:adc:get}
+
+\end{figure}
+In Rust a \emph{impl} block is used to define member methods for the struct.
+These member method can be called using the dot notation known from object oriented languages.
+
+\subsection{Instantiating a MMIO object}
+
+Now that we have shown that \gls{mmio} can be represented as object defined by structs, we consider how to instantiate objects.
+Usually an object in the object oriented paradigm is created with a constructor and deallocated with a destructor.
+The constructor is responsible for allocating the object and initializing the fields with initial values.
+Analogously the destructor is responsible for deallocating the object and any owned member objects.
+\gls{mmio} devices have a fixed position in the memory and does not need to be allocated, they also generally do not have any owned members.
+Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate a variable holding the reference to the \gls{mmio} and having the desired type.
+\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both C and Rust.
+
+\begin{figure}[H]
+
+  \begin{subfigure}{0.31\textwidth}
+    \begin{minted}{rust}
+const ADC0_BASE: *mut Adc
+      = 0x40002000 as *mut Adc
+
+fn main() {
+  let adc0 = unsafe {
+    match ADC0_BASE.as_mut() {
+      Some(reference) => reference,
+      None => panic!("...")
+    }
+  };
+}
+    \end{minted}
+    \caption{Rust}
+    \label{fig:oo:instantiate:rust}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.31\textwidth}
+    \begin{minted}{c}
+#define ADC0_BASE 0x40002000
+
+void main() {
+  ADC* adc0 = (ADC*)ADC0_BASE;
+}
+    \end{minted}
+        \caption{C}
+    \label{fig:oo:instantiate:c}
+  \end{subfigure}
+  \caption{Instantiating MMIOs}
+  \label{fig:oo:instantiate}
+
+\end{figure}
+
+\todo{Move this to discussion}
+\autoref{fig:oo:instantiate:rust} contains the Rust keyword unsafe.
+As \autoref{ssub:unsafe_code} describes using this keyword requires the programmer to ensure that the code is still safe.
+The direct reason for the need to annotate the block with unsafe is the fact that the function \texttt{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \texttt{unsafe}.
+The underlying reason is a bit more subtle.
+The unsafety here comes from the fact that \texttt{as\_mut} converts a raw pointer to a safe reference.
+After the conversion the pointer must be safe to dereference.
+This is the programmars part of the contract to ensure when using a unsafe block.
+So what is unsafe about derefencing raw pointer?
+Well firstly the pointer can be a null pointer, this case is handled by the fact that \texttt{as\_mut} returns \textbf{None} in that case.
+The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
+For instance, dereferencing the pointer 0x \todo{Find a funky address} causes the Gecko to HardFault on a Bus Error.
+In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}.
+So we know that this address can be safely dereferenced.
+
+The last point about unsafety that can be made here is the fact that using this, mutable aliases to \gls{mmio}s can be created.
+Consider the code in \autoref{lst:oo:aliasing-mutability}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+fn new_adc0() -> Adc {
+  unsafe { match ADC0_BASE.as_mut() {
+    Some(reference) => reference,
+    None => panic!("...")
+  }
+}
+
+fn main() {
+  let adc0 = new_adc0();
+  let _adc0 = new_adc0();
+}
+  \end{minted}
+  \caption{Creating mutable aliases}
+  \label{lst:oo:aliasing-mutability}
+\end{listing}
