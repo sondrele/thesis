@@ -22,4 +22,7 @@
 *.fls
 *.out.ps
 *.pyg
-
+*.gls
+main.glg
+main.alg
+main.acr
