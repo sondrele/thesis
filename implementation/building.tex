@@ -164,7 +164,8 @@ This means that only \emph{either} the library, a binary, an example or a test (
 These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our \texttt{emlib}, can depend on it for completing the build.
 Indeed, the functionality proposed with this subcommand would be enough to cover all the cases that we solved with our implementation of \texttt{cargo-linkargs}.
 
-After gaining insight into Cargo's internals during the development of \texttt{cargo-linkargs}, it was interesting to see if we could get this same functionality into Cargo itself by implementing \texttt{cargo-rustc}.
+After gaining insight into Cargo's internals during the development of \texttt{cargo\-linkargs}, it was interesting to see if we could get this same functionality into Cargo itself by implementing \texttt{cargo-rustc}.
+Even though \texttt{cargo-linkargs} worked great for its purpose, it was not very ergonomic for \texttt{emlib} to depend on a third party plugin in order to work, especially if this functionality could be natively supported by Cargo.
 Not only would it benefit our project, it would also give many other Rust projects the ability to use Cargo for the entire compilation process.
-Since both Rust and Cargo are open source projects, it was easy to get in contact with the project maintainers about the issue, and eventually submit a pull-request with the new subcommand.
-After it was reviewed by one of the project maintainers, the pull-request was accepted and merged into Cargo's code base.
+Since both Rust and Cargo are open source projects, it was quick to get in contact with the project maintainers about the issue, and eventually submit a pull-request with the new subcommand.
+After it was reviewed by one of the project maintainers, the pull-request was accepted and merged into Cargo's code base, and it is already part of Rust's nightly builds.
