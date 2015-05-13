@@ -498,16 +498,16 @@ Most of these tools are self explanatory, but the \texttt{build} and the \texttt
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{r|l}
-\textbf{Command} & \textbf{Description}                           &
+\textbf{Command} & \textbf{Description}                           \\
 \hline
-build  & Compile the current project                              &
-clean  & Remove the target directory                              &
-doc    & Build this project's and its dependencies' documentation &
-new    & Create a new cargo project                               &
-run    & Build and execute src/main.rs                            &
-test   & Run the tests                                            &
-bench  & Run the benchmarks                                       &
-update & Update dependencies listed in Cargo.lock                 &
+build  & Compile the current project                              \\
+clean  & Remove the target directory                              \\
+doc    & Build this project's and its dependencies' documentation \\
+new    & Create a new cargo project                               \\
+run    & Build and execute src/main.rs                            \\
+test   & Run the tests                                            \\
+bench  & Run the benchmarks                                       \\
+update & Update dependencies listed in Cargo.lock                 \\
 \hline
 \end{tabular}
 \caption{Common cargo commands}
@@ -520,17 +520,17 @@ When all dependencies have been built, the build script will be invoked (if it i
 Lastly, if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory, the projects executables will be compiled.
 
 The \texttt{cargo test} command will also trigger \texttt{rustc} to compile the library in the same manner as \texttt{cargo build}, but it will leave out compilation of the project executables.
-When the library is compiled, any function that is marked with \texttt{#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
+When the library is compiled, any function that is marked with \texttt{\#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
 \texttt{Cargo} also treats all the sources found in the \texttt{examples} directory as tests, so these will be compiled instead of the other project executables, together with all the integration tests.
 When \texttt{Cargo} has finished compiling the library and its executables, it will by default run all the unit tests, including the integration tests, but it will not run the examples.
 
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{r|l}
-\textbf{Flag} & \textbf{Description}                                   &
+\textbf{Flag} & \textbf{Description}                                   \\
 \hline
---features FEATURES   & Space-separated list of features to also build &
---target TRIPLE       & Build for the target triple                    &
+--features FEATURES   & Space-separated list of features to also build \\
+--target TRIPLE       & Build for the target triple                    \\
 \hline
 \end{tabular}
 \caption{Cargo flags to alter the package library and executables}
@@ -564,10 +564,10 @@ fn main() {
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{r|l}
-\textbf{Command} & \textbf{Output}                          &
+\textbf{Command} & \textbf{Output}                          \\
 \hline
-\texttt{\$ cargo build --features one}  & num() + num() = 2 &
-\texttt{\$ cargo build --features two}  & num() + num() = 4 &
+\texttt{\$ cargo build --features one}  & num() + num() = 2 \\
+\texttt{\$ cargo build --features two}  & num() + num() = 4 \\
 \hline
 \end{tabular}
 \caption{Example output of features}
