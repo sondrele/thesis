@@ -21,7 +21,7 @@ We looked at armboot's Makefile to figure out what flags to pass to \texttt{rust
 \subsection{Transitioning to Cargo}
 \label{ssub:transitioning_to_cargo}
 
-It was always a goal to use Cargo for building, distributing and managing the packages and dependencies that would become part of this project.
+It was always a goal to use Cargo for building, distributing, and managing the packages and dependencies that would become part of this project.
 When the project first started out it was built by compiling Rust's core library and Silabs' emlib C sources separately, and then linking them with the \gls{ffi} bindings for emlib by hand.
 While this approach worked, it was far from optimal for a number of reasons:
 
