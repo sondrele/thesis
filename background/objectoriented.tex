@@ -55,6 +55,7 @@ The two registers SINGLECTRL and SINGLEDATA are for initializing the single conv
 
 The traditional memory layout of an object in an object oriented language is an implementation detail.
 This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
+The layout is aslo a implementation detail of Rust for the same reasons but annotating the struct with \textbf{#[repr(C)]} ensures C compatible arrangement.
 Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
 In the C programming language where classes and objectes are not part of the langauge, structs are used to create the representations for objects.
