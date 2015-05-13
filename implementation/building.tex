@@ -22,6 +22,9 @@ We looked at armboot's Makefile to figure out what flags to pass to \texttt{rust
 \label{ssub:transitioning_to_cargo}
 
 It was always a goal to use Cargo for building, distributing, and managing the packages and dependencies that would become part of this project.
+An obvious reason for this was to lower the bar for other potential users of the library, and to make our project as standalone as possible, so that it is easier to include and extend it as a part of other potential projects.
+By letting \texttt{Cargo} handle as much as possible in its build routine, it will automate a lot of the work that every programmer using the library otherwise would have to do manually
+
 When the project first started out it was built by compiling Rust's core library and Silabs' emlib C sources separately, and then linking them with the \gls{ffi} bindings for emlib by hand.
 While this approach worked, it was far from optimal for a number of reasons:
 
