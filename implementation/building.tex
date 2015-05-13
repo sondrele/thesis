@@ -128,7 +128,7 @@ This flag was included for debugging purposes. \\
 
 In order to solve the problems we had with building the project, we created a new subcommand called \texttt{cargo-linkargs} \cite{github:cargo_linkargs} that depends on Cargo itself.
 This subcommand was created specifically with \texttt{emlib} in mind, and supports all the flags that the \texttt{cargo-build} command supports, including the flags shown in \autoref{tab:cargo_linkargs}.
-We got rid of the two problems we had with building \texttt{emlib} once \texttt{cargo-linkargs} were working.
+We got rid of the two problems we had with building \texttt{emlib} once \texttt{cargo-linkargs} was working.
 The problem with resolving the location of generated metadata were solved implicitly just by utilizing Cargo, and the extra linker-arguments could easily be passed on to the invocation of \texttt{cargo-linkargs} via the project's makefile.
 
 \subsection{Continuous Integration}
