@@ -22,4 +22,7 @@
 *.fls
 *.out.ps
 *.pyg
-.standalone.tex
+*.gls
+main.glg
+main.alg
+main.acr

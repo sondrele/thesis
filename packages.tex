@@ -62,8 +62,8 @@
 % Per-chapter numbering of figures and tables
 \usepackage{chngcntr}
 % See: https://tex.stackexchange.com/questions/28333/continuous-v-per-chapter-section-numbering-of-figures-tables-and-other-docume
-\counterwithin{figure}{section}
-\counterwithin{table}{section}
+% \counterwithin{figure}{section}
+% \counterwithin{table}{section}
 
 % To provide appendices in the contents
 \usepackage[toc,page]{appendix}
@@ -73,7 +73,7 @@
 
 % For listings. This package requires the pdf to be compiled with '-shell-escape' and that
 % python-pygments is found in the system path
-\usepackage{minted}
+\usepackage[chapter]{minted}
 
 \usepackage{caption}
 \usepackage{subcaption}
