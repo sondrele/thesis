@@ -2,7 +2,15 @@
 
 This section looks at the size of the end object files for various Rust libraries and examples.
 A comparison with the size of identical programs implemented in C is also included.
-Each program is compiled with optimization levels O0, O1, O2 and O3, the O0 level is compiled both with and without debugging symbols.
+
+Code size is an important factor in an embedded system.
+Primarly the system is more restricted than conventional systems exspecially when it comes to storage.
+For the EFM32 line of microcontrollers the code is stored in flash memory.
+In \autoref{efm32-family} in \autoref{sec:back:hw} we showed that the flash memory in the EFM32 family of microcontrollers ranges from 4kB to 1024kB.
+As \autoref{sec:before-main} explains the flash memory should not only contain the program code but also the constant data defined in the program.
+This limits the code size even further.
+
+Each program was compiled with optimization levels O0, O1, O2 and O3, the O0 level is compiled both with and without debugging symbols.
 Compiling the library results in a lib*.rlib file which is an archive containing object files for the code contained in the library.
 Compiling executable programs results in an elf binary file.
 The size is then calculated by executing the \emph{arm-none-eabi-gcc} program.

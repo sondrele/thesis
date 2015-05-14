@@ -45,7 +45,7 @@ The \textbf{.bss} section is a logical section so it is not really stored in the
 The header specfies the size of the \textbf{.bss} section which describes the size of the zero-initialized data in the program.
 
 \subsection{Before main}
-
+\label{sec:before-main}
 Before the \textbf{main} function executes, all static data must be initialized.
 The data is divided into two categories; zero and non-zero initialized.
 The non-zero initialized data are contained either in the \textbf{.text} (read-only-data) or \textbf{.data} sections of the \textbf{elf} binary.
