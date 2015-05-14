@@ -186,44 +186,46 @@ Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter
 
 \subsubsection{Loops}
 
-Rust provides the two known loop constructs \textbf{for} and \textbf{while}, in addition to \textbf{loop} for infinite loops.
-The \textbf{for} loop is not the conventional \textit{for (initialize; condition; increment)}, it operates on iterators.
-To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in Listing \ref{lst:rust:for}
+Rust provides the two loop constructs known from C, \texttt{for} and \texttt{while}, in addition to \texttt{loop} for infinite loops.
+The \texttt{for} loop is not the conventional \texttt{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
+Rust's \texttt{for} statement is merely syntactic sugar for a \texttt{loop} with an internal \texttt{match} around the iterator's \texttt{next()} function.
+\autoref{lst:rust:desugared-for} shows a simplified, expanded version of the code presented in \autoref{lst:rust:for}.
 
+% To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in \autoref{lst:rust:for}
+\todo{Why not provide an example using List, instead of a Vector?}
 
-\begin{minipage}[b]{0.5\linewidth}
-  \begin{listing}[H]
+\begin{listing}[!h]
+ \begin{minipage}{0.45\textwidth}
+\begin{listing}[H]
   \begin{minted}{rust}
+let values = vec![1, 2, 3];
 
-    let values = vec![1, 2, 3];
-    for x in 0..10 {
-      println!("{}", x);
-    }
+for x in values {
+  println!("{}", x);
+}
 
-  \end{minted}
-  \caption{Desugaring for loop}
-  \label{lst:rust:for}
-  \end{listing}
-  \end{minipage}
 
-\begin{minipage}[b]{0.5\linewidth}
+\end{minted}
+\caption{A \texttt{for} loop for an iterators}
+\label{lst:rust:for}
+\end{listing}
+ \end{minipage}
+ \begin{minipage}{0.45\textwidth}
   \begin{listing}[H]
     \begin{minted}{rust}
-
-      let mut it = values.into_iter();
-      loop {
-        match it.next() {
-          Some(x) => println!("{}", x),
-          None => break,
-        }
-      }
-
+let mut it = values.into_iter();
+loop {
+  match it.next() {
+    Some(x) => println!("{}", x),
+    None => break,
+  }
+}
     \end{minted}
-
-    \caption{Desugaring for loop}
+    \caption{Rust's \texttt{for} loop expanded to a \texttt{loop}}
     \label{lst:rust:desugared-for}
   \end{listing}
-\end{minipage}
+ \end{minipage}
+\end{listing}
 
 % \subsubsection{Case Study - Result}
 
