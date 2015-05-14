@@ -1,70 +1,68 @@
 \section{Object Oriented Embedded Programming}
 \label{sec:back:oo}
 
-In its essense Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigms essensial concept can be applied to embedded C programming even though the language does not define language features to aid the design.
-This section looks at how Object Oriented programming is used in conjunction with memory mapped I/O in embedded programming.
-We look at the memory layout of a memory mapped \gls{adc} and see how this can be represented as an object.
+In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
+The paradigms essential concept can be applied to embedded C programming even though the language itself does not directly define any language features to aid the design.
+This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
+We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
 \subsection{Memory Mapped I/O}
 \gls{mmio} is a method for interfacing with peripheral devices in a computer system.
 The method entails connecting the control registers of hardware devices to the same address bus as RAM.
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
-Lets consider the \gls{adc} on the Gecko.
+Let us consider the \gls{adc} on the Gecko.
 The \gls{adc} converts an analoge signal to a digital representation.
-The \gls{adc} on the Gecko is memory mapped to the location \textbf{0x40002000}.
+The \gls{adc} on the Gecko is memory mapped to the location \texttt{0x40002000}.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
-A subsection of the \gls{adc} control register layout is given in \autoref{fig:back:memorymapped}.
+
 \begin{figure}[H]
   \centering
   \begin{tabular}{l|l|l|}
-    Location&Offset&Name\\
+    \textbf{Location} & \textbf{Offset} & \textbf{Name} \\
     \hline
     &...&...\\
     \hline
     \hline
-    0x40002000&0x0&CTRL\\
+    \texttt{0x40002000} & 0x0 & CTRL\\
     \hline
-    &0x4&CMD\\
-    \hline
-    &...&...\\
-    \hline
-    &0xC&SINGLECTRL\\
+    & \texttt{0x4} & CMD\\
     \hline
     &...&...\\
     \hline
-    &0x24&SINGLEDATA\\
+    & \texttt{0xC} & SINGLECTRL\\
+    \hline
+    &...&...\\
+    \hline
+    & \texttt{0x24} & SINGLEDATA\\
     \hline
     &...&...\\
     \hline
     \hline
     &&\\
   \end{tabular}
-  \caption{Subsection of ADC0 Memory map for EFM32GG}
+  \caption{Subsection of ADC0 Memory map for the Gecko}
   \label{fig:back:memorymapped}
 \end{figure}
 
+\todo{Is the table supposed to look like this? it seems broken}
 A subsection of the \gls{adc} control register is given in \autoref{fig:back:memorymapped}
 It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
-We see that the CTRL register is at offset 0x0 from the base address of the \gls{adc} and that the CMD register is at offest 0x4 bytes.
-The two registers SINGLECTRL and SINGLEDATA are for initializing the single conversion and reading the results of a conversion respectively.
+We see that the CTRL register is at offset \texttt{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \texttt{0x4} bytes.
+The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single conversion and reading the results of a conversion, respectively.
 
 \subsection{Memory Layout of Objects}
 
 The traditional memory layout of an object in an object oriented language is an implementation detail.
 This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
-The layout is aslo a implementation detail of Rust for the same reasons but annotating the struct with \textbf{#[repr(C)]} ensures C compatible arrangement.
+The layout is aslo a implementation detail of Rust for the same reasons, but by annotating a struct with \texttt{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
 Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
-In the C programming language where classes and objectes are not part of the langauge, structs are used to create the representations for objects.
-By using structs the programmer has full control over the memory layout of the object in memory.
-The Object Oriented concepts used for \gls{mmio} used static dispatch and the structs does not include tag fields or references to virtual tables.
-
-\begin{figure}[H]
+\begin{listing}[H]
   \centering
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.31\textwidth}
+  \begin{listing}
     \begin{minted}{java}
 class ADC {
   int CTRL;
@@ -76,11 +74,11 @@ class ADC {
   // ...
 }
     \end{minted}
-    \caption{Java}
-    \label{fig:back:adc-objects:java}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
   \hfill
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.31\textwidth}
+  \begin{listing}
     \begin{minted}{rust}
 #[repr(C)]
 struct ADC {
@@ -93,11 +91,11 @@ struct ADC {
   // ...
 }
     \end{minted}
-    \caption{Rust}
-    \label{fig:back:adc-objects:rust}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
   \hfill
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.31\textwidth}
+  \begin{listing}
     \begin{minted}{c}
 typedef struct {
   uint32_t CTRL;
@@ -109,18 +107,21 @@ typedef struct {
   // ...
 } ADC;
     \end{minted}
-    \caption{C}
-    \label{fig:back:adc-objects:c}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
 
-  \caption{Definition of \gls{adc}}
+  \caption{Definition of an \gls{adc} in Java, Rust, and C}
   \label{lst:back:adc-objects}
-\end{figure}
+\end{listing}
 
-\autoref{lst:back:adc-objects} shows how to define a Java class and Rust and C structs for the \gls{adc} on the Gecko.
-The memory layout of objects based on the definitions in \autoref{lst:back:adc-objects} are given in \label{fig:back:memlayout}.
 
-\begin{figure}[H]
+In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
+By using structs the programmer has full control over the layout of the object in memory.
+The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
+\autoref{lst:back:adc-objects} shows how to define a Java class, and Rust and C structs for the \gls{adc} on the Gecko.
+The memory layout of these objects are given in \autoref{fig:back:memlayout}.
+
+\begin{table}[H]
 
   \centering
   \begin{subfigure}{0.31\textwidth}
@@ -171,7 +172,7 @@ The memory layout of objects based on the definitions in \autoref{lst:back:adc-o
   \caption{Memory layout of objects}
   \label{fig:back:memlayout}
 
-\end{figure}
+\end{table}
 
 By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in Rust and C has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that if a pointer to the memory mapped I/O device is considered as a reference to an \gls{adc} object the object oriented pattern can be used to interface with the \gls{mmio}.
