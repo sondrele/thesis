@@ -1,31 +1,83 @@
 \section{Hardware Platform}
 \label{sec:back:hw}
 
-This project targets the EFM32GG microcontroller by Silicon Labaratories.
-The following sections describes the various options supplied by SiliconLabs and the platform used in the work leeding up to this thesis.
+This project targets the EFM32GG \gls{mcu} developed by Silicon Labs.
+The following sections presents the EFM32 family of microcontrollers and a couple of development kits that utilize the Giant Gecko \gls{mcu}, soldered with a handful of different peripherals.
 
 \subsection{EFM32}
-The EFM32GG is a versatile chip aimed at low power application with support for number of peripherals.
-The chip called Giant Gecko by SiliconLabs is a part of their energy friend range of 32-bit microcontrollers.
-\autoref{tab:efm32-family} shows that the Giant Gecko lies in the upper end of this range.
+\label{sub:emf32}
+\todo{There's some rough edges of the language in this section. Needs to be rephrased}
 
-\begin{table}[H]
-  \centering
-  \begin{tabular}{|l|l|l|l|l|}
+ARM Cortex-M is a family of 32-bit RISC processor cores, intended to be used by applications that require low cost and energy-usage.
+These factors are crucial in modern systems and applications where energy efficiency is of great importance.
+For example with the \gls{iot}, where we predict a future where tens of billions of devices will be connected to the Internet, ranging from Super Computers down to small embedded devices that might be used to power up and control everything from cars to light bulbs via the Internet.
+The different processor cores of the Cortex-M family are summarized in \autoref{tab:cortex_m}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{r|l}
+    \textbf{Name} & \textbf{Target features}            \\
     \hline
-    Family & Core & Speed (MHz) & Flash Memory (kB) & RAM (kB) \\
+    Cortex-M0 & Lowest cost and lowest area              \\
+    Cortex-M0+ & Lowest power                            \\
+    Cortex-M1 & Designed for implementation in FPGAs     \\
+    Cortex-M3 & Performance efficiency                   \\
+    Cortex-M4 & DSP, SIMD, FP                            \\
+    Cortex-M7 & Cache, TCM, AXI, ECC, double + single FP \\
     \hline
-    Zero Gecko & ARM Cortex-M0+ & 24 & 4, 8, 16, 32 & 2, 4 \\
-    Tiny Gecko & ARM Cortex-M3 & 32 & 4, 8, 16, 32 & 2, 4 \\
-    Gecko & ARM Cortex-M3 & 32 & 16, 32, 64, 128 & 8, 16 \\
-    Leopard Gecko & ARM Cortex-M3 & 48 & 64, 128, 256 & 32 \\
-    Giant Gecko & ARM Cortex-M3 & 48 & 512, 1024 & 128 \\
-    Wonder Gecko & ARM Cortex-M4 & 48 & 64, 128, 256 & 32 \\
-    \hline
-  \end{tabular}
-  \caption{EFM32 Product Family \cite{web:silabs}}
-  \label{tab:efm32-family}
+    \end{tabular}
+\end{center}
+\caption{Cortex-M family of processor cores}
+\label{tab:cortex_m}
 \end{table}
+
+\todo{Include the table with flash size instead?}
+The EFM32 family of microcontrollers are all based on different Cortex-M processors, some of their features are summarized in \autoref{tab:efm32_family}.
+The focus of these microcontrollers is energy efficiency and low power-consumption in resource-constraint environments.
+The EFM32GG, usually referred to with the name Giant Gecko, which is the one targeted in this project, is a versatile chip that is in the upper end in the Cortex-M series.
+
+The microcontrollers implement several different methods for reducing the power consumption.
+The most important way to achieve low power consumption is by turning off the different parts of the chip that are inactive, so that these parts do no longer draw any power from the overall system.
+The EFM32 processors features five different energy modes, or sleep modes, ranging from EM0 (Energy Mode 0) where the core is on, to EM4 where the processor can only wake up on specific interrupt signals.
+The different peripherals provided with the EFM32's operate in different energy modes.
+This system allows applications to utilize many different peripherals for data collection, while the processor itself is turned off.
+The peripherals then has the opportunity to wake up the processor on different interrupt-signals and transfer data to it, in order to do general processing.
+
+\begin{table}[b]
+\begin{center}
+    \begin{tabular}{r|l|l}
+    \textbf{Name} & \textbf{Processor} & \textbf{Speed (MHz)} \\
+    \hline
+    Zero Gecko    & ARM Cortex-M0+ & 24 \\
+    Tiny Gecko    & ARM Cortex-M3  & 32 \\
+    Gecko         & ARM Cortex-M3  & 32 \\
+    Leopard Gecko & ARM Cortex-M3  & 48 \\
+    Giant Gecko   & ARM Cortex-M3  & 48 \\
+    Wonder Gecko  & ARM Cortex-M4  & 48 \\
+    \hline
+    \end{tabular}
+\end{center}
+\caption{EFM32}
+\label{tab:efm32_family}
+\end{table}
+
+% \begin{table}[H]
+%   \centering
+%   \begin{tabular}{|l|l|l|l|l|}
+%     \hline
+%     Family & Core & Speed (MHz) & Flash Memory (kB) & RAM (kB) \\
+%     \hline
+%     Zero Gecko & ARM Cortex-M0+ & 24 & 4, 8, 16, 32 & 2, 4 \\
+%     Tiny Gecko & ARM Cortex-M3 & 32 & 4, 8, 16, 32 & 2, 4 \\
+%     Gecko & ARM Cortex-M3 & 32 & 16, 32, 64, 128 & 8, 16 \\
+%     Leopard Gecko & ARM Cortex-M3 & 48 & 64, 128, 256 & 32 \\
+%     Giant Gecko & ARM Cortex-M3 & 48 & 512, 1024 & 128 \\
+%     Wonder Gecko & ARM Cortex-M4 & 48 & 64, 128, 256 & 32 \\
+%     \hline
+%   \end{tabular}
+%   \caption{EFM32 Product Family \cite{web:silabs}}
+%   \label{tab:efm32-family}
+% \end{table}
 
 \subsection{Evaluation boards}
 

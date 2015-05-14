@@ -1,3 +1,5 @@
+% !TEX root = ../main.tex
+
 \section{Libraries}
 \label{sec:back:lib}
 
@@ -22,8 +24,15 @@ The libraries are written in C and used through Rusts Foreign Function Interface
   \label{tab:back:libs}
 \end{table}
 
-\subsection{emdrv}
-\subsection{emlib}
+\section{Emlib}
+\label{sub:emlib}
+
+\emlib is a peripheral \gls{api} by Silicon Labs that provides an abstraction layer over the different peripherals for their EFM32 series of ARM microcontrollers.
+It is a general library written in C that provides functions and modules to read, write and control the different peripherals that is supported by the EMF32 microcontrollers.
+With the \gls{api}, the application programmer can control and set up the different peripherals and easily control sleep modes and wakeup, and interrupt handlers among others.
+The library is built on the \gls{cmsis} library provided by ARM.
+It is possible to control the EFM32's with this library as well, or a combination between the two, but \emlib is designed to function as a standalone library.
+
 
 The Energy Micro Peripheral Support library exposes the vast range of peripherals that are possible to connect the Gecko.
 The emlib library is divided into separate file that defines modules such as \textbf{adc}, \textbf{dac}, \textbf{timer}, \textbf{dma}, et cetera.
@@ -64,7 +73,7 @@ To see these differnet patterns we consider the \textbf{timer}, \textbf{rtc} and
   \label{lst:back:lib:gpio}
 \end{listing}
 
-
+\subsection{emdrv}
 
 \subsection{CMSIS}
 
