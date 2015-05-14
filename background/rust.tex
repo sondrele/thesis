@@ -244,10 +244,43 @@ loop {
 % \label{lst:rust:result}
 % \end{listing}
 
+\subsection{Organization}
+\label{ssub:rust:organization}
+
+A Rust library or executable is organized into a \emph{crate}, and such a crate can consist of many \emph{modules}.
+These modules are used to split up the library into separated pieces of code, giving it a logical structure.
+The crate is a sharable part of Rust code that can be included into other projects and libraries.
+The modules are the hierarchical means of organizing a crate, and ensures that the design is modular.
+This gives the programmer the ability to import only the components of the library that is needed for a given program.
+\autoref{fig:rust:collections} shows a few or the modules contained within the Rust \texttt{collections} crate.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/libcollections.png}
+  \end{center}
+  \caption{Some of the modules in the \texttt{collections} crate}
+  \label{fig:rust:collections}
+\end{figure}
+
+The Rust compiler comes bundled with a handful of standard libraries that are used as a basis for almost all third party libraries and executables.
+By default, every Rust application is linked with the the Rust \texttt{std} library, which \emph{re-exports} functionality from the standard libraries, like e.g. the \texttt{collections} crate.
+\todo{This figure looks broken...}
+\autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
+Many of these libraries contains functionality that depends on an operating system to be present, which is not necessarily a safe assumption to make for a bare-metal system.
+This means that the \texttt{std} library can not be utilized in this project, instead it has to be based on Rust's \texttt{core} library, which lays the foundation for all of the standard libraries.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
+  \end{center}
+  \caption{Some crates re-exported in the \texttt{std} library}
+  \label{fig:rust:librust}
+\end{figure}
+
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
 
-Abstractions, in the form of references and pointers to objects or structures and how they are
+Abstractions, in the form of references and pointers to objects or structures, and how they are
 structured on the heap, is a common source of overhead in programming languages.
 \autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how Java lays out a vector of
 strings in memory.
@@ -507,43 +540,6 @@ These are all considered unsafe and provides core functionality to e.g. access a
 It is important to note that Rust's borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.
 The borrow-checker can can never be disabled, but for for certain operations it will simply not work.
 As an example, it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues, as described in \autoref{ssec:lifetimes}.
-
-\subsection{Organization}
-\label{ssub:rust:organization}
-
-\subsubsection{Crates and Modules}
-
-Rust provides two main features to organizing code, crates and modules.
-A crate defines a collection of modules which constitutes a library.
-The crate construct is a sharable part of rust code that can be included into other projects and libraries.
-The module is the hierarchical means of organizing a crate.
-Figure \ref{fig:rust:collections} shows a few or the modules contained within the Rust collection library.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.3]{figures/background/rust/libcollections.png}
-  \end{center}
-  \caption{Modules in collection crate.}
-  \label{fig:rust:collections}
-\end{figure}
-
-\subsubsection{Rust library}
-
-The Rust library is organized using crates.
-This ensures that the design is modular and provides the programmer the ability to import only the components of the library that is needed for a given program.
-The \texttt{Cargo} packages manager makes this feature easily exploitable.
-Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones \todo{Bare metal?} this is integral to exploiting the standard library.
-As the standard library contains functionality that assumes a operating system the library as a whole cannot be utilized.
-Figure \ref{fig:rust:librust} depicts the crates of the standard library with their dependencies.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
-  \end{center}
-  \caption{Some crates of the rust library}
-  \label{fig:rust:librust}
-\end{figure}
-std* - The std crate depends nearly all of the crates in the lower right corner
 
 \subsection{Cargo}
 \label{sec:cargo}
