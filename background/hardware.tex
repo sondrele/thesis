@@ -34,7 +34,8 @@ The different processor cores of the Cortex-M family are summarized in \autoref{
 \todo{Include the table with flash size instead?}
 The EFM32 family of microcontrollers are all based on different Cortex-M processors, some of their features are summarized in \autoref{tab:efm32_family}.
 The focus of these microcontrollers is energy efficiency and low power-consumption in resource-constraint environments.
-The EFM32GG, usually referred to with the name Giant Gecko, which is the one targeted in this project, is a versatile chip that is in the upper end in the Cortex-M series.
+The EFM32GG, usually referred to with the name Giant Gecko, is a versatile chip that is in the upper end in the Cortex-M series.
+This is the processor core that is targeted in this project, and for the sake of simplicity we will refer to this chip as the \texttt{Gecko}.
 
 The microcontrollers implement several different methods for reducing the power consumption.
 The most important way to achieve low power consumption is by turning off the different parts of the chip that are inactive, so that these parts do no longer draw any power from the overall system.
@@ -81,11 +82,11 @@ The peripherals then has the opportunity to wake up the processor on different i
 
 \subsection{Evaluation boards}
 
-SiliconLabs provides a range of Boards and Kits for development and testing purposes.
-
-For development and testing purposes, SiliconLabs provides two hardware kits with the Gecko.
-The simplest of the two are the Giant Gecko Starter Kit depicted in \autoref{fig:efm32gg-stk3700}.
-This board contains a few leds, buttons, sensors, a segment LCD display and an expansion header.
+Silicon Labs provides a wide range of development-kits and -boards that are targeted for general development and testing of applications based on the EFM32's.
+Two of these boards are available with the \texttt{Gecko} and we have used both of them in this project.
+The simplest of the two are the Giant Gecko Starter Kit, which is depicted in \autoref{fig:efm32gg-stk3700}.
+This board contains a few LEDs and buttons, a couple of sensors to demonstrate a wide range of use-cases, and a segment LCD display.
+It also includes an expansion header that can be used to connect with third party devices and peripherals, and a JLink debug interface over USB.
 
 \begin{figure}[H]
   \begin{center}
@@ -96,7 +97,10 @@ This board contains a few leds, buttons, sensors, a segment LCD display and an e
 \end{figure}
 
 As seen in \autoref{fig:efm32gg-dk3750} the Giant Gecko Development Kit is a more complex board.
-It features a touch TFT Display, a prototyping board and a plugable MCU board containing the Gecko.
+It features a TFT touch Display, a prototyping board which exposes all the \gls{mcu} pins on headers.
+The \gls{mcu} itself is also soldered on a pluggable board, which makes the development kit a suitable system for testing a wide range of different applications.
+We have also used the Biometrix-EXP Evaluation board, which features a handful of additional sensors, in addition to the two board mentioned already.
+The Biometrix-EXP Evaluation board is shown in \autoref{fig:biometric-exp} and connects directly with the Expansion Header available on the Starter Kit.
 
 \begin{figure}[H]
   \begin{center}
@@ -106,30 +110,6 @@ It features a touch TFT Display, a prototyping board and a plugable MCU board co
   \label{fig:efm32gg-dk3750}
 \end{figure}
 
-Table \ref{tab:hw:boards} summarizes the different hardware devices refered to throughout this thesis.
-
-\begin{table}[H]
-  \begin{tabular}{|c|c|c|}
-    \hline
-    Product Name & Description & Short name \\
-    \hline
-    \hline
-    EFM32GG & The Giant Gecko Microcontroller & Gecko \\
-    \hline
-    EFM32GG-STK3700 & Giant Gecko Starter Kit & STK \\
-    \hline
-    EFM32GG-DK3750 & Giant Gecko Development Kit & DK \\
-    \hline
-    BIOMETRIC-EXP-EVB & Biometric Sensor Expansion Board & BIO-EXP \\
-    \hline
-  \end{tabular}
-  \caption{Hardware devices}
-  \label{tab:hw:boards}
-\end{table}
-
-In addition to the two board mentioned above, the Biometrix-EXP Evaluation board is used for additional sensors.
-The BIO-EXP in \autoref{fig:biometric-exp} connects to the STK Expansion Header.
-
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.5]{figures/biometric-exp}
@@ -137,3 +117,22 @@ The BIO-EXP in \autoref{fig:biometric-exp} connects to the STK Expansion Header.
   \caption{The Biometric-EXP Evaluation Board - BIOMETRIC-EXP-EVB \cite{UG-BIO-EXP}}
   \label{fig:biometric-exp}
 \end{figure}
+
+
+\autoref{tab:hw:boards} summarizes the different hardware devices that are referred to throughout this report.
+The original device-names are shortened in order to simplify reading.
+
+\begin{table}[H]
+  \begin{tabular}{l|l|l}
+    \textbf{Product Name} & \textbf{Description} & \textbf{Short name} \\
+    \hline
+    EFM32GG & The Giant Gecko Microcontroller & \texttt{Gecko} \\
+    EFM32GG-STK3700 & Giant Gecko Starter Kit & \texttt{STK} \\
+    EFM32GG-DK3750 & Giant Gecko Development Kit & \texttt{DK} \\
+    BIOMETRIC-EXP-EVB & Biometric Sensor Expansion Board & \texttt{BIO-EXP} \\
+    \hline
+  \end{tabular}
+  \caption{Hardware devices}
+  \label{tab:hw:boards}
+\end{table}
+
