@@ -15,7 +15,7 @@ Lets consider the \gls{adc} on the Gecko.
 The \gls{adc} converts an analoge signal to a digital representation.
 The \gls{adc} on the Gecko is memory mapped to the location \textbf{0x40002000}.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
-A subsection of the \gls{adc} control register layout is given in \autoref{tab:back:memorymapped}.
+A subsection of the \gls{adc} control register layout is given in \autoref{fig:back:memorymapped}.
 \begin{figure}[H]
   \centering
   \begin{tabular}{l|l|l|}
@@ -42,7 +42,7 @@ A subsection of the \gls{adc} control register layout is given in \autoref{tab:b
     &&\\
   \end{tabular}
   \caption{Subsection of ADC0 Memory map for EFM32GG}
-  \label{tab:back:memorymapped}
+  \label{fig:back:memorymapped}
 \end{figure}
 
 A subsection of the \gls{adc} control register is given in \autoref{fig:back:memorymapped}
@@ -173,7 +173,7 @@ The memory layout of objects based on the definitions in \autoref{lst:back:adc-o
 
 \end{figure}
 
-By comparing \autoref{tab:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in Rust and C has same exact layout as the memory mapped control register of the \gls{adc}.
+By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in Rust and C has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that if a pointer to the memory mapped I/O device is considered as a reference to an \gls{adc} object the object oriented pattern can be used to interface with the \gls{mmio}.
 
 \subsection{Adding Object Functionality}
