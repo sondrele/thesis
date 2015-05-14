@@ -225,22 +225,22 @@ To understand the functionality we look the approximate desugaring of the for lo
   \end{listing}
 \end{minipage}
 
-\subsubsection{Case Study - Result}
+% \subsubsection{Case Study - Result}
 
-The Result type is an integral type in the Rust library and in Rust code in general.
-The type is the base type for error handling.
+% The Result type is an integral type in the Rust library and in Rust code in general.
+% The type is the base type for error handling.
 
-\begin{listing}[H]
-  \begin{minted}{rust}
-    #[must_use]
-    pub enum Result<T, E> {
-      Ok(T),
-      Err(E),
-    }
-\end{minted}
-\caption{Definition of Result}
-\label{lst:rust:result}
-\end{listing}
+% \begin{listing}[H]
+%   \begin{minted}{rust}
+%     #[must_use]
+%     pub enum Result<T, E> {
+%       Ok(T),
+%       Err(E),
+%     }
+% \end{minted}
+% \caption{Definition of Result}
+% \label{lst:rust:result}
+% \end{listing}
 
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
