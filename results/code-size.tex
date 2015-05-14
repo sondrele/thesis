@@ -92,6 +92,6 @@ All of these are static abstractions and can be removed at compile time.
 An importaint point here is that although the \emph{core} library by it self is over 100KB when optimized for size a program utilizing the library can be substantially smaller.
 This is because of the fact that a library build must provide all the functionality of the source code, while an executable build can eliminate all the functionality of the library that is not used.
 
-Over all the compress factor when applying optimizations are 2.3x from O0 with debugging enabled to the smallest build.
+By considering the size of the largest and the smallest build for each program we see that the compress factor when applying optimizations is 2.3x on average.
 
 \subsection{Executables}
