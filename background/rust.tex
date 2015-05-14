@@ -4,11 +4,9 @@
 \label{sub:the_rust_programming_language}
 
 Rust \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
-Rust is a strongly and statically typed, multi-paradigm programming language.
+It is a strongly and statically typed, multi-paradigm programming language.
 The language borrows many constructs and features from other programming languages, some of which is described in the following sections.
-
-Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency.
-It is designed to support concurrency and parallelism and take full utilization of the underlying hardware, while making strong guarantees about memory safety and isolation, without sacrificing performance.
+Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
 
 \subsection{Language Features}
 \label{ssub:rust:features}
@@ -68,12 +66,13 @@ This is also an example of generics in Rust, \texttt{T} can be anything, e.g. an
 The \texttt{Option} type is analogous with a normal C pointer value, which either has the value 0, or \texttt{null} (analogous to \texttt{None}), or a value that that points to a structure at a place in memory (analogous to \texttt{Some}).
 Even though the \texttt{Option} is analogous to a C pointer, it is important to note their differences.
 It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \texttt{None}.
-The usage of \texttt{enum} types described in this section become very expressive in combination with \emph{match expressions}, as discussed in \autoref{sub:pattern_matching}.
+The usage of \texttt{enum} types described in this section become very expressive in combination with \texttt{match} expressions, as discussed in \autoref{sub:pattern_matching}.
 
 \subsubsection{Case Study - List}
 
 A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
 Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+\todo{I think this should be an example of Boxed types in stead of a case study of Enums}
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -89,9 +88,9 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
 \subsubsection{Structs}
 \label{ssub:structs}
 
-\texttt{structs} in Rust are similar to that of C, and is a way of creating more advanced data types than \texttt{primitives} or \texttt{enums}.
+A \texttt{struct} in Rust is similar to that of C, and is a way of creating more advanced data types than \texttt{primitives} or \texttt{enums}.
 With a \texttt{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
-An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, everyone that knows C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
+An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
 Everything in Rust is \emph{private} by default, the \texttt{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
 The \texttt{impl} keyword lets us implement member functions for the \texttt{Book}, similar to class-declarations in C++ and other object-oriented languages.
 
