@@ -1,12 +1,9 @@
 \section{Rust Embedded Library}
 \label{sec:rust_embedded_library}
 
-This section describes some of the libraries provided by Rust that are usable in an embedded, bare-metal system.
-When considering the dependencies for \texttt{std} shown in \autoref{fig:rust:librust} we see that this crate is not suitable for a bare-metal application, because it depends on an \gls{os} to be present.
-The dependency on either a Unix or a Windows \gls{os} excludes \texttt{std} and all of its dependents from being with the EFM32.
-The remaining \gls{rel}, is shown in \autoref{fig:rust:rel} \todo{this figure is not correct}.
-\todo{this is kind of described the Build System chapter. Need to coordinate..}
-
+When we consider \texttt{std}'s dependencies, shown in \autoref{fig:rust:librust}, we see that the crate is not suitable for a bare-metal application because it depends on an \gls{os} to be present.
+The dependency on either a Unix or a Windows \gls{os} excludes \texttt{std} and all of its dependents from being used directly with the EFM32.
+This section presents some of the libraries provided by Rust that can be used in a bare-metal system, and how and why they are composed into what we refer to as the \gls{rel}.
 
 \begin{figure}[H]
   \begin{center}
@@ -15,11 +12,6 @@ The remaining \gls{rel}, is shown in \autoref{fig:rust:rel} \todo{this figure is
   \caption{Rust Embedded Library}
   \label{fig:rust:rel}
 \end{figure}
-
-The remainder of this section examines the contents of the different crate composed into \gls{rel}.
-
-\subsubsection{Memory Management}
-\subsubsection{Core Language Traits}
 
 \subsection{Allocation}
 \label{sec:rust:allocation}
