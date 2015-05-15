@@ -1,45 +1,49 @@
 \section{Rust Embedded Library}
 
-This section describes some of the libraries provided by Rust that are usable in a bare-metal, embedded system.
-From considering the dependencies for \textbf{std} in \autoref{fig:rust:librust} we see that this crate is not suitable for a barebones application.
-The dependency on either an Unix or Windows OS excludes \textbf{std} and all its dependents from being used without an OS.
-The remaining Rust Embedded Library, REL, is shown in \autoref{fig:rust:rel}.
+This section describes some of the libraries provided by Rust that are usable in an embedded, bare-metal system.
+When considering the dependencies for \texttt{std} shown in \autoref{fig:rust:librust} we see that this crate is not suitable for a bare-metal application, because it depends on an \gls{os} to be present.
+The dependency on either a Unix or a Windows \gls{os} excludes \texttt{std} and all of its dependents from being with the EFM32.
+The remaining \gls{rel}, is shown in \autoref{fig:rust:rel} \todo{this figure is not correct}.
+\todo{this is kind of described the Build System chapter. Need to coordinate..}
+
 
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.3]{figures/background/rust/embedded-rust-lib.png}
   \end{center}
-  \caption{Rust Embedded Library, REL}
+  \caption{Rust Embedded Library}
   \label{fig:rust:rel}
 \end{figure}
 
-The remainder of this section examines the contents of the different crate composed into REL.
+The remainder of this section examines the contents of the different crate composed into \gls{rel}.
 
 \subsection{Rust Core Library}
 
-The Rust Core Library, RCL, defines the platform independent non-dependent core of the Rust language.
-For normal usage the Rust Standard Library, RSL, augments RCL with platform dependent features and reexports the stable parts.
-In this way RCL is not interfaced with directly and can modified as long as the interface though RSL stays the same.
-With REL the programmer must interface with RCL directly.
+\todo{maybe we should include this part about core in the Rust background chapter}
 
-REL mainly defines the primitive types of Rust and operations on these in addition to memory management and some core language traits.
+The \gls{rcl}, defines the platform independent core of the Rust language.
+For normal usage the \gls{rsl}, augments \gls{rcl} with platform dependent features and reexports the stable parts.
+In this way \gls{rcl} is not interfaced with directly and can modified as long as the interface though RSL stays the same.
+With \gls{rel} the programmer must interface with \gls{rcl} directly.
+
+\gls{rel} mainly defines the primitive types of Rust and operations on these in addition to memory management and some core language traits.
 
 \subsubsection{Primitive types}
 
 \autoref{tab:rust:datatypes} lists the primitive datatypes available in Rust.
-RCL defines functions for manipulating these datatypes.
+\gls{rcl} defines functions for manipulating these datatypes.
 
 \begin{table}[H]
   \begin{tabular}{l|l}
-    array & fixed-length array type \\
-    bool & data type with value true or false \\
-    char & a unicode scalar value \\
+    array    & fixed-length array type \\
+    bool     & data type with value true or false \\
+    char     & a unicode scalar value \\
     f32, f64 & floating point number of single and double precision \\
     i8, i16, i32, i64, u8, u16, u32, u64 & integers \\
-    isize, usize & integers of 'pointer-sized' size \\
-    pointer & raw unsafe pointers (*const T, *mut T) \\
-    slice & a view into a array \\
-    str & string \\
+    isize, usize & integers of `pointer-sized' size \\
+    pointer      & raw unsafe pointers (\texttt{*const T}, \texttt{*mut T}) \\
+    slice        & a view into a array \\
+    str          & UTF-8 encoded byte array \\
     tuple & finite ordered list of elements
   \end{tabular}
 
@@ -53,14 +57,14 @@ The ones who are not common place are discussed in below.
 \paragraph{Pointer}
 
 Rust exposes a few different pointer types.
-Within RCL is a raw pointer type.
+Within \gls{rcl} is a raw pointer type.
 This pointer is not generally used in Rust code and is considered unsafe.
 These pointers are used for interfacing with C code and writing data structure not permitted by safe pointers. \todo{Should probably show the restrictions related to doubly-linked lists}
 
 \paragraph{Slice}
 
 The slice type is simply a view into an array.
-The representation is a pointer and a length as shown in \autoref{lst:rust:slice}.
+The representation is a pointer and a length as shown in \autoref{lst:rust:slice}, their syntax is denoted by \texttt{\&[T]} where \texttt{T} is a type.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -73,14 +77,12 @@ The representation is a pointer and a length as shown in \autoref{lst:rust:slice
 \label{lst:rust:slice}
 \end{listing}
 
-Slices have special syntax denoted by \&[T] where T is a type.
-
 \paragraph{str}
 \label{par:rust:str}
 
-The Rust string type str can either be a statically allocated string defined as a literal or a borrowed reference into another string.
+The Rust string type \texttt{str} can either be a statically allocated string defined as a literal or a borrowed reference into another string.
 A string in Rust is a sequence of Unicode scalar values and is not null terminated.
-The representation of the string type is closely related to slices as \&str is equivalent to \&[u8].
+The representation of the string type is closely related to slices as \texttt{\&str} is equivalent to \texttt{\&[u8]}.
 
 \paragraph{tuple}
 
@@ -94,7 +96,7 @@ In addition the type supports tags just like the variants of an enum.
 \subsection{Allocation}
 \label{sec:rust:allocation}
 
-The RCL does not use or expose any heap allocation.
+The \gls{rcl} does not use or expose any heap allocation.
 Heap allocation is introduced through the \texttt{Box} type defined in the allocation library.
 
 \subsection{The Collection Library}
@@ -135,7 +137,7 @@ The \texttt{String} defined in the collection library is a heap allocated mutabl
 
 The heap allocation library described in \autoref{sec:rust:allocation} depends on the \texttt{libc} crate abstraction.
 The \texttt{libc} library provided in the standard library provides bindings for the C standard library and platform specific libraries.
-REL depends on \texttt{libc} for the low level memory operations \texttt{malloc}, \texttt{realloc} and \texttt{free}.
+\gls{rel} depends on \texttt{libc} for the low level memory operations \texttt{malloc}, \texttt{realloc} and \texttt{free}.
 The details of this implementation is found in \autoref{sec:impl:libc}. \todo{Update reference to implementation chapter part about libc implementation}
 
 \subsection{Notable missing functionality in REL}
