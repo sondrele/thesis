@@ -1,9 +1,9 @@
 \section{Rust Embedded Library}
 
-This section describes the library facilities provided by Rust that are usable in an barebone embedded setting.
-From considering the dependencies for \textbf{std} in Figure \ref{fig:rust:librust} we see that this crate is not suitable for a barebones application.
+This section describes some of the libraries provided by Rust that are usable in a bare-metal, embedded system.
+From considering the dependencies for \textbf{std} in \autoref{fig:rust:librust} we see that this crate is not suitable for a barebones application.
 The dependency on either an Unix or Windows OS excludes \textbf{std} and all its dependents from being used without an OS.
-The remaining Rust Embedded Library, REL, is shown in Figure \ref{fig:rust:rel}.
+The remaining Rust Embedded Library, REL, is shown in \autoref{fig:rust:rel}.
 
 \begin{figure}[H]
   \begin{center}
@@ -26,7 +26,7 @@ REL mainly defines the primitive types of Rust and operations on these in additi
 
 \subsubsection{Primitive types}
 
-Table \ref{tab:rust:datatypes} lists the primitive datatypes available in Rust.
+\autoref{tab:rust:datatypes} lists the primitive datatypes available in Rust.
 RCL defines functions for manipulating these datatypes.
 
 \begin{table}[H]
@@ -47,7 +47,7 @@ RCL defines functions for manipulating these datatypes.
   \label{tab:rust:datatypes}
 \end{table}
 
-Most of the datatypes in Table \ref{tab:rust:datatypes} brings no surprises with the when it comes to representation and functionality.
+Most of the datatypes in \autoref{tab:rust:datatypes} brings no surprises with the when it comes to representation and functionality.
 The ones who are not common place are discussed in below.
 
 \paragraph{Pointer}
@@ -60,7 +60,7 @@ These pointers are used for interfacing with C code and writing data structure n
 \paragraph{Slice}
 
 The slice type is simply a view into an array.
-The representation is a pointer and a length as shown in Listing \ref{lst:rust:slice}.
+The representation is a pointer and a length as shown in \autoref{lst:rust:slice}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -99,7 +99,7 @@ Heap allocation is introduced through the \texttt{Box} type defined in the alloc
 
 \subsection{The Collection Library}
 
-The Rust collection library provides the data structures shown in Table \ref{tab:rust:collections}.
+The Rust collection library provides the data structures shown in \autoref{tab:rust:collections}.
 
 \begin{table}[H]
   \begin{tabular}{l}
@@ -128,15 +128,15 @@ In essence it is a growable heap allocated list of values of the same type.
 
 \subsubsection{String}
 
-In section \ref{par:rust:str} we discussed the \textbf{string slice}.
+In \autoref{par:rust:str} we discussed the \textbf{string slice}.
 The \texttt{String} defined in the collection library is a heap allocated mutable string.
 
 \subsection{libc}
 
-The heap allocation library described in Section \ref{sec:rust:allocation} depends on the \texttt{libc} crate abstraction.
+The heap allocation library described in \autoref{sec:rust:allocation} depends on the \texttt{libc} crate abstraction.
 The \texttt{libc} library provided in the standard library provides bindings for the C standard library and platform specific libraries.
 REL depends on \texttt{libc} for the low level memory operations \texttt{malloc}, \texttt{realloc} and \texttt{free}.
-The details of this implementation is found in Section \ref{sec:impl:libc}. \todo{Update reference to implementation chapter part about libc implementation}
+The details of this implementation is found in \autoref{sec:impl:libc}. \todo{Update reference to implementation chapter part about libc implementation}
 
 \subsection{Notable missing functionality in REL}
 
