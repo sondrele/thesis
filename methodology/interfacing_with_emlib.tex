@@ -1,29 +1,6 @@
 % !TEX root = ../main.tex
 
-\subsection{Peripherals}
-\label{sub:peripherals}
-
-In this project we have focused on writing software for the Giant Gecko series of microcontrollers.
-We have utilized two different development boards that both features the EFM32GG990 microcontroller,
-thus we have limited implementation of bindings to only support a handful of peripherals that are
-available with this device. A block diagram of the device and its peripherals are shown in
-\autoref{fig:efm32gg990_block_diagram}.
-
-\begin{figure}[tb]
-\centering
-\missingfigure{EFM32GG990 block diagram}
-\caption{Some caption}
-\label{fig:efm32gg990_block_diagram}
-\end{figure}
-
-For this project, the porting of library bindings are only interesting if the peripherals exposed by
-the library are actually going to be used. The two boards we have access to implements many external
-sensors and peripherals that are all controlled through \emlib. It is only interesting to write
-bindings and abstractions for the core functionality of \emlib and the parts of the library that
-lets us control peripherals that we use in throughout the projects.
-
-
-\subsection{Bindings for emlib} % (fold)
+\section{Bindings for emlib} % (fold)
 \label{sub:interfacing_with_emlib}
 
 The \gls{ffi} available in Rust has been used to interface with emlib. This way, we have been able
