@@ -11,8 +11,48 @@ Over the course of Rust's development, the language has set out to solve two maj
 \subsection{Language Features}
 \label{ssub:rust:features}
 
-This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
-The language is multi-paradigm and therefore offers a wider range of language constructs.
+This section starts by describing Rust's \texttt{core} library and its type-system, before moving on to presenting some of the language features that makes Rust so different from C.
+Because Rust is a multi-paradigm language it offers a wider range of language constructs that are not present in the procedural paradigm usually found in embedded programming.
+
+\subsubsection{The Core Library}
+
+Rust's \texttt{core} library, defines the platform independent part of the language.
+This library is not directly accessible to the programmer, instead its stable parts are reexported through Rust's standard library called \texttt{std}.
+In this way, \texttt{core} is not interfaced with directly in normal Rust programs, so it can be modified while \texttt{std}'s interface stays the same.
+The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
+
+\autoref{tab:rust:datatypes} lists the primitive datatypes available in Rust, the \texttt{core} library defines many functions and abstractions that are used to manage and manipulate these datatypes.
+Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from C are discussed throughout the following sections.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r|l}
+    \textbf{Type} & \textbf{Description} \\
+    \hline
+    \texttt{bool}  & Either \texttt{true} or \texttt{false} \\
+    \texttt{char}  & A UTF-8 scalar value \\
+    \texttt{f32}, \texttt{f64} & Floating point number of single and double precision \\
+    \texttt{u8}, \texttt{u16}, \texttt{u32}, \texttt{u64} & Unsigned integers \\
+    \texttt{i8}, \texttt{i16}, \texttt{i32}, \texttt{i64} & Signed integers \\
+    \texttt{isize}, \texttt{usize}                        & `Pointer-sized' Integers \\
+    Pointer        & Raw unsafe pointers (\texttt{*const T}, \texttt{*mut T}) \\
+    Array          & Fixed-length array type, denoted with \texttt{[T]} \\
+    \texttt{slice} & A view into a array, denoted with \texttt{\&[T]} \\
+    \texttt{str}   & UTF-8 encoded byte array \\
+    Tuple          & Finite ordered list of elements \\
+    \hline
+  \end{tabular}
+
+  \caption{Rust's primitive datatypes}
+  \label{tab:rust:datatypes}
+\end{table}
+
+% \paragraph{tuple}
+
+% A tuple type is a fixed size datatype of variable types.
+% The type can be used to return multiple return values from a function.
+% In addition the type supports tags just like the variants of an enum.
+
 
 \subsubsection{Variables and Bindings}
 
@@ -88,7 +128,7 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
 \subsubsection{Structs}
 \label{ssub:structs}
 
-A \texttt{struct} in Rust is similar to that of C, and is a way of creating more advanced data types than \texttt{primitives} or \texttt{enums}.
+A \texttt{struct} in Rust is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
 With a \texttt{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
 An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
 Everything in Rust is \emph{private} by default, the \texttt{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
@@ -110,6 +150,34 @@ The \texttt{impl} keyword lets us implement member functions for the \texttt{Boo
   \caption{Struct definition and implementation}
   \label{lst:book_struct}
 \end{listing}
+
+\subsubsection{Pointers}
+
+Rust's \texttt{core} library exposes two pointer types which are considered \textit{unsafe} by the language, \autoref{ssub:unsafe_code} explains why.
+Pointers in Rust are a very fundamental part of the language, but they are not used much outside of low-level code and bindings.
+Instead, the library offers higher-level structures as an abstraction between the \emph{raw} pointers and their data.
+
+\subsubsection{Slices}
+
+The \texttt{slice} type is simply a view into an array, it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
+Slice syntax is denoted by \texttt{\&[T]}, which reads like `a reference to a finite array with type \texttt{T}'.
+They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub struct Slice<T> {
+      pub data: *const T,
+      pub len: usize
+    }
+\end{minted}
+\caption{Slice representation}
+\label{lst:rust:slice}
+\end{listing}
+
+An example of common slice type in Rust is the \texttt{str} type, which can either be a statically allocated string defined as a literal, or a borrowed reference into another string.
+The representation of the string type is closely related to slices, as a string-slice denoted as \texttt{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \texttt{\&[u8]}.
+It is important to note that an arbitrary slice of bytes are not necessarily a valid string.
+The \texttt{str} type differs from a \texttt{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
 
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
