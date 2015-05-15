@@ -3,8 +3,8 @@
 
 Building the library and the EFM32 executables turned out to be one of the major parts of the work done in this project.
 This section describes how building the project have changed over time.
-This includes managing dependencies, compiling the RCL and REL and the Silicon Labs EFM32 \texttt{emlib}.
-We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of Rust and making sure that the builds have been consistent across the systems it has been built on.
+This includes managing dependencies, compiling the \texttt{core} library and \gls{rel}, and the Silicon Labs EFM32 \texttt{emlib}.
+We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of Rust, and to make sure that the builds have been consistent across the systems it has been built on.
 
 \subsection{Early days}
 \label{ssub:using_make}
@@ -23,10 +23,10 @@ We looked at armboot's Makefile to figure out what flags to pass to \texttt{rust
 
 It was always a goal to use Cargo for building, distributing, and managing the packages and dependencies that would become part of this project.
 An obvious reason for this was to lower the bar for other potential users of the library, and to make our project as standalone as possible, so that it is easier to include and extend it as a part of other potential projects.
-By letting \texttt{Cargo} handle as much as possible in its build routine, it will automate a lot of the work that every programmer using the library otherwise would have to do manually
+By letting \texttt{Cargo} handle as much as possible in its build routine, it would automate a lot of the work that every programmer using the library otherwise would have to do manually
 
 When the project first started out it was built by compiling Rust's core library and Silabs' emlib C sources separately, and then linking them with the \gls{ffi} bindings for emlib by hand.
-While this approach worked, it was far from optimal for a number of reasons:
+While this approach worked, built it was far from optimal for a number of reasons:
 
 \begin{itemize}
     \item Rust was in active development and many of it's unstable \glspl{api} were going through rapid changes. Ensuring that versions of rustc and the Rust source code stayed up to date across different systems was not easy.
@@ -43,7 +43,7 @@ By invoking the \texttt{cargo build --verbose} command, it was possible to see t
 A big priority was to to shrink the size of the makefiles that was in the project by making them a part of the standard build process for \texttt{emlib} instead, doing this would help us get a long way of ensuring that the builds done by Cargo could be consistent across systems.
 By defining a Rust build script and utilizing a Rust build-dependency called \texttt{gcc} \cite{web:cargo_gcc}, we were able to compile the C sources from Silabs' emlib and link them with our bindings directly as part of the build process.
 Note that the \texttt{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the \texttt{arm-none-eabi-gcc} compiler.
-By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies like the \texttt{core} and \texttt{collections} libraries.
+By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies, like the \texttt{core} and \texttt{collections} libraries.
 
 Because the project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard Rust libraries that we wanted to utilize for the ARM Cortex-M3.
 We could not utilize the pre-compiled libraries that are already included with \texttt{rustc}, since these only works for the current system architecture.
