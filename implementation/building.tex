@@ -45,13 +45,14 @@ By defining a Rust build script and utilizing a Rust build-dependency called \te
 Note that the \texttt{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the \texttt{arm-none-eabi-gcc} compiler.
 By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies, like the \texttt{core} and \texttt{collections} libraries.
 
-Because the project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard Rust libraries that we wanted to utilize for the ARM Cortex-M3.
+Because this project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard Rust libraries that we wanted to utilize for the ARM Cortex-M3.
 We could not utilize the pre-compiled libraries that are already included with \texttt{rustc}, since these only works for the current system architecture.
 \todo{Mention this in discussion. Is there a better way of solving this? Currently it fetches a release tarball of the language. It fetches more than it needs to for each library, but it's quicker/easier than using e.g. git to do it. It does however take a little while to compile all the dependencies on smaller machines.}
-We solved this problem by implementing a new Cargo build-dependency, called \texttt{rust-src} \cite{github:rust_src}, whose purpose is to download the entire Rust source code that is compliant with the instance of \texttt{rustc} that is \emph{currently} compiling the library.
+This problem was solved by implementing a new Cargo build-dependency, called \texttt{rust-src} \cite{github:rust_src}, whose purpose is to download the entire Rust source code that is compliant with the instance of \texttt{rustc} that is \emph{currently} compiling the library.
 By making it a task for each build to fetch its own source code, we were guaranteed that the dependencies we used for the project would always compile, independent of the current instance of \texttt{rustc} that was installed on the system.
-\autoref{tab:compiled_libraries} summarizes the different crates that we have fetched from Rust's standard library in order to use them with our project.
-\todo{May not need this table here. Need to synchronize with the section that presents REL and such..}
+The crates that we have fetched from Rust's standard library that make up what we call \gls{rel} is already described in \autoref{sec:rust_embedded_library}, but they are also shown in \autoref{tab:compiled_libraries} for the sake of completeness.
+% The crates\autoref{tab:compiled_libraries} summarizes the different crates that we have fetched from Rust's standard library in order to use them with our project.
+% \todo{May not need this table here. Need to synchronize with the section that presents REL and such..}
 
 \todo{We need to write about the \texttt{rlibc} crate, and the need to define our own \texttt{memmove} and \texttt{memalign} functions in order to use alloc (Box, Vector, ...)}
 
