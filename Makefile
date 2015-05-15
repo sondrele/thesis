@@ -33,6 +33,7 @@ showquick: quick
 	$(OPEN) $(REPORT:.tex=.pdf)
 
 mk:
+	$(GLS) $(REPORT:.tex=)
 	@latexmk -pdf -shell-escape main.tex
 
 
