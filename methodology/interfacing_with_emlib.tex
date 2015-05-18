@@ -3,72 +3,52 @@
 \section{Bindings for emlib} % (fold)
 \label{sub:interfacing_with_emlib}
 
-The \gls{ffi} available in Rust has been used to interface with emlib. This way, we have been able
-to create thin wrappers around the emlib peripheral \gls{api} for the different peripherals that we
-have used in the project, without porting the core logic itself. The following sections explains the
-process of defining the \gls{ffi} in Rust that is used to access the \gls{cpu} and the peripherals
-on the EFM32 STK. We will start by showing an example of what it is like to use emlib with C, and
-then move over to what it looks like in Rust.
+The \gls{ffi} available in Rust has been used to interface with Silabs' emlib.
+This way, we have been able to create thin wrappers around the peripheral \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
+The following sections explains the process of defining the \gls{ffi} in Rust that is used to access the \gls{cpu} and the peripherals on the EFM32 STK. We will start by showing an example of what it is like to use emlib with C, and then move over to what it looks like in Rust.
 
-The \gls{ffi} bindings for the Timer module \cite{an0014_timer} provides for a good example of what
-the Rust bindings looks like. The Timer module is fairly small, mostly exposing functions to set up
-and initialize timers that can be used for up, down, up/down, and input- and output-capture. The
-program shown in \autoref{lst:timer_program_c} first starts the clock and acquires an initialization
-structure for the Timer module. Then it enables interrupts and initializes the module. The interrupt
-vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler}, all it does is
-clearing the interrupt and toggle the value of an LED. Note that this program is not a complete
-working example, it only shows the most important parts required to use the Timer module.
+The \gls{ffi} bindings for the Timer module \cite{an0014_timer} provides for a good example of what the Rust bindings looks like.
+The Timer module is fairly small, mostly exposing functions to set up and initialize timers that can be used for up, down, up/down, and input- and output-capture.
+The program shown in \autoref{lst:timer_program_c} first starts the clock and acquires an initialization structure for the Timer module. Then it enables interrupts and initializes the module.
+The interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler}, all it does is clearing the interrupt and toggle the value of an LED. Note that this program is not a complete working example, it only shows the most important parts required to use the Timer module.
 
 \begin{listing}[tb]
 \begin{minted}{c}
-/* Enable clock for TIMER0 module */
+// Enable clock for TIMER0 module
 CMU_ClockEnable(cmuClock_TIMER0, true);
-
-/* Select TIMER0 parameters */
+// Select TIMER0 parameters
 TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
-
-/* Enable overflow interrupt */
+// Enable overflow interrupt
 TIMER_IntEnable(TIMER0, TIMER_IF_OF);
-
-/* Enable TIMER0 interrupt vector in NVIC */
+// Enable TIMER0 interrupt vector in NVIC
 NVIC_EnableIRQ(TIMER0_IRQn);
-
-/* Set TIMER Top value */
+// Set TIMER Top value
 TIMER_TopSet(TIMER0, TOP);
-
-/* Configure TIMER */
+// Configure TIMER
 TIMER_Init(TIMER0, &timerInit);
 \end{minted}
 \caption{Caption here}
 \label{lst:timer_program_c}
 \end{listing}
 
-The equivalent program written in Rust is shown in \autoref{lst:timer_program_rust}. Semantically
-they are the same, but the usage differs slightly, which is natural since we are using a
-higher-order programming language. Instead of calling functions that are included through a C header
-file, we are calling functions that are available through a Rust module. It is also worth to notice
-the difference of how the Timer0 structure can be treated like an object in Rust, instead of
-explicitly passing it to every function that requires it in C.
+The equivalent program written in Rust is shown in \autoref{lst:timer_program_rust}.
+Semantically they are the same, but the usage differs slightly, which is natural since we are using a higher-order programming language.
+Instead of calling functions that are included through a C header file, we are calling functions that are available through a Rust module. It is also worth to notice the difference of how the Timer0 structure can be treated like an object in Rust, instead of explicitly passing it to every function that requires it in C.
 
 \begin{listing}[tb]
 \begin{minted}{rust}
-/* Enable clock for TIMER0 module */
+// Enable clock for TIMER0 module
 cmu::clock_enable(cmu::Clock::TIMER0, true);
-
-/* Select TIMER0 parameters */
+// Select TIMER0 parameters
 let timer_init = Default::default();
-
-/* Enable overflow interrupt */
+// Enable overflow interrupt
 let timer0 = timer::Timer::timer0();
 timer0.int_enable(timer::TIMER_IF_OF);
-
-/* Enable TIMER0 interrupt vector in NVIC */
+// Enable TIMER0 interrupt vector in NVIC
 nvic::enable_irq(nvic::IRQn::TIMER0);
-
-/* Set TIMER Top value */
+// Set TIMER Top value
 timer0.top_set(TOP);
-
-/* Configure TIMER */
+// Configure TIMER
 timer0.init(&timer_init);
 \end{minted}
 \caption{Caption here}
@@ -78,10 +58,9 @@ timer0.init(&timer_init);
 \begin{listing}[tb]
 \begin{minted}{c}
 void TIMER0_IRQHandler(void) {
-  /* Clear flag for TIMER0 overflow interrupt */
+  // Clear flag for TIMER0 overflow interrupt
   TIMER_IntClear(TIMER0, TIMER_IF_OF);
-
-  /* Toggle LED ON/OFF */
+  // Toggle LED ON/OFF
   GPIO_PinOutToggle(LED_PORT, LED_PIN);
 }
 \end{minted}
@@ -89,20 +68,13 @@ void TIMER0_IRQHandler(void) {
 \label{lst:timer_interrupt_handler}
 \end{listing}
 
-In order to work with structures and enums originally defined in C, we had to re-define them in Rust
-and mark them with \texttt{\#[repr(C)]} so that Rust guarantees that the data-elements are C
-compatible. The header files in the peripheral \gls{api} also defines many functions as
-\texttt{static inline}, which only makes the functions accessible by including the header file.
-Since it is not possible to include header files directly in Rust, we had to expose these functions
-through one extra layer with C code. As an example, the \texttt{TIMER\_IntEnable} function is defined
-as \texttt{static inline} in \texttt{em\_timer.h}, in order to call this function through Rust we
-have to expose it through the file \texttt{timer.c}, as shown in
-\autoref{lst:exposing_static_inline}. In the Rust module definition of Timer, the function has to
-be made available through the \texttt{extern} block shown in \autoref{lst:rust_ffi_example}. Every
-function available through the \gls{ffi} are defined as \texttt{unsafe} because Rust knows nothing
-of what the function does, other than what it takes as parameters and what value it returns. Thus,
-in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to
-the foreign functions in an \texttt{unsafe} block in the respective function defined in Rust.
+In order to work with structures and enums originally defined in C, we had to re-define them in Rust and mark them with \texttt{\#[repr(C)]} so that Rust guarantees that the data-elements are C compatible.
+The header files in the peripheral \gls{api} also defines many functions as \texttt{static inline}, which only makes the functions accessible by including the header file.
+Since it is not possible to include header files directly in Rust, we had to expose these functions through one extra layer with C code.
+As an example, the \texttt{TIMER\_IntEnable} function is defined as \texttt{static inline} in \texttt{em\_timer.h}, in order to call this function through Rust we have to expose it through the file \texttt{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
+In the Rust module definition of Timer, the function has to be made available through the \texttt{extern} block shown in \autoref{lst:rust_ffi_example}.
+Every function available through the \gls{ffi} are defined as \texttt{unsafe} because Rust knows nothing of what the function does, other than what it takes as parameters and what value it returns.
+Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an \texttt{unsafe} block in the respective function defined in Rust.
 
 \begin{listing}[tb]
 \begin{minted}{c}
@@ -133,12 +105,8 @@ extern {
 \label{lst:rust_ffi_example}
 \end{listing}
 
-If we compare the call-stack when calling the \texttt{timer0.int\_enable} function in Rust with
-calling the \texttt{TIMER\_IntEnable} function in C, we can see that every function call through the
-\gls{ffi} requires two extra function calls. These are simple wrappers which require extra
-unconditional jumps in the assembly, but it should be possible to get rid of the extra overhead
-with link-time optimizations, thereby making the emlib-bindings a zero-cost abstraction over
-Silicon Labs emlib peripheral \gls{api}.
+If we compare the call-stack when calling the \texttt{timer0.int\_enable} function in Rust with calling the \texttt{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires two extra function calls.
+These are simple wrappers which require extra unconditional jumps in the assembly, but it should be possible to get rid of the extra overhead with link-time optimizations, thereby making the emlib-bindings a zero-cost abstraction over Silicon Labs emlib peripheral \gls{api}.
 \todo{We have not gotten this to work yet}
 
 \todo[inline]{This whole section needs rewrite. A lot of the content (code examples etc.) might not
