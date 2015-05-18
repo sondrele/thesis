@@ -33,9 +33,12 @@ showquick: quick
 	$(OPEN) $(REPORT:.tex=.pdf)
 
 mk:
-	$(GLS) $(REPORT:.tex=)
 	@latexmk -pdf -shell-escape main.tex
 
+glsmk:
+	@latexmk -pdf -shell-escape main.tex
+	$(GLS) $(REPORT:.tex=)
+	@latexmk -pdf -shell-escape main.tex
 
 ls:
 	@tree -P "*.tex|*.bib"
