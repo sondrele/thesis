@@ -35,7 +35,7 @@ pub extern fn ADC0_IRQHandler() {
   unsafe { BUFFER[IDX % N] = sample; }
 }
   \end{minted}
-  \caption{Analogue sample with global buffer}
+  \caption{Analogue sampler with global buffer}
   \label{lst:irq:global}
 \end{listing}
 
@@ -67,7 +67,7 @@ fn main() {
   loop {}
 }
   \end{minted}
-  \caption{Analogue sample with local buffer}
+  \caption{Analogue sampler with local buffer}
   \label{lst:irq:local}
 \end{listing}
 
@@ -135,7 +135,7 @@ We substitue the \texttt{Box} pointer with a raw pointer to the closure as shown
   \begin{minted}{rust}
 static mut CLOSURE: Option<*const Fn()> = None;
   \end{minted}
-  \caption{Storing a pointer to the closure globally}
+  \caption{Storing a raw pointer to the closure globally}
   \label{lst:raw-global-pointer-to-closure}
 \end{listing}
 
@@ -194,7 +194,7 @@ fn dispatch() {
   }
 }
   \end{minted}
-  \caption{Safe abstraction over global reference}
+  \caption{Safe abstraction over global raw pointer}
   \label{lst:reg-disp}
 \end{listing}
 
@@ -276,7 +276,7 @@ impl Adc {
   // Clears interrupt signals
   pub fn int_clear(&self, flag: u32) { /*...*/ }
 
-  // Retreives next sample from the ADC
+  // Triggers an ADC conversion and returns the result
   pub fn data_single_get(&self) -> u32 { /*...*/ }
 }
 
@@ -287,15 +287,15 @@ fn ADC0_IRQHandler() {
     dispatch(Event::ADC0);
 }
   \end{minted}
-  \caption{Storing a pointer to the closure globally}
-  \label{lst:raw-global-pointer-to-closure}
+  \caption{\gls{adc} abstraction over Event Hub}
+  \label{lst:adc-abstraction}
 \end{listing}
 
 Now looking back at out target implementation in \autoref{lst:irq:local} we augment the example to be functional with the library presented in this section.
 
 \paragraph{Working example with closure as interrupt handler}
 
-\autoref{lst:irq:closure} shows a runnable version of the example application from \label{par:irq:motivation}.
+\autoref{lst:irq:closure} shows a runnable version of the example application from \autoref{par:irq:motivation}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -316,7 +316,7 @@ fn main() {
   loop {}
 }
   \end{minted}
-  \caption{Analogue sample with local buffer}
+  \caption{Running example of example application}
   \label{lst:irq:closure}
 \end{listing}
 
@@ -331,7 +331,7 @@ This ensures that the \texttt{hub} variable has \texttt{static} lifetime and can
 The inspiration for this \textit{hack} was drawn from the pattern being used in the Servo project for setting up an Event Loop.
 
 Elimintaing the main stack frame dependence was considerable easy to do by using the same conversion used in the register call above.
-\autoref{list:irq:init} shows a initializing function which creates a \texttt{Hub} object and registrers it in the \texttt{HUB} reference.
+\autoref{lst:irq:init} shows a initializing function which creates a \texttt{Hub} object and registrers it in the \texttt{HUB} reference.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -346,6 +346,6 @@ pub fn init() {
   }
 }
   \end{minted}
-  \caption{Saving a global reference to a heap allocated object}
-  \label{lst:irq:closure}
+  \caption{Function for initializing the Event Hub}
+  \label{lst:irq:init}
 \end{listing}
