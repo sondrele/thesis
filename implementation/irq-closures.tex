@@ -12,6 +12,7 @@ Therefore avoiding mutable global state is a goal of any Rust program.
 
 Lets consider a simple example for motiviating the use of closures to handle interrupts.
 The example application samples an analogue signal and saves the result to a memory buffer.
+An example of such an application is an audio filter which samples an audio input connected to the \gls{adc} and stores a window of samples in RAM for processing.
 
 \begin{listing}[H]
   \begin{minted}{rust}
