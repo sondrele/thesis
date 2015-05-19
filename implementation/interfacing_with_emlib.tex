@@ -167,7 +167,70 @@ pub enum CCMode {
 \subsection{Testing}
 \label{ssub:testing}
 
-\todo{Håvard: Tar du denne seksjonen?}
+This section describes a small Unit testing framework developed for testing the emlib bindings.
+
+\subsubsection{Why Unit testing}
+
+Early on in the development phase of the emlib bindings we saw the need for a testing framework.
+This was provoked by the fact that the testing on an embedded system is a timeconsuming and tedious task.
+More often than not you find your self running the code in the debugger inspecting the callstack and arguments to ensure that the bindings are calling the correct functions with the correct arguments.
+The last statement about arguments has a subtle point to it.
+We are working in two statically typed languages here which leads to the compiler statically assuring that the correct types are passed around, but at the language boundries there are no checks (yet?) for assuring that the memory layout of the datatypes in C and Rust match.
+Currently the Rust FFI requires the programmer to redefine the datatypes like structs and enums on the Rust side in order to call into C functions that takes these datatypes as arguments.
+This process proved error prone and timeconsuming to verify manually.
+
+\subsubsection{Framework}
+
+To meet this problem a featherweight testing framework was developed which enabled this verification to be automated.
+The metodology of the framework was to replace the emlib code with statically generated test mocks, write a test cases where the datastructures where setup in Rust code and then verify the correctness in C code.
+All of this was executed on the \textbf{Gecko} which reported test failure/success over Uart.
+
+The framework is implemented is a small test runner utilizing CMock \cite{web:cmock} and Unity \cite{web:unity} for mocking and assertions respectivly.
+
+An test case for verifying that the \texttt{ADC\_Init} is working properly is given in \autoref{lst:test:adc}
+
+\begin{listing}[H]
+  \centering
+  \begin{minipage}{\textwidth}
+  \begin{listing}
+    \begin{minted}{rust}
+fn test_init_called_with_default() {
+  unsafe { adc_expect_init_called_with_default(); }
+
+  let adc0 = adc::Adc::adc0();
+  adc0.init(&Default::default());
+}
+    \end{minted}
+    \label{lst:test:adc:rust}
+    \caption{Rust side of ADC\_Init test}
+  \end{listing}
+  \end{minipage}
+
+  \begin{minipage}{\textwidth}
+  \begin{listing}
+    \begin{minted}{c}
+void adc_expect_init_called_with_default() {
+    static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
+    ADC_Init_Expect(ADC0, &init);
+}
+    \end{minted}
+    \label{lst:test:adc:rust}
+    \caption{C side of ADC\_Init test}
+  \end{listing}
+  \end{minipage}
+
+  \caption{Test case for ADC\_Init with default values}
+  \label{lst:test:adc}
+\end{listing}
+
+\subsubsection{Not using: cargo test}
+
+The Rust programming language contains a testing framework within the standard library.
+The reasons for not using it to test the bindings are two fold.
+Primarly we wanted to run the tests on the \textbf{Gecko}.
+The rational for this is that the tests are mostly checking that the datatypes used on the Rust and C side of the bindings are compatible.
+Therefore we need to use the proper compilers and compiler targets for the platform, verifying that the OSX platform gcc and rust compiler has compatible types does not help in this respect.
+Secondly the testing framework in the standard library relies heavily on the Rust standard library RSL, as discussed in \autoref{sec:back:lib} this renders the framework unusable for our embedded platform.
 
 \subsection{Thoughts and Review}
 
