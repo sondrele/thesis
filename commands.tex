@@ -15,3 +15,10 @@
 %\renewcommand\thesection{\arabic{chapter}.\arabic{section}}
 %\renewcommand\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
 %\renewcommand\thesubsubsection{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+\newcommand{\frontchapter}[1]{
+    \setcounter{chapter}{0}
+    \setcounter{section}{0}
+    \chapter*{#1}
+    \addcontentsline{toc}{chapter}{#1}
+}
