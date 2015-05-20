@@ -216,3 +216,20 @@ Even though \texttt{cargo-linkargs} worked great for its purpose, it was not ver
 Not only would it benefit our project, it would also give many other Rust projects the ability to use Cargo for the entire compilation process.
 Since both Rust and Cargo are open source projects, it was quick to get in contact with the project maintainers about the issue, and eventually submit a pull-request with the new subcommand.
 After it was reviewed by one of the project maintainers, the pull-request was accepted and merged into Cargo's code base, and it is already part of Rust's nightly builds.
+
+\subsection{Final Library Build Artifacts}
+
+The collection of the output file for the library is presented in \autoref{fig:lib:structure}.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.5]{figures/lib-structure.png}
+  \end{center}
+  \caption{The organization files of libraries}
+  \label{fig:lib:structure}
+\end{figure}
+
+The figure shows that all of the libraries except for \texttt{modules} consists of both a C static archive (\texttt{*.a}) and a Rust library (\texttt{*.rlib}).
+The \texttt{modules} library is a high level library over the \texttt{emlib} and \texttt{emdrv} libraries.
+The reset of the libraries provides the Rust bindings in the \texttt{*.rlib} part and the C implementations in the \texttt{*.a} portion.
+We also see the dependencies, denoted by the arrows, between the libraries generally flowing from the top level abstraction down to the lower level abstractions.
