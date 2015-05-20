@@ -146,15 +146,12 @@ Now we've managed to store a closure in a statically allocated location.
   \begin{minted}{rust}
 // Registers an interrupt handler
 fn register(f: Box<Fn()>) {
-
   unsafe {
-
     // Deallocate old handler if existing
     match CLOSURE {
       Some(old) => {
         // Remove the global reference
         CLOSURE = None;
-
         // Return the ownership of the pointer
         // to a managed box, this will ensure
         // that the contents is deallocated when
@@ -163,27 +160,20 @@ fn register(f: Box<Fn()>) {
       },
       None => ()
     }
-
     // Consume the Box pointer and
     // return a raw pointer to the closure
     let raw = boxed::into_raw(f);
-
     // Save the closure pointer in the global reference
     CLOSURE = Some(raw);
   }
-
 }
-
 // Dispatch a event by calling the closure if it is registered
 fn dispatch() {
-
   // The Closure is stored in a global variable mutable
   // So the access to this variable is unsafe
   match unsafe { CLOSURE } {
-
       // Unwrap the closure value
       Some(func) => unsafe {
-
         // The closure is stored behind a pointer which must
         // be dereferenced, it is called with is environment
         // by invoking the function: call
@@ -226,13 +216,10 @@ struct Hub {
 
 // Signatures for implementation of the Event Hub
 impl Hub {
-
   // Create an empty hub
   fn new() -> Hub { /* .. */ }
-
   // Register a handler for an Event
   fn register(&mut self, event: Event, f: Box<Fn()>) { /*...*/ }
-
   // Trigger an event
   fn dispatch(&self, event: Event) { /*...*/ }
 }
@@ -253,29 +240,22 @@ impl Adc {
 
   // This constructor is defined in emlib
   pub fn adc0() -> &'static Adc { /*...*/ }
-
   pub fn on_single(&'static self, callback: Box<Fn(u32)>) {
-
     // Make sure the callback for
     // a single conversion is enabled
     self.int_enable(IEN_SINGLE);
-
     // Call the utility to register a irq handler
     // The move keyword is used to move
     // ownership of the callback function into the closure
     register(Event::ADC0, Box::new(move || {
-
       // Clear interrupt signal to mark it as handled
       self.int_clear(IF_SINGLE);
-
       // Call the interrupt handler with the ADC sample
       callback(self.data_single_get())
     }));
   }
-
   // Clears interrupt signals
   pub fn int_clear(&self, flag: u32) { /*...*/ }
-
   // Triggers an ADC conversion and returns the result
   pub fn data_single_get(&self) -> u32 { /*...*/ }
 }
