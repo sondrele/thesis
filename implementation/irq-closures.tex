@@ -338,7 +338,7 @@ The issue with the end solution presented in \autoref{lst:irq:init} which makes 
 In Servos use case, the desired behaviour is to deallocate the object when the \texttt{main} stack frame is deallocated.
 Letting the reference live on the \texttt{main} stack frame ensures this behaviour is provided automatically by the Rust compiler.
 
-The approach taken in \autoref{lst:irq:init} is similary to the one taken by the \textit{lazy_statics} \cite{web:lazy_statics} library.
-\textit{lazy_statics} provides a macro for declaring static variables which need initializers executed at runtime.
+The approach taken in \autoref{lst:irq:init} is similary to the one taken by the \textit{lazy\_statics} \cite{web:lazy_statics} library.
+\textit{lazy\_statics} provides a macro for declaring static variables which need initializers executed at runtime.
 This macro avoids the need for the initilizer method used here as it implements the \texttt{Deref} trait for the hidden `static mut` variable, the \texttt{HUB} variable in our example.
 The library uses a Rust RSL feature to register an initializer function which is guaranteed to run once only on the first dereference of the variable.
