@@ -2,16 +2,16 @@
 \label{sec:back:startup}
 
 This section describes the process of starting a program on an embedded system.
-The \textbf{main} function is usually considered the starting point of a program.
+The \texttt{main} function is usually considered the starting point of a program.
 This is sometimes true from the point of view of the programmer, but as we will see in this section usually it is not.
 This section looks at what happens before the program reaches the main function.
 
 \subsection{Prelude}
 
 Before we look at the start of execution, lets look at the process between compilation and execution.
-The compiler outputs objectfiles which the linker combines into a \textbf{elf} file.
-This file is loaded into the microcontrollers ROM Flash memory.
-Then the reset signal is sent to the CPU to start execution.
+The compiler outputs object-files which the linker combines into a \textbf{elf} file.
+This file is loaded into the microcontrollers \gls{rom} Flash memory.
+Then the reset signal is sent to the \gls{cpu} to start execution.
 
 \subsection{Executable and Linkable File Format}
 \label{sec:back:elf}
@@ -21,7 +21,7 @@ This file format can be loaded onto a microcontroller and executed.
 For our purposes, this format defines three interesting sections, namely \textbf{.text}, \textbf{.data} and \textbf{.bss}.
 \autoref{fig:elf} describes the contents of the these sections an \textbf{elf} file.
 
-\begin{figure}[H]
+\begin{table}[H]
   \centering
   \begin{tabular}{|l|l|}
     \hline
@@ -36,7 +36,7 @@ For our purposes, this format defines three interesting sections, namely \textbf
   \end{tabular}
   \caption{Sections of elf file format}
   \label{fig:elf}
-\end{figure}
+\end{table}
 
 The \textbf{.text} section contains the program code and any read-only data defined in the code.
 Strings are for instance stored in the \textbf{.text} section as read-only.
@@ -49,13 +49,13 @@ The header specfies the size of the \textbf{.bss} section which describes the si
 Before the \textbf{main} function executes, all static data must be initialized.
 The data is divided into two categories; zero and non-zero initialized.
 The non-zero initialized data are contained either in the \textbf{.text} (read-only-data) or \textbf{.data} sections of the \textbf{elf} binary.
-On the chip the \textbf{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into RAM.
+On the chip the \textbf{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into \gls{ram}.
 The \textbf{.text} section contains the instructions and read-only data, this data does not need to be copied as thet can be read directly from flash at runtime.
 All zero initialized data are represented by the \textbf{.bss} section in the \textbf{elf} binary.
-A portion of RAM corresonding to the size of the \textbf{.bss} section must be set to zero.
+A portion of \gls{ram} corresponding to the size of the \textbf{.bss} section must be set to zero.
 
-Copying the \textbf{.data} section into RAM is handled by the \textbf{ResetHandler} function in \autoref{lst:reset-handler}
-The function is the real entry point of the program and is executed when the CPU receives the reset signal.
+Copying the \textbf{.data} section into \gls{ram} is handled by the \texttt{ResetHandler} function shown in \autoref{lst:reset-handler}
+The function is the real entry point of the program and is executed when the \gls{cpu} receives the reset signal.
 
 \begin{listing}[H]
 \begin{minted}{c}
@@ -74,16 +74,16 @@ void ResetHandler() {
 \label{lst:reset-handler}
 \end{listing}
 
-When the \textbf{ResetHandler} has copied the non-zero initialized data into RAM it calls the \textbf{\_start} function in the C runtime.
-The \textbf{\_start} function finds the size of the \textbf{.bss} section which describes the size of zero-initialized area in RAM.
-It then calls on the \textbf{memset} function to zero out the RAM.
-\textbf{\_start} then goes on to call the \textbf{main} function supplied by the programmer.
+When the \texttt{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \texttt{\_start} function in the C runtime.
+The \texttt{\_start} function finds the size of the \textbf{.bss} section which describes the size of zero-initialized area in \gls{ram}.
+It then calls on the \texttt{memset} function to zero out the \gls{ram}.
+\texttt{\_start} then goes on to call the \texttt{main} function supplied by the programmer.
 
 \begin{listing}[H]
 \begin{minted}{c}
 // Variables set in linker script
-bss_start; // start of .bss segment in RAM
-bss_end;   // end of .bss segment in RAM
+bss_start; // start of .bss segment in \gls{ram}
+bss_end;   // end of .bss segment in \gls{ram}
 
 void _start() {
   memset(bss_start, 0, bss_end - bss_start);
