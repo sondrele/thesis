@@ -172,22 +172,25 @@ This section describes a small Unit testing framework developed for testing the 
 \subsubsection{Why Unit testing}
 
 Early on in the development phase of the emlib bindings we saw the need for a testing framework.
-This was provoked by the fact that the testing on an embedded system is a timeconsuming and tedious task.
-More often than not you find your self running the code in the debugger inspecting the callstack and arguments to ensure that the bindings are calling the correct functions with the correct arguments.
-The last statement about arguments has a subtle point to it.
-We are working in two statically typed languages here which leads to the compiler statically assuring that the correct types are passed around, but at the language boundries there are no checks (yet?) for assuring that the memory layout of the datatypes in C and Rust match.
+This was provoked by the fact that testing on an embedded system is a time consuming and tedious task.
+More often than not you find your self running the code in the debugger inspecting the call stack and arguments to ensure that the bindings are calling the correct functions with the correct arguments.
+The fact about arguments has a subtle point to it.
+
+We are working in two statically typed languages here which leads to the compiler statically assuring that the correct types are passed around, but at the language boundries there are no checks for assuring that the memory layout of the datatypes in C and Rust match.
 Currently the Rust FFI requires the programmer to redefine the datatypes like structs and enums on the Rust side in order to call into C functions that takes these datatypes as arguments.
-This process proved error prone and timeconsuming to verify manually.
+This process proved to be too error prone and time consuming to verify manually.
 
 \subsubsection{Framework}
 
-To meet this problem a featherweight testing framework was developed which enabled this verification to be automated.
-The metodology of the framework was to replace the emlib code with statically generated test mocks, write a test cases where the datastructures where setup in Rust code and then verify the correctness in C code.
+To meet this problem, a featherweight testing framework was developed which enabled this verification to be automated.
+The goal of the framework was to initialize the data on the Rust side execute the \gls{ffi} and verify the correct function where called with the exact data as supplied.
+To do this we set up a framework to replace the emlib code with statically generated test mocks, execute test cases where the datastructures where setup in Rust code and then verify the correctness in C code.
 All of this was executed on the \textbf{Gecko} which reported test failure/success over Uart.
 
-The framework is implemented is a small test runner utilizing CMock \cite{web:cmock} and Unity \cite{web:unity} for mocking and assertions respectivly.
+The framework implemented is a small test runner utilizing CMock \cite{web:cmock} and Unity \cite{web:unity} for mocking and assertions respectivly.
 
-An test case for verifying that the \texttt{ADC\_Init} is working properly is given in \autoref{lst:test:adc}
+An test case for verifying that the \texttt{ADC\_Init} with default argument is working properly is given in \autoref{lst:test:adc}.
+
 
 \begin{listing}[H]
   \centering
@@ -195,9 +198,11 @@ An test case for verifying that the \texttt{ADC\_Init} is working properly is gi
   \begin{listing}
     \begin{minted}{rust}
 fn test_init_called_with_default() {
+  // FFI call to the C function below
   unsafe { adc_expect_init_called_with_default(); }
 
   let adc0 = adc::Adc::adc0();
+  // Call the emlib bindings with an default argument
   adc0.init(&Default::default());
 }
     \end{minted}
@@ -210,11 +215,12 @@ fn test_init_called_with_default() {
   \begin{listing}
     \begin{minted}{c}
 void adc_expect_init_called_with_default() {
-    static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
-    ADC_Init_Expect(ADC0, &init);
+  static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
+  // setup the expected value on the Mock
+  ADC_Init_Expect(ADC0, &init);
 }
     \end{minted}
-    \label{lst:test:adc:rust}
+    \label{lst:test:adc:c}
     \caption{C side of ADC\_Init test}
   \end{listing}
   \end{minipage}
@@ -223,14 +229,33 @@ void adc_expect_init_called_with_default() {
   \label{lst:test:adc}
 \end{listing}
 
-\subsubsection{Not using: cargo test}
+When using mocking in unit tests the workflow of for the user seems reversed compared to standard unit tests.
+First you setup the expected results with by calling the \texttt{ADC\_Init\_Expect} function on the mock as shown in \auroref{lst:test:adc:c}.
+This method is in fact called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
+When the expected result is setup the test case goes on to create an \gls{adc} object using the Rust bindings and calling the \texttt{init} function causing the \gls{ffi} library bindings to be executed.
+When the test returns, the test runner is responsible for calling a \texttt{Verify} function on the mock object.
+This function causes the program to fail and report status over Uart if the expectation set up was not met.
+
+\autoref{fig:test-framework} shows a diagram of the flow between \textit{Test Runner}, \textit{Test Case}, \textit{emlib Bindings} as \gls{CUT} and the \textit{emlib Mock} when executing the testcase above.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/testframework}
+  \end{center}
+  \caption{Flowchart for test framework}
+  \label{fig:test-framework}
+\end{figure}
+
+We see that the two boxes marked with \textit{Test Case} are the pieces of code the user of the framework, presented in \autoref{lst:test:adc}, writes.
+The stippled vertical line shows the separation between Rust and C code, all the three calls which cross this line is implemented using the Rust \gls{ffi}.
+
+\subsubsection{Rust libtest}
 
 The Rust programming language contains a testing framework within the standard library.
-The reasons for not using it to test the bindings are two fold.
-Primarly we wanted to run the tests on the \textbf{Gecko}.
+The reasons for not using it to test the bindings is that we wanted to run the tests on the \textbf{Gecko}.
 The rational for this is that the tests are mostly checking that the datatypes used on the Rust and C side of the bindings are compatible.
 Therefore we need to use the proper compilers and compiler targets for the platform, verifying that the OSX platform gcc and rust compiler has compatible types does not help in this respect.
-Secondly the testing framework in the standard library relies heavily on the Rust standard library RSL, as discussed in \autoref{sec:back:lib} this renders the framework unusable for our embedded platform.
+Consequently, given that the testing framework in the standard library relies heavily on the Rust standard library RSL as discussed in \autoref{sec:back:lib}, this renders the framework unusable for our embedded platform.
 
 \subsection{Thoughts and Review}
 
