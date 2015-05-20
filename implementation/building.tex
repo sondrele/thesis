@@ -14,9 +14,55 @@ When the project first started out it was based upon the \texttt{armboot} \cite{
 \texttt{armboot} is a small template project for using Rust bare metal on a STM32 ARM \glspl{mcu}.
 These are, similarly with the EFM32 series, also based on the Cortex-M series of ARM processor cores.
 
-\todo{Håvard: Skriv denne seksjonen}
 The project got up and running pretty fast based on how \texttt{armboot} was built.
 We looked at armboot's Makefile to figure out what flags to pass to \texttt{rustc} in order to make it cross-compile for an ARM target architecture.
+The components listed in \autoref{tab:build:components} were identified as the minimal set of needed to build an executable for the Gecko.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l l l}
+    thumbv7m-none-eabi.json & llvm spec for compiler backend \\ \hline
+    zero.rs & minimal runtime requirements \\ \hline
+    blinky.rs & a program to execute \\ \hline
+    efm32gg.ld & linker script \\ \hline
+    startup\_efm32gg.s & ResetHandler and interrupt vector \\ \hline
+    system\_efm32gg.c & System Clock management \\
+  \end{tabular}
+  \caption{Initial Components for building Rust for ARM Cortex-M}
+  \label{tab:build:components}
+\end{table}
+
+The components in \autoref{tab:build:components} are the files included in the initial successfull build for the Gecko located at geckoboot.rs \cite{web:geckobook-initial} for references.
+In order to compile these components into an executable a Makefile was developed.
+The compilation process consisted of compiling the \texttt{blinky.rs} file to assembly by passing the target architecture and assembly output flag to the \texttt{rustc} compiler.
+This file was then, along with the startup and system files compiled into object files with \texttt{arm-none-eabi-gcc} and linked into an executable with the linker script using \texttt{arm-none-eabi-ld}.
+
+Note: The initial build did not contain the \gls{RCL}.
+
+The build system was then evolved to include the \gls{RCL} library by building it manually for the architecture producing a \texttt{libcore.rlib} library file which was linked to the \texttt{blinky.rs} file before compiling it to assembly.
+The initial bindings to emlib was created and compiled together with the startup and system files.
+
+The final revision on the build system using Makefiles was to eliminate the \texttt{gcc} build step for the Rust files.
+This revision utilizes the \texttt{link-args} argument to the \texttt{rustc} compiler to specify the arguments to the linker.
+Making this change resulting in the a build system with three steps as listed in \autoref{tab:build-steps}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l l l l}
+    & \textbf{Description} & \textbf{Output} & \textbf{Output Type} \\
+    &&&\\
+    1. & Building emlib+system+startup & \texttt{libcompiler-rt.a} & static archive \\
+    2. & Building \gls{RCL} & \texttt{libcore.rlib} & static Rust crate \\
+    3. & Building and linking executable & \texttt{\%.bin} & executable elf file \\
+  \end{tabular}
+  \caption{Build steps}
+  \label{tab:build-steps}
+\end{table}
+
+At this stage of the evolution of the build system the emlib bindings was buils as part of the Rust application code.
+Later this was separated out to produce an \text{libemlib.rlib} which complements an \texttt{libemlib.a} containing the C porting of the emlib code.
+By doing this the system and startup code was separated to \texttt{libstartup.rlib} and \texttt{libstartup.a}.
+This lead to the final library design given in \autoref{fig:lib:structure}.
 
 \subsection{Transitioning to Cargo}
 \label{ssub:transitioning_to_cargo}
