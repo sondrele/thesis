@@ -1,17 +1,17 @@
 \documentclass[10pr,a4paper]{report}
 
-% Contains all the packages used in the report
-\include{packages}
-
 % For orange todos. It needs to be here, otherwise the arrows will not be correct
+% Stupid latex....
 \usepackage{todonotes}
 
-
-% Generate abbreviations, include after hypreref to link. Cite with \gls and \glspl
+% Generate abbreviations, include after hypreref for links. Cite with \gls and \glspl
 % Define with: \newacronym{mac}{MAC}{Media Access Control}
 % Complile with 'makeglossaries main'
 % \usepackage[acronyms, nonumberlist]{glossaries}
-\usepackage{glossaries}
+\usepackage[acronym]{glossaries}
+
+% Contains all the packages used in the report
+\include{packages}
 
 % Contains all commands used in the report
 \include{commands}

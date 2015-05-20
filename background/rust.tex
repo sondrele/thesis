@@ -4,17 +4,55 @@
 \label{sub:the_rust_programming_language}
 
 Rust \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
-Rust is a strongly and statically typed, multi-paradigm programming language.
+It is a strongly and statically typed, multi-paradigm programming language.
 The language borrows many constructs and features from other programming languages, some of which is described in the following sections.
-
-Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency.
-It is designed to support concurrency and parallelism and take full utilization of the underlying hardware, while making strong guarantees about memory safety and isolation, without sacrificing performance.
+Over the course of Rust's development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
 
 \subsection{Language Features}
 \label{ssub:rust:features}
 
-This section describes a few key language features of Rust that are not present in the procedural paradigm usually found in embedded programming.
-The language is multi-paradigm and therefore offers a wider range of language constructs.
+This section starts by describing Rust's \texttt{core} library and its type-system, before moving on to presenting some of the language features that makes Rust so different from C.
+Because Rust is a multi-paradigm language it offers a wider range of language constructs that are not present in the procedural paradigm usually found in embedded programming.
+
+\subsubsection{The Core Library}
+
+Rust's \texttt{core} library, defines the platform independent part of the language.
+This library is not directly accessible to the programmer, instead its stable parts are reexported through Rust's standard library called \texttt{std}.
+In this way, \texttt{core} is not interfaced with directly in normal Rust programs, so it can be modified while \texttt{std}'s interface stays the same.
+The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
+
+\autoref{tab:rust:datatypes} lists the primitive datatypes available in Rust, the \texttt{core} library defines many functions and abstractions that are used to manage and manipulate these datatypes.
+Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from C are discussed throughout the following sections.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r|l}
+    \textbf{Type} & \textbf{Description} \\
+    \hline
+    \texttt{bool}  & Either \texttt{true} or \texttt{false} \\
+    \texttt{char}  & A UTF-8 scalar value \\
+    \texttt{f32}, \texttt{f64} & Floating point number of single and double precision \\
+    \texttt{u8}, \texttt{u16}, \texttt{u32}, \texttt{u64} & Unsigned integers \\
+    \texttt{i8}, \texttt{i16}, \texttt{i32}, \texttt{i64} & Signed integers \\
+    \texttt{isize}, \texttt{usize}                        & `Pointer-sized' Integers \\
+    Pointer        & Raw unsafe pointers (\texttt{*const T}, \texttt{*mut T}) \\
+    Array          & Fixed-length array type, denoted with \texttt{[T]} \\
+    \texttt{slice} & A view into a array, denoted with \texttt{\&[T]} \\
+    \texttt{str}   & UTF-8 encoded byte array \\
+    Tuple          & Finite ordered list of elements \\
+    \hline
+  \end{tabular}
+
+  \caption{Rust's primitive datatypes}
+  \label{tab:rust:datatypes}
+\end{table}
+
+% \paragraph{tuple}
+
+% A tuple type is a fixed size datatype of variable types.
+% The type can be used to return multiple return values from a function.
+% In addition the type supports tags just like the variants of an enum.
+
 
 \subsubsection{Variables and Bindings}
 
@@ -68,12 +106,13 @@ This is also an example of generics in Rust, \texttt{T} can be anything, e.g. an
 The \texttt{Option} type is analogous with a normal C pointer value, which either has the value 0, or \texttt{null} (analogous to \texttt{None}), or a value that that points to a structure at a place in memory (analogous to \texttt{Some}).
 Even though the \texttt{Option} is analogous to a C pointer, it is important to note their differences.
 It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \texttt{None}.
-The usage of \texttt{enum} types described in this section become very expressive in combination with \emph{match expressions}, as discussed in \autoref{sub:pattern_matching}.
+The usage of \texttt{enum} types described in this section become very expressive in combination with \texttt{match} expressions, as discussed in \autoref{sub:pattern_matching}.
 
 \subsubsection{Case Study - List}
 
 A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
 Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+\todo{I think this should be an example of Boxed types in stead of a case study of Enums}
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -89,9 +128,9 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
 \subsubsection{Structs}
 \label{ssub:structs}
 
-\texttt{structs} in Rust are similar to that of C, and is a way of creating more advanced data types than \texttt{primitives} or \texttt{enums}.
+A \texttt{struct} in Rust is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
 With a \texttt{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
-An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, everyone that knows C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
+An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
 Everything in Rust is \emph{private} by default, the \texttt{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
 The \texttt{impl} keyword lets us implement member functions for the \texttt{Book}, similar to class-declarations in C++ and other object-oriented languages.
 
@@ -111,6 +150,34 @@ The \texttt{impl} keyword lets us implement member functions for the \texttt{Boo
   \caption{Struct definition and implementation}
   \label{lst:book_struct}
 \end{listing}
+
+\subsubsection{Pointers}
+
+Rust's \texttt{core} library exposes two pointer types which are considered \textit{unsafe} by the language, \autoref{ssub:unsafe_code} explains why.
+Pointers in Rust are a very fundamental part of the language, but they are not used much outside of low-level code and bindings.
+Instead, the library offers higher-level structures as an abstraction between the \emph{raw} pointers and their data.
+
+\subsubsection{Slices}
+
+The \texttt{slice} type is simply a view into an array, it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
+Slice syntax is denoted by \texttt{\&[T]}, which reads like `a reference to a finite array with type \texttt{T}'.
+They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    pub struct Slice<T> {
+      pub data: *const T,
+      pub len: usize
+    }
+\end{minted}
+\caption{Slice representation}
+\label{lst:rust:slice}
+\end{listing}
+
+An example of common slice type in Rust is the \texttt{str} type, which can either be a statically allocated string defined as a literal, or a borrowed reference into another string.
+The representation of the string type is closely related to slices, as a string-slice denoted as \texttt{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \texttt{\&[u8]}.
+It is important to note that an arbitrary slice of bytes are not necessarily a valid string.
+The \texttt{str} type differs from a \texttt{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
 
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
@@ -145,10 +212,9 @@ We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible out
 
 \subsubsection{Traits}
 
-A Trait defines behavior for an object that implements the Trait.
-Traits are used to facilitate code reuse and polymorphism.
-
-One integral trait in the Rust programming language is the Iterator trait defined in Listing \ref{lst:rust:iterator}.
+Traits in Rust are similar to Interfaces in Java, they are used to facilitate code reuse and polymorphism.
+A \texttt{trait} can define a set methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
+The definition of one of Rust's more integral traits is the \texttt{Iterator} trait, which is shown in \autoref{lst:rust:iterator}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -159,11 +225,11 @@ One integral trait in the Rust programming language is the Iterator trait define
       // ...
     }
   \end{minted}
-  \caption{Definition of Iterator trait}
+  \caption{Definition of the Iterator trait}
   \label{lst:rust:iterator}
 \end{listing}
 
-Implementing the Iterator trait for the List type in Listing \ref{lst:rust:list-iter} involves the discussed features enums, pattern matching and traits.
+Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter} involves the discussed features enums, pattern matching and traits.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -188,66 +254,101 @@ Implementing the Iterator trait for the List type in Listing \ref{lst:rust:list-
 
 \subsubsection{Loops}
 
-Rust provides the two known loop constructs \textbf{for} and \textbf{while}, in addition to \textbf{loop} for infinite loops.
-The \textbf{for} loop is not the conventional \textit{for (initialize; condition; increment)}, it operates on iterators.
-To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in Listing \ref{lst:rust:for}
+Rust provides the two loop constructs known from C, \texttt{for} and \texttt{while}, in addition to \texttt{loop} for infinite loops.
+The \texttt{for} loop is not the conventional \texttt{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
+Rust's \texttt{for} statement is merely syntactic sugar for a \texttt{loop} with an internal \texttt{match} around the iterator's \texttt{next()} function.
+\autoref{lst:rust:desugared-for} shows a simplified, expanded version of the code presented in \autoref{lst:rust:for}.
 
+% To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in \autoref{lst:rust:for}
+\todo{Why not provide an example using List, instead of a Vector?}
 
-\begin{minipage}[b]{0.5\linewidth}
-  \begin{listing}[H]
-  \begin{minted}{rust}
-
-    let values = vec![1, 2, 3];
-    for x in 0..10 {
-      println!("{}", x);
-    }
-
-  \end{minted}
-  \caption{Desugaring for loop}
-  \label{lst:rust:for}
-  \end{listing}
-  \end{minipage}
-
-\begin{minipage}[b]{0.5\linewidth}
-  \begin{listing}[H]
-    \begin{minted}{rust}
-
-      let mut it = values.into_iter();
-      loop {
-        match it.next() {
-          Some(x) => println!("{}", x),
-          None => break,
-        }
-      }
-
-    \end{minted}
-
-    \caption{Desugaring for loop}
-    \label{lst:rust:desugared-for}
-  \end{listing}
-\end{minipage}
-
-\subsubsection{Case Study - Result}
-
-The Result type is an integral type in the Rust library and in Rust code in general.
-The type is the base type for error handling.
-
+\begin{listing}[!h]
+ \begin{minipage}{0.45\textwidth}
 \begin{listing}[H]
   \begin{minted}{rust}
-    #[must_use]
-    pub enum Result<T, E> {
-      Ok(T),
-      Err(E),
-    }
+let values = vec![1, 2, 3];
+
+for x in values {
+  println!("{}", x);
+}
+
+
 \end{minted}
-\caption{Definition of Result}
-\label{lst:rust:result}
+\caption{A \texttt{for} loop for an iterators}
+\label{lst:rust:for}
 \end{listing}
+ \end{minipage}
+ \begin{minipage}{0.45\textwidth}
+  \begin{listing}[H]
+    \begin{minted}{rust}
+let mut it = values.into_iter();
+loop {
+  match it.next() {
+    Some(x) => println!("{}", x),
+    None => break,
+  }
+}
+    \end{minted}
+    \caption{Rust's \texttt{for} loop expanded to a \texttt{loop}}
+    \label{lst:rust:desugared-for}
+  \end{listing}
+ \end{minipage}
+\end{listing}
+
+% \subsubsection{Case Study - Result}
+
+% The Result type is an integral type in the Rust library and in Rust code in general.
+% The type is the base type for error handling.
+
+% \begin{listing}[H]
+%   \begin{minted}{rust}
+%     #[must_use]
+%     pub enum Result<T, E> {
+%       Ok(T),
+%       Err(E),
+%     }
+% \end{minted}
+% \caption{Definition of Result}
+% \label{lst:rust:result}
+% \end{listing}
+
+\subsection{Organization}
+\label{ssub:rust:organization}
+
+A Rust library or executable is organized into a \emph{crate}, and such a crate can consist of many \emph{modules}.
+These modules are used to split up the library into separated pieces of code, giving it a logical structure.
+The crate is a sharable part of Rust code that can be included into other projects and libraries.
+The modules are the hierarchical means of organizing a crate, and ensures that the design is modular.
+This gives the programmer the ability to import only the components of the library that is needed for a given program.
+\autoref{fig:rust:collections} shows a few or the modules contained within the Rust \texttt{collections} crate.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/libcollections.png}
+  \end{center}
+  \caption{Some of the modules in the \texttt{collections} crate}
+  \label{fig:rust:collections}
+\end{figure}
+
+The Rust compiler comes bundled with a handful of standard libraries that are used as a basis for almost all third party libraries and executables.
+By default, every Rust application is linked with the the Rust \texttt{std} library, which \emph{re-exports} functionality from the standard libraries, like e.g. the \texttt{collections} crate.
+\todo{This figure looks broken...}
+\autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
+Many of these libraries contains functionality that depends on an operating system to be present, which is not necessarily a safe assumption to make for a bare-metal system.
+This means that the \texttt{std} library can not be utilized in this project, instead it has to be based on Rust's \texttt{core} library, which lays the foundation for all of the standard libraries.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
+  \end{center}
+  \caption{Some crates re-exported in the \texttt{std} library}
+  \label{fig:rust:librust}
+\end{figure}
 
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
 
-Abstractions, in the form of references and pointers to objects or structures and how they are
+Abstractions, in the form of references and pointers to objects or structures, and how they are
 structured on the heap, is a common source of overhead in programming languages.
 \autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how Java lays out a vector of
 strings in memory.
@@ -507,194 +608,3 @@ These are all considered unsafe and provides core functionality to e.g. access a
 It is important to note that Rust's borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.
 The borrow-checker can can never be disabled, but for for certain operations it will simply not work.
 As an example, it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues, as described in \autoref{ssec:lifetimes}.
-
-\subsection{Organization}
-\label{ssub:rust:organization}
-
-\subsubsection{Crates and Modules}
-
-Rust provides two main features to organizing code, crates and modules.
-A crate defines a collection of modules which constitutes a library.
-The crate construct is a sharable part of rust code that can be included into other projects and libraries.
-The module is the hierarchical means of organizing a crate.
-Figure \ref{fig:rust:collections} shows a few or the modules contained within the Rust collection library.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.3]{figures/background/rust/libcollections.png}
-  \end{center}
-  \caption{Modules in collection crate.}
-  \label{fig:rust:collections}
-\end{figure}
-
-\subsubsection{Rust library}
-
-The Rust library is organized using crates.
-This ensures that the design is modular and provides the programmer the ability to import only the components of the library that is needed for a given program.
-The \texttt{Cargo} packages manager makes this feature easily exploitable.
-Usually this facility is not needed when writing Rust programs, but when targeting embedded platforms barebones \todo{Bare metal?} this is integral to exploiting the standard library.
-As the standard library contains functionality that assumes a operating system the library as a whole cannot be utilized.
-Figure \ref{fig:rust:librust} depicts the crates of the standard library with their dependencies.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
-  \end{center}
-  \caption{Some crates of the rust library}
-  \label{fig:rust:librust}
-\end{figure}
-std* - The std crate depends nearly all of the crates in the lower right corner
-
-\subsection{Cargo}
-\label{sec:cargo}
-
-\texttt{Cargo} is Rust's package manager, a program that automates the process of building and distributing Rust programs.
-It comes bundled with the default installation of Rust.
-\texttt{Cargo} comes with a collection of tools that makes building, testing and running Rust programs a lot easier than invoking \texttt{rustc} directly.
-\texttt{Cargo} also defines a standard Rust project layout, in addition to downloading and maintaining package dependencies.
-This section will cover the most important features of \texttt{Cargo} and how it works, enough of what is required in order to understand the work that is described later in this project report.
-
-\subsubsection{Project Structure}
-\label{ssub:project_structure}
-
-Every crate, or package, built by \texttt{Cargo} requires a \texttt{Cargo.toml} file to be present in the root directory.
-This file is interpreted by \texttt{Cargo} and is used to determine the name of the library and executables to be built in the package.
-Any dependencies that the package might depend on is also specified in this file, \texttt{Cargo} will automatically download, compile, and link these dependencies with the project.
-It also includes information that tells \texttt{Cargo} how the package can be compiled for different target architectures, and it is used to define different \textit{features} of a package - a way to conditionally compile certain parts of the code present in the library.
-
-\begin{listing}
-\dirtree{%
-.1 hello\_world.
-.2 Cargo.lock.
-.2 Cargo.toml.
-.2 src.
-.3 main.rs.
-}
-\caption{Minimal Cargo project structure}
-\label{lst:standard_cargo_project_structure}
-\end{listing}
-
-\autoref{lst:standard_cargo_project_structure} shows a standard \texttt{Cargo} project structure for an executable target.
-If a project contains a \texttt{main.rs} file, it will be compiled into an executable with the same name as the project (\texttt{hello\_world} for this example).
-It is required by \texttt{Cargo} that this file also contains the \texttt{main} function for the program.
-Finally, \texttt{Cargo} also generates a \texttt{Cargo.lock} file that contains \emph{specific} information about every package that are used in the project.
-This information includes the name and version of the package and its dependencies, including any transitive dependencies they might have.
-This file helps \texttt{Cargo} to determine if packages needs to be re-downloaded, updated, or re-compiled in order for the project to be built consistently - independent on the target architecture it is built on and for.
-
-\begin{listing}
-\dirtree{%
-.1 cargo.
-.2 Cargo.lock.
-.2 Cargo.toml.
-.2 src.
-.3 bin.
-.4 build.rs.
-.4 test.rs.
-.4 ....
-.3 lib.rs.
-.3 compile.rs.
-.3 ....
-.2 tests.
-.3 test\_cargo\_build.rs.
-.3 test\_cargo\_test.rs.
-.3 ....
-}
-\caption{Expanded Cargo project structure}
-\label{lst:expanded_cargo_project_structure}
-\end{listing}
-
-\autoref{lst:expanded_cargo_project_structure} shows an example of a library project structure, and is in fact a simplified version of \texttt{Cargo's} actual structure.
-If the intended use of a project is as a library for other applications, they include a \texttt{lib.rs}.
-This file, including its submodules like \texttt{src/compile.rs} in this example, will be compiled into a Rust crate with the same name as the project, in this case it will be \texttt{cargo.rlib}.
-Any files found under the \texttt{src/bin} directory will also be compiled into its own executables, \texttt{Cargo} will automatically link the library and all of the its dependencies with these executables.
-In \texttt{Cargo's} case, every command shown in \autoref{tab:common_cargo_commands} has its own dedicated executable target in this directory.
-
-A package can also contain a \texttt{tests} directory with integration tests, like in the above example, and finally an \texttt{examples} directory with different executables that demonstrates how to use the library (this has not been included in the above example).
-A package can also have it's own build-routine by specifying a \texttt{build} script in the \texttt{Cargo.toml}.
-This file is executed prior to building the package itself, and provides the possibility to e.g. compile and link third party C-libraries, or generate code prior to compilation.
-
-\subsubsection{Building and testing (Or Tools?)}
-
-As mentioned earlier, \texttt{Cargo} comes with a collection of tools that makes it easy to build and test Rust projects.
-The most common commands are shown in \autoref{tab:common_cargo_commands}.
-Most of these tools are self explanatory, but the \texttt{build} and the \texttt{test} commands will be described a little more thoroughly in this section.
-
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{r|l}
-\textbf{Command} & \textbf{Description}                           \\
-\hline
-build  & Compile the current project                              \\
-clean  & Remove the target directory                              \\
-doc    & Build this project's and its dependencies' documentation \\
-new    & Create a new cargo project                               \\
-run    & Build and execute src/main.rs                            \\
-test   & Run the tests                                            \\
-bench  & Run the benchmarks                                       \\
-update & Update dependencies listed in Cargo.lock                 \\
-\hline
-\end{tabular}
-\caption{Common cargo commands}
-\label{tab:common_cargo_commands}
-\end{center}
-\end{table}
-
-By invoking the \texttt{cargo build} command, \texttt{Cargo} will download and resolve all package dependencies, and trigger \texttt{rustc} to compile them and link them with each other in the correct order.
-When all dependencies have been built, the build script will be invoked (if it is present in the package), before the library itself is compiled.
-Lastly, the projects executables will be compiled if the project contains a \texttt{main.rs} or sources in the \texttt{src/bin} directory.
-
-The \texttt{cargo test} command will also trigger \texttt{rustc} to compile the library in the same manner as \texttt{cargo build}, but it will leave out compilation of the project executables.
-When the library is compiled, any function that is marked with \texttt{\#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
-\texttt{Cargo} also treats all the sources found in the \texttt{examples} directory as tests, so these will be compiled instead of the other project executables, together with all the integration tests.
-When \texttt{Cargo} has finished compiling the library and its executables, it will by default run all the unit tests, including the integration tests, but it will not run the examples.
-
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{r|l}
-\textbf{Flag} & \textbf{Description}                                   \\
-\hline
---features FEATURES   & Space-separated list of features to also build \\
---target TRIPLE       & Build for the target triple                    \\
-\hline
-\end{tabular}
-\caption{Cargo flags to alter the package library and executables}
-\label{tab:cargo_flags}
-\end{center}
-\end{table}
-
-Both of these commands support several optional build-specific flags that are passed further on to the invocation of \texttt{rustc}, we will take extra notice to the two flags shown in \autoref{tab:cargo_flags}.
-The \texttt{--target} flag is used if the project should be compiled for a different target architecture than the machine it is invoked on, this is necessary when cross-compiling the package.
-The list following the \texttt{--features} flag will be used by \texttt{Cargo} and \texttt{rustc} to conditionally compile code that is present in the project.
-Consider the example shown in \autoref{lst:rust_features} and its output shown in \autoref{tab:rust_features_output}.
-We can see from this example that the definition of the \texttt{num} function will be different based on the feature flag that is passed together with \texttt{Cargo}.
-
-\begin{listing}[H]
-\begin{minted}{rust}
-// src/main.rs
-#[cfg(feature = "one")]
-fn num() -> u32 { 1 }
-
-#[cfg(feature = "two")]
-fn num() -> u32 { 2 }
-
-fn main() {
-    println!("num() + num() = {}", num() + num())
-}
-\end{minted}
-\caption{Example usage of features}
-\label{lst:rust_features}
-\end{listing}
-
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{r|l}
-\textbf{Command} & \textbf{Output}                          \\
-\hline
-\texttt{\$ cargo build --features one}  & num() + num() = 2 \\
-\texttt{\$ cargo build --features two}  & num() + num() = 4 \\
-\hline
-\end{tabular}
-\caption{Example output of features}
-\label{tab:rust_features_output}
-\end{center}
-\end{table}

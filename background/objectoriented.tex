@@ -1,70 +1,70 @@
 \section{Object Oriented Embedded Programming}
 \label{sec:back:oo}
 
-In its essense Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigms essensial concept can be applied to embedded C programming even though the language does not define language features to aid the design.
-This section looks at how Object Oriented programming is used in conjunction with memory mapped I/O in embedded programming.
-We look at the memory layout of a memory mapped \gls{adc} and see how this can be represented as an object.
+In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
+The paradigms essential concept can be applied to embedded C programming even though the language itself does not directly define any language features to aid the design.
+This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
+We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
 \subsection{Memory Mapped I/O}
+\label{ssec:memory_mapped_io}
+
 \gls{mmio} is a method for interfacing with peripheral devices in a computer system.
 The method entails connecting the control registers of hardware devices to the same address bus as RAM.
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
-Lets consider the \gls{adc} on the Gecko.
+Let us consider the \gls{adc} on the Gecko.
 The \gls{adc} converts an analoge signal to a digital representation.
-The \gls{adc} on the Gecko is memory mapped to the location \textbf{0x40002000}.
+The \gls{adc} on the Gecko is memory mapped to the location \texttt{0x40002000}.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
-A subsection of the \gls{adc} control register layout is given in \autoref{fig:back:memorymapped}.
+
 \begin{figure}[H]
   \centering
   \begin{tabular}{l|l|l|}
-    Location&Offset&Name\\
+    \textbf{Location} & \textbf{Offset} & \textbf{Name} \\
     \hline
     &...&...\\
     \hline
     \hline
-    0x40002000&0x0&CTRL\\
+    \texttt{0x40002000} & 0x0 & CTRL\\
     \hline
-    &0x4&CMD\\
-    \hline
-    &...&...\\
-    \hline
-    &0xC&SINGLECTRL\\
+    & \texttt{0x4} & CMD\\
     \hline
     &...&...\\
     \hline
-    &0x24&SINGLEDATA\\
+    & \texttt{0xC} & SINGLECTRL\\
+    \hline
+    &...&...\\
+    \hline
+    & \texttt{0x24} & SINGLEDATA\\
     \hline
     &...&...\\
     \hline
     \hline
     &&\\
   \end{tabular}
-  \caption{Subsection of ADC0 Memory map for EFM32GG}
+  \caption{Subsection of ADC0 Memory map for the Gecko}
   \label{fig:back:memorymapped}
 \end{figure}
 
+\todo{Is the table supposed to look like this? it seems broken}
 A subsection of the \gls{adc} control register is given in \autoref{fig:back:memorymapped}
 It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
-We see that the CTRL register is at offset 0x0 from the base address of the \gls{adc} and that the CMD register is at offest 0x4 bytes.
-The two registers SINGLECTRL and SINGLEDATA are for initializing the single conversion and reading the results of a conversion respectively.
+We see that the CTRL register is at offset \texttt{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \texttt{0x4} bytes.
+The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single conversion and reading the results of a conversion, respectively.
 
 \subsection{Memory Layout of Objects}
 
 The traditional memory layout of an object in an object oriented language is an implementation detail.
 This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
-The layout is aslo a implementation detail of Rust for the same reasons but annotating the struct with \texttt{\#[repr(C)]} ensures C compatible arrangement.
+The layout is aslo a implementation detail of Rust for the same reasons but annotating the struct with \texttt{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
 Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
-In the C programming language where classes and objectes are not part of the langauge, structs are used to create the representations for objects.
-By using structs the programmer has full control over the memory layout of the object in memory.
-The Object Oriented concepts used for \gls{mmio} used static dispatch and the structs does not include tag fields or references to virtual tables.
-
-\begin{figure}[H]
+\begin{listing}[H]
   \centering
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.31\textwidth}
+  \begin{listing}
     \begin{minted}{java}
 class ADC {
   int CTRL;
@@ -76,11 +76,11 @@ class ADC {
   // ...
 }
     \end{minted}
-    \caption{Java}
-    \label{fig:back:adc-objects:java}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
   \hfill
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.31\textwidth}
+  \begin{listing}
     \begin{minted}{rust}
 #[repr(C)]
 struct ADC {
@@ -93,11 +93,11 @@ struct ADC {
   // ...
 }
     \end{minted}
-    \caption{Rust}
-    \label{fig:back:adc-objects:rust}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
   \hfill
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.31\textwidth}
+  \begin{listing}
     \begin{minted}{c}
 typedef struct {
   uint32_t CTRL;
@@ -109,18 +109,21 @@ typedef struct {
   // ...
 } ADC;
     \end{minted}
-    \caption{C}
-    \label{fig:back:adc-objects:c}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
 
-  \caption{Definition of \gls{adc}}
+  \caption{Definition of an \gls{adc} in Java, Rust, and C}
   \label{lst:back:adc-objects}
-\end{figure}
+\end{listing}
 
-\autoref{lst:back:adc-objects} shows how to define a Java class and Rust and C structs for the \gls{adc} on the Gecko.
-The memory layout of objects based on the definitions in \autoref{lst:back:adc-objects} are given in \label{fig:back:memlayout}.
 
-\begin{figure}[H]
+In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
+By using structs the programmer has full control over the layout of the object in memory.
+The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
+\autoref{lst:back:adc-objects} shows how to define a Java class, and Rust and C structs for the \gls{adc} on the Gecko.
+The memory layout of these objects are given in \autoref{fig:back:memlayout}.
+
+\begin{table}[H]
 
   \centering
   \begin{subfigure}{0.31\textwidth}
@@ -171,28 +174,27 @@ The memory layout of objects based on the definitions in \autoref{lst:back:adc-o
   \caption{Memory layout of objects}
   \label{fig:back:memlayout}
 
-\end{figure}
+\end{table}
 
 By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in Rust and C has same exact layout as the memory mapped control register of the \gls{adc}.
-This suggests that if a pointer to the memory mapped I/O device is considered as a reference to an \gls{adc} object the object oriented pattern can be used to interface with the \gls{mmio}.
+This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
 \subsection{Adding Object Functionality}
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
-Both languages uses static dispatch where the compiler knows the address of the function to apply at compile time.
+Both C and Rust uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
 This ensures that C and Rust provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
 Implementing objects with static dispatch is a straight forward process in C.
 Here we define a function which takes a reference to the object as the first parameter.
-The function then uses the object reference in the same manner as the implicit \emph{this} parameter in conventional object oriented languages such as Java.
-\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using a object oriented pattern.
+The function then uses the object reference in the same manner as the implicit \texttt{this} parameter in conventional object oriented languages such as Java.
 
-\begin{figure}[H]
+\begin{listing}[H]
   \centering
-
-  \begin{subfigure}{0.47\textwidth}
+  \begin{minipage}{0.47\textwidth}
+  \begin{listing}
       \begin{minted}{c}
 // ADC Member function with exlicit
 // object reference
@@ -213,11 +215,11 @@ void main() {
   ADC_DataSingleGet(&adc);
 }
       \end{minted}
-      \caption{C}
-      \label{lst:back:adc:get:c}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
   \hfill
-  \begin{subfigure}{0.47\textwidth}
+  \begin{minipage}{0.47\textwidth}
+  \begin{listing}
       \begin{minted}{rust}
 impl Adc {
   // Rust lets the programmer
@@ -234,7 +236,6 @@ fn main() {
   // Instantiation of MMIOs
   // is handled in the next section
   let adc = Adc;
-
   // The Rust compiler issues
   // a static call to the
   // member method and passes
@@ -242,47 +243,45 @@ fn main() {
   adc.data_single_get();
 }
       \end{minted}
-      \caption{Rust}
-      \label{lst:back:adc:get:rust}
-  \end{subfigure}
-  \caption{Member methods}
+  \end{listing}
+  \end{minipage}
+  \caption{Member methods for C and Rust, respectively.}
   \label{lst:back:adc:get}
 
-\end{figure}
-In Rust a \emph{impl} block is used to define member methods for the struct.
-These member method can be called using the dot notation known from object oriented languages.
+\end{listing}
+
+\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using an object oriented pattern.
+We use the \texttt{impl} block to define the same behavior in Rust, but the methods are called with the dot notation known from object oriented languages.
 
 \subsection{Instantiating a MMIO object}
 
-Now that we have shown that \gls{mmio} can be represented as object defined by structs, we consider how to instantiate objects.
+Now that we have shown that \glspl{mmio} can be represented as objects defined by structs, we consider how to instantiate them.
 Usually an object in the object oriented paradigm is created with a constructor and deallocated with a destructor.
-The constructor is responsible for allocating the object and initializing the fields with initial values.
-Analogously the destructor is responsible for deallocating the object and any owned member objects.
+The constructor is responsible for allocating the object and initialize the fields with values.
+Analogously, the destructor is responsible for deallocating the object and any other member objects that it owns.
 \gls{mmio} devices have a fixed position in the memory and does not need to be allocated, they also generally do not have any owned members.
-Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate a variable holding the reference to the \gls{mmio} and having the desired type.
+Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate the variable that holds the reference to the \gls{mmio} and cast it to the desired type.
 \autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both C and Rust.
 
-\begin{figure}[H]
-
-  \begin{subfigure}{0.31\textwidth}
+\begin{listing}[H]
+  \begin{minipage}{0.47\textwidth}
+  \begin{listing}
     \begin{minted}{rust}
 const ADC0_BASE: *mut Adc
-      = 0x40002000 as *mut Adc
+      = 0x40002000 as *mut Adc;
 
 fn main() {
   let adc0 = unsafe {
-    match ADC0_BASE.as_mut() {
-      Some(reference) => reference,
-      None => panic!("...")
-    }
+    ADC0_BASE.as_mut()
+      .unwrap_or(panic!("..."))
   };
 }
     \end{minted}
-    \caption{Rust}
-    \label{fig:oo:instantiate:rust}
-  \end{subfigure}
+  \end{listing}
+  \end{minipage}
   \hfill
-  \begin{subfigure}{0.31\textwidth}
+  \begin{minipage}{0.47\textwidth}
+  \begin{listing}
     \begin{minted}{c}
 #define ADC0_BASE 0x40002000
 
@@ -290,44 +289,41 @@ void main() {
   ADC* adc0 = (ADC*)ADC0_BASE;
 }
     \end{minted}
-        \caption{C}
-    \label{fig:oo:instantiate:c}
-  \end{subfigure}
-  \caption{Instantiating MMIOs}
+  \end{listing}
+  \end{minipage}
+  \caption{Instantiating \glspl{mmio} in Rust and C, respectively.}
   \label{fig:oo:instantiate}
-
-\end{figure}
+\end{listing}
 
 \todo{Move this to discussion}
-\autoref{fig:oo:instantiate:rust} contains the Rust keyword unsafe.
-As \autoref{ssub:unsafe_code} describes using this keyword requires the programmer to ensure that the code is still safe.
+The Rust code in \autoref{fig:oo:instantiate} contains the \texttt{unsafe} keyword.
+As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
 The direct reason for the need to annotate the block with unsafe is the fact that the function \texttt{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \texttt{unsafe}.
 The underlying reason is a bit more subtle.
 The unsafety here comes from the fact that \texttt{as\_mut} converts a raw pointer to a safe reference.
 After the conversion the pointer must be safe to dereference.
 This is the programmars part of the contract to ensure when using a unsafe block.
 So what is unsafe about derefencing raw pointer?
-Well firstly the pointer can be a null pointer, this case is handled by the fact that \texttt{as\_mut} returns \textbf{None} in that case.
+Well, firstly the pointer can be \texttt{null}, this case is handled in \texttt{as\_mut} by returning \texttt{None}.
 The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer 0x \todo{Find a funky address} causes the Gecko to HardFault on a Bus Error.
-In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}.
-So we know that this address can be safely dereferenced.
+For instance, dereferencing the pointer \texttt{0x} \todo{Find a funky address} causes the Gecko to HardFault on a Bus Error.
+In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
 
-The last point about unsafety that can be made here is the fact that using this, mutable aliases to \gls{mmio}s can be created.
+The last point about unsafety that can be made here, is the fact we can create multiple mutable aliases to the \glspl{mmio}.
 Consider the code in \autoref{lst:oo:aliasing-mutability}.
+\todo{Need to explain why this is a problem}
 
 \begin{listing}[H]
   \begin{minted}{rust}
 fn new_adc0() -> Adc {
-  unsafe { match ADC0_BASE.as_mut() {
-    Some(reference) => reference,
-    None => panic!("...")
+  unsafe { match ADC0_BASE.as_mut()
+                  .unwrap_or(panic!("..."))
   }
 }
 
 fn main() {
-  let adc0 = new_adc0();
-  let _adc0 = new_adc0();
+  let mut adc0 = new_adc0();
+  let mut _adc0 = new_adc0();
 }
   \end{minted}
   \caption{Creating mutable aliases}
