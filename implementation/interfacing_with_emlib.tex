@@ -164,6 +164,59 @@ pub enum CCMode {
 \label{lst:enum_naming_rust}
 \end{listing}
 
+\subsection{The Bindings Library}
+\label{ssub:the_bindings_library}
+
+We have written many example applications in Rust that are based on bindings for many of the \texttt{Gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
+As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
+In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \todo{Refer to sections about circle-game and sensor-tracker}.
+
+It has not been a priority of this project to fully support all of the \texttt{Gecko}'s peripherals or provide bindings for the entire \texttt{emlib}.
+The bindings have been developed because we have needed functionality from the peripherals, not the other way around.
+\autoref{tab:emlib_peripheral_bindings} summarizes a number of modules from \texttt{emlib} that we have written bindings for, and why we wanted these bindings.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r|p{10cm}}
+    \textbf{Module} & \textbf{Purpose} \\
+    \hline
+cmu     & The \gls{cmu} provided functions to manage the different clocks and oscillators on the \texttt{gecko}.
+This module is necessary in order to configure the clocks that are required by other peripherals to function. \\
+
+dma     & We wanted to use \gls{dma} for the \texttt{sensor-tracker} application because it can be used to transfer data without intercepting the \gls{cpu}. \\
+
+ebi     & The \gls{ebi} is used in the \texttt{Gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the \texttt{DK}. \\
+
+emu     & The \gls{emu} module controls the different energy modes on the \texttt{Gecko}.
+We needed this functionality for the \texttt{sensor-tracker} application. \\
+
+gpio    & The \gls{gpio} was one of the first modules to be ported, it is used extensively throughout the bindings and in the applications. \\
+
+lesense & The \gls{lesense} can be configured to automatically collect data from multiple sensors, we needed this for the \texttt{sensor-tracker}. \\
+
+acmp    & The \gls{acmp} was ported alongside \gls{lesense}, it is used to compare two analog signals and tell which one is greater. \\
+
+adc     & The \gls{adc} was  \\
+
+i2c     &  \\
+
+leuart  &  \\
+
+prs     &  \\
+
+rtc     &  \\
+
+timer   &  \\
+
+usart   &  \\
+
+    \hline
+  \end{tabular}
+
+  \caption{\texttt{emlib} peripheral bindings.}
+  \label{tab:emlib_peripheral_bindings}
+\end{table}
+
 \subsection{Testing}
 \label{ssub:testing}
 
