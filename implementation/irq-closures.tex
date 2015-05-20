@@ -326,11 +326,11 @@ This code pattern is highly risky and must be used with great care.
 The method allocates an object on the stack and saves a mutable reference to it in an global variable.
 If this technique is utilized on an arbitrary stack frame and the reference is read from, the program will most probably crash.
 This is because the stack frame in question will probably be deallocated and either unused or used for another stack frame.
-As mentioned in the start of this section we consider the stack frame of the main function as a special frame which will not be subject for deallocating, unless the application is about to terminate.
-This ensures that the \texttt{hub} variable has \texttt{static} lifetime and can be used store the boxed closures while still being reachable from the global reference \texttt{HUB}.
-The inspiration for this \textit{hack} was drawn from the pattern being used in the Servo project for setting up an Event Loop.
+As mentioned in the start of this section we consider the stack frame of the \texttt{main} function as a special frame which will not be subject for deallocating, unless the application is about to terminate.
+This ensures that the \texttt{hub} variable has a lifetime that in practice is \texttt{static} and can be used store the boxed closures while still being reachable from the global reference \texttt{HUB}.
+The inspiration for this \textit{hack} was drawn from the pattern being used in the Servo \cite{web:servo} project for setting up an Event Loop.
 
-Elimintaing the main stack frame dependence was considerable easy to do by using the same conversion used in the register call above.
+Elimintaing the \texttt{main} stack frame dependence was considerable easy to do, by using the same conversion used in the register call in \autoref{lst:reg-disp}.
 \autoref{lst:irq:init} shows a initializing function which creates a \texttt{Hub} object and registrers it in the \texttt{HUB} reference.
 
 \begin{listing}[H]
@@ -349,3 +349,16 @@ pub fn init() {
   \caption{Function for initializing the Event Hub}
   \label{lst:irq:init}
 \end{listing}
+
+This lets us have an Event Hub with truly static lifetime without allocating it in the \texttt{main} function stack frame.
+
+\subsubsection{Discussion}
+
+The issue with the end solution presented in \autoref{lst:irq:init} which makes it unsuited for Servo is the fact that when converting the \texttt{Box} to a raw pointer, the programmar takes on the responsibility of deallocating the object.
+In Servos use case, the desired behaviour is to deallocate the object when the \texttt{main} stack frame is deallocated.
+Letting the reference live on the \texttt{main} stack frame ensures this behaviour is provided automatically by the Rust compiler.
+
+The approach taken in \autoref{lst:irq:init} is similary to the one taken by the \textit{lazy_statics} \cite{web:lazy_statics} library.
+\textit{lazy_statics} provides a macro for declaring static variables which need initializers executed at runtime.
+This macro avoids the need for the initilizer method used here as it implements the \texttt{Deref} trait for the hidden `static mut` variable, the \texttt{HUB} variable in our example.
+The library uses a Rust RSL feature to register an initializer function which is guaranteed to run once only on the first dereference of the variable.
