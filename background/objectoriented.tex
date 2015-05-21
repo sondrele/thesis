@@ -296,7 +296,7 @@ void main() {
 \end{listing}
 
 \todo{Move this to discussion}
-The \rust code in \autoref{fig:oo:instantiate} contains the \keyword{unsafe} keyword.
+The \rust code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword.
 As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
 The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \keyword{unsafe}.
 The underlying reason is a bit more subtle.
