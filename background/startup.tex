@@ -26,11 +26,11 @@ For our purposes, this format defines three interesting sections, namely \elfsec
     \hline
     EFL Header & Header describing size of sections \\
     \hline
-    \textbf{.bss} & Logical section for zero-initialized data \\
+    \elfsec{.bss} & Logical section for zero-initialized data \\
     \hline
-    \textbf{.text} & Read-only section for code and constants \\
+    \elfsec{.text} & Read-only section for code and constants \\
     \hline
-    \textbf{.data} & Section containing values for non-zero initialized data \\
+    \elfsec{.data} & Section containing values for non-zero initialized data \\
     \hline
   \end{tabular}
   \caption{Sections of elf file format}

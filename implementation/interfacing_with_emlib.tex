@@ -10,7 +10,7 @@ We will start by showing an example of what it is like to use Silab's emlib (wit
 
 \subsection{Defining the Bindings}
 
-The \texttt{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
+The \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
 The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
 First, in order to use a peripheral, its clock need to be enabled.
@@ -84,7 +84,7 @@ timer0.init(&timer_init);
 
 \subsection{Exposing Static Inline Functions to {\rust}}
 
-In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \texttt{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are C compatible.
+In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are C compatible.
 The header files in the peripheral \gls{api} also defines many functions as \code{static inline}, which only make the functions accessible by including the header file.
 Since it is not possible to include C header files directly in {\rust}, we had to expose these functions through one extra layer of C code.
 As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}, in order to call this function through {\rust} we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.

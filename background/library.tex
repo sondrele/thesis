@@ -36,11 +36,11 @@ The different peripherals that comes with ARM's \glspl{cpu} are memory mapped, w
 
 The \emlib peripheral \gls{api} by Silicon Labs is a general library written in C that provides functionality to control the vast range of peripherals that are supported by the EFM32's.
 It provides a thin layer of abstraction over each of the peripherals' registers, which are memory-mapped as described in \autoref{sec:back:oo}, and us is built on ARM's \gls{cmsis}.
-It is possible to control the EFM32's with this library as well, or a combination between the two, but \texttt{emlib} is designed to function as a standalone library.
+It is possible to control the EFM32's with this library as well, or a combination between the two, but {\emlib} is designed to function as a standalone library.
 
 The \gls{api} is divided into separate files that define interfaces for modules such as e.g. ADC, DAC, Timer, and DMA, and it provides functions to easily control sleep modes and interrupt handlers.
 The library functions are exposed in three different API patterns, either as standalone utility methods, singleton object methods, or C object oriented fashion.
-Examples of these patterns are shown for the \texttt{timer} in \autoref{lst:back:lib:timer}, the \texttt{RTC} in \autoref{lst:back:lib:rtc}, and for the \texttt{gpio} module in \autoref{lst:back:lib:gpio}.
+Examples of these patterns are shown for the \code{timer} in \autoref{lst:back:lib:timer}, the \code{RTC} in \autoref{lst:back:lib:rtc}, and for the \code{gpio} module in \autoref{lst:back:lib:gpio}.
 \todo{We can not assume that anyone reading this knows what RTC, GPIO, TIMER etc is...}
 
 \begin{listing}[H]
