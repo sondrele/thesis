@@ -42,7 +42,7 @@ By invoking the \texttt{cargo build --verbose} command, it was possible to see t
 
 A big priority was to to shrink the size of the makefiles that was in the project by making them a part of the standard build process for \texttt{emlib} instead, doing this would help us get a long way of ensuring that the builds done by Cargo could be consistent across systems.
 By defining a Rust build script and utilizing a Rust build-dependency called \texttt{gcc} \cite{web:cargo_gcc}, we were able to compile the C sources from Silabs' emlib and link them with our bindings directly as part of the build process.
-Note that the \texttt{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the \texttt{arm-none-eabi-gcc} compiler.
+Note that the \texttt{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the \armgcc compiler.
 By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies, like the \texttt{core} and \texttt{collections} libraries.
 
 Because this project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard Rust libraries that we wanted to utilize for the ARM Cortex-M3.
