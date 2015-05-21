@@ -103,7 +103,7 @@ The static globals are immutable by default but can be made mutable by the \code
 A constant declaration, shown in lines 1 and 2 of \autoref{lst:rust-static-init}, represents a value.
 There is no need to allocate memory for globals declared as \code{const} and they behave like \code{\#define} in C. \todo{Well that's a lie as \#define is handled by the preprocessor}
 Variables on line 3 and 4 declares the variables to be \code{static}.
-As these are immutable they are allocated in the read-only section called \elfsec{.text}.
+As these are immutable they are allocated in the read-only section called {\elf}sec{.text}.
 On line 5 and 6 the declarations are marked with \code{static mut}.
-Here we see that the zero initializes variable is assigned to the \elfsec{.bss} section in the \elf file.
+Here we see that the zero initializes variable is assigned to the {\elf}sec{.bss} section in the {\elf} file.
 On line 6 we have a non-zero value that has to be stored in Flash memory prior to execution and is copied to RAM in the \func{ResetHandler}.
