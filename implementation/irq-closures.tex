@@ -27,7 +27,6 @@ fn main() {
   // e.g.: unsafe { &BUFFER[..] }
   loop {}
 }
-
 pub extern fn ADC0_IRQHandler() {
   let adc = adc0();
   let sample = adc.get_single_data();
@@ -48,12 +47,9 @@ This is a fact which we praised in \autoref{sec:impl:booting} as it provides a v
 \begin{listing}[H]
   \begin{minted}{rust}
 fn main() {
-
   let mut adc = adc0();
-
   let buffer = CircularBuffer::new();
   let mut ch = buffer.in();
-
   // Register a closure on the ADC
   // The closure will be called each time
   // a new sample is ready with the sample
@@ -148,17 +144,14 @@ Now we've managed to store a closure in a statically allocated location.
 fn register(f: Box<Fn()>) {
   unsafe {
     // Deallocate old handler if existing
-    match CLOSURE {
-      Some(old) => {
-        // Remove the global reference
-        CLOSURE = None;
-        // Return the ownership of the pointer
-        // to a managed box, this will ensure
-        // that the contents is deallocated when
-        // the box variable goes out of scope
-        let box= boxed::from_raw(old);
-      },
-      None => ()
+    if let Some(old) = CLOSURE {
+      // Remove the global reference
+      CLOSURE = None;
+      // Return the ownership of the pointer
+      // to a managed box, this will ensure
+      // that the contents is deallocated when
+      // the box variable goes out of scope
+      let box= boxed::from_raw(old);
     }
     // Consume the Box pointer and
     // return a raw pointer to the closure
@@ -171,15 +164,13 @@ fn register(f: Box<Fn()>) {
 fn dispatch() {
   // The Closure is stored in a global variable mutable
   // So the access to this variable is unsafe
-  match unsafe { CLOSURE } {
-      // Unwrap the closure value
-      Some(func) => unsafe {
+  unsafe {
+    // Unwrap the closure value
+    if let Some(func) = CLOSURE {
         // The closure is stored behind a pointer which must
         // be dereferenced, it is called with is environment
         // by invoking the function: call
         (*func).call(())
-      },
-      None => ()
     }
   }
 }
@@ -213,7 +204,6 @@ enum Event {
 struct Hub {
   handlers: BTreeMap<Event, Box<Fn()>>
 }
-
 // Signatures for implementation of the Event Hub
 impl Hub {
   // Create an empty hub
@@ -223,7 +213,6 @@ impl Hub {
   // Trigger an event
   fn dispatch(&self, event: Event) { /*...*/ }
 }
-
 // We do not want users to interact with the hub directly so we provide
 // a public interface for registering and dispatching events
 pub fn register(event: Event, f: Box<Fn()>) { /*...*/ }
@@ -237,7 +226,6 @@ And finally the interface used in \autoref{lst:irq:local} is created using the u
 \begin{listing}[H]
   \begin{minted}{rust}
 impl Adc {
-
   // This constructor is defined in emlib
   pub fn adc0() -> &'static Adc { /*...*/ }
   pub fn on_single(&'static self, callback: Box<Fn(u32)>) {
@@ -259,7 +247,6 @@ impl Adc {
   // Triggers an ADC conversion and returns the result
   pub fn data_single_get(&self) -> u32 { /*...*/ }
 }
-
 // The ADC0 Interrupt handler
 // This is defined as a part of the library
 #[allow(non_snake_case)]
@@ -280,7 +267,6 @@ Now looking back at out target implementation in \autoref{lst:irq:local} we augm
 \begin{listing}[H]
   \begin{minted}{rust}
 fn main() {
-
   // Create Event Hub and save it to the global variable
   let mut hub = Hub::new();
   unsafe { HUB = Some(&mut hub); }
@@ -290,7 +276,6 @@ fn main() {
   let mut ch = buffer.in();
 
   adc.on_single(Box::new(move |sample| ch.send(sample) });
-
   // Using buffer is safe
   // e.g.: &buffer[..];
   loop {}
@@ -316,7 +301,6 @@ Elimintaing the \texttt{main} stack frame dependence was considerable easy to do
 \begin{listing}[H]
   \begin{minted}{rust}
 pub fn init() {
-
   if unsafe { HUB.is_none() } {
     let hub = Box::new(Hub::new());
     let raw = unsafe { boxed::into_raw(hub); }
