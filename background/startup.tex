@@ -14,6 +14,7 @@ This file is loaded into the microcontrollers \gls{rom} Flash memory.
 Then the reset signal is sent to the \gls{cpu} to start execution.
 
 \subsection{Executable and Linkable File Format}
+\label{sec:back:elf}
 %\todo{Reference: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0044e/IHI0044E\_aaelf.pdf}
 \elf is a file format for storing code and data for a program.
 This file format can be loaded onto a microcontroller and executed.
@@ -44,7 +45,7 @@ The \elfsec{.bss} section is a logical section so it is not really stored in the
 The header specfies the size of the \elfsec{.bss} section which describes the size of the zero-initialized data in the program.
 
 \subsection{Before main}
-
+\label{sec:before-main}
 Before the \textbf{main} function executes, all static data must be initialized.
 The data is divided into two categories; zero and non-zero initialized.
 The non-zero initialized data are contained either in the \elfsec{.text} (read-only-data) or \elfsec{.data} sections of the {\elf} binary.
