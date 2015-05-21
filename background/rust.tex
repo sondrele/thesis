@@ -575,9 +575,9 @@ The compiler can not protect against use-after-free errors or dangling pointers 
 
 The ability to make new abstractions that optimize away to essentially nothing is an important feature of {\rust}.
 Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
-For these tasks, {\rust} provides the keyword \unsafe.
-It is important to note that this \unsafe keyword is introduced in order to \emph{keep} {\rust}'s semantics about memory safety.
-When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \unsafe block is indeed safe.
+For these tasks, {\rust} provides the keyword {\unsafe}.
+It is important to note that this {\unsafe} keyword is introduced in order to \emph{keep} {\rust}'s semantics about memory safety.
+When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the {\unsafe} block is indeed safe.
 \todo{Maybe add reference for this? Don't really think its necessary}
 
 \begin{table}[ht]
@@ -593,16 +593,16 @@ When the compiler can no longer guarantee safety, it is up to the programmer to 
   There are no variable bindings between a raw pointer and the data it points to, thus the normal ownership rules provided by the borrow-checker does not apply for them. This means that {\rust} cannot resolve issues with race conditions or dangling pointers. \\
 
   \raggedleft{Call unsafe functions, e.g. \\ \gls{ffi} or compiler intrinsics} &
-  {\rust} can make no guarantees about the safety of \unsafe functions. If a \gls{ffi} function is called we are leaving {\rust}'s scope and entering another language domain, it is not possible for {\rust} to verify the safety of such code. \\
+  {\rust} can make no guarantees about the safety of {\unsafe} functions. If a \gls{ffi} function is called we are leaving {\rust}'s scope and entering another language domain, it is not possible for {\rust} to verify the safety of such code. \\
 
 \hline
 \end{tabular}
-\caption{Unsafe operations exposed through an \unsafe block}
+\caption{Unsafe operations exposed through an {\unsafe} block}
 \label{tab:reasons_for_unsafe}
 \end{center}
 \end{table}
 
-\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \unsafe block, and some examples of why the operations are considered unsafe.
+\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an {\unsafe} block, and some examples of why the operations are considered unsafe.
 Compiler intrinsics are functions that are provided by the compiler itself, not {\rust}, and are functions that are closely related with raw pointers.
 These are all considered unsafe and provides core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
 It is important to note that {\rust}'s borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.

@@ -103,8 +103,8 @@ void STATIC_INLINE_TIMER_IntEnable(TIMER_TypeDef *timer,
 \end{listing}
 
 In the {\rust} module definition of Timer, the function has to be made available through the \code{extern} block shown in \autoref{lst:rust_ffi_example}.
-As described in \autoref{ssub:unsafe_code}, every function available through the \gls{ffi} are considered \unsafe because {\rust} knows nothing about the function, other than its parameters and its return value.
-Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an \unsafe block, in the respective function defined in {\rust}.
+As described in \autoref{ssub:unsafe_code}, every function available through the \gls{ffi} are considered {\unsafe} because {\rust} knows nothing about the function, other than its parameters and its return value.
+Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an {\unsafe} block, in the respective function defined in {\rust}.
 
 \begin{listing}[h]
 \begin{minted}{rust}
