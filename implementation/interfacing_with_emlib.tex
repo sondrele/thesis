@@ -3,16 +3,16 @@
 \section{Bindings for emlib}
 \label{sub:interfacing_with_emlib}
 
-The \gls{ffi} available in Rust has been used to interface with Silabs' emlib.
+The \gls{ffi} available in {\rust} has been used to interface with Silabs' emlib.
 This way, we have been able to create thin wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
-The following sections explains the process of defining and implementing the \gls{ffi} in Rust that is used to access and control the peripherals on the \texttt{Gecko}.
-We will start by showing an example of what it is like to use Silab's emlib (with C), and then move on to what it looks like to use the bindings in Rust.
+The following sections explains the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
+We will start by showing an example of what it is like to use Silab's emlib (with C), and then move on to what it looks like to use the bindings in {\rust}.
 
 \subsection{Defining the Bindings}
 
-The \texttt{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the Rust bindings look like.
+The \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
-The program shown in \autoref{lst:timer_program_c} is an example of initializing the \texttt{Timer0} peripheral on the \texttt{Gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
+The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
 First, in order to use a peripheral, its clock need to be enabled.
 Every external clock are disabled by default \todo{Is this true? Is every clock disabled?} in order for the peripherals not to draw any power, by enabling the clock the \gls{mcu} will get access to control it.
 Then an initialization structure for the Timer module is acquired, this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
@@ -39,7 +39,7 @@ TIMER_Init(TIMER0, &timerInit);
 The next lines enables interrupts for the Timer, and the NVIC interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
 All this function does is to clear the interrupt signal and toggle the value of an LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
-Interrupts like this are an important part of programming the \texttt{Gecko}.
+Interrupts like this are an important part of programming the {\gecko}.
 They can be used for an asynchronous programming model where the application is defined by the code in the different interrupt handlers, and like in the example above, the \gls{mcu} can be put to sleep in between interrupts.
 
 \begin{listing}[h]
@@ -55,12 +55,12 @@ void TIMER0_IRQHandler(void) {
 \label{lst:timer_interrupt_handler}
 \end{listing}
 
-The equivalent program written in Rust is shown in \autoref{lst:timer_program_rust}.
+The equivalent program written in {\rust} is shown in \autoref{lst:timer_program_rust}.
 Semantically they are the same, but the usage differs slightly, which is natural since we are using a higher level programming language.
-Instead of calling functions that are included through a C header file, we are calling functions that are available through a Rust module.
-For example, the \texttt{Clock} enum is part of the \texttt{cmu} module, and the \texttt{enable\_irq} function is part of the \texttt{nvic} module.
+Instead of calling functions that are included through a {\C} header file, we are calling functions that are available through a {\rust} module.
+For example, the \code{Clock} enum is part of the \code{cmu} module, and the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
-It is also worth to notice the difference between how the \texttt{Timer0} structure can be treated like an object with its own member methods in Rust, instead of being passed as the first parameter to every function that requires it, like in C.
+It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
 
 \begin{listing}[h]
 \begin{minted}{rust}
@@ -78,16 +78,16 @@ timer0.top_set(TOP);
 // Configure TIMER
 timer0.init(&timer_init);
 \end{minted}
-\caption{Initializing a Timer in Rust}
+\caption{Initializing a Timer in {\rust}}
 \label{lst:timer_program_rust}
 \end{listing}
 
-\subsection{Exposing Static Inline Functions to Rust}
+\subsection{Exposing Static Inline Functions to Rrust}
 
-In order to work with structures and enums originally defined in C, we had to redefine them in Rust and mark them with \texttt{\#[repr(C)]} so that Rust can guarantee that the data-elements are C compatible.
-The header files in the peripheral \gls{api} also defines many functions as \texttt{static inline}, which only make the functions accessible by including the header file.
-Since it is not possible to include C header files directly in Rust, we had to expose these functions through one extra layer of C code.
-As an example, the \texttt{TIMER\_IntEnable} function is defined as \texttt{static inline} in \texttt{em\_timer.h}, in order to call this function through Rust we had to expose it through the file \texttt{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
+In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
+The header files in the peripheral \gls{api} also defines many functions as \code{static inline}, which only make the functions accessible by including the header file.
+Since it is not possible to include {\C} header files directly in {\rust}, we had to expose these functions through one extra layer of {\C} code.
+As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}, in order to call this function through {\rust} we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
 
 \begin{listing}[h]
 \begin{minted}{c}
@@ -98,13 +98,13 @@ void STATIC_INLINE_TIMER_IntEnable(TIMER_TypeDef *timer,
     TIMER_IntEnable(timer, flags);
 }
 \end{minted}
-\caption{Exposing a \texttt{static inline} function to Rust.}
+\caption{Exposing a \code{static inline} function to {\rust}.}
 \label{lst:exposing_static_inline}
 \end{listing}
 
-In the Rust module definition of Timer, the function has to be made available through the \texttt{extern} block shown in \autoref{lst:rust_ffi_example}.
-As described in \autoref{ssub:unsafe_code}, every function available through the \gls{ffi} are considered \texttt{unsafe} because Rust knows nothing about the function, other than its parameters and its return value.
-Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an \texttt{unsafe} block, in the respective function defined in Rust.
+In the {\rust} module definition of Timer, the function has to be made available through the \code{extern} block shown in \autoref{lst:rust_ffi_example}.
+As described in \autoref{ssub:unsafe_code}, every function available through the \gls{ffi} are considered {\unsafe} because {\rust} knows nothing about the function, other than its parameters and its return value.
+Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an {\unsafe} block, in the respective function defined in {\rust}.
 
 \begin{listing}[h]
 \begin{minted}{rust}
@@ -118,20 +118,20 @@ extern {
     fn STATIC_INLINE_TIMER_IntEnable(timer: &Timer, flags: u32);
 }
 \end{minted}
-\caption{Defining and using a function through the Rust \gls{ffi}.}
+\caption{Defining and using a function through the {\rust} \gls{ffi}.}
 \label{lst:rust_ffi_example}
 \end{listing}
 
-If we compare the call-stacks between calling the \texttt{timer0.int\_enable} function in Rust and calling the \texttt{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
+If we compare the call-stacks between calling the \code{timer0.int\_enable} function in {\rust} and calling the \func{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
 These are simple wrappers which require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one to two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
-By compiling the code with optimization, Rust will get rid of the overhead introduced by the function that wraps around the call to the foreign function.
-Additionally, by enabling \emph{link-time-optimizations} during the compilations, LLVM will remove the overhead entirely, which results in the same performance and similar call-stacks between C and Rust.
-This is a working example of one of Rust's many zero-cost abstractions.
+By compiling the code with optimization, {\rust} will get rid of the overhead introduced by the function that wraps around the call to the foreign function.
+Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will remove the overhead entirely, which results in the same performance and similar call-stacks between {\C} and {\rust}.
+This is a working example of one of {\rust}'s many zero-cost abstractions.
 
 \subsection{Naming Conventions}
 
-We have tried to keep \texttt{emlib}'s naming convention across the layer of bindings.
-This makes it easy for anyone reading either the C- or the Rust-code to translate and understand the code between the two languages.
+We have tried to keep \emlib's naming convention across the layer of bindings.
+This makes it easy for anyone reading either the C- or the {\rust}-code to translate and understand the code between the two languages.
 Since every constant, enum-field, or struct-name is directly accessible by name in C, if the corresponding header file is included, it is important that names of such fields can be separated from each other and do not cause a naming collision.
 
 \begin{listing}[h]
@@ -146,11 +146,11 @@ typedef enum {
 \label{lst:enum_naming_c}
 \end{listing}
 
-As an example, two fields of an enum from \texttt{em\_timer.h} is shown in \autoref{lst:enum_naming_c}.
-From each field in the enum we can extract 1) its module name \texttt{timer}, 2) its typedef name \texttt{CCMode} and 3) its field name \texttt{Off} or \texttt{Capture}.
-Rust allows us to keep the same naming convention at the same time as utilizing its modularity.
-\autoref{lst:enum_naming_rust} shows the enum ported to Rust, where both the module name and the typedef name has been left out, and only the field names have remained.
-However, the naming convention remains the same when the fields are used, e.g. the expression ``\texttt{let mode = timer::CCMode::Capture;}'' in Rust shows the similarity with the equivalent expression in C: ``\texttt{int mode = timerCCModeCapture;}''.
+As an example, two fields of an enum from \file{em\_timer.h} is shown in \autoref{lst:enum_naming_c}.
+From each field in the enum we can extract 1) its module name \file{timer}, 2) its typedef name \code{CCMode} and 3) its field name \code{Off} or \code{Capture}.
+\rust allows us to keep the same naming convention at the same time as utilizing its modularity.
+\autoref{lst:enum_naming_rust} shows the enum ported to {\rust}, where both the module name and the typedef name has been left out, and only the field names have remained.
+However, the naming convention remains the same when the fields are used, e.g. the expression ``\code{let mode = timer::CCMode::Capture;}'' in {\rust} shows the similarity with the equivalent expression in C: ``\code{int mode = timerCCModeCapture;}''.
 
 \begin{listing}[h]
 \begin{minted}{rust}
@@ -160,7 +160,7 @@ pub enum CCMode {
   // ...
 }
 \end{minted}
-\caption{The enum ported to Rust.}
+\caption{The enum ported to {\rust}.}
 \label{lst:enum_naming_rust}
 \end{listing}
 
@@ -293,14 +293,102 @@ In addition to writing bindings for
 \subsection{Testing}
 \label{ssub:testing}
 
-\todo{Håvard: Tar du denne seksjonen?}
+This section describes a small Unit testing framework developed for testing the emlib bindings.
+
+\subsubsection{Why Unit testing}
+
+Early on in the development phase of the emlib bindings we saw the need for a testing framework.
+This was provoked by the fact that testing on an embedded system is a time consuming and tedious task.
+More often than not you find your self running the code in the debugger inspecting the call stack and arguments to ensure that the bindings are calling the correct functions with the correct arguments.
+The fact about arguments has a subtle point to it.
+
+We are working in two statically typed languages here which leads to the compiler statically assuring that the correct types are passed around, but at the language boundries there are no checks for assuring that the memory layout of the datatypes in C and Rust match.
+Currently the Rust FFI requires the programmer to redefine the datatypes like structs and enums on the Rust side in order to call into C functions that takes these datatypes as arguments.
+This process proved to be too error prone and time consuming to verify manually.
+
+\subsubsection{Framework}
+
+To meet this problem, a featherweight testing framework was developed which enabled this verification to be automated.
+The goal of the framework was to initialize the data on the Rust side execute the \gls{ffi} and verify the correct function where called with the exact data as supplied.
+To do this we set up a framework to replace the emlib code with statically generated test mocks, execute test cases where the datastructures where setup in Rust code and then verify the correctness in C code.
+All of this was executed on the \textbf{Gecko} which reported test failure/success over Uart.
+
+The framework implemented is a small test runner utilizing CMock \cite{web:cmock} and Unity \cite{web:unity} for mocking and assertions respectivly.
+
+An test case for verifying that the \texttt{ADC\_Init} with default argument is working properly is given in \autoref{lst:test:adc}.
+
+
+\begin{listing}[H]
+  \centering
+  \begin{minipage}{\textwidth}
+  \begin{listing}
+    \begin{minted}{rust}
+fn test_init_called_with_default() {
+  // FFI call to the C function below
+  unsafe { adc_expect_init_called_with_default(); }
+
+  let adc0 = adc::Adc::adc0();
+  // Call the emlib bindings with an default argument
+  adc0.init(&Default::default());
+}
+    \end{minted}
+    \label{lst:test:adc:rust}
+    \caption{Rust side of ADC\_Init test}
+  \end{listing}
+  \end{minipage}
+
+  \begin{minipage}{\textwidth}
+  \begin{listing}
+    \begin{minted}{c}
+void adc_expect_init_called_with_default() {
+  static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
+  // setup the expected value on the Mock
+  ADC_Init_Expect(ADC0, &init);
+}
+    \end{minted}
+    \label{lst:test:adc:c}
+    \caption{C side of ADC\_Init test}
+  \end{listing}
+  \end{minipage}
+
+  \caption{Test case for ADC\_Init with default values}
+  \label{lst:test:adc}
+\end{listing}
+
+When using mocking in unit tests the workflow of for the user seems reversed compared to standard unit tests.
+First you setup the expected results with by calling the \texttt{ADC\_Init\_Expect} function on the mock as shown in \auroref{lst:test:adc:c}.
+This method is in fact called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
+When the expected result is setup the test case goes on to create an \gls{adc} object using the Rust bindings and calling the \texttt{init} function causing the \gls{ffi} library bindings to be executed.
+When the test returns, the test runner is responsible for calling a \texttt{Verify} function on the mock object.
+This function causes the program to fail and report status over Uart if the expectation set up was not met.
+
+\autoref{fig:test-framework} shows a diagram of the flow between \textit{Test Runner}, \textit{Test Case}, \textit{emlib Bindings} as \gls{CUT} and the \textit{emlib Mock} when executing the testcase above.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.3]{figures/testframework}
+  \end{center}
+  \caption{Flowchart for test framework}
+  \label{fig:test-framework}
+\end{figure}
+
+We see that the two boxes marked with \textit{Test Case} are the pieces of code the user of the framework, presented in \autoref{lst:test:adc}, writes.
+The stippled vertical line shows the separation between Rust and C code, all the three calls which cross this line is implemented using the Rust \gls{ffi}.
+
+\subsubsection{Rust libtest}
+
+The Rust programming language contains a testing framework within the standard library.
+The reasons for not using it to test the bindings is that we wanted to run the tests on the \textbf{Gecko}.
+The rational for this is that the tests are mostly checking that the datatypes used on the Rust and C side of the bindings are compatible.
+Therefore we need to use the proper compilers and compiler targets for the platform, verifying that the OSX platform gcc and rust compiler has compatible types does not help in this respect.
+Consequently, given that the testing framework in the standard library relies heavily on the Rust standard library RSL as discussed in \autoref{sec:back:lib}, this renders the framework unusable for our embedded platform.
 
 \subsection{Thoughts and Review}
 
 \todo{Does it make sense to have this section here? Should content like this be mover somewhere else (like in the discussion chapter), or is this a good place?}
 
-Writing the bindings for different the peripherals was a tedious work, that required careful review of the \texttt{emlib} source code in order to correctly port enum- and struct-definitions from C to Rust.
-Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various C macros defined in header files that are used throughout the library.
+Writing the bindings for different the peripherals was a tedious work, that required careful review of the \emlib source code in order to correctly port enum- and struct-definitions from {\C} to {\rust}.
+Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various {\C} macros defined in header files that are used throughout the library.
 We had to retrieve the value of the constants by debugging the source code and explicitly look up the value of these constants if they were only implicitly defined in the header files.
 
 Since we have constrained our library to only support the EFM32GG990 devices we chose to manually write the bindings for the library, instead of generating the bindings through some kind of automated process.
@@ -311,9 +399,9 @@ However, we chose not to utilize such tools because of the reasons described bel
     \item It was quick and easy to get started with code for a new peripheral.
     This argument was especially important when the project started out, because we still had no clue of how the project would evolve and what it was going to look like.
 
-    \item It was an advantage to depend on as few third party tools as possible, since both Rust and all available libraries would be unstable until the 1.0 release of the language.
+    \item It was an advantage to depend on as few third party tools as possible, since both {\rust} and all available libraries would be unstable until the 1.0 release of the language.
 
-    \item We wanted to keep the naming convention of our bindings as similar to \texttt{emlib} as possible, this would not have been easy to keep consistent with an automated process, partly because there are exceptions where these conventions do not fully hold.
+    \item We wanted to keep the naming convention of our bindings as similar to \emlib as possible, this would not have been easy to keep consistent with an automated process, partly because there are exceptions where these conventions do not fully hold.
     It is however an interesting problem that would have a higher priority if the library were ever to support more than one EFM32 device.
 
     \item We could focus on writing bindings for smaller parts of each module separately when we first needed them, which would split the work into smaller work-packages.
