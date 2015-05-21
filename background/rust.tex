@@ -254,9 +254,9 @@ Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter
 
 \subsubsection{Loops}
 
-\rust provides the two loop constructs known from C, \texttt{for} and \texttt{while}, in addition to \texttt{loop} for infinite loops.
-The \texttt{for} loop is not the conventional \texttt{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
-\rust's \texttt{for} statement is merely syntactic sugar for a \texttt{loop} with an internal \texttt{match} around the iterator's \texttt{next()} function.
+\rust provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
+The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
+\rust's \code{for} statement is merely syntactic sugar for a \code{loop} with an internal \code{match} around the iterator's \code{next()} function.
 \autoref{lst:rust:desugared-for} shows a simplified, expanded version of the code presented in \autoref{lst:rust:for}.
 
 % To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in \autoref{lst:rust:for}
@@ -274,7 +274,7 @@ for x in values {
 
 
 \end{minted}
-\caption{A \texttt{for} loop for an iterators}
+\caption{A \code{for} loop for an iterators}
 \label{lst:rust:for}
 \end{listing}
  \end{minipage}
@@ -289,7 +289,7 @@ loop {
   }
 }
     \end{minted}
-    \caption{\rust's \texttt{for} loop expanded to a \texttt{loop}}
+    \caption{\rust's \code{for} loop expanded to a \code{loop}}
     \label{lst:rust:desugared-for}
   \end{listing}
  \end{minipage}
@@ -315,12 +315,12 @@ loop {
 \subsection{Organization}
 \label{ssub:rust:organization}
 
-A \rust library or executable is organized into a \emph{crate}, and such a crate can consist of many \emph{modules}.
+A \rust library or executable is organized into a \concept{crate}, and such a crate can consist of many \concept{modules}.
 These modules are used to split up the library into separated pieces of code, giving it a logical structure.
 The crate is a sharable part of \rust code that can be included into other projects and libraries.
 The modules are the hierarchical means of organizing a crate, and ensures that the design is modular.
 This gives the programmer the ability to import only the components of the library that is needed for a given program.
-\autoref{fig:rust:collections} shows a few or the modules contained within the \rust \texttt{collections} crate.
+\autoref{fig:rust:collections} shows a few or the modules contained within the \rust \lib{collections} crate.
 
 \begin{figure}[H]
   \begin{center}
@@ -331,7 +331,7 @@ This gives the programmer the ability to import only the components of the libra
 \end{figure}
 
 The \rust compiler comes bundled with a handful of standard libraries that are used as a basis for almost all third party libraries and executables.
-By default, every \rust application is linked with the the \rust \std library, which \emph{re-exports} functionality from the standard libraries, like e.g. the \texttt{collections} crate.
+By default, every \rust application is linked with the the \rust \std library, which \concept{re-exports} functionality from the standard libraries, like e.g. the \lib{collections} crate.
 \todo{This figure looks broken...}
 \autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
 Many of these libraries contains functionality that depends on an operating system to be present, which is not necessarily a safe assumption to make for a bare-metal system.
@@ -395,7 +395,7 @@ A \rust program will not successfully compile if the programmer is failing to pr
 
 One of \rust's biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing performance.
 The memory safety boils down to how \rust manages its variables and their memory throughout the course of a program.
-\rust introduces a few concepts that are all centered around the \emph{ownership} of these variables and their \emph{lifetimes}, and how references to these variables can be \emph{borrowed}.
+\rust introduces a few concepts that are all centered around the \concept{ownership} of these variables and their \concept{lifetimes}, and how references to these variables can be \concept{borrowed}.
 These concepts are defined in \rust, but a lot of the inspiration behind those rules comes from other type-safe languages, like Haskell and OCaml, and especially Cyclone's \cite{Grossman2002,Swamy2006} region-based memory management.
 \rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically during compilation.
 
@@ -403,8 +403,8 @@ These concepts are defined in \rust, but a lot of the inspiration behind those r
 \label{sec:back:rust:own}
 
 In order to achieve full memory safety, we have to remove all form for memory leaks and dangling pointers to invalid memory.
-This implies one \emph{memory deallocation} for every respective \emph{memory allocation}.
-Traditionally, when allocating memory for a variable, the programming language will return a \emph{pointer},  or a \emph{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store that record in memory.
+This implies one \concept{memory deallocation} for every respective \concept{memory allocation}.
+Traditionally, when allocating memory for a variable, the programming language will return a \concept{pointer},  or a \concept{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store that record in memory.
 The memory can safely be deallocated when there is no longer any need for it, i.e. the variable holding the handle to the memory goes out of scope.
 
 Modern programming languages, like Java and Python, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
@@ -413,7 +413,7 @@ The downside of such an approach to memory safety is the continuous use of resou
 Every assignment to a variable and every time a variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
 
 Another common implementation is a stop-the-world garbage collector.
-It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the \emph{root} set of variables, i.e. global variables, local variables in the stack and any variable that may be accessible from the current state of the registers \cite{Wilson1992}.
+It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the \concept{root} set of variables, i.e. global variables, local variables in the stack and any variable that may be accessible from the current state of the registers \cite{Wilson1992}.
 The memory that are accessible from these references are then marked as valid, and all the invalid memory will then be freed and accessible through new calls to the memory allocation function.
 The downside of such an approach is the requirement of halting the entire program in order to release the invalid memory.
 There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
@@ -431,8 +431,8 @@ It is important to always remember and deallocate all memory referenced by a han
 This is done statically without any interference by the programmer.
 When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
-These two aspects of memory allocation and deallocation is combined into the concept of \emph{ownership} that \rust incorporates.
-When a handle that \emph{owns} a reference to a data-segment on the heap leaves its scope, \rust knows that it can safely free the memory that is referenced by it, because it is the \emph{owning handle} to that memory.
+These two aspects of memory allocation and deallocation is combined into the concept of \concept{ownership} that \rust incorporates.
+When a handle that \concept{owns} a reference to a data-segment on the heap leaves its scope, \rust knows that it can safely free the memory that is referenced by it, because it is the \concept{owning handle} to that memory.
 
 \begin{listing}[tb]
 \begin{minted}{c}
@@ -458,20 +458,20 @@ fn main() {
 
 An example of this ownership is shown in \autoref{lst:owning_handle}.
 There can only exist one owning handle for any heap- or a stack-allocated variable at any time during program execution.
-This means that if the handle gets passed as an argument to a function, this function will take \emph{ownership} of the variable, by \emph{moving} it to the new scope defined by the function.
+This means that if the handle gets passed as an argument to a function, this function will take \concept{ownership} of the variable, by \concept{moving} it to the new scope defined by the function.
 This move prevents any further use of the handle in its original scope and is necessary because \rust only allows one owned handle to any memory-segment at any time.
-If two or more handles to the memory had existed at the same time it would have resulted in several calls to \texttt{free}, one for every time the handle left the different scopes.
+If two or more handles to the memory had existed at the same time it would have resulted in several calls to \func{free}, one for every time the handle left the different scopes.
 The only way to continue using the handle in its original scope would have been to give the ownership back after using it.
 
 \subsubsection{Borrowing}
 \label{ssec:borrowing}
 
-\emph{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
-\rust allows the programmer to \emph{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
-There can exist multiple \emph{references} to the same place in memory, as long there is only one \emph{owner} of the actual handle.
-A reference is denoted with an \texttt{\&} in front of the handle, this will tell \rust that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
+\concept{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
+\rust allows the programmer to \concept{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
+There can exist multiple \emph{references} to the same place in memory, as long there is only one \concept{owner} of the actual handle.
+A reference is denoted with an \code{\&} in front of the handle, this will tell \rust that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
 Consider a modification of the previous example shown in \autoref{lst:borrowing_handle}.
-Here, the the \texttt{read\_book} function is modified to accept a reference to a book instead of overtaking its ownership, this allows us to lend out the book to be read as many times as we want.
+Here, the the \func{read\_book} function is modified to accept a reference to a book instead of overtaking its ownership, this allows us to lend out the book to be read as many times as we want.
 Since the book's owning handle lives in the scope defined by the main function, the memory will be deallocated when the program exits.
 
 \begin{listing}[tb]
@@ -500,10 +500,10 @@ fn main() {
 \label{ssec:lifetimes}
 
 \rust needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
-\rust achieves this with a concept called \emph{lifetimes}, in which the compiler with the help of \emph{lifetime elisions} or \emph{lifetime specifiers}, can statically resolve any dangling pointers or \emph{use-after-free} issues introduced by the programmer.
-Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in \texttt{C} that returns a reference into a variable allocated in its own stackframe.
-The \texttt{C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
-A similar implementation of \texttt{name\_as\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
+\rust achieves this with a concept called \concept{lifetimes}, in which the compiler with the help of \concept{lifetime elisions} or \econceptmph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
+Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in \C that returns a reference into a variable allocated in its own stackframe.
+The \C compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
+A similar implementation of \code{name\_as\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
 
 \begin{listing}[tb]
 \begin{minted}{c}
@@ -533,8 +533,8 @@ Such elisions are used extensively together with parameters and return values, a
 There are two kinds of lifetimes; the ones associated with \emph{input parameters} to a function, and the ones associated with the \emph{returned value} from a function.
 These are referred to as \emph{input-lifetimes} and \emph{output-lifetimes}, respectively.
 We have an error if a function attempts to return a value with an output lifetime that lives shorter than the input lifetime, because this would result in a use-after-free.
-As an example, consider the updated version of the \texttt{name\_as\_ref} function shown in \autoref{lst:valid_ref_rust}.
-Here we annotate a lifetime by giving it the name \texttt{'a}, the explicit name of the lifetime does not matter, what matters is that we tell \rust that our function is passed a reference to a book that is alive \emph{before} the function is called.
+As an example, consider the updated version of the \code{name\_as\_ref} function shown in \autoref{lst:valid_ref_rust}.
+Here we annotate a lifetime by giving it the name \code{'a}, the explicit name of the lifetime does not matter, what matters is that we tell \rust that our function is passed a reference to a book that is alive \emph{before} the function is called.
 Since \rust \emph{knows} that the book is alive before calling the function, it knows that it would be safe to return a reference to a field of that book because the returned value have the \emph{same} lifetime.
 
 \begin{listing}[tb]
@@ -569,15 +569,15 @@ This is an important distinction, because it allows for any number 3rd party con
 
 \rust's strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
 There exists many programs that are indeed safe, but still not possible for the compiler to verify.
-Examples of code that the compiler cannot verify is code that dereference \emph{raw pointers}, or code that utilize \rust's \gls{ffi} or directly call any of the compiler intrinsics functions.
+Examples of code that the compiler cannot verify is code that dereference \concept{raw pointers}, or code that utilize \rust's \gls{ffi} or directly call any of the compiler intrinsics functions.
 Raw pointers in \rust are similar to a normal pointer in C, which means that they are not constrained by \rust's ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
 The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
 The ability to make new abstractions that optimize away to essentially nothing is an important feature of \rust.
 Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
-For these tasks, \rust provides the keyword \texttt{unsafe}.
-It is important to note that this \texttt{unsafe} keyword is introduced in order to \emph{keep} \rust's semantics about memory safety.
-When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \texttt{unsafe} block is indeed safe.
+For these tasks, \rust provides the keyword \unsafe.
+It is important to note that this \unsafe keyword is introduced in order to \emph{keep} \rust's semantics about memory safety.
+When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the \unsafe block is indeed safe.
 \todo{Maybe add reference for this? Don't really think its necessary}
 
 \begin{table}[ht]
@@ -593,16 +593,16 @@ When the compiler can no longer guarantee safety, it is up to the programmer to 
   There are no variable bindings between a raw pointer and the data it points to, thus the normal ownership rules provided by the borrow-checker does not apply for them. This means that \rust cannot resolve issues with race conditions or dangling pointers. \\
 
   \raggedleft{Call unsafe functions, e.g. \\ \gls{ffi} or compiler intrinsics} &
-  \rust can make no guarantees about the safety of \texttt{unsafe} functions. If a \gls{ffi} function is called we are leaving \rust's scope and entering another language domain, it is not possible for \rust to verify the safety of such code. \\
+  \rust can make no guarantees about the safety of \unsafe functions. If a \gls{ffi} function is called we are leaving \rust's scope and entering another language domain, it is not possible for \rust to verify the safety of such code. \\
 
 \hline
 \end{tabular}
-\caption{Unsafe operations exposed through an \texttt{unsafe} block}
+\caption{Unsafe operations exposed through an \unsafe block}
 \label{tab:reasons_for_unsafe}
 \end{center}
 \end{table}
 
-\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \texttt{unsafe} block, and some examples of why the operations are considered unsafe.
+\autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an \unsafe block, and some examples of why the operations are considered unsafe.
 Compiler intrinsics are functions that are provided by the compiler itself, not \rust, and are functions that are closely related with raw pointers.
 These are all considered unsafe and provides core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
 It is important to note that \rust's borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.

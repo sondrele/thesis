@@ -80,7 +80,7 @@ unsigned int GPIO_PinOutGet(GPIO_Port_TypeDef port,
 
 \subsection{Emdrv}
 
-Another library provided by Silicon Labs is called \texttt{emdrv}, and it provides higher-level drivers for some of the more general EFM32 peripherals.
+Another library provided by Silicon Labs is called \emdrv, and it provides higher-level drivers for some of the more general EFM32 peripherals.
 Commonly used modules with common usage patterns usually have their own drivers that makes them easier to initialize and use.
 Examples of modules that have their own drivers are the \texttt{flash} which features a common read-write pattern, and the GPIO which exposes a common pattern for registering handler functions to be executed when an event is triggered.
 
@@ -89,9 +89,9 @@ Examples of modules that have their own drivers are the \texttt{flash} which fea
 \todo{maybe present this section before CMSIS?}
 % Newlib is an implementation of a C library \todo{Do you mean a C standard library or something? Or is it just a C library?} for embedded devices.
 Newlib is a C library that is implemented specifically to be used by embedded devices.
-Most notably this library defines heap memory management facilities through \texttt{malloc}, \texttt{realloc} and \texttt{free}.
-These base functions are needed in order to compile both \texttt{emlib} and \texttt{emdrv}, and \rust's \texttt{alloc} library.
-The functions in newlib are used directly by the C libraries, or in \rust through its \texttt{libc} library, which exposes the memory management symbols mentioned above.
+Most notably this library defines heap memory management facilities through \func{malloc}, \func{realloc} and \func{free}.
+These base functions are needed in order to compile both \emlib and \lib{emdrv}, and \rust's \lib{alloc} library.
+The functions in newlib are used directly by the C libraries, or in \rust through its \lib{libc} library, which exposes the memory management symbols mentioned above.
 This library is distributed as a part of the GNU ARM Toolchain.
 % which is described in \autoref{}
 \todo{Refer to toolchain section}
