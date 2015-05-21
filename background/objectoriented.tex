@@ -13,9 +13,9 @@ We look at the memory layout of a memory-mapped \gls{adc} and see how this can b
 The method entails connecting the control registers of hardware devices to the same address bus as RAM.
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
-Let us consider the \gls{adc} on the Gecko.
+Let us consider the \gls{adc} on the \gecko.
 The \gls{adc} converts an analoge signal to a digital representation.
-The \gls{adc} on the Gecko is memory mapped to the location \mem{0x40002000}.
+The \gls{adc} on the \gecko is memory mapped to the location \mem{0x40002000}.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
 
 \begin{figure}[H]
@@ -43,7 +43,7 @@ This means that writing to a pointer that points to this address will write to t
     \hline
     &&\\
   \end{tabular}
-  \caption{Subsection of ADC0 Memory map for the Gecko}
+  \caption{Subsection of ADC0 Memory map for the \gecko}
   \label{fig:back:memorymapped}
 \end{figure}
 
@@ -120,7 +120,7 @@ typedef struct {
 In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
 By using structs the programmer has full control over the layout of the object in memory.
 The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
-\autoref{lst:back:adc-objects} shows how to define a Java class, and \rust and C structs for the \gls{adc} on the Gecko.
+\autoref{lst:back:adc-objects} shows how to define a Java class, and \rust and C structs for the \gls{adc} on the \gecko.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \begin{table}[H]
@@ -306,7 +306,7 @@ This is the programmars part of the contract to ensure when using a unsafe block
 So what is unsafe about derefencing raw pointer?
 Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
 The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the Gecko to HardFault on a Bus Error.
+For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the \gecko to HardFault on a Bus Error.
 In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
 
 The last point about unsafety that can be made here, is the fact we can create multiple mutable aliases to the \glspl{mmio}.
