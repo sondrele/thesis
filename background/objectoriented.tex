@@ -58,7 +58,7 @@ The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single co
 
 The traditional memory layout of an object in an object oriented language is an implementation detail.
 This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
-The layout is aslo a implementation detail of \rust for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
+The layout is aslo a implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
 Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
 \begin{listing}[H]
@@ -112,7 +112,7 @@ typedef struct {
   \end{listing}
   \end{minipage}
 
-  \caption{Definition of an \gls{adc} in Java, \rust, and C}
+  \caption{Definition of an \gls{adc} in Java, {\rust}, and C}
   \label{lst:back:adc-objects}
 \end{listing}
 
@@ -120,7 +120,7 @@ typedef struct {
 In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
 By using structs the programmer has full control over the layout of the object in memory.
 The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
-\autoref{lst:back:adc-objects} shows how to define a Java class, and \rust and C structs for the \gls{adc} on the \gecko.
+\autoref{lst:back:adc-objects} shows how to define a Java class, and {\rust} and C structs for the \gls{adc} on the \gecko.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \begin{table}[H]
@@ -176,14 +176,14 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \end{table}
 
-By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in \rust and \C has same exact layout as the memory mapped control register of the \gls{adc}.
+By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and \C has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
 \subsection{Adding Object Functionality}
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
-Both \C and \rust uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
-This ensures that C and \rust provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
+Both \C and {\rust} uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
+This ensures that C and {\rust} provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
@@ -222,7 +222,7 @@ void main() {
   \begin{listing}
       \begin{minted}{rust}
 impl Adc {
-  // \rust lets the programmer
+  // {\rust} lets the programmer
   // specify how to accept the
   // object when invoked with
   // the dot notation
@@ -236,7 +236,7 @@ fn main() {
   // Instantiation of MMIOs
   // is handled in the next section
   let adc = Adc;
-  // The \rust compiler issues
+  // The {\rust} compiler issues
   // a static call to the
   // member method and passes
   // in the reference to the MMIO
@@ -245,13 +245,13 @@ fn main() {
       \end{minted}
   \end{listing}
   \end{minipage}
-  \caption{Member methods for C and \rust, respectively.}
+  \caption{Member methods for C and {\rust}, respectively.}
   \label{lst:back:adc:get}
 
 \end{listing}
 
 \autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using an object oriented pattern.
-We use the \keyword{impl} block to define the same behavior in \rust, but the methods are called with the dot notation known from object oriented languages.
+We use the \keyword{impl} block to define the same behavior in {\rust}, but the methods are called with the dot notation known from object oriented languages.
 
 \subsection{Instantiating a MMIO object}
 
@@ -261,7 +261,7 @@ The constructor is responsible for allocating the object and initialize the fiel
 Analogously, the destructor is responsible for deallocating the object and any other member objects that it owns.
 \gls{mmio} devices have a fixed position in the memory and does not need to be allocated, they also generally do not have any owned members.
 Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate the variable that holds the reference to the \gls{mmio} and cast it to the desired type.
-\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both \C and \rust.
+\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both \C and {\rust}.
 
 \begin{listing}[H]
   \begin{minipage}{0.47\textwidth}
@@ -291,12 +291,12 @@ void main() {
     \end{minted}
   \end{listing}
   \end{minipage}
-  \caption{Instantiating \glspl{mmio} in \rust and C, respectively.}
+  \caption{Instantiating \glspl{mmio} in {\rust} and C, respectively.}
   \label{fig:oo:instantiate}
 \end{listing}
 
 \todo{Move this to discussion}
-The \rust code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword.
+The {\rust} code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword.
 As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
 The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \keyword{unsafe}.
 The underlying reason is a bit more subtle.
