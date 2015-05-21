@@ -500,7 +500,7 @@ fn main() {
 \label{ssec:lifetimes}
 
 \rust needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
-\rust achieves this with a concept called \concept{lifetimes}, in which the compiler with the help of \concept{lifetime elisions} or \econceptmph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
+\rust achieves this with a concept called \concept{lifetimes}, in which the compiler with the help of \concept{lifetime elisions} or \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
 Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in \C that returns a reference into a variable allocated in its own stackframe.
 The \C compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
 A similar implementation of \code{name\_as\_ref} in \rust is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
