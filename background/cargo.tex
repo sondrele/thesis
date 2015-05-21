@@ -58,11 +58,11 @@ This file helps {\cargo} to determine if packages needs to be re-downloaded, upd
 \label{lst:expanded_cargo_project_structure}
 \end{listing}
 
-\autoref{lst:expanded_cargo_project_structure} shows an example of a library project structure, and is in fact a simplified version of {\cargos} actual structure.
+\autoref{lst:expanded_cargo_project_structure} shows an example of a library project structure, and is in fact a simplified version of {\cargo}'s actual structure.
 If the intended use of a project is as a library for other applications, they include a \file{lib.rs}.
 This file, including its submodules like \file{src/compile.rs} in this example, will be compiled into a {\rust} crate with the same name as the project, in this case it will be \file{cargo.rlib}.
 Any files found under the \dir{src/bin} directory will also be compiled into its own executables, {\cargo} will automatically link the library and all of the its dependencies with these executables.
-In {\cargos} case, every command shown in \autoref{tab:common_cargo_commands} has its own dedicated executable target in this directory.
+In {\cargo}' case, every command shown in \autoref{tab:common_cargo_commands} has its own dedicated executable target in this directory.
 
 A package can also contain a \dir{tests} directory with integration tests, like in the above example, and finally an \dir{examples} directory with different executables that demonstrates how to use the library (this has not been included in the above example).
 A package can also have it's own build-routine by specifying a \file{build} script in the \file{Cargo.toml}.
