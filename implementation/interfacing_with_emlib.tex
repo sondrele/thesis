@@ -180,35 +180,48 @@ The bindings have been developed because we have needed functionality from the p
   \begin{tabular}{r|p{10cm}}
     \textbf{Module} & \textbf{Purpose} \\
     \hline
-cmu     & The \gls{cmu} provided functions to manage the different clocks and oscillators on the \texttt{gecko}.
+\texttt{cmu}     &
+The \gls{cmu} provides functions to manage the different clocks and oscillators on the \texttt{gecko}.
 This module is necessary in order to configure the clocks that are required by other peripherals to function. \\
 
-dma     & We wanted to use \gls{dma} for the \texttt{sensor-tracker} application because it can be used to transfer data without intercepting the \gls{cpu}. \\
+\texttt{dma}     &
+We wanted to use \gls{dma} for the \texttt{sensor-tracker} application because it can be used to transfer data without intercepting the \gls{cpu}. \\
 
-ebi     & The \gls{ebi} is used in the \texttt{Gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the \texttt{DK}. \\
+\texttt{ebi}     &
+The \gls{ebi} is used in the \texttt{Gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the \texttt{DK}. \\
 
-emu     & The \gls{emu} module controls the different energy modes on the \texttt{Gecko}.
+\texttt{emu}     &
+The \gls{emu} module controls the different energy modes on the \texttt{Gecko}.
 We needed this functionality for the \texttt{sensor-tracker} application. \\
 
-gpio    & The \gls{gpio} was one of the first modules to be ported, it is used extensively throughout the bindings and in the applications. \\
+\texttt{gpio}    &
+The \gls{gpio} was one of the first modules to be ported, it is used extensively throughout the bindings and in the applications. \\
 
-lesense & The \gls{lesense} can be configured to automatically collect data from multiple sensors, we needed this for the \texttt{sensor-tracker}. \\
+\texttt{lesense} &
+The \gls{lesense} can be configured to automatically collect data from multiple sensors, we needed this for the \texttt{sensor-tracker}. \\
 
-acmp    & The \gls{acmp} was ported alongside \gls{lesense}, it is used to compare two analog signals and tell which one is greater. \\
+\texttt{acmp}    &
+The \gls{acmp} was ported alongside \gls{lesense}, it is used to compare two analog signals and tell which one is greater. \\
 
-adc     & The \gls{adc} was  \\
+\texttt{adc}     &
+The \gls{adc} was needed by the \texttt{sensor-tracker}, it has been used to get the internal temperature of the \gls{cpu}. \\
 
-i2c     &  \\
+\texttt{usart}   &
+Primarily we wanted the \gls{usart} for easy debugging and I/O from a computer. \\
 
-leuart  &  \\
+\texttt{leuart}  &
+The \gls{leuart} was ported a while after the \gls{usart}.
+It has the same functionality, but it works with a lower-frequency clock and at requires less energy than the \gls{usart}. \\
 
-prs     &  \\
+\texttt{i2c}     &
+The \gls{i2c} has many of the same use cases as the different \gls{uart} types, but it works at lower energy levels.
+It is used in by the \texttt{sensor-tracker}. \\
 
-rtc     &  \\
+\texttt{rtc}     &
+The \gls{rtc} was an easy module to write bindings for, it is used in several examples for timing purposes, as well as in the \texttt{sensor-tracker}. \\
 
-timer   &  \\
-
-usart   &  \\
+\texttt{timer}   &
+The Timer was one of the first modules to be ported, it worked as a proof-of-concept for the design of the bindings, as described earlier in this section. \\
 
     \hline
   \end{tabular}
