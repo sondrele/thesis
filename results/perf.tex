@@ -4,7 +4,7 @@ This section describes the performance measurement of the system.
 Firstly we present the metric used for measuring the performance in \autoref{sec:perf:fps}, then the bias involved when using this metric is discussed in \autoref{sec:perf:bias}.
 \autoref{sec:perf:res} presents the results obtained and lastly \autoref{sec:perf:disc} discusses the results.
 
-The performance was measured by implemententing the game application described in \autoref{circle-game} in both C and \rust and recording a performance metric.
+The performance was measured by implemententing the game application described in \autoref{circle-game} in both \C and \rust and recording a performance metric.
 The performance metric chosen for the evaluation is the Frames Per Second, FPS.
 This metric measures the amount of work/second.
 The metric is simple and commonly used when measuring relative performance of realtime graphic applications.
@@ -76,9 +76,9 @@ extern fn SysTick_Handler() {
   \label{lst:perf:fps}
 \end{listing}
 
-As can be seen in \autoref{lst:perf:fps} a frame counter is incremented each iteration of the Game Loop in the variable FRAME\_COUNT.
-Each second this counter is stored in the LAST\_FRAME\_COUNT variable and reset to zero.
-This ensures that each second the number of frames draw the last second is always held by the LAST\_FRAME\_COUNT variable.
+As can be seen in \autoref{lst:perf:fps} a frame counter is incremented each iteration of the Game Loop in the variable \code{FRAME\_COUNT}.
+Each second this counter is stored in the \code{LAST\_FRAME\_COUNT} variable and reset to zero.
+This ensures that each second the number of frames draw the last second is always held by the \code{LAST\_FRAME\_COUNT} variable.
 This variable is printed on the screen on each iteration.
 
 \subsection{Measurment Bias}
