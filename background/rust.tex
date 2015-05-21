@@ -11,17 +11,17 @@ Over the course of \rust's development, the language has set out to solve two ma
 \subsection{Language Features}
 \label{ssub:rust:features}
 
-This section starts by describing \rust's \texttt{core} library and its type-system, before moving on to presenting some of the language features that makes \rust so different from C.
+This section starts by describing \rust's \core library and its type-system, before moving on to presenting some of the language features that makes \rust so different from C.
 Because \rust is a multi-paradigm language it offers a wider range of language constructs that are not present in the procedural paradigm usually found in embedded programming.
 
 \subsubsection{The Core Library}
 
-\rust's \texttt{core} library, defines the platform independent part of the language.
-This library is not directly accessible to the programmer, instead its stable parts are reexported through \rust's standard library called \texttt{std}.
-In this way, \texttt{core} is not interfaced with directly in normal \rust programs, so it can be modified while \texttt{std}'s interface stays the same.
+\rust's \core library, defines the platform independent part of the language.
+This library is not directly accessible to the programmer, instead its stable parts are reexported through \rust's standard library called \std.
+In this way, \core is not interfaced with directly in normal \rust programs, so it can be modified while \std's interface stays the same.
 The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
 
-\autoref{tab:rust:datatypes} lists the primitive datatypes available in \rust, the \texttt{core} library defines many functions and abstractions that are used to manage and manipulate these datatypes.
+\autoref{tab:rust:datatypes} lists the primitive datatypes available in \rust, the \core library defines many functions and abstractions that are used to manage and manipulate these datatypes.
 Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from C are discussed throughout the following sections.
 
 \begin{table}[H]
@@ -153,7 +153,7 @@ The \texttt{impl} keyword lets us implement member functions for the \texttt{Boo
 
 \subsubsection{Pointers}
 
-\rust's \texttt{core} library exposes two pointer types which are considered \textit{unsafe} by the language, \autoref{ssub:unsafe_code} explains why.
+\rust's \core library exposes two pointer types which are considered \textit{unsafe} by the language, \autoref{ssub:unsafe_code} explains why.
 Pointers in \rust are a very fundamental part of the language, but they are not used much outside of low-level code and bindings.
 Instead, the library offers higher-level structures as an abstraction between the \emph{raw} pointers and their data.
 
@@ -331,17 +331,17 @@ This gives the programmer the ability to import only the components of the libra
 \end{figure}
 
 The \rust compiler comes bundled with a handful of standard libraries that are used as a basis for almost all third party libraries and executables.
-By default, every \rust application is linked with the the \rust \texttt{std} library, which \emph{re-exports} functionality from the standard libraries, like e.g. the \texttt{collections} crate.
+By default, every \rust application is linked with the the \rust \std library, which \emph{re-exports} functionality from the standard libraries, like e.g. the \texttt{collections} crate.
 \todo{This figure looks broken...}
 \autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
 Many of these libraries contains functionality that depends on an operating system to be present, which is not necessarily a safe assumption to make for a bare-metal system.
-This means that the \texttt{std} library can not be utilized in this project, instead it has to be based on \rust's \texttt{core} library, which lays the foundation for all of the standard libraries.
+This means that the \std library can not be utilized in this project, instead it has to be based on \rust's \core library, which lays the foundation for all of the standard libraries.
 
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
   \end{center}
-  \caption{Some crates re-exported in the \texttt{std} library}
+  \caption{Some crates re-exported in the \std library}
   \label{fig:rust:librust}
 \end{figure}
 

@@ -1,8 +1,8 @@
 \section{\rust Embedded Library}
 \label{sec:rust_embedded_library}
 
-When we consider \texttt{std}'s dependencies, shown in \autoref{fig:rust:librust}, we see that the crate is not suitable for a bare-metal application because it depends on an \gls{os} to be present.
-The dependency on either a Unix or a Windows \gls{os} excludes \texttt{std} and all of its dependents from being used directly with the EFM32.
+When we consider \std's dependencies, shown in \autoref{fig:rust:librust}, we see that the crate is not suitable for a bare-metal application because it depends on an \gls{os} to be present.
+The dependency on either a Unix or a Windows \gls{os} excludes \std and all of its dependents from being used directly with the EFM32.
 This section presents some of the libraries provided by \rust that can be used in a bare-metal system, and how and why they are composed into what we refer to as the \gls{rel}.
 
 \begin{figure}[H]
