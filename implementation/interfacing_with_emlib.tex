@@ -295,7 +295,7 @@ Demonstrates dynamically allocated strings and vectors from the \lib{collections
 
 As with {\emlib}, it was not a goal to fully support all available peripheral drivers that are available in \prog{emdrv}.
 The drivers that we have partially implemented bindings for are summarized in \autoref{tab:emdrv_bindings}, they are not that hard to grasp or use since they are all fairly small.
-The project includes two examples that demonstrate how to use the flash driver, they are summarized in \autoref{tab:emdrv_bindings}.
+The project includes two examples that demonstrate how to use the flash driver, they are summarized in \autoref{tab:emdrv_examples}  \todo{table needs to refer to section about IRQ. Evt. flytt noe av innholdet fra IRQ-seksjonen inn i denne seksjonen.}.
 
 \begin{table}[H]
   \centering
@@ -312,7 +312,7 @@ The Driver is used by the {\prog{sensor-tracker}}. \\
 
 \prog{gpioint}  &
 This driver is ported from {\C} to {\rust}, the implementation differs slightly between the two versions, but the functionality is the same.
-The reasoning for porting this driver is described in \todo{refer to section about IRQ. Evt. flytt noe av innholdet fra IRQ-seksjonen inn i denne seksjonen.}. \\
+The reasoning for porting this driver is described in \autoref{}. \\
 
 \prog{i2c}  &
 This driver is used by the {\prog{sensor-tracker}} application, it exposes functions initialize normal \gls{i2c} data transfers. \\
@@ -330,7 +330,7 @@ It is used in the \prog{circle-game}. \\
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{r|p{6.6cm}|p{2.1cm}}
+  \begin{tabular}{r|p{6.6cm}|p{1.9cm}}
     \textbf{Example} & \textbf{Purpose} & \textbf{Uses} \\
     \hline
 
@@ -356,34 +356,34 @@ flash-driver, \gls{lesense}, \gls{usart}, \gls{acmp}, \gls{gpio}, \gls{rtc} \\
 
 Interrupt support through NVIC was the only interesting part of the \gls{cmsis} library that we have written bindings for.
 Most of the examples implement one or several IRQ handlers for the peripheral bindings that they demonstrate.
-\todo{Det er vel en seksjon som beskriver dette? Vi får fylle ut mer her etter hvert som vi får oversikt}
 
 \subsection{Testing}
 \label{ssub:testing}
 
-This section describes a small Unit testing framework developed for testing the emlib bindings.
+Verification of correctness is an important part of all software, weather it is done manually or with an automated framework.
+This section describes a small Unit test framework that was developed for testing the bindings for {\emlib}.
 
 \subsubsection{Why Unit testing}
 
-Early on in the development phase of the emlib bindings we saw the need for a testing framework.
-This was provoked by the fact that testing on an embedded system is a time consuming and tedious task.
-More often than not you find your self running the code in the debugger inspecting the call stack and arguments to ensure that the bindings are calling the correct functions with the correct arguments.
+Early on in the development phase of the {\emlib} bindings we saw the need for a testing framework.
+This was provoked by the fact that testing software on an embedded system is a time consuming and tedious task.
+More often than not you find yourself running the code in the debugger, inspecting the call stack and function arguments, to ensure that the bindings are calling the correct functions, with the correct arguments.
 The fact about arguments has a subtle point to it.
 
-We are working in two statically typed languages here which leads to the compiler statically assuring that the correct types are passed around, but at the language boundries there are no checks for assuring that the memory layout of the datatypes in C and Rust match.
-Currently the Rust FFI requires the programmer to redefine the datatypes like structs and enums on the Rust side in order to call into C functions that takes these datatypes as arguments.
-This process proved to be too error prone and time consuming to verify manually.
+We are working in two statically typed languages which leads the compiler to statically assure that the correct types are passed around.
+However, there are no checks to assure that the memory layout of the datatypes in {\C} and {\rust} match at the borders between the two languages.
+Currently, the {\rust} \gls{ffi} requires the programmer to redefine the {\C} datatypes in {\rust}, like structs and enums, in order to call into the {\C} functions that takes these datatypes as arguments.
+The process of verifying this manually proved to be both error prone and time consuming, which suggested the need for an automated system to verify the correctness of the bindings.
 
 \subsubsection{Framework}
 
-To meet this problem, a featherweight testing framework was developed which enabled this verification to be automated.
-The goal of the framework was to initialize the data on the Rust side execute the \gls{ffi} and verify the correct function where called with the exact data as supplied.
-To do this we set up a framework to replace the emlib code with statically generated test mocks, execute test cases where the datastructures where setup in Rust code and then verify the correctness in C code.
-All of this was executed on the \textbf{Gecko} which reported test failure/success over Uart.
+To meet this problem, a featherlight testing framework was developed which enabled this verification to be automated.
+The goal of the framework was to initialize the data on the {\rust} side, call functions via the \gls{ffi}, and verify that the correct functions were called with the exact data as supplied.
+In order to do this, we made a framework that could replace {\emlib}'s code with statically generated test mocks, before calling these mocked functions from {\rust} and then verify that the functions where called correctly in {\C}.
 
-The framework implemented is a small test runner utilizing CMock \cite{web:cmock} and Unity \cite{web:unity} for mocking and assertions respectivly.
-
-An test case for verifying that the \texttt{ADC\_Init} with default argument is working properly is given in \autoref{lst:test:adc}.
+The implemented framework is a small test runner that utilizes CMock \cite{web:cmock} and Unity \cite{web:unity}, for mocking and assertions, respectively.
+All of the unit tests were compiled into a binary that was executed on the {\gecko}, which reported back via \gls{usart} whether the tests failed or ran successfully.
+An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
 
 
 \begin{listing}[H]
@@ -396,12 +396,12 @@ fn test_init_called_with_default() {
   unsafe { adc_expect_init_called_with_default(); }
 
   let adc0 = adc::Adc::adc0();
-  // Call the emlib bindings with an default argument
+  // Call the emlib bindings with a default argument
   adc0.init(&Default::default());
 }
     \end{minted}
+    \caption{Rust side of \code{ADC\_Init} test}
     \label{lst:test:adc:rust}
-    \caption{Rust side of ADC\_Init test}
   \end{listing}
   \end{minipage}
 
@@ -410,27 +410,29 @@ fn test_init_called_with_default() {
     \begin{minted}{c}
 void adc_expect_init_called_with_default() {
   static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
-  // setup the expected value on the Mock
+  // Set up the expected value on the Mock
   ADC_Init_Expect(ADC0, &init);
 }
     \end{minted}
+    \caption{C side of \code{ADC\_Init} test}
     \label{lst:test:adc:c}
-    \caption{C side of ADC\_Init test}
   \end{listing}
   \end{minipage}
 
-  \caption{Test case for ADC\_Init with default values}
+  \caption{Test case for \code{ADC\_Init} with default values}
   \label{lst:test:adc}
 \end{listing}
 
-When using mocking in unit tests the workflow of for the user seems reversed compared to standard unit tests.
-First you setup the expected results with by calling the \texttt{ADC\_Init\_Expect} function on the mock as shown in \auroref{lst:test:adc:c}.
+When using mocking in unit tests, the workflow for the user seems reversed compared to standard unit tests.
+First, you set up the expected results by calling the \texttt{ADC\_Init\_Expect} function on the mock, as shown in \autoref{lst:test:adc:c}.
 This method is in fact called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
-When the expected result is setup the test case goes on to create an \gls{adc} object using the Rust bindings and calling the \texttt{init} function causing the \gls{ffi} library bindings to be executed.
+When the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
 When the test returns, the test runner is responsible for calling a \texttt{Verify} function on the mock object.
-This function causes the program to fail and report status over Uart if the expectation set up was not met.
+This function causes the program to fail and report its status over \gls{usart} if the expected result was not met.
 
-\autoref{fig:test-framework} shows a diagram of the flow between \textit{Test Runner}, \textit{Test Case}, \textit{emlib Bindings} as \gls{CUT} and the \textit{emlib Mock} when executing the testcase above.
+\autoref{fig:test-framework} shows a diagram of the program flow between the \textit{Test Runner}, the \textit{Test Case}, the \textit{emlib bindings} as \gls{CUT} \todo{what is CUT?}, and the \textit{emlib mock}, for when the test case above is executed.
+We see that the two boxes marked with \textit{Test Case} are the pieces of code the user of the framework, presented in \autoref{lst:test:adc}, writes.
+The stippled vertical line shows the separation between {\rust} and {\C} code, all the three function calls which cross this line is implemented using the {\rust} \gls{ffi}.
 
 \begin{figure}[H]
   \begin{center}
@@ -440,16 +442,18 @@ This function causes the program to fail and report status over Uart if the expe
   \label{fig:test-framework}
 \end{figure}
 
-We see that the two boxes marked with \textit{Test Case} are the pieces of code the user of the framework, presented in \autoref{lst:test:adc}, writes.
-The stippled vertical line shows the separation between Rust and C code, all the three calls which cross this line is implemented using the Rust \gls{ffi}.
 
 \subsubsection{Rust libtest}
 
-The Rust programming language contains a testing framework within the standard library.
-The reasons for not using it to test the bindings is that we wanted to run the tests on the \textbf{Gecko}.
-The rational for this is that the tests are mostly checking that the datatypes used on the Rust and C side of the bindings are compatible.
-Therefore we need to use the proper compilers and compiler targets for the platform, verifying that the OSX platform gcc and rust compiler has compatible types does not help in this respect.
-Consequently, given that the testing framework in the standard library relies heavily on the Rust standard library RSL as discussed in \autoref{sec:back:lib}, this renders the framework unusable for our embedded platform.
+The {\rust} programming language contains a testing framework within the standard library.
+The reasons for not using it to test the bindings is that we needed to run the tests on the {\gecko}.
+The rational for this is that the tests are mostly checking that the datatypes used on the {\rust} and {\C} side of the bindings are compatible.
+Therefore we need to use the proper compilers and compile the test targets for the ARM platform, verifying that the platform-specific \prog{gcc} and {\rustc} has compatible types does not help in respect to this.
+Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s own {\std} library, which renders the framework unusable for our embedded platform.
+
+% Consequently, {\rust}'s standard testing framework is rendered unusable for our embedded platform because it relies heavily on the {\rust}'s own {\std} library.
+
+% Consequently, given that the testing framework in the standard library relies heavily on the  that was discussed in \autoref{sec:back:lib}, this renders the framework unusable for our embedded platform.
 
 \subsection{Thoughts and Review}
 
@@ -469,7 +473,7 @@ However, we chose not to utilize such tools because of the reasons described bel
 
     \item It was an advantage to depend on as few third party tools as possible, since both {\rust} and all available libraries would be unstable until the 1.0 release of the language.
 
-    \item We wanted to keep the naming convention of our bindings as similar to \emlib as possible, this would not have been easy to keep consistent with an automated process, partly because there are exceptions where these conventions do not fully hold.
+    \item We wanted to keep the naming convention of our bindings as similar to {\emlib} as possible, this would not have been easy to keep consistent with an automated process, partly because there are exceptions where these conventions do not fully hold.
     It is however an interesting problem that would have a higher priority if the library were ever to support more than one EFM32 device.
 
     \item We could focus on writing bindings for smaller parts of each module separately when we first needed them, which would split the work into smaller work-packages.
