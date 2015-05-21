@@ -50,14 +50,14 @@ In essence it is a growable heap allocated list of values of the same type.
 
 \subsubsection{String}
 
-In \autoref{par:rust:str} we discussed the \textbf{string slice}.
+In \autoref{par:rust:str} we discussed the \concept{string slice}.
 The \texttt{String} defined in the collection library is a heap allocated mutable string.
 
 \subsection{libc}
 
-The heap allocation library described in \autoref{sec:rust:allocation} depends on the \texttt{libc} crate abstraction.
-The \texttt{libc} library provided in the standard library provides bindings for the C standard library and platform specific libraries.
-\gls{rel} depends on \texttt{libc} for the low level memory operations \texttt{malloc}, \texttt{realloc} and \texttt{free}.
+The heap allocation library described in \autoref{sec:rust:allocation} depends on the \lib{libc} crate abstraction.
+The \lib{libc} library provided in the standard library provides bindings for the C standard library and platform specific libraries.
+\gls{rel} depends on \lib{libc} for the low level memory operations \func{malloc}, \func{realloc} and \func{free}.
 The details of this implementation is found in \autoref{sec:impl:libc}. \todo{Update reference to implementation chapter part about libc implementation}
 
 \subsection{Notable missing functionality in REL}
