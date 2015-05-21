@@ -3,7 +3,7 @@
 
 \subsection{Project Breakdown}
 
-The aim of this thesis is to evaluate the Rust language used in an embedded computer system.
+The aim of this thesis is to evaluate the \rust language used in an embedded computer system.
 The work was divided into several phases each having its own primary goal and subgoals.
 \autoref{tab:meth:phases} summarizes the phases with the primary goals annotated.
 
@@ -41,7 +41,7 @@ The rest of this section describes each phase in more detail.
 \subsubsection{Phase 1 - Getting Started}
 The initial phase of the project defined two main activities.
 Firstly the initial direction of the project along with major challenges was identified in a meeting with Silicon Labs w/Marius Grannæs and Mikael Berg.
-Secondly the milestone of getting up and running with Rust on the Gecko was reached.
+Secondly the milestone of getting up and running with \rust on the Gecko was reached.
 
 \paragraph{Initial direction}
 The initial direction set in the first meeting with Silicon Labs.
@@ -49,7 +49,7 @@ Here a tentative project plan was set, given in \autoref{fig:meth:initial}
 
 \begin{listing}[H]
   \begin{itemize}
-    \item Get up and running with Rust
+    \item Get up and running with \rust
     \item Port/bind central libraries
     \item Evaluate system
     \item Handle Interrupts
@@ -79,7 +79,7 @@ The major challenges identified in the initial meeting with Silicon Labs are giv
 These challenges and their relation to the project are described in \autoref{} \todo{Write this section in implementation chapter.}
 
 \paragraph{Up and running}
-The activity identified as getting up and running consists of successfully compiling, linking and executing a Rust program on the EFM32GG.
+The activity identified as getting up and running consists of successfully compiling, linking and executing a \rust program on the EFM32GG.
 There were two options for assessing a successfull program on the Gecko, a complete and a simple.
 The complete would be to start the program in debugging with the GDB debugger and verify the success.
 While the simple was to create the simplest program with visual feedback on the STK.
@@ -136,7 +136,7 @@ Two complementary projects was specified given in \autoref{tab:meth:projects}.
   \label{tab:meth:projects}
 \end{table}
 
-Both projects are implemented in both Rust, using the framework developed for this thesis, and C using the libraries provided by Silicon Labs.
+Both projects are implemented in both \rust, using the framework developed for this thesis, and C using the libraries provided by Silicon Labs.
 
 \paragraph{Project I - Sensor Tracker}
 The Sensor Tracker application was chosen to measure the energy efficiency of the system.
@@ -164,7 +164,7 @@ About using
  \item rustc/cargo
 \end{itemize}
 
-\section{Using C as a framework for Rust}
+\section{Using C as a framework for \rust}
 
 About
 \begin{itemize}

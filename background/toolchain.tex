@@ -9,9 +9,9 @@ This section describes the build system.
 Using an abstract view the compiler toolchain uses two major components.
 The \rustc compiler, built on LLVM, and the \prog{arm-none-eabi} gcc toolchain.
 C files for the emlib sources are compiled into object files using \armgcc.
-Rust source files are compiled to object files with the Rust compiler.
+\rust source files are compiled to object files with the \rust compiler.
 Finally the object files are linked with \armld to produce an elf binary.
-The Rust compiler does not support the target architecture directly, so a custom target specification is supplied.
+The \rust compiler does not support the target architecture directly, so a custom target specification is supplied.
 
 \subsection{Cargo}
 \label{sec:back:build:cargo}

@@ -3,10 +3,10 @@
 \section{The Cargo Package Manager}
 \label{sec:cargo}
 
-\cargo is Rust's package manager, a program that automates the process of building and distributing Rust programs.
-It comes bundled with the default installation of Rust.
-\cargo comes with a collection of tools that makes building, testing and running Rust programs a lot easier than invoking \rustc directly.
-\cargo also defines a standard Rust project layout, in addition to downloading and maintaining package dependencies.
+\cargo is \rust's package manager, a program that automates the process of building and distributing \rust programs.
+It comes bundled with the default installation of \rust.
+\cargo comes with a collection of tools that makes building, testing and running \rust programs a lot easier than invoking \rustc directly.
+\cargo also defines a standard \rust project layout, in addition to downloading and maintaining package dependencies.
 This section will cover the most important features of \cargo and how it works, enough of what is required in order to understand the work that is described later in this project report.
 
 \subsection{Project Structure}
@@ -60,7 +60,7 @@ This file helps \cargo to determine if packages needs to be re-downloaded, updat
 
 \autoref{lst:expanded_cargo_project_structure} shows an example of a library project structure, and is in fact a simplified version of \cargos actual structure.
 If the intended use of a project is as a library for other applications, they include a \file{lib.rs}.
-This file, including its submodules like \file{src/compile.rs} in this example, will be compiled into a Rust crate with the same name as the project, in this case it will be \file{cargo.rlib}.
+This file, including its submodules like \file{src/compile.rs} in this example, will be compiled into a \rust crate with the same name as the project, in this case it will be \file{cargo.rlib}.
 Any files found under the \dir{src/bin} directory will also be compiled into its own executables, \cargo will automatically link the library and all of the its dependencies with these executables.
 In \cargos case, every command shown in \autoref{tab:common_cargo_commands} has its own dedicated executable target in this directory.
 
@@ -70,7 +70,7 @@ This file is executed prior to building the package itself, and provides the pos
 
 \subsection{Building and testing}
 
-As mentioned earlier, \cargo comes with a collection of tools that makes it easy to build and test Rust projects.
+As mentioned earlier, \cargo comes with a collection of tools that makes it easy to build and test \rust projects.
 The most common commands are shown in \autoref{tab:common_cargo_commands}.
 Most of these tools are self explanatory, but the \cmd{build} and the \cmd{test} commands will be described a little more thoroughly in this section.
 
@@ -99,7 +99,7 @@ When all dependencies have been built, the build script will be invoked (if it i
 Lastly, the projects executables will be compiled if the project contains a \file{main.rs} or sources in the \dir{src/bin} directory.
 
 The \cmd{cargo test} command will also trigger \prog{rustc} to compile the library in the same manner as \cmd{cargo build}, but it will leave out compilation of the project executables.
-When the library is compiled, any function that is marked with \attrib{\#[test]} will be included and treated like a unit test, this is a feature from Rust itself.
+When the library is compiled, any function that is marked with \attrib{\#[test]} will be included and treated like a unit test, this is a feature from \rust itself.
 \cargo also treats all the sources found in the \dir{examples} directory as tests, so these will be compiled instead of the other project executables, together with all the integration tests.
 When \cargo has finished compiling the library and its executables, it will by default run all the unit tests, including the integration tests, but it will not run the examples.
 
