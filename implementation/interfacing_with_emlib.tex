@@ -164,12 +164,14 @@ pub enum CCMode {
 \label{lst:enum_naming_rust}
 \end{listing}
 
-\subsection{The Bindings Library}
+\subsection{The Bindings Libraries}
 \label{ssub:the_bindings_library}
 
 We have written many example applications in Rust that are based on bindings for many of the \texttt{Gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
 In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \todo{Refer to sections about circle-game and sensor-tracker}.
+
+\subsubsection{Emlib}
 
 It has not been a priority of this project to fully support all of the \texttt{Gecko}'s peripherals or provide bindings for the entire \texttt{emlib}.
 The bindings have been developed because we have needed functionality from the peripherals, not the other way around.
@@ -288,7 +290,73 @@ Demonstrates dynamically allocated strings and vectors from the \texttt{collecti
   \label{tab:emlib_examples}
 \end{table}
 
-In addition to writing bindings for
+\subsubsection{Emdrv}
+\label{sub:emdrv_bindings}
+
+As with \texttt{emlib}, it was not a goal to fully support all available peripheral drivers that are available in \texttt{emdrv}.
+The drivers that we have partially implemented bindings for are summarized in \autoref{tab:emdrv_bindings}, they are not that hard to grasp or use since they are all fairly small.
+The project includes two examples that demonstrate how to use the \texttt{flash} driver, they are summarized in \autoref{tab:emdrv_bindings}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r|p{10cm}}
+    \textbf{Driver} & \textbf{Purpose} \\
+    \hline
+
+\texttt{dmactrl}  &
+This binding only exports one function to return a standard \emph{\gls{dma} Descriptor} which is used to initiate a \gls{dma} transfer. \\
+
+\texttt{flash}  &
+The flash driver adds an abstraction layer over a flash memory, it exposes functions to \emph{initialize}, \emph{read}, \emph{write} and get the \emph{device info}.
+The Driver is used by the \texttt{sensor-tracker}. \\
+
+\texttt{gpioint}  &
+This driver is ported from {\C} to {\rust}, the implementation differs slightly between the two versions, but the functionality is the same.
+The reasoning for porting this driver is described in \todo{refer to section about IRQ. Evt. flytt noe av innholdet fra IRQ-seksjonen inn i denne seksjonen.} \\
+
+\texttt{i2c}  &
+This driver is used by the \texttt{sensor-tracker} application, it exposes functions initialize normal \gls{i2c} data transfers. \\
+
+\texttt{tft}  &
+This binding exposes one function to initialize the TFT screen on the \texttt{DK}.
+It is used in the \texttt{circle-game}. \\
+
+    \hline
+  \end{tabular}
+
+  \caption{\texttt{emdrv} driver bindings.}
+  \label{tab:emdrv_bindings}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r|p{6.6cm}|p{2.1cm}}
+    \textbf{Example} & \textbf{Purpose} & \textbf{Uses} \\
+    \hline
+
+\texttt{flash} &
+Demonstrates reading and writing to the \texttt{STK}'s flash memory. &
+flash-driver, \gls{gpio} \\
+
+\texttt{light\_measure} &
+Based on the \texttt{light\_sense} example from \autoref{tab:emlib_examples}.
+The results from measuring the light intensity is saved to flash.
+When the user presses a button the \texttt{STK} will initiate a transfer that reeds all the data stored to flash and transmits it over a \gls{usart} connection. &
+flash-driver, \gls{lesense}, \gls{usart}, \gls{acmp}, \gls{gpio}, \gls{rtc} \\
+
+    \hline
+  \end{tabular}
+
+  \caption{Examples that demonstrate how to use the flash bindings.}
+  \label{tab:emdrv_examples}
+\end{table}
+
+\subsubsection{CMSIS}
+\label{sub:cmsis_bindings}
+
+Interrupt support through NVIC was the only interesting part of the \gls{cmsis} library that we have written bindings for.
+Most of the examples implement one or several IRQ handlers for the peripheral bindings that they demonstrate.
+\todo{Det er vel en seksjon som beskriver dette? Vi får fylle ut mer her etter hvert som vi får oversikt}
 
 \subsection{Testing}
 \label{ssub:testing}
