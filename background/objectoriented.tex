@@ -59,7 +59,7 @@ The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single co
 The traditional memory layout of an object in an object oriented language is an implementation detail.
 This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
 The layout is aslo a implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
-Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
+Objects in a language like {\Java} also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
 \begin{listing}[H]
   \centering
@@ -120,7 +120,7 @@ typedef struct {
 In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
 By using structs the programmer has full control over the layout of the object in memory.
 The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
-\autoref{lst:back:adc-objects} shows how to define a Java class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
+\autoref{lst:back:adc-objects} shows how to define a {\Java} class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \begin{table}[H]

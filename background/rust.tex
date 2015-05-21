@@ -350,7 +350,7 @@ This means that the {\std} library can not be utilized in this project, instead 
 
 Abstractions, in the form of references and pointers to objects or structures, and how they are
 structured on the heap, is a common source of overhead in programming languages.
-\autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how Java lays out a vector of
+\autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how {\Java} lays out a vector of
 strings in memory.
 Fundamentally, a reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that is placed elsewhere on the heap.
 % There are four levels of indirection between the reference to the vector on stack, and the actual character data of its strings.
@@ -374,7 +374,7 @@ This is both important for performance, and in general, in order to have a deter
 The main difference is that the vector itself is placed on the stack, and the string data is placed directly inside the memory block owned by the vector.
 The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
 
-There is still one really important difference between the two examples; we can safely have multiple references to our vector in Java without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in C++ can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
+There is still one really important difference between the two examples; we can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in C++ can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
 \todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in c++ can lead to a dangling pointer?}.
 In {\rust}'s case, all structures is allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
 References to such stack-allocated variables can be passed around and accessed, just like in C++,
@@ -407,7 +407,7 @@ This implies one \concept{memory deallocation} for every respective \concept{mem
 Traditionally, when allocating memory for a variable, the programming language will return a \concept{pointer},  or a \concept{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store that record in memory.
 The memory can safely be deallocated when there is no longer any need for it, i.e. the variable holding the handle to the memory goes out of scope.
 
-Modern programming languages, like Java and Python, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
+Modern programming languages, like {\Java} and Python, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
 A common implementation is a reference counted garbage collector that keeps a count over the number of references to the variables and deallocates them when there are no valid references to them.
 The downside of such an approach to memory safety is the continuous use of resources it requires to keep track all the references.
 Every assignment to a variable and every time a variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
