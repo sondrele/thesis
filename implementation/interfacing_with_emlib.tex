@@ -82,7 +82,7 @@ timer0.init(&timer_init);
 \label{lst:timer_program_rust}
 \end{listing}
 
-\subsection{Exposing Static Inline Functions to {\rust}}
+\subsection{Exposing Static Inline Functions to Rrust}
 
 In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
 The header files in the peripheral \gls{api} also defines many functions as \code{static inline}, which only make the functions accessible by including the header file.
