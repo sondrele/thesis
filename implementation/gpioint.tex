@@ -1,4 +1,4 @@
-\subsection{}
+\subsection{Porting GPIO Interrupt Driver}
 
 This section considers a case study of an issue discovered when porting the GPIO interrupt driver from SiliconLabs to Rust.
 The issue was discoverd when annotating the \texttt{unsafe} blocks for referencing mutable global state and gives an example of the awareness the inclusion of the \texttt{unsafe} keyword provides.
