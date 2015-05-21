@@ -7,11 +7,11 @@ This section describes the build system.
 \label{sec:back:build:toolchain}
 
 Using an abstract view the compiler toolchain uses two major components.
-The \textbf{rustc} compiler, built on LLVM, and the \textbf{arm-none-eabi} gcc toolchain.
-C files for the emlib sources are compiled into object files using arm-none-eabi-gcc.
-Rust source files are compiled to object files with the Rust compiler.
-Finally the object files are linked with arm-none-eabi-ld to produce an elf binary.
-The Rust compiler does not support the target architecture directly, so a custom target specification is supplied.
+The {\rustc} compiler, built on LLVM, and the \prog{arm-none-eabi} gcc toolchain.
+C files for the emlib sources are compiled into object files using {\armgcc}.
+\rust source files are compiled to object files with the {\rust} compiler.
+Finally the object files are linked with {\armld} to produce an elf binary.
+The {\rust} compiler does not support the target architecture directly, so a custom target specification is supplied.
 
 \subsection{Cargo}
 \label{sec:back:build:cargo}

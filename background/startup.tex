@@ -2,23 +2,23 @@
 \label{sec:back:startup}
 
 This section describes the process of starting a program on an embedded system.
-The \texttt{main} function is usually considered the starting point of a program.
+The {\main} function is usually considered the starting point of a program.
 This is sometimes true from the point of view of the programmer, but as we will see in this section usually it is not.
 This section looks at what happens before the program reaches the main function.
 
 \subsection{Prelude}
 
 Before we look at the start of execution, lets look at the process between compilation and execution.
-The compiler outputs object-files which the linker combines into a \textbf{elf} file.
+The compiler outputs object-files which the linker combines into a {\elf} file.
 This file is loaded into the microcontrollers \gls{rom} Flash memory.
 Then the reset signal is sent to the \gls{cpu} to start execution.
 
 \subsection{Executable and Linkable File Format}
 %\todo{Reference: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0044e/IHI0044E\_aaelf.pdf}
-\textbf{elf} is a file format for storing code and data for a program.
+\elf is a file format for storing code and data for a program.
 This file format can be loaded onto a microcontroller and executed.
-For our purposes, this format defines three interesting sections, namely \textbf{.text}, \textbf{.data} and \textbf{.bss}.
-\autoref{fig:elf} describes the contents of the these sections an \textbf{elf} file.
+For our purposes, this format defines three interesting sections, namely \elfsec{.text}, \elfsec{.data} and \elfsec{.bss}.
+\autoref{fig:elf} describes the contents of the these sections an {\elf} file.
 
 \begin{table}[H]
   \centering
@@ -26,34 +26,34 @@ For our purposes, this format defines three interesting sections, namely \textbf
     \hline
     EFL Header & Header describing size of sections \\
     \hline
-    \textbf{.bss} & Logical section for zero-initialized data \\
+    \elfsec{.bss} & Logical section for zero-initialized data \\
     \hline
-    \textbf{.text} & Read-only section for code and constants \\
+    \elfsec{.text} & Read-only section for code and constants \\
     \hline
-    \textbf{.data} & Section containing values for non-zero initialized data \\
+    \elfsec{.data} & Section containing values for non-zero initialized data \\
     \hline
   \end{tabular}
   \caption{Sections of elf file format}
   \label{fig:elf}
 \end{table}
 
-The \textbf{.text} section contains the program code and any read-only data defined in the code.
-Strings are for instance stored in the \textbf{.text} section as read-only.
-The \textbf{.data} section contains the values for non-zero initialized data.
-The \textbf{.bss} section is a logical section so it is not really stored in the file.
-The header specfies the size of the \textbf{.bss} section which describes the size of the zero-initialized data in the program.
+The \elfsec{.text} section contains the program code and any read-only data defined in the code.
+Strings are for instance stored in the \elfsec{.text} section as read-only.
+The \elfsec{.data} section contains the values for non-zero initialized data.
+The \elfsec{.bss} section is a logical section so it is not really stored in the file.
+The header specfies the size of the \elfsec{.bss} section which describes the size of the zero-initialized data in the program.
 
 \subsection{Before main}
 
 Before the \textbf{main} function executes, all static data must be initialized.
 The data is divided into two categories; zero and non-zero initialized.
-The non-zero initialized data are contained either in the \textbf{.text} (read-only-data) or \textbf{.data} sections of the \textbf{elf} binary.
-On the chip the \textbf{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into \gls{ram}.
-The \textbf{.text} section contains the instructions and read-only data, this data does not need to be copied as thet can be read directly from flash at runtime.
-All zero initialized data are represented by the \textbf{.bss} section in the \textbf{elf} binary.
-A portion of \gls{ram} corresponding to the size of the \textbf{.bss} section must be set to zero.
+The non-zero initialized data are contained either in the \elfsec{.text} (read-only-data) or \elfsec{.data} sections of the {\elf} binary.
+On the chip the \elfsec{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into \gls{ram}.
+The \elfsec{.text} section contains the instructions and read-only data, this data does not need to be copied as thet can be read directly from flash at runtime.
+All zero initialized data are represented by the \elfsec{.bss} section in the {\elf} binary.
+A portion of \gls{ram} corresponding to the size of the \elfsec{.bss} section must be set to zero.
 
-Copying the \textbf{.data} section into \gls{ram} is handled by the \texttt{ResetHandler} function shown in \autoref{lst:reset-handler}
+Copying the \elfsec{.data} section into \gls{ram} is handled by the \func{ResetHandler} function shown in \autoref{lst:reset-handler}
 The function is the real entry point of the program and is executed when the \gls{cpu} receives the reset signal.
 
 \begin{listing}[H]
@@ -73,10 +73,10 @@ void ResetHandler() {
 \label{lst:reset-handler}
 \end{listing}
 
-When the \texttt{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \texttt{\_start} function in the C runtime.
-The \texttt{\_start} function finds the size of the \textbf{.bss} section which describes the size of zero-initialized area in \gls{ram}.
-It then calls on the \texttt{memset} function to zero out the \gls{ram}.
-\texttt{\_start} then goes on to call the \texttt{main} function supplied by the programmer.
+When the \func{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \func{\_start} function in the {\C} runtime.
+The \func{\_start} function finds the size of the \elfsec{.bss} section which describes the size of zero-initialized area in \gls{ram}.
+It then calls on the \func{memset} function to zero out the \gls{ram}.
+\func{\_start} then goes on to call the {\main} function supplied by the programmer.
 
 \begin{listing}[H]
 \begin{minted}{c}
