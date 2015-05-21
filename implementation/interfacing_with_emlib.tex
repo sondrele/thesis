@@ -131,7 +131,7 @@ This is a working example of one of {\rust}'s many zero-cost abstractions.
 \subsection{Naming Conventions}
 
 We have tried to keep \emlib's naming convention across the layer of bindings.
-This makes it easy for anyone reading either the C- or the {\rust}-code to translate and understand the code between the two languages.
+This makes it easy for anyone reading either the {\C}- or the {\rust}-code to translate and understand the code between the two languages.
 Since every constant, enum-field, or struct-name is directly accessible by name in C, if the corresponding header file is included, it is important that names of such fields can be separated from each other and do not cause a naming collision.
 
 \begin{listing}[h]
@@ -142,7 +142,7 @@ typedef enum {
   // ...
 } TIMER_CCMode_TypeDef;
 \end{minted}
-\caption{Part of a Timer enum defined in C.}
+\caption{Part of a Timer enum defined in {\C}.}
 \label{lst:enum_naming_c}
 \end{listing}
 
@@ -167,69 +167,69 @@ pub enum CCMode {
 \subsection{The Bindings Libraries}
 \label{ssub:the_bindings_library}
 
-We have written many example applications in Rust that are based on bindings for many of the \texttt{Gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
+We have written many example applications in Rust that are based on bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
 In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \todo{Refer to sections about circle-game and sensor-tracker}.
 
 \subsubsection{Emlib}
 
-It has not been a priority of this project to fully support all of the \texttt{Gecko}'s peripherals or provide bindings for the entire \texttt{emlib}.
+It has not been a priority of this project to fully support all of the {\gecko}'s peripherals or provide bindings for the entire {\emlib}.
 The bindings have been developed because we have needed functionality from the peripherals, not the other way around.
-\autoref{tab:emlib_peripheral_bindings} summarizes a number of modules from \texttt{emlib} that we have written bindings for, and why we wanted these bindings.
-A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}, these are either written from scratch, or directly ported from \texttt{emlib}'s examples.
+\autoref{tab:emlib_peripheral_bindings} summarizes a number of modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
+A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}, these are either written from scratch, or directly ported from {\emlib}'s examples.
 
 \begin{table}[H]
   \centering
   \begin{tabular}{r|p{10cm}}
     \textbf{Module} & \textbf{Purpose} \\
     \hline
-\texttt{cmu}     &
-The \gls{cmu} provides functions to manage the different clocks and oscillators on the \texttt{gecko}.
+\prog{cmu}     &
+The \gls{cmu} provides functions to manage the different clocks and oscillators on the {\gecko}.
 This module is necessary in order to configure the clocks that are required by other peripherals to function. \\
 
-\texttt{dma}     &
-We wanted to use \gls{dma} for the \texttt{sensor-tracker} application because it can be used to transfer data without intercepting the \gls{cpu}. \\
+\prog{dma}     &
+We wanted to use \gls{dma} for the {\prog{sensor-tracker}} application because it can be used to transfer data without intercepting the \gls{cpu}. \\
 
-\texttt{ebi}     &
-The \gls{ebi} is used in the \texttt{Gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the \texttt{DK}. \\
+\prog{ebi}     &
+The \gls{ebi} is used in the {\gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the {\chip{DK}}. \\
 
-\texttt{emu}     &
-The \gls{emu} module controls the different energy modes on the \texttt{Gecko}.
-We needed this functionality for the \texttt{sensor-tracker} application. \\
+\prog{emu}     &
+The \gls{emu} module controls the different energy modes on the {\gecko}.
+We needed this functionality for the {\prog{sensor-tracker}} application. \\
 
-\texttt{gpio}    &
+\prog{gpio}    &
 The \gls{gpio} was one of the first modules to be ported, it is used extensively throughout the bindings and in the applications. \\
 
-\texttt{lesense} &
-The \gls{lesense} can be configured to automatically collect data from multiple sensors, we needed this for the \texttt{sensor-tracker}. \\
+\prog{lesense} &
+The \gls{lesense} can be configured to automatically collect data from multiple sensors, we needed this for the {\prog{sensor-tracker}}. \\
 
-\texttt{acmp}    &
+\prog{acmp}    &
 The \gls{acmp} was ported alongside \gls{lesense}, it is used to compare two analog signals and tell which one is greater. \\
 
-\texttt{adc}     &
-The \gls{adc} was needed by the \texttt{sensor-tracker}, it has been used to get the internal temperature of the \gls{cpu}. \\
+\prog{adc}     &
+The \gls{adc} was needed by the {\prog{sensor-tracker}}, it has been used to get the internal temperature of the \gls{cpu}. \\
 
-\texttt{usart}   &
+\prog{usart}   &
 Primarily we wanted the \gls{usart} for easy debugging and I/O from a computer. \\
 
-\texttt{leuart}  &
+\prog{leuart}  &
 The \gls{leuart} was ported a while after the \gls{usart}.
 It has the same functionality, but it works with a lower-frequency clock and at requires less energy than the \gls{usart}. \\
 
-\texttt{i2c}     &
+\prog{i2c}     &
 The \gls{i2c} has many of the same use cases as the different \gls{uart} types, but it works at lower energy levels.
-It is used in by the \texttt{sensor-tracker}. \\
+It is used in by the {\prog{sensor-tracker}}. \\
 
-\texttt{rtc}     &
-The \gls{rtc} was an easy module to write bindings for, it is used in several examples for timing purposes, as well as in the \texttt{sensor-tracker}. \\
+\prog{rtc}     &
+The \gls{rtc} was an easy module to write bindings for, it is used in several examples for timing purposes, as well as in the {\prog{sensor-tracker}}. \\
 
-\texttt{timer}   &
+\prog{timer}   &
 The Timer was one of the first modules to be ported, it worked as a proof-of-concept for the design of the bindings, as described earlier in this section. \\
 
     \hline
   \end{tabular}
 
-  \caption{\texttt{emlib} peripheral bindings.}
+  \caption{Peripheral bindings for {\emlib}.}
   \label{tab:emlib_peripheral_bindings}
 \end{table}
 
@@ -239,49 +239,49 @@ The Timer was one of the first modules to be ported, it worked as a proof-of-con
   \begin{tabular}{r|p{7cm}|p{2.1cm}}
     \textbf{Example} & \textbf{Purpose} & \textbf{Uses} \\
     \hline
-\texttt{buttons\_int}  &
-Demonstrates interrupts by lighting a led on the \texttt{STK} when the respective button has been pressed. &
+\prog{buttons\_int}  &
+Demonstrates interrupts by lighting a led on the {\chip{STK}} when the respective button has been pressed. &
 \gls{gpio}, IRQ \\
 
-\texttt{rtc\_blink}    &
+\prog{rtc\_blink}    &
 Toggle a led with an interval of 2 seconds. &
 \gls{rtc}, \gls{gpio} \\
 
-\texttt{energy\_modes} &
-Demonstrates the four stages of sleep on the \texttt{Gecko}. &
+\prog{energy\_modes} &
+Demonstrates the four stages of sleep on the {\gecko}. &
 \gls{emu}, \gls{gpio}, \gls{cmu}, IRQ \\
 
-\texttt{uart}          &
+\prog{uart}          &
 Demonstrates serial communication over \gls{usart} by echoing back every byte it receives. &
 \gls{usart}, \gls{gpio}, \gls{cmu} \\
 
-\texttt{leuart}        &
-Similar example as \texttt{uart}, but the \gls{cpu} is turned off and the functionality is moved to an interrupt handler instead. &
+\prog{leuart}        &
+Similar example as \prog{uart}, but the \gls{cpu} is turned off and the functionality is moved to an interrupt handler instead. &
 \gls{leuart}, \gls{cmu}, IRQ, \gls{gpio}, \gls{emu} \\
 
-\texttt{i2c}           &
+\prog{i2c}           &
 Sends and receives a data-buffer between two devices that supports \gls{i2c}. &
 \gls{i2c}, \gls{gpio}, \gls{cmu}, IRQ \\
 
-\texttt{joystick}      &
-Reads analog signals generated by a Joystick that is connected to the \texttt{STK}. &
+\prog{joystick}      &
+Reads analog signals generated by a Joystick that is connected to the {\chip{STK}}. &
 \gls{adc}, \gls{cmu} \\
 
-\texttt{dma}           &
+{\prog{dma}}           &
 Transfer a data-buffer from one memory location to another. &
 \gls{dma} \\
 
-\texttt{light\_sense}  &
-Uses the \texttt{STK}'s light sensor to measure the light intensity, and signal when it goes dark by lighting a LED. &
+\prog{light\_sense}  &
+Uses the {\chip{STK}}'s light sensor to measure the light intensity, and signal when it goes dark by lighting a LED. &
 \gls{lesense}, \gls{acmp}, \gls{gpio}, \gls{rtc}\\
 
-\texttt{boxes}         &
-Demonstrates dynamic memory allocation with \texttt{Box}'es, provided by the Rust \texttt{alloc} library. &
-\texttt{alloc} \\
+\prog{boxes}         &
+Demonstrates dynamic memory allocation with \code{Box}'es, provided by the Rust \lib{alloc} library. &
+\lib{alloc} \\
 
-\texttt{vec}           &
-Demonstrates dynamically allocated strings and vectors from the \texttt{collections} library. &
-\texttt{collections} \\
+\prog{vec}           &
+Demonstrates dynamically allocated strings and vectors from the \lib{collections} library. &
+\lib{collections} \\
 
     \hline
   \end{tabular}
@@ -293,9 +293,9 @@ Demonstrates dynamically allocated strings and vectors from the \texttt{collecti
 \subsubsection{Emdrv}
 \label{sub:emdrv_bindings}
 
-As with \texttt{emlib}, it was not a goal to fully support all available peripheral drivers that are available in \texttt{emdrv}.
+As with {\emlib}, it was not a goal to fully support all available peripheral drivers that are available in \prog{emdrv}.
 The drivers that we have partially implemented bindings for are summarized in \autoref{tab:emdrv_bindings}, they are not that hard to grasp or use since they are all fairly small.
-The project includes two examples that demonstrate how to use the \texttt{flash} driver, they are summarized in \autoref{tab:emdrv_bindings}.
+The project includes two examples that demonstrate how to use the flash driver, they are summarized in \autoref{tab:emdrv_bindings}.
 
 \begin{table}[H]
   \centering
@@ -303,28 +303,28 @@ The project includes two examples that demonstrate how to use the \texttt{flash}
     \textbf{Driver} & \textbf{Purpose} \\
     \hline
 
-\texttt{dmactrl}  &
+\prog{dmactrl}  &
 This binding only exports one function to return a standard \emph{\gls{dma} Descriptor} which is used to initiate a \gls{dma} transfer. \\
 
-\texttt{flash}  &
+\prog{flash}  &
 The flash driver adds an abstraction layer over a flash memory, it exposes functions to \emph{initialize}, \emph{read}, \emph{write} and get the \emph{device info}.
-The Driver is used by the \texttt{sensor-tracker}. \\
+The Driver is used by the {\prog{sensor-tracker}}. \\
 
-\texttt{gpioint}  &
+\prog{gpioint}  &
 This driver is ported from {\C} to {\rust}, the implementation differs slightly between the two versions, but the functionality is the same.
-The reasoning for porting this driver is described in \todo{refer to section about IRQ. Evt. flytt noe av innholdet fra IRQ-seksjonen inn i denne seksjonen.} \\
+The reasoning for porting this driver is described in \todo{refer to section about IRQ. Evt. flytt noe av innholdet fra IRQ-seksjonen inn i denne seksjonen.}. \\
 
-\texttt{i2c}  &
-This driver is used by the \texttt{sensor-tracker} application, it exposes functions initialize normal \gls{i2c} data transfers. \\
+\prog{i2c}  &
+This driver is used by the {\prog{sensor-tracker}} application, it exposes functions initialize normal \gls{i2c} data transfers. \\
 
-\texttt{tft}  &
-This binding exposes one function to initialize the TFT screen on the \texttt{DK}.
-It is used in the \texttt{circle-game}. \\
+\prog{tft}  &
+This binding exposes one function to initialize the TFT screen on the {\chip{DK}}.
+It is used in the \prog{circle-game}. \\
 
     \hline
   \end{tabular}
 
-  \caption{\texttt{emdrv} driver bindings.}
+  \caption{Driver bindings for \prog{emdrv}.}
   \label{tab:emdrv_bindings}
 \end{table}
 
@@ -334,14 +334,14 @@ It is used in the \texttt{circle-game}. \\
     \textbf{Example} & \textbf{Purpose} & \textbf{Uses} \\
     \hline
 
-\texttt{flash} &
-Demonstrates reading and writing to the \texttt{STK}'s flash memory. &
+\prog{flash} &
+Demonstrates reading and writing to the {\chip{STK}}'s flash memory. &
 flash-driver, \gls{gpio} \\
 
-\texttt{light\_measure} &
-Based on the \texttt{light\_sense} example from \autoref{tab:emlib_examples}.
+\prog{light\_measure} &
+Based on the \prog{light\_sense} example from \autoref{tab:emlib_examples}.
 The results from measuring the light intensity is saved to flash.
-When the user presses a button the \texttt{STK} will initiate a transfer that reeds all the data stored to flash and transmits it over a \gls{usart} connection. &
+When the user presses a button the {\chip{STK}} will initiate a transfer that reeds all the data stored to flash and transmits it over a \gls{usart} connection. &
 flash-driver, \gls{lesense}, \gls{usart}, \gls{acmp}, \gls{gpio}, \gls{rtc} \\
 
     \hline
