@@ -2,7 +2,7 @@
 \label{sec:back:oo}
 
 In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigms essential concept can be applied to embedded C programming even though the language itself does not directly define any language features to aid the design.
+The paradigms essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
 This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
 We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
@@ -13,9 +13,9 @@ We look at the memory layout of a memory-mapped \gls{adc} and see how this can b
 The method entails connecting the control registers of hardware devices to the same address bus as RAM.
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
-Let us consider the \gls{adc} on the Gecko.
+Let us consider the \gls{adc} on the {\gecko}.
 The \gls{adc} converts an analoge signal to a digital representation.
-The \gls{adc} on the Gecko is memory mapped to the location \texttt{0x40002000}.
+The \gls{adc} on the {\gecko} is memory mapped to the location \mem{0x40002000}.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
 
 \begin{figure}[H]
@@ -26,24 +26,24 @@ This means that writing to a pointer that points to this address will write to t
     &...&...\\
     \hline
     \hline
-    \texttt{0x40002000} & 0x0 & CTRL\\
+    \mem{0x40002000} & 0x0 & CTRL\\
     \hline
-    & \texttt{0x4} & CMD\\
-    \hline
-    &...&...\\
-    \hline
-    & \texttt{0xC} & SINGLECTRL\\
+    & \mem{0x4} & CMD\\
     \hline
     &...&...\\
     \hline
-    & \texttt{0x24} & SINGLEDATA\\
+    & \mem{0xC} & SINGLECTRL\\
+    \hline
+    &...&...\\
+    \hline
+    & \mem{0x24} & SINGLEDATA\\
     \hline
     &...&...\\
     \hline
     \hline
     &&\\
   \end{tabular}
-  \caption{Subsection of ADC0 Memory map for the Gecko}
+  \caption{Subsection of ADC0 Memory map for the {\gecko}}
   \label{fig:back:memorymapped}
 \end{figure}
 
@@ -51,15 +51,15 @@ This means that writing to a pointer that points to this address will write to t
 A subsection of the \gls{adc} control register is given in \autoref{fig:back:memorymapped}
 It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
-We see that the CTRL register is at offset \texttt{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \texttt{0x4} bytes.
+We see that the CTRL register is at offset \mem{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \mem{0x4} bytes.
 The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single conversion and reading the results of a conversion, respectively.
 
 \subsection{Memory Layout of Objects}
 
 The traditional memory layout of an object in an object oriented language is an implementation detail.
 This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
-The layout is aslo a implementation detail of Rust for the same reasons, but by annotating a struct with \texttt{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
-Objects in a language like Java also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
+The layout is aslo a implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
+Objects in a language like {\Java} also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
 \begin{listing}[H]
   \centering
@@ -112,7 +112,7 @@ typedef struct {
   \end{listing}
   \end{minipage}
 
-  \caption{Definition of an \gls{adc} in Java, Rust, and C}
+  \caption{Definition of an \gls{adc} in Java, {\rust}, and C}
   \label{lst:back:adc-objects}
 \end{listing}
 
@@ -120,7 +120,7 @@ typedef struct {
 In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
 By using structs the programmer has full control over the layout of the object in memory.
 The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
-\autoref{lst:back:adc-objects} shows how to define a Java class, and Rust and C structs for the \gls{adc} on the Gecko.
+\autoref{lst:back:adc-objects} shows how to define a {\Java} class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \begin{table}[H]
@@ -153,7 +153,7 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
       0x24&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-    \caption{Rust}
+    \caption{\rust}
     \label{fig:back:memlayout:rust}
   \end{subfigure}
   \hfill
@@ -176,20 +176,20 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \end{table}
 
-By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in Rust and C has same exact layout as the memory mapped control register of the \gls{adc}.
+By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
 \subsection{Adding Object Functionality}
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
-Both C and Rust uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
-This ensures that C and Rust provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
+Both {\C} and {\rust} uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
+This ensures that {\C} and {\rust} provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
-Implementing objects with static dispatch is a straight forward process in C.
+Implementing objects with static dispatch is a straight forward process in {\C}.
 Here we define a function which takes a reference to the object as the first parameter.
-The function then uses the object reference in the same manner as the implicit \texttt{this} parameter in conventional object oriented languages such as Java.
+The function then uses the object reference in the same manner as the implicit \var{this} parameter in conventional object oriented languages such as {\Java}.
 
 \begin{listing}[H]
   \centering
@@ -245,13 +245,13 @@ fn main() {
       \end{minted}
   \end{listing}
   \end{minipage}
-  \caption{Member methods for C and Rust, respectively.}
+  \caption{Member methods for {\C} and {\rust}, respectively.}
   \label{lst:back:adc:get}
 
 \end{listing}
 
 \autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using an object oriented pattern.
-We use the \texttt{impl} block to define the same behavior in Rust, but the methods are called with the dot notation known from object oriented languages.
+We use the \keyword{impl} block to define the same behavior in {\rust}, but the methods are called with the dot notation known from object oriented languages.
 
 \subsection{Instantiating a MMIO object}
 
@@ -261,7 +261,7 @@ The constructor is responsible for allocating the object and initialize the fiel
 Analogously, the destructor is responsible for deallocating the object and any other member objects that it owns.
 \gls{mmio} devices have a fixed position in the memory and does not need to be allocated, they also generally do not have any owned members.
 Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate the variable that holds the reference to the \gls{mmio} and cast it to the desired type.
-\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both C and Rust.
+\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both {\C} and {\rust}.
 
 \begin{listing}[H]
   \begin{minipage}{0.47\textwidth}
@@ -291,22 +291,22 @@ void main() {
     \end{minted}
   \end{listing}
   \end{minipage}
-  \caption{Instantiating \glspl{mmio} in Rust and C, respectively.}
+  \caption{Instantiating \glspl{mmio} in {\rust} and C, respectively.}
   \label{fig:oo:instantiate}
 \end{listing}
 
 \todo{Move this to discussion}
-The Rust code in \autoref{fig:oo:instantiate} contains the \texttt{unsafe} keyword.
+The {\rust} code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword.
 As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
-The direct reason for the need to annotate the block with unsafe is the fact that the function \texttt{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \texttt{unsafe}.
+The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \keyword{unsafe}.
 The underlying reason is a bit more subtle.
-The unsafety here comes from the fact that \texttt{as\_mut} converts a raw pointer to a safe reference.
+The unsafety here comes from the fact that \code{as\_mut} converts a raw pointer to a safe reference.
 After the conversion the pointer must be safe to dereference.
 This is the programmars part of the contract to ensure when using a unsafe block.
 So what is unsafe about derefencing raw pointer?
-Well, firstly the pointer can be \texttt{null}, this case is handled in \texttt{as\_mut} by returning \texttt{None}.
+Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
 The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer \texttt{0x} \todo{Find a funky address} causes the Gecko to HardFault on a Bus Error.
+For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the {\gecko} to HardFault on a Bus Error.
 In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
 
 The last point about unsafety that can be made here, is the fact we can create multiple mutable aliases to the \glspl{mmio}.
