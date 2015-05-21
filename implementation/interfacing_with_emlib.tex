@@ -5,14 +5,14 @@
 
 The \gls{ffi} available in {\rust} has been used to interface with Silabs' emlib.
 This way, we have been able to create thin wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
-The following sections explains the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the \gecko.
+The following sections explains the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
 We will start by showing an example of what it is like to use Silab's emlib (with C), and then move on to what it looks like to use the bindings in {\rust}.
 
 \subsection{Defining the Bindings}
 
 The \texttt{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
-The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the \gecko, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
+The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
 First, in order to use a peripheral, its clock need to be enabled.
 Every external clock are disabled by default \todo{Is this true? Is every clock disabled?} in order for the peripherals not to draw any power, by enabling the clock the \gls{mcu} will get access to control it.
 Then an initialization structure for the Timer module is acquired, this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
@@ -39,7 +39,7 @@ TIMER_Init(TIMER0, &timerInit);
 The next lines enables interrupts for the Timer, and the NVIC interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
 All this function does is to clear the interrupt signal and toggle the value of an LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
-Interrupts like this are an important part of programming the \gecko.
+Interrupts like this are an important part of programming the {\gecko}.
 They can be used for an asynchronous programming model where the application is defined by the code in the different interrupt handlers, and like in the example above, the \gls{mcu} can be put to sleep in between interrupts.
 
 \begin{listing}[h]
