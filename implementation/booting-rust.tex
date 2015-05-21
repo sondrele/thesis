@@ -1,8 +1,9 @@
 \section{Booting Rust on the Gecko}
+\label{sec:impl:booting}
 
-The contains of this section explaines how the startup process described in \autoref{sec:back:startup} is implemented for a Rust program.
+The contains of this section explaines how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
 
-The process for Rust is identical to the process in C due to the fact that Rust only allows constant initialization before the \textbf{main} function.
+The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization before the {\main} function.
 In C++ however, the process is complicated by the fact that C++ support static global constructors as shown in \autoref{lst:impl:c++:static-constructor}
 
 \begin{listing}[H]
@@ -17,16 +18,16 @@ int main() { return 0; }
 
 In \autoref{lst:impl:c++:static-constructor} the Foo constructor call must be issued before the main function is executed.
 The runtime must therefore be augmented to issue calls to these constructors and handle errors that can occure.
-These types of constructors are not allowed in Rust by a compiler rule which allows only constant-expression as initializers.
+These types of constructors are not allowed in {\rust} by a compiler rule which allows only constant-expression as initializers.
 (An interesting side note here is given in \autoref{sec:impl:lazy-statics}.)
 
-As this process is identical to C we are able to reuse standard runtime components for embedded toolchains for C.
-SiliconLabs software suite provides the \textbf{ResetHandler} and linker script for the efm32 microcontrollers.
-The \textbf{\_mainCRTStartup} function defined in the C runtime provided by the \textbf{arm-none-eabi} gcc toolchain handles the setup in \textbf{\_start}:
+As this process is identical to {\C} we are able to reuse standard runtime components for embedded toolchains for C.
+SiliconLabs software suite provides the \func{ResetHandler} and linker script for the efm32 microcontrollers.
+The \func{\_mainCRTStartup} function defined in the {\C} runtime provided by the \textbf{arm-none-eabi} gcc toolchain handles the setup in \func{\_start}:
 
 \subsection{Minimal Rust program to boot}
 
-There are a few modification which have to be applied to the default 'Hello World' program in order to get it to boot in an embedded environment.
+There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in an embedded environment.
 Lets first look at the standard version in \autoref{lst:rust-hello-world}.
 
 \begin{listing}[H]
@@ -36,12 +37,12 @@ fn main() {
 }
 \end{minted}
 \label{lst:rust-hello-world}
-\caption{Rust Hello World}
+\caption{\rust Hello World}
 \end{listing}
 
 In comparrison, the embedded version in \autoref{lst:embedded-rust-hello-world}.
 This program does not print out "Hello, World!" as this requires some setup and we are conserned with the boot processs here.
-The highlight of the changes are, to export the \textbf{main} function to the C runtime, and to prevent the standard library being loaded while retaining the core library.
+The highlight of the changes are, to export the {\main} function to the {\C} runtime, and to prevent the standard library being loaded while retaining the core library.
 
 \begin{listing}[H]
 \begin{minted}{rust}
@@ -64,25 +65,25 @@ pub extern "C" fn main() {
 \label{lst:embedded-rust-hello-world}
 \end{listing}
 
-\texttt{\#\![no\_std]} on line 1 in \autoref{lst:embedded-rust-hello-world} tells the Rust compiler not to include the standard library.
+\attrib{\#\![no\_std]} on line 1 in \autoref{lst:embedded-rust-hello-world} tells the {\rust} compiler not to include the standard library.
 The standard library is not used for embedded programming. \todo{include reasoning or refere to section about not using std}
 
 Line 2 must be analysed in conjunction with lines 7 and 8.
-Firstly we must guarantee that the function can be called by the \textbf{\_start} function.
-This is done by defining the \textbf{main} function to be an publicly exported symbol denoted by \texttt{pub extern}.
-Rust symbols are private by default.
-The second change is to ensure that the function is callable by the a C function.
-\texttt{extern "C"} makes this possible by making the function use the C ABI. \todo{Some reference to the C ABI}
-The last thing is to disable the Rust name mangling so that the C code can refere to the function by the unmangled name \textbf{main}.
-Now that the \textbf{main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
-Therefore we have to tell the compiler that the program does not contain a \textbf{main} function, but that this is ok, hence the \texttt{\#\![no\_main]}.
+Firstly we must guarantee that the function can be called by the \func{\_start} function.
+This is done by defining the {\main} function to be an publicly exported symbol denoted by \code{pub extern}.
+\rust symbols are private by default.
+The second change is to ensure that the function is callable by the a {\C} function.
+\code{extern "C"} makes this possible by making the function use the {\C} ABI. \todo{Some reference to the {\C} ABI}
+The last thing is to disable the {\rust} name mangling so that the {\C} code can refere to the function by the unmangled name {\main}.
+Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
+Therefore we have to tell the compiler that the program does not contain a {\main} function, but that this is ok, hence the \attrib{\#\![no\_main]}.
 
-The last three lines are a complication due to error handling in Rust.
+The last three lines are a complication due to error handling in {\rust}.
 These functions are used by the core library but implemented in the standard library, they are described in detail in Section \ref{}. \todo{Describe panic and exception handling}
 The implementation here just ignores all error handling.
 
 \todo{Might go in a different section}
-With an example, we will now see how the startup process maps to the storage qualifiers in Rust.
+With an example, we will now see how the startup process maps to the storage qualifiers in {\rust}.
 \begin{listing}[H]
 \begin{minted}{rust}
 const      RUST_CONST_ZERO: u32 = 0;      // not allocated
@@ -94,16 +95,16 @@ static mut RUST_STATIC_MUT: u32 = 0xBEEF; // .data
 
 pub extern fn main() { /* Use the variables */ }
 \end{minted}
-\caption{Rust static initialization}
+\caption{\rust static initialization}
 \label{lst:rust-static-init}
 \end{listing}
-In \autoref{lst:rust-static-init} the three different types of declaring globals in Rust are shown.
-Firstly Rust divides between two types of global declarations, constants and statics.
-The static globals are immutable by default but can be made mutable by the \textbf{mut} keyword.
+In \autoref{lst:rust-static-init} the three different types of declaring globals in {\rust} are shown.
+Firstly {\rust} divides between two types of global declarations, constants and statics.
+The static globals are immutable by default but can be made mutable by the \code{mut} keyword.
 A constant declaration, shown in lines 1 and 2 of \autoref{lst:rust-static-init}, represents a value.
-There is no need to allocate memory for globals declared as \textbf{const} and they behave like \textbf{\#define} in C. \todo{Well that's a lie as \#define is handled by the preprocessor}
-Variables on line 3 and 4 declares the variables to be \textbf{static}.
-As these are immutable they are allocated in the read-only section called \textbf{.text}.
-On line 5 and 6 the declarations are marked with \textbf{static mut}.
-Here we see that the zero initializes variable is assigned to the \textbf{.bss} section in the \textbf{elf} file.
-On line 6 we have a non-zero value that has to be stored in Flash memory prior to execution and is copied to RAM in the \textbf{ResetHandler}.
+There is no need to allocate memory for globals declared as \code{const} and they behave like \code{\#define} in C. \todo{Well that's a lie as \#define is handled by the preprocessor}
+Variables on line 3 and 4 declares the variables to be \code{static}.
+As these are immutable they are allocated in the read-only section called {\elf}sec{.text}.
+On line 5 and 6 the declarations are marked with \code{static mut}.
+Here we see that the zero initializes variable is assigned to the {\elf}sec{.bss} section in the {\elf} file.
+On line 6 we have a non-zero value that has to be stored in Flash memory prior to execution and is copied to RAM in the \func{ResetHandler}.
