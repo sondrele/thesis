@@ -176,20 +176,20 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \end{table}
 
-By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and \C has same exact layout as the memory mapped control register of the \gls{adc}.
+By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
 \subsection{Adding Object Functionality}
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
-Both \C and {\rust} uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
+Both {\C} and {\rust} uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
 This ensures that C and {\rust} provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
-Implementing objects with static dispatch is a straight forward process in \C.
+Implementing objects with static dispatch is a straight forward process in {\C}.
 Here we define a function which takes a reference to the object as the first parameter.
-The function then uses the object reference in the same manner as the implicit \var{this} parameter in conventional object oriented languages such as \Java.
+The function then uses the object reference in the same manner as the implicit \var{this} parameter in conventional object oriented languages such as {\Java}.
 
 \begin{listing}[H]
   \centering
@@ -261,7 +261,7 @@ The constructor is responsible for allocating the object and initialize the fiel
 Analogously, the destructor is responsible for deallocating the object and any other member objects that it owns.
 \gls{mmio} devices have a fixed position in the memory and does not need to be allocated, they also generally do not have any owned members.
 Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate the variable that holds the reference to the \gls{mmio} and cast it to the desired type.
-\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both \C and {\rust}.
+\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both {\C} and {\rust}.
 
 \begin{listing}[H]
   \begin{minipage}{0.47\textwidth}

@@ -60,7 +60,7 @@ Semantically they are the same, but the usage differs slightly, which is natural
 Instead of calling functions that are included through a C header file, we are calling functions that are available through a {\rust} module.
 For example, the \code{Clock} enum is part of the \code{cmu} module, and the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
-It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in \C.
+It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
 
 \begin{listing}[h]
 \begin{minted}{rust}
@@ -125,7 +125,7 @@ extern {
 If we compare the call-stacks between calling the \code{timer0.int\_enable} function in {\rust} and calling the \func{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
 These are simple wrappers which require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one to two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
 By compiling the code with optimization, {\rust} will get rid of the overhead introduced by the function that wraps around the call to the foreign function.
-Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will remove the overhead entirely, which results in the same performance and similar call-stacks between \C and {\rust}.
+Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will remove the overhead entirely, which results in the same performance and similar call-stacks between {\C} and {\rust}.
 This is a working example of one of {\rust}'s many zero-cost abstractions.
 
 \subsection{Naming Conventions}
@@ -173,8 +173,8 @@ pub enum CCMode {
 
 \todo{Does it make sense to have this section here? Should content like this be mover somewhere else (like in the discussion chapter), or is this a good place?}
 
-Writing the bindings for different the peripherals was a tedious work, that required careful review of the \emlib source code in order to correctly port enum- and struct-definitions from \C to {\rust}.
-Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various \C macros defined in header files that are used throughout the library.
+Writing the bindings for different the peripherals was a tedious work, that required careful review of the \emlib source code in order to correctly port enum- and struct-definitions from {\C} to {\rust}.
+Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various {\C} macros defined in header files that are used throughout the library.
 We had to retrieve the value of the constants by debugging the source code and explicitly look up the value of these constants if they were only implicitly defined in the header files.
 
 Since we have constrained our library to only support the EFM32GG990 devices we chose to manually write the bindings for the library, instead of generating the bindings through some kind of automated process.
