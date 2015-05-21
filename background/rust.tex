@@ -29,16 +29,16 @@ Most of the datatypes are self explanatory when it comes to representation and f
   \begin{tabular}{r|l}
     \textbf{Type} & \textbf{Description} \\
     \hline
-    \texttt{bool}  & Either \texttt{true} or \texttt{false} \\
-    \texttt{char}  & A UTF-8 scalar value \\
-    \texttt{f32}, \texttt{f64} & Floating point number of single and double precision \\
-    \texttt{u8}, \texttt{u16}, \texttt{u32}, \texttt{u64} & Unsigned integers \\
-    \texttt{i8}, \texttt{i16}, \texttt{i32}, \texttt{i64} & Signed integers \\
-    \texttt{isize}, \texttt{usize}                        & `Pointer-sized' Integers \\
-    Pointer        & Raw unsafe pointers (\texttt{*const T}, \texttt{*mut T}) \\
-    Array          & Fixed-length array type, denoted with \texttt{[T]} \\
-    \texttt{slice} & A view into a array, denoted with \texttt{\&[T]} \\
-    \texttt{str}   & UTF-8 encoded byte array \\
+    \keyword{bool}  & Either \code{true} or \code{false} \\
+    \keyword{char}  & A UTF-8 scalar value \\
+    \keyword{f32}, \keyword{f64} & Floating point number of single and double precision \\
+    \keyword{u8}, \keyword{u16}, \keyword{u32}, \keyword{u64} & Unsigned integers \\
+    \keyword{i8}, \keyword{i16}, \keyword{i32}, \keyword{i64} & Signed integers \\
+    \keyword{isize}, \keyword{usize}                        & `Pointer-sized' Integers \\
+    Pointer        & Raw unsafe pointers (\code{*const T}, \code{*mut T}) \\
+    Array          & Fixed-length array type, denoted with \code{[T]} \\
+    \keyword{slice} & A view into a array, denoted with \code{\&[T]} \\
+    \keyword{str}   & UTF-8 encoded byte array \\
     Tuple          & Finite ordered list of elements \\
     \hline
   \end{tabular}
@@ -58,7 +58,7 @@ Most of the datatypes are self explanatory when it comes to representation and f
 
 \rust features a handful of different data types, all which can be assigned to a \emph{variable} by using a \emph{binding}.
 The most important types are described in the following sections, but we will first look at how variables work.
-A value gets bound to a variable by utilizing the \texttt{let} keyword.
+A value gets bound to a variable by utilizing the \keyword{let} keyword.
 A variable in \rust has a name and a value, much like other programming languages, but there is a distinct difference between the \emph{mutability} of those variables.
 
 With a mutable variable binding, it is possible to change the value of the variable.
@@ -80,13 +80,13 @@ The example will not work because we try to change the value of an immutable var
 \end{listing}
 
 An important part of variable bindings is \rust's way to automatically infer the data type of the variables.
-We can see from the example that \texttt{a} is defined to be a 32-bit integer with the value 5, and because the variable \texttt{b} later gets assigned to \texttt{a}'s value, \rust will automatically infer \texttt{b} to be of the same type.
+We can see from the example that \code{a} is defined to be a 32-bit integer with the value 5, and because the variable \code{b} later gets assigned to \code{a}'s value, \rust will automatically infer \code{b} to be of the same type.
 
 \subsubsection{Sum types - Enum}
 
-A sum type, also known as a tagged union, or an \texttt{enum} in \rust, is a data structure that is used to hold only one out of a small set of possible values.
-\rust's \texttt{enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
-This makes the \texttt{enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
+A sum type, also known as a tagged union, or an \enum in \rust, is a data structure that is used to hold only one out of a small set of possible values.
+\rust's \enum construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
+This makes the \enum a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
 \autoref{lst:rust:option} shows the definition of one of \rust's most commonly used types that is used extensively throughout its standard library and other third party libraries and applications.
 
 \begin{listing}[H]
@@ -100,18 +100,18 @@ This makes the \texttt{enum} a powerful feature of the language that can be used
   \label{lst:rust:option}
 \end{listing}
 
-Every \texttt{Option} variable is an \texttt{enum} that can either have the algebraic value \texttt{Some} or the \emph{named value} \texttt{None}.
-If the variable is is \texttt{Some}, the definition also says that it needs to contain another type \texttt{T}.
-This is also an example of generics in \rust, \texttt{T} can be anything, e.g. an integer, a string, or a user defined type.
-The \texttt{Option} type is analogous with a normal C pointer value, which either has the value 0, or \texttt{null} (analogous to \texttt{None}), or a value that that points to a structure at a place in memory (analogous to \texttt{Some}).
-Even though the \texttt{Option} is analogous to a C pointer, it is important to note their differences.
-It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \texttt{None}.
-The usage of \texttt{enum} types described in this section become very expressive in combination with \texttt{match} expressions, as discussed in \autoref{sub:pattern_matching}.
+Every \code{Option} variable is an \enum that can either have the algebraic value \code{Some} or the \emph{named value} \code{None}.
+If the variable is is \code{Some}, the definition also says that it needs to contain another type \code{T}.
+This is also an example of generics in \rust, \code{T} can be anything, e.g. an integer, a string, or a user defined type.
+The \code{Option} type is analogous with a normal C pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that that points to a structure at a place in memory (analogous to \code{Some}).
+Even though the \code{Option} is analogous to a C pointer, it is important to note their differences.
+It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
+The usage of \enum types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
 
 \subsubsection{Case Study - List}
 
 A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
-Each list item is either a value and a pointer to the next item, as the \textbf{Cons}, or a termination value as \textbf{Nil}.
+Each list item is either a value and a pointer to the next item, as the \code{Cons}, or a termination value as \code{Nil}.
 \todo{I think this should be an example of Boxed types in stead of a case study of Enums}
 
 \begin{listing}[H]
@@ -128,11 +128,11 @@ Each list item is either a value and a pointer to the next item, as the \textbf{
 \subsubsection{Structs}
 \label{ssub:structs}
 
-A \texttt{struct} in \rust is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
-With a \texttt{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
-An example of a \texttt{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with C will see the similarity of the \texttt{struct} definition, but there are also a couple of extra things to notice from the example.
-Everything in \rust is \emph{private} by default, the \texttt{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
-The \texttt{impl} keyword lets us implement member functions for the \texttt{Book}, similar to class-declarations in C++ and other object-oriented languages.
+A \keyword{struct} in \rust is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
+With a \keyword{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
+An example of a \keyword{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with C will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
+Everything in \rust is \emph{private} by default, the \code{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
+The \keyword{impl} keyword lets us implement member functions for the \code{Book}, similar to class-declarations in C++ and other object-oriented languages.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -159,8 +159,8 @@ Instead, the library offers higher-level structures as an abstraction between th
 
 \subsubsection{Slices}
 
-The \texttt{slice} type is simply a view into an array, it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
-Slice syntax is denoted by \texttt{\&[T]}, which reads like `a reference to a finite array with type \texttt{T}'.
+The \code{slice} type is simply a view into an array, it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
+Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a finite array with type \code{T}'.
 They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
 
 \begin{listing}[H]
@@ -174,24 +174,24 @@ They are a fundamental type that abstracts away the underlying block of data ref
 \label{lst:rust:slice}
 \end{listing}
 
-An example of common slice type in \rust is the \texttt{str} type, which can either be a statically allocated string defined as a literal, or a borrowed reference into another string.
-The representation of the string type is closely related to slices, as a string-slice denoted as \texttt{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \texttt{\&[u8]}.
+An example of common slice type in \rust is the \keyword{str} type, which can either be a statically allocated string defined as a literal, or a borrowed reference into another string.
+The representation of the string type is closely related to slices, as a string-slice denoted as \code{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \code{\&[u8]}.
 It is important to note that an arbitrary slice of bytes are not necessarily a valid string.
-The \texttt{str} type differs from a \texttt{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
+The \keyword{str} type differs from a \code{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
 
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
 
-Pattern matching is a powerful language construct of \rust that resembles the \texttt{switch} statement from C.
-It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \texttt{match}.
-Another important feature of the \texttt{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \texttt{match} need to be considered, otherwise \rust will issue an error during compilation.
-This is contrary to C, where only primitive values can be used in a \texttt{switch} statement, and there is no requirement to cover all switch cases, i.e. the \texttt{default} keyword is not required.
+Pattern matching is a powerful language construct of \rust that resembles the \code{switch} statement from C.
+It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \code{match}.
+Another important feature of the \keyword{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \keyword{match} need to be considered, otherwise \rust will issue an error during compilation.
+This is contrary to C, where only primitive values can be used in a \keyword{switch} statement, and there is no requirement to cover all switch cases, i.e. the \code{default} keyword is not required.
 
-An example of pattern matching on the \texttt{Option} type is given in \autoref{lst:rust:match}.
+An example of pattern matching on the \code{Option} type is given in \autoref{lst:rust:match}.
 We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
-We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible outcomes of the \texttt{Option}, are being matched against.
-% In Listing \ref{lst:rust:match} the Option \texttt{Some(42)} is checked against the patterns in the match expression.
-% As the first pattern matches the value, the number \texttt{42} is bound to the variable number and the \texttt{println} function is executed.
+We can also see that both \code{Some} and \code{None}, i.e. all possible outcomes of the \code{Option}, are being matched against.
+% In Listing \ref{lst:rust:match} the Option \code{Some(42)} is checked against the patterns in the match expression.
+% As the first pattern matches the value, the number \code{42} is bound to the variable number and the \code{println} function is executed.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -213,8 +213,8 @@ We can also see that both \texttt{Some} and \texttt{None}, i.e. all possible out
 \subsubsection{Traits}
 
 Traits in \rust are similar to Interfaces in Java, they are used to facilitate code reuse and polymorphism.
-A \texttt{trait} can define a set methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
-The definition of one of \rust's more integral traits is the \texttt{Iterator} trait, which is shown in \autoref{lst:rust:iterator}.
+A \code{trait} can define a set methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
+The definition of one of \rust's more integral traits is the \code{Iterator} trait, which is shown in \autoref{lst:rust:iterator}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -326,7 +326,7 @@ This gives the programmer the ability to import only the components of the libra
   \begin{center}
     \includegraphics[scale=0.3]{figures/background/rust/libcollections.png}
   \end{center}
-  \caption{Some of the modules in the \texttt{collections} crate}
+  \caption{Some of the modules in the \code{collections} crate}
   \label{fig:rust:collections}
 \end{figure}
 
