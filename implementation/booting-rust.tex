@@ -1,8 +1,8 @@
-\section{Booting {\rust} on the {\gecko}}
+\section{Booting Rust on the Gecko}
 
 The contains of this section explaines how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
 
-The process for {\rust} is identical to the process in C due to the fact that {\rust} only allows constant initialization before the {\main} function.
+The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization before the {\main} function.
 In C++ however, the process is complicated by the fact that C++ support static global constructors as shown in \autoref{lst:impl:c++:static-constructor}
 
 \begin{listing}[H]
@@ -20,13 +20,13 @@ The runtime must therefore be augmented to issue calls to these constructors and
 These types of constructors are not allowed in {\rust} by a compiler rule which allows only constant-expression as initializers.
 (An interesting side note here is given in \autoref{sec:impl:lazy-statics}.)
 
-As this process is identical to C we are able to reuse standard runtime components for embedded toolchains for C.
+As this process is identical to {\C} we are able to reuse standard runtime components for embedded toolchains for C.
 SiliconLabs software suite provides the \func{ResetHandler} and linker script for the efm32 microcontrollers.
-The \func{\_mainCRTStartup} function defined in the C runtime provided by the \textbf{arm-none-eabi} gcc toolchain handles the setup in \func{\_start}:
+The \func{\_mainCRTStartup} function defined in the {\C} runtime provided by the \textbf{arm-none-eabi} gcc toolchain handles the setup in \func{\_start}:
 
-\subsection{Minimal {\rust} program to boot}
+\subsection{Minimal Rust program to boot}
 
-There are a few modification which have to be applied to the default 'Hello World' program in order to get it to boot in an embedded environment.
+There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in an embedded environment.
 Lets first look at the standard version in \autoref{lst:rust-hello-world}.
 
 \begin{listing}[H]
@@ -41,7 +41,7 @@ fn main() {
 
 In comparrison, the embedded version in \autoref{lst:embedded-rust-hello-world}.
 This program does not print out "Hello, World!" as this requires some setup and we are conserned with the boot processs here.
-The highlight of the changes are, to export the {\main} function to the C runtime, and to prevent the standard library being loaded while retaining the core library.
+The highlight of the changes are, to export the {\main} function to the {\C} runtime, and to prevent the standard library being loaded while retaining the core library.
 
 \begin{listing}[H]
 \begin{minted}{rust}
@@ -71,9 +71,9 @@ Line 2 must be analysed in conjunction with lines 7 and 8.
 Firstly we must guarantee that the function can be called by the \func{\_start} function.
 This is done by defining the {\main} function to be an publicly exported symbol denoted by \code{pub extern}.
 \rust symbols are private by default.
-The second change is to ensure that the function is callable by the a C function.
-\code{extern "C"} makes this possible by making the function use the C ABI. \todo{Some reference to the C ABI}
-The last thing is to disable the {\rust} name mangling so that the C code can refere to the function by the unmangled name {\main}.
+The second change is to ensure that the function is callable by the a {\C} function.
+\code{extern "C"} makes this possible by making the function use the {\C} ABI. \todo{Some reference to the {\C} ABI}
+The last thing is to disable the {\rust} name mangling so that the {\C} code can refere to the function by the unmangled name {\main}.
 Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
 Therefore we have to tell the compiler that the program does not contain a {\main} function, but that this is ok, hence the \attrib{\#\![no\_main]}.
 

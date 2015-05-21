@@ -73,7 +73,7 @@ void ResetHandler() {
 \label{lst:reset-handler}
 \end{listing}
 
-When the \func{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \func{\_start} function in the C runtime.
+When the \func{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \func{\_start} function in the {\C} runtime.
 The \func{\_start} function finds the size of the \elfsec{.bss} section which describes the size of zero-initialized area in \gls{ram}.
 It then calls on the \func{memset} function to zero out the \gls{ram}.
 \func{\_start} then goes on to call the {\main} function supplied by the programmer.

@@ -2,7 +2,7 @@
 \label{sec:back:oo}
 
 In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigms essential concept can be applied to embedded C programming even though the language itself does not directly define any language features to aid the design.
+The paradigms essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
 This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
 We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
@@ -120,7 +120,7 @@ typedef struct {
 In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
 By using structs the programmer has full control over the layout of the object in memory.
 The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
-\autoref{lst:back:adc-objects} shows how to define a Java class, and {\rust} and C structs for the \gls{adc} on the {\gecko}.
+\autoref{lst:back:adc-objects} shows how to define a Java class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \begin{table}[H]
@@ -183,7 +183,7 @@ This suggests that, if a pointer to the \gls{mmio} device is considered as a ref
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
 Both {\C} and {\rust} uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
-This ensures that C and {\rust} provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
+This ensures that {\C} and {\rust} provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
@@ -245,7 +245,7 @@ fn main() {
       \end{minted}
   \end{listing}
   \end{minipage}
-  \caption{Member methods for C and {\rust}, respectively.}
+  \caption{Member methods for {\C} and {\rust}, respectively.}
   \label{lst:back:adc:get}
 
 \end{listing}

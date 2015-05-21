@@ -57,7 +57,7 @@ void TIMER0_IRQHandler(void) {
 
 The equivalent program written in {\rust} is shown in \autoref{lst:timer_program_rust}.
 Semantically they are the same, but the usage differs slightly, which is natural since we are using a higher level programming language.
-Instead of calling functions that are included through a C header file, we are calling functions that are available through a {\rust} module.
+Instead of calling functions that are included through a {\C} header file, we are calling functions that are available through a {\rust} module.
 For example, the \code{Clock} enum is part of the \code{cmu} module, and the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
 It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
@@ -84,9 +84,9 @@ timer0.init(&timer_init);
 
 \subsection{Exposing Static Inline Functions to {\rust}}
 
-In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are C compatible.
+In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
 The header files in the peripheral \gls{api} also defines many functions as \code{static inline}, which only make the functions accessible by including the header file.
-Since it is not possible to include C header files directly in {\rust}, we had to expose these functions through one extra layer of C code.
+Since it is not possible to include {\C} header files directly in {\rust}, we had to expose these functions through one extra layer of {\C} code.
 As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}, in order to call this function through {\rust} we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
 
 \begin{listing}[h]

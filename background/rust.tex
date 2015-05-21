@@ -22,7 +22,7 @@ In this way, {\core} is not interfaced with directly in normal {\rust} programs,
 The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
 
 \autoref{tab:rust:datatypes} lists the primitive datatypes available in {\rust}, the {\core} library defines many functions and abstractions that are used to manage and manipulate these datatypes.
-Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from C are discussed throughout the following sections.
+Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from {\C} are discussed throughout the following sections.
 
 \begin{table}[H]
   \centering
@@ -103,8 +103,8 @@ This makes the {\enum} a powerful feature of the language that can be used to de
 Every \code{Option} variable is an {\enum} that can either have the algebraic value \code{Some} or the \emph{named value} \code{None}.
 If the variable is is \code{Some}, the definition also says that it needs to contain another type \code{T}.
 This is also an example of generics in {\rust}, \code{T} can be anything, e.g. an integer, a string, or a user defined type.
-The \code{Option} type is analogous with a normal C pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that that points to a structure at a place in memory (analogous to \code{Some}).
-Even though the \code{Option} is analogous to a C pointer, it is important to note their differences.
+The \code{Option} type is analogous with a normal {\C} pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that that points to a structure at a place in memory (analogous to \code{Some}).
+Even though the \code{Option} is analogous to a {\C} pointer, it is important to note their differences.
 It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
 The usage of {\enum} types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
 
@@ -130,7 +130,7 @@ Each list item is either a value and a pointer to the next item, as the \code{Co
 
 A \keyword{struct} in {\rust} is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
 With a \keyword{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
-An example of a \keyword{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with C will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
+An example of a \keyword{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with {\C} will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
 Everything in {\rust} is \emph{private} by default, the \code{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
 The \keyword{impl} keyword lets us implement member functions for the \code{Book}, similar to class-declarations in C++ and other object-oriented languages.
 
@@ -419,7 +419,7 @@ The downside of such an approach is the requirement of halting the entire progra
 There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
 
 Another approach to keeping track of the memory resources have been to give the programmer full control of every memory allocation and deallocation.
-This is the most common approach for systems programming languages like C and C++, where performance and predictability is important.
+This is the most common approach for systems programming languages like {\C} and C++, where performance and predictability is important.
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
 Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
 
@@ -427,7 +427,7 @@ Memory leaks like this will eventually lead a running program into crashing due 
 background chapter}
 
 It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
-\rust operates a little different from C when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
+\rust operates a little different from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
 When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.

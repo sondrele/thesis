@@ -23,7 +23,7 @@ Gradually, while the {\rust} programming language started to take shape, a few p
 Combined with its strong guarantees about memory safety and absence of data races and other common errors like stack- and buffer-overflows, it makes for an interesting language to run on bare-metal systems.
 Early projects that worked with running {\rust} bare-metal on ARM microcontrollers had to do a few workarounds in order to make it work, but since the language is implemented in the open, with great influence from the community, it is now easy to rely on only the core functionality of the language that is platform independent.
 
-The purpose of this project has been to try and give a rough comparison of {\rust} and C on a bare-metal system.
+The purpose of this project has been to try and give a rough comparison of {\rust} and {\C} on a bare-metal system.
 In the process of doing this, we decided that the EFM32 microcontrollers from Silicon Labs would be well suited for the task, which gives us a couple of metrics where we can compare the two languages.
 Mainly, we want to compare the performance of the two languages against each other on a small system with limited computing power, and we want to compare energy usage, or power consumption, of programs written in the two languages.
 Typically, the two problems go hand-in-hand; the best way to save power is to shut down the hardware, and in order to shut down the processor, the programs need to finish quickly - basically, executing as few instructions as possible.

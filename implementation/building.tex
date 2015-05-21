@@ -25,7 +25,7 @@ It was always a goal to use Cargo for building, distributing, and managing the p
 An obvious reason for this was to lower the bar for other potential users of the library, and to make our project as standalone as possible, so that it is easier to include and extend it as a part of other potential projects.
 By letting {\cargo} handle as much as possible in its build routine, it would automate a lot of the work that every programmer using the library otherwise would have to do manually
 
-When the project first started out it was built by compiling {\rust}'s core library and Silabs' {\emlib} C sources separately, and then linking them with the \gls{ffi} bindings for {\emlib} by hand.
+When the project first started out it was built by compiling {\rust}'s core library and Silabs' {\emlib} {\C} sources separately, and then linking them with the \gls{ffi} bindings for {\emlib} by hand.
 While this approach worked, built it was far from optimal for a number of reasons:
 
 \begin{itemize}
@@ -41,9 +41,9 @@ When the transition to Cargo started, we focused on structuring the main library
 By invoking the \cmd{cargo build --verbose} command, it was possible to see the output from what Cargo attempted to build when it failed, and then structure the project accordingly.
 
 A big priority was to to shrink the size of the makefiles that was in the project by making them a part of the standard build process for {\emlib} instead, doing this would help us get a long way of ensuring that the builds done by Cargo could be consistent across systems.
-By defining a {\rust} build script and utilizing a {\rust} build-dependency called \prog{gcc} \cite{web:cargo_gcc}, we were able to compile the C sources from Silabs' {\emlib} and link them with our bindings directly as part of the build process.
+By defining a {\rust} build script and utilizing a {\rust} build-dependency called \prog{gcc} \cite{web:cargo_gcc}, we were able to compile the {\C} sources from Silabs' {\emlib} and link them with our bindings directly as part of the build process.
 Note that the \prog{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the {\armgcc} compiler.
-By removing the dependency of manually compiling the C sources, it was easier to start to automatically fetch the other dependencies, like the {\core} and \lib{collections} libraries.
+By removing the dependency of manually compiling the {\C} sources, it was easier to start to automatically fetch the other dependencies, like the {\core} and \lib{collections} libraries.
 
 Because this project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard {\rust} libraries that we wanted to utilize for the ARM Cortex-M3.
 We could not utilize the pre-compiled libraries that are already included with {\rustc}, since these only works for the current system architecture.
