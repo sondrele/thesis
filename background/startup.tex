@@ -2,7 +2,7 @@
 \label{sec:back:startup}
 
 This section describes the process of starting a program on an embedded system.
-The \main function is usually considered the starting point of a program.
+The {\main} function is usually considered the starting point of a program.
 This is sometimes true from the point of view of the programmer, but as we will see in this section usually it is not.
 This section looks at what happens before the program reaches the main function.
 
@@ -76,7 +76,7 @@ void ResetHandler() {
 When the \func{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \func{\_start} function in the C runtime.
 The \func{\_start} function finds the size of the \elfsec{.bss} section which describes the size of zero-initialized area in \gls{ram}.
 It then calls on the \func{memset} function to zero out the \gls{ram}.
-\func{\_start} then goes on to call the \main function supplied by the programmer.
+\func{\_start} then goes on to call the {\main} function supplied by the programmer.
 
 \begin{listing}[H]
 \begin{minted}{c}

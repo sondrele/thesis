@@ -31,7 +31,7 @@ It also includes information that tells \cargo how the package can be compiled f
 
 \autoref{lst:standard_cargo_project_structure} shows a standard \cargo project structure for an executable target.
 If a project contains a \file{main.rs} file, it will be compiled into an executable with the same name as the project (\file{hello\_world} for this example).
-It is required by \cargo that this file also contains the \main function for the program.
+It is required by \cargo that this file also contains the {\main} function for the program.
 Finally, \cargo also generates a \file{Cargo.lock} file that contains \emph{specific} information about every package that are used in the project.
 This information includes the name and version of the package and its dependencies, including any transitive dependencies they might have.
 This file helps \cargo to determine if packages needs to be re-downloaded, updated, or re-compiled in order for the project to be built consistently - independent on the target architecture it is built on and for.

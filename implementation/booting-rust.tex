@@ -2,7 +2,7 @@
 
 The contains of this section explaines how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
 
-The process for {\rust} is identical to the process in C due to the fact that {\rust} only allows constant initialization before the \main function.
+The process for {\rust} is identical to the process in C due to the fact that {\rust} only allows constant initialization before the {\main} function.
 In C++ however, the process is complicated by the fact that C++ support static global constructors as shown in \autoref{lst:impl:c++:static-constructor}
 
 \begin{listing}[H]
@@ -41,7 +41,7 @@ fn main() {
 
 In comparrison, the embedded version in \autoref{lst:embedded-rust-hello-world}.
 This program does not print out "Hello, World!" as this requires some setup and we are conserned with the boot processs here.
-The highlight of the changes are, to export the \main function to the C runtime, and to prevent the standard library being loaded while retaining the core library.
+The highlight of the changes are, to export the {\main} function to the C runtime, and to prevent the standard library being loaded while retaining the core library.
 
 \begin{listing}[H]
 \begin{minted}{rust}
@@ -69,13 +69,13 @@ The standard library is not used for embedded programming. \todo{include reasoni
 
 Line 2 must be analysed in conjunction with lines 7 and 8.
 Firstly we must guarantee that the function can be called by the \func{\_start} function.
-This is done by defining the \main function to be an publicly exported symbol denoted by \code{pub extern}.
+This is done by defining the {\main} function to be an publicly exported symbol denoted by \code{pub extern}.
 \rust symbols are private by default.
 The second change is to ensure that the function is callable by the a C function.
 \code{extern "C"} makes this possible by making the function use the C ABI. \todo{Some reference to the C ABI}
-The last thing is to disable the {\rust} name mangling so that the C code can refere to the function by the unmangled name \main.
-Now that the \main function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
-Therefore we have to tell the compiler that the program does not contain a \main function, but that this is ok, hence the \attrib{\#\![no\_main]}.
+The last thing is to disable the {\rust} name mangling so that the C code can refere to the function by the unmangled name {\main}.
+Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
+Therefore we have to tell the compiler that the program does not contain a {\main} function, but that this is ok, hence the \attrib{\#\![no\_main]}.
 
 The last three lines are a complication due to error handling in {\rust}.
 These functions are used by the core library but implemented in the standard library, they are described in detail in Section \ref{}. \todo{Describe panic and exception handling}
