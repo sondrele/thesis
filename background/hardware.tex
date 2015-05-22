@@ -166,5 +166,6 @@ The \gls{adc} is a peripheral that is used to measure analogue signals, like e.g
 Oppositely, the \gls{dac} can be used to convert digital signals back to e.g. analogue sound signals.
 
 Timers are another important peripheral type, the {\gecko} supports a number different timers that operate with different frequencies and at different energy levels.
-The Timer peripheral is used to keep track of timing and counting of different events, without intervention of the \gls{cpu}, it can e.g. be used to initiate \gls{dma} transfer over \gls{uart} at timed intervals.
+The Timer peripheral is used to generate signals at specified frequencies.
+These signals can be software interrupts to the \gls{cpu} or other peripherals, which in turn, without intervention from the \gls{cpu}, can be used to e.g. initiate a \gls{dma} transfer over \gls{uart} at timed intervals.
 The \gls{rtc} is another timer that work at low energy levels which is useful for energy constraint applications.
