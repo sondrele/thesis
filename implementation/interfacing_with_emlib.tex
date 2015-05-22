@@ -82,7 +82,7 @@ timer0.init(&timer_init);
 \label{lst:timer_program_rust}
 \end{listing}
 
-\subsection{Exposing Static Inline Functions to Rrust}
+\subsection{Exposing Static Inline Functions to Rust}
 
 In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
 The header files in the peripheral \gls{api} also defines many functions as \code{static inline}, which only make the functions accessible by including the header file.
@@ -173,6 +173,7 @@ In this way, the bindings have been defined incrementally during the development
 
 \subsubsection{Emlib}
 
+The priority, when we first set out to make the bindings for {\emlib}, was to define a viable platform to write rust applications with, which we could use to evaluate the language on the embedded system.
 It has not been a priority of this project to fully support all of the {\gecko}'s peripherals or provide bindings for the entire {\emlib}.
 The bindings have been developed because we have needed functionality from the peripherals, not the other way around.
 \autoref{tab:emlib_peripheral_bindings} summarizes a number of modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
