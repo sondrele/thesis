@@ -1,10 +1,10 @@
 % !TEX root = ../main.tex
 
-% Set page numbering to Roman for the pages prior to the Table of Contents
-\pagenumbering{Roman}
-\setcounter{secnumdepth}{0}
-
 \include{front/title}
+
+\newpage
+
+\include{front/preface}
 
 \newpage
 
@@ -25,9 +25,6 @@
 \printglossary[type=\acronymtype]
 \clearpage
 
-% Switch back to arabic numbering
-\pagenumbering{arabic}
-\setcounter{secnumdepth}{3} % Show sections like '2.1.1 Heading'
 % Writes 'section' instead of 'subsection' for subsections when referencing with autoref
 % Has to be done after messing around with the Roman/Arabic page numbering
 \renewcommand{\sectionautorefname}{Section}
