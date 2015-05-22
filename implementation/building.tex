@@ -32,7 +32,7 @@ The components listed in \autoref{tab:build:components} were identified as the m
   \label{tab:build:components}
 \end{table}
 
-The components in \autoref{tab:build:components} are the files included in the initial successfull build for the Gecko located at geckoboot.rs \cite{web:geckobook-initial} for references.
+The components in \autoref{tab:build:components} are the files included in the initial successfull build for the Gecko located at geckoboot.rs \cite{web:geckoboot-initial} for references.
 In order to compile these components into an executable a Makefile was developed.
 The compilation process consisted of compiling the \file{blinky.rs} file to assembly by passing the target architecture and assembly output flag to the {\rustc} compiler.
 This file was then, along with the startup and system files compiled into object files with {\arm-gcc} and linked into an executable with the linker script using {\arm-ld}.
