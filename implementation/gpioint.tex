@@ -1,29 +1,24 @@
 \section{Porting GPIO Interrupt Driver}
 
-This section considers a case study of an issue discovered while porting the GPIO interrupt driver from \lib{emdrv} to {\rust}.
+This section considers a case study of an issue discovered while porting the \gls{gpio} interrupt driver from \lib{emdrv} to {\rust}.
 The issue was discoverd when annotating the \texttt{unsafe} blocks for referencing mutable global state and gives an example of the awareness the inclusion of the {\unsafe} keyword provides.
 
 \subsection{Presenting the Problem}
 
-The driver lets the user registers a callback function to be called when an interrupt occures at a given \gls{gpio} pin.
-It is implemented by a global mutable list of 16 function pointers, a register function to assign functions to indices of the list corresponding to GPIO pins and a dispatch mechanisms which calls the correct functions when an interrupt occures.
+The \texttt{gpioint} driver lets the user registers a callback function to be called when an interrupt occures at a given \gls{gpio} pin.
+It is implemented with a global mutable list of 16 function pointers, a register function to assign functions to indices of the list corresponding to \gls{gpio} pins, and a dispatch mechanisms which calls the correct functions when an interrupt occurs.
 The issue arises in the dispatch function in \autoref{lst:irq-dispatch:c}.
 
 \begin{listing}
   \begin{minted}{c}
 static void GPIOINT_IRQDispatcher(uint32_t iflags) {
-
   while(iflags) {
-
     // Utility for iterating through all active interrupt signals
     uint32_t irqIdx = GPIOINT_MASK2IDX(iflags);
-
     // Mark interrupt as handled
     iflags &= ~(1 << irqIdx);
-
     // Check if the interrupt has a callback
     if (gpioCallbacks[irqIdx]) {
-
       // Call the callback
       gpioCallbacks[irqIdx](irqIdx);
     }
@@ -34,22 +29,16 @@ static void GPIOINT_IRQDispatcher(uint32_t iflags) {
   \label{lst:irq-dispatch:c}
 \end{listing}
 
-A first take at porting the dispatcher function to Rust yields the code in \autoref{lst:irq-dispatch:rust}.
-
 \begin{listing}
   \begin{minted}{rust}
 static mut GPIO_CALLBACKS: [Option<fn(u8)>; 16] = [None; 16];
 
 fn dispatcher(iflags: u32) {
-
   while(iflags) {
-
     // Utility for iterating through all active interrupt signals
     let irq_idx = mask_to_index(iflags);
-
     // Mark interrupt as handled
     iflags &= !(1 << irq_idx);
-
     // Check if the interrupt has a callback
     if (unsafe { GPIO_CALLBACKS[irq_idx] }.is_some()) {
 
@@ -65,7 +54,8 @@ fn dispatcher(iflags: u32) {
   \label{lst:irq-dispatch:rust}
 \end{listing}
 
-In \autoref{lst:irq-dispatch:rust} it is quite easy to see that the global mutable state is read twice.
+A first take at porting the dispatcher function to Rust yields the code in \autoref{lst:irq-dispatch:rust}.
+It is quite easy to see that the global mutable state is read twice.
 This means that there is a possibility of the second reference to return a different value than the first.
 For instance the function \func{GPIOINT\_CallbackUnRegister(uin32\_t pin)} will insert the value \mem{0x0} into the specified pin.
 If this function is called inside a interrupt handler and this interrupt is triggered while the GPIO driver is dispatching an interrupt the function pointer can be set to \mem{0x0} between the check and the call.
@@ -122,27 +112,22 @@ GPIOINT_IRQDispatcher:
   \label{lst:gpio:asm:O1}
 \end{listing}
 
-At O1 the compiler has performed \gls{CSE} to remove the duplicate load present in \autoref{lst:gpio:asm:O0}.
-This can be elimintated with the assumption that the gpioCallback will no changed by external code.
-But as the Rust version in \autoref{lst:irq-dispatch:rust} suggests this code can lead to a datarace because it is referencing a global mutable variable.
+At O1 the compiler has performed \gls{cse} to remove the duplicate load present in \autoref{lst:gpio:asm:O0}.
+This can be elimintated with the assumption that the gpioCallback will not be changed by external code.
+But as the Rust version in \autoref{lst:irq-dispatch:rust} suggests this code can lead to a \concept{data race} because it is referencing a global mutable variable.
 
 \subsection{Proposed solution}
 
-The solution to this problem is quite straightforward by performening the \gls{CSE} manually.
+The solution to this problem is quite straightforward by performening the \gls{cse} manually.
 \autoref{lst:irq-dispatch:c-fixed} contains the implementation proposed to SiliconLabs to resolve this issue.
 
 \begin{listing}[H]
   \begin{minted}{rust}
 static void GPIOINT_IRQDispatcher(uint32_t iflags) {
-  uint32_t irqIdx;
-
   while(iflags) {
-    irqIdx = GPIOINT_MASK2IDX(iflags);
-
+    uint32_t irqIdx = GPIOINT_MASK2IDX(iflags);
     iflags &= ~(1 << irqIdx);
-
     GPIOINT_IrqCallbackPtr_t callback = gpioCallbacks[irqIdx];
-
     if (callback) {
       callback(irqIdx);
     }
