@@ -1,4 +1,4 @@
-\documentclass[10pr,a4paper]{report}
+\documentclass[pdftex,10pt,b5paper,twoside]{book}
 
 % For orange todos. It needs to be here, otherwise the arrows will not be correct
 % Stupid latex....
@@ -27,19 +27,19 @@
 
 \begin{document}
   % Include everything that comes before the introduction chapter.
+  \frontmatter
   \include{front/front}
 
+  \mainmatter
   % Include every chapter
   \include{introduction/introduction}
   \include{background/background}
-  \include{methodology/methodology}
   \include{implementation/implementation}
   \include{results/results}
   \include{conclusion/conclusion}
 
   % The bibliography can be generated from multiple sources.
   % The 'web' is used exclusively for web-references
-  % \addcontentsline{toc}{chapter}{Bibliography}
   \bibliographystyle{plain} %Alternative: apalike
   %\bibpunct{[}{]}{;}{a}{,}{,} % Alternative citation format, probably not going to be used
   \bibliography{refs/web,refs/library,refs/manuals}
@@ -49,5 +49,8 @@
   \begin{appendices}
     \include*{appendix}
   \end{appendices}
+
+  % We can use backmatter if we should ever need anything behind appendix...
+  % \backmatter
 
 \end{document}
