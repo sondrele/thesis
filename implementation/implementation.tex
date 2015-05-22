@@ -1,7 +1,24 @@
 \chapter{Implementation}
 \label{chap:impl}
 
-\include*{implementation/booting-rust}
-\include*{implementation/handling-interrupts}
+The implementation chapter describes various software components both developed and fitted to create a framework for programming in Rust for an Embedded system.
+The last sections dives into two projects which were developed in order to drive the deveopment of the framework and to provide a basis to evaluate the platform in the next chapter.
+
+We start in \autoref{sec:impl:booting} by describing the startup process of a Rust program on a Microcontroller.
+Secondly we define the parts of the Rust standard library \gls{rel} which are applicable for an embedded system.
+\autoref{sub:interfacing_with_emlib} goes on to describe the hardware specific bindings developed for controlling the Peripherals of the Microcontroller.
+In \autoref{sec:build_system} we take a look at the evolution of the building system from a traditional \file{Makefile} to the integration with the {\rust} package manager {\cargo}.
+The next two sections \autoref{sec:irq-closures} and \autoref{sec:rust-embedded-modules} explores a few experimentation with creating higher level abstractions for the lower level Peripheral libraries.
+\autoref{sec:porting-gpioint} looks at a case study of porting a GPIO driver from {\C} to {\rust}.
+The last two sections \autoref{sec:impl:project:i} and \autoref{sec:impl:project:ii} gives an overview over the implementation of the projects used to evaluate the programmability and certain metrics presented in \autoref{chap:results}.
+
+\include{implementation/booting-rust}
+\include{implementation/rust-embedded-library}
+\include{implementation/interfacing_with_emlib}
 \include{implementation/building}
-\include*{implementation/experimental}
+\include{implementation/irq-closures}
+\include{implementation/rust-embedded-modules}
+\include{implementation/project-i}
+\include{implementation/project-ii}
+
+\include{implementation/handling-interrupts}
