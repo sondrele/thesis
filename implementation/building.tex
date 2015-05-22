@@ -14,9 +14,56 @@ When the project first started out it was based upon the \texttt{armboot} \cite{
 \texttt{armboot} is a small template project for using {\rust} bare metal on a STM32 ARM \glspl{mcu}.
 These are, similarly with the EFM32 series, also based on the Cortex-M series of ARM processor cores.
 
-\todo{Håvard: Skriv denne seksjonen}
 The project got up and running pretty fast based on how \texttt{armboot} was built.
 We looked at armboot's Makefile to figure out what flags to pass to {\rustc} in order to make it cross-compile for an ARM target architecture.
+The components listed in \autoref{tab:build:components} were identified as the minimal set of files needed to build an executable for the Gecko.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l l}
+    \file{thumbv7m-none-eabi.json} & llvm spec for compiler backend \\ \hline
+    \file{zero.rs} & minimal runtime requirements \\ \hline
+    \file{blinky.rs} & a program to execute \\ \hline
+    \file{efm32gg.ld} & linker script \\ \hline
+    \file{startup\_efm32gg.s} & ResetHandler and interrupt vector \\ \hline
+    \file{system\_efm32gg.c} & System Clock management \\
+  \end{tabular}
+  \caption{Initial Components for building {\rust} for ARM Cortex-M}
+  \label{tab:build:components}
+\end{table}
+
+The components in \autoref{tab:build:components} are the files included in the initial successfull build for the Gecko located at geckoboot.rs \cite{web:geckoboot-initial} for references.
+In order to compile these components into an executable a Makefile was developed.
+The executable program, called \prog{blinky}, blinks the LEDs on the STK.
+The compilation process consisted of compiling the \file{blinky.rs} file to assembly by passing the target architecture and assembly output flag to the {\rustc} compiler.
+This file was then, along with the startup and system files, compiled into object files with {\arm-gcc} and linked into an executable with the linker script using {\arm-ld}.
+Note: The initial build did not contain the \gls{rcl}.
+
+The build system was then was modified to include the \gls{rcl} library by building it manually for the architecture producing a \file{libcore.rlib} library file which was linked to the \file{blinky.rs} file before compiling it to assembly.
+The initial bindings to {\emlib} was created and compiled together with the startup and system files.
+
+The final revision on the build system using Makefiles was to eliminate the assembly step for the {\rust} sources and to use the {\rustc} compiler as the last step to create the executable binary.
+This was done by building an archive file for the object files generated {\C} compiled sources with the \cmd{arm-none-eabi-ar}.
+The archive along with linker arguments was supplied to the {\rustc} compiler in order to make the binary.
+Making this change resulting in the a build system with three steps as listed in \autoref{tab:build-steps}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l l l l}
+    & \textbf{Description} & \textbf{Output} & \textbf{Output Type} \\
+    &&&\\
+    1. & Building emlib+system+startup & \file{libcompiler-rt.a} & static archive \\
+    2. & Building \gls{RCL} & \file{libcore.rlib} & static {\rust} crate \\
+    3. & Building and linking executable & \format{\%.bin} & executable {\elf} file \\
+  \end{tabular}
+  \caption{Build steps}
+  \label{tab:build-steps}
+\end{table}
+
+At this stage of the evolution of the build system the {\emlib} bindings was build as part of the {\rust} application code.
+Later this was separated out to produce an \file{libemlib.rlib} which complements an \file{libemlib.a} containing the {\C} porting of the emlib code.
+By doing this the system and startup code was separated to \file{libstartup.rlib} and \file{libstartup.a}.
+This lead to the final library design given in \autoref{fig:lib:structure}.
 
 \subsection{Transitioning to Cargo}
 \label{ssub:transitioning_to_cargo}
@@ -162,6 +209,7 @@ Different systems do not necessarily support all flags and possibilities, so if 
 There have been an issue on Cargo's project page about implementing a new subcommand (called \cmd{cargo-rustc}) for the package manager.
 This subcommand would have allowed for passing arbitrary flags further on to {\rustc}, but with the restriction of only compiling a \emph{single} target at a time.
 This means that only \emph{either} the library, a binary, an example or a test (or a package dependency), may be compiled with the extra flags, and \emph{not} the entire package.
+
 These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our {\emlib}, can depend on it for completing the build.
 Indeed, the functionality proposed with this subcommand would be enough to cover all the cases that we solved with our implementation of \cmd{cargo-linkargs}.
 
@@ -170,3 +218,20 @@ Even though \cmd{cargo-linkargs} worked great for its purpose, it was not very e
 Not only would it benefit our project, it would also give many other {\rust} projects the ability to use Cargo for the entire compilation process.
 Since both {\rust} and Cargo are open source projects, it was quick to get in contact with the project maintainers about the issue, and eventually submit a pull-request with the new subcommand.
 After it was reviewed by one of the project maintainers, the pull-request was accepted and merged into Cargo's code base, and it is already part of {\rust}'s nightly builds.
+
+\subsection{Final Library Build Artifacts}
+
+The resulting files of compiling the libraries are presented in \autoref{fig:lib:structure}.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.5]{figures/lib-structure.png}
+  \end{center}
+  \caption{The organization files of libraries}
+  \label{fig:lib:structure}
+\end{figure}
+
+The figure shows that all of the libraries except for \lib{modules} consists of both a {\C} static archive (\format{*.a}) and a {\rust} library (\format{*.rlib}).
+The \lib{modules} library is a high level library that is built on top of {\emlib} and \lib{emdrv}.
+The rest of the libraries provides the {\rust} bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
+We also see the dependencies, denoted by the arrows, between the libraries generally flowing from the top level abstraction down to the lower level abstractions.
