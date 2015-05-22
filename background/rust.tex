@@ -11,18 +11,33 @@ Over the course of {\rust}'s development, the language has set out to solve two 
 \subsection{Language Features}
 \label{ssub:rust:features}
 
-This section starts by describing {\rust}'s {\core} library and its type-system, before moving on to presenting some of the language features that makes {\rust} so different from C.
+This section starts by describing {\rust}'s standard library and its type-system, before moving on to presenting some of the language features that makes {\rust} so different from C.
 Because {\rust} is a multi-paradigm language it offers a wider range of language constructs that are not present in the procedural paradigm usually found in embedded programming.
 
-\subsubsection{The Core Library}
+\subsubsection{The Rust Standard Library}
+\label{sec:rsl}
 
-\rust's {\core} library, defines the platform independent part of the language.
-This library is not directly accessible to the programmer, instead its stable parts are reexported through {\rust}'s standard library called {\std}.
-In this way, {\core} is not interfaced with directly in normal {\rust} programs, so it can be modified while {\std}'s interface stays the same.
-The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
+The \gls{rsl} is the is included into all {\rust} programs and strives to be an abstraction layer to write portable applications.
+The library is implemented as a facade, meaning that the crate {\std} provides a thin wrapper which reexports a stable interface for crates like \lib{alloc} (for memory allocation), \lib{collections} (general purpose data structures) and {\core} (described in the next section).
+In addition to providing the facade, {\std} crate defines platform abstractions like files, network protocols and threading, all of these assumes an OS.
+This basic fact renders the {\std} crate unusable in a barebone embedded system as these dependencies will not be met.
+Luckly it is possible to opt-out of using the library.
 
-\autoref{tab:rust:datatypes} lists the primitive datatypes available in {\rust}, the {\core} library defines many functions and abstractions that are used to manage and manipulate these datatypes.
-Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from {\C} are discussed throughout the following sections.
+Notice the distinction between the \gls{rsl} which includes the functionality provided by the underlying Collection, Allocation and Core libraries, and the {\std} crate which defines the facade and the mentioned additional abstractions.
+
+\subsubsection{The Rust Core Library}
+\label{sec:rcl}
+
+\gls{rcl}, defines the platform independent part of the language.
+This library is not intended to be directly interfaced with by the application programmer, instead a stable interface is reexported through \gls{rsl}.
+In this way, \gls{rcl} is not interfaced with directly in normal {\rust} programs.
+This gives the developer the ability to modify the library while the \gls{rsl} interface stays the same.
+%The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
+
+The distinction between \gls{rcl} and the {\core} crate is not that clear as the {\std} and \gls{rsl} as \gls{rcl} does not export any functionallity which is not defined in {\core}.
+
+\autoref{tab:rust:datatypes} lists the primitive datatypes available in {\rust}, \gls{rcl} defines many functions and abstractions that are used to manage and manipulate these datatypes.
+%Most of the datatypes are self explanatory when it comes to representation and functionality, the ones that are noticeably different from {\C} are discussed throughout the following sections.
 
 \begin{table}[H]
   \centering
