@@ -4,7 +4,7 @@ This section describes the performance measurement of the system.
 Firstly we present the metric used for measuring the performance in \autoref{sec:perf:fps}, then the bias involved when using this metric is discussed in \autoref{sec:perf:bias}.
 \autoref{sec:perf:res} presents the results obtained and lastly \autoref{sec:perf:disc} discusses the results.
 
-The performance was measured by implemententing the game application described in \autoref{circle-game} in both C and Rust and recording a performance metric.
+The performance was measured by implemententing the game application described in \autoref{circle-game} in both {\C} and {\rust} and recording a performance metric.
 The performance metric chosen for the evaluation is the Frames Per Second, FPS.
 This metric measures the amount of work/second.
 The metric is simple and commonly used when measuring relative performance of realtime graphic applications.
@@ -76,9 +76,9 @@ extern fn SysTick_Handler() {
   \label{lst:perf:fps}
 \end{listing}
 
-As can be seen in \autoref{lst:perf:fps} a frame counter is incremented each iteration of the Game Loop in the variable FRAME\_COUNT.
-Each second this counter is stored in the LAST\_FRAME\_COUNT variable and reset to zero.
-This ensures that each second the number of frames draw the last second is always held by the LAST\_FRAME\_COUNT variable.
+As can be seen in \autoref{lst:perf:fps} a frame counter is incremented each iteration of the Game Loop in the variable \code{FRAME\_COUNT}.
+Each second this counter is stored in the \code{LAST\_FRAME\_COUNT} variable and reset to zero.
+This ensures that each second the number of frames draw the last second is always held by the \code{LAST\_FRAME\_COUNT} variable.
 This variable is printed on the screen on each iteration.
 
 \subsection{Measurment Bias}
@@ -115,7 +115,7 @@ This was done by implementing a simple artificial intellegence which emulates th
 A Random Number Generator, RNG is used to generate a stream of seemingly random numbers.
 The RNG is used to generate position for the obstacles the user has to avoid described in \autoref{sec:back:game}.
 The rational for the User Input bias related to deterministic execution can be reiterated for a Random Number Generator, RNG.
-As Rust implements its own RNG which does not depend on the C RNG, a bias can be observed between the platform.
+As {\rust} implements its own RNG which does not depend on the {\C} RNG, a bias can be observed between the platform.
 This lead to the implementation of a simple deterministic RNG based the RNG for Doom.
 This RNG contains a list of 256 seemingly random numbers.
 Each time a number is requested by the application the RNG returns a number from the list and increments a internal index into the list.
@@ -129,7 +129,7 @@ In an game like the one considered here this could done by defining the game to 
 These kind of measurements are more relevant when the actual performance of the application is important.
 Such applications can be the interrupt handler of a time critical stream of interrupt.
 In these applications the success criteria is if the operation can be performed within the given deadline.
-In this experiment we are interested in the releative performance between C code and Rust code.
+In this experiment we are interested in the releative performance between {\C} code and {\rust} code.
 Therefore the added bias by the FPS measurment is accetable as long as it is the same for both code bases.
 In fact in this case we can reformulate the problem description of the Game to report the fps to user.
 This is due to the fact that the process of measuring the FPS is similar in nature to the problem we are trying to measure.
@@ -152,20 +152,20 @@ In this section the result obtained when measuring performance is presented.
   \begin{center}
     \includegraphics[scale=0.5]{results/plots/perf/perf.png}
   \end{center}
-  \caption{Frame/Second achived by C and Rust code.}
+  \caption{Frame/Second achived by {\C} and {\rust} code.}
   \label{fig:perf:res}
 \end{figure}
 
 \autoref{fig:perf:res} graphs the results for the performance measurements.
 The Y axis shows the number of Frames Per Seconds achived by running the game on the optimization level given by the X axis.
-We see that the C code is \~10x faster on O0 and O1, but Rust equates by providing a 1.07x speedup over C at O2.
-C achives best performance at level O2 while Rust is slighly faster on O3 compared to O2.
-The optimization Os for size is not available for Rust and is included for the discussion of size vs performance in \autoref{sec:res:size-v-perf}.
+We see that the {\C} code is \~10x faster on O0 and O1, but {\rust} equates by providing a 1.07x speedup over {\C} at O2.
+C achives best performance at level O2 while {\rust} is slighly faster on O3 compared to O2.
+The optimization Os for size is not available for {\rust} and is included for the discussion of size vs performance in \autoref{sec:res:size-v-perf}.
 \todo{I'm thinking there will be a larger discussion taking all the results in consideration in the end of this chapter}
 
 \subsection{Discussion}
 \label{sec:perf:disc}
-As \autoref{sec:perf:res} shows the performance of the application written in Rust not only matches the FPS performance of the C version, it also provides a speedup of 1.07x.
+As \autoref{sec:perf:res} shows the performance of the application written in {\rust} not only matches the FPS performance of the {\C} version, it also provides a speedup of 1.07x.
 We also see that the optimiziations are more predictable on this application in relation to optimization level, with perf(Ox) > perf(Oy) when x > y.
-This relationship does not hold for the C application where the perf(O1) > perf(O3).
-The results for the C application shows that optimizing for size provides a higher performance enhancement than applying the most aggressive optimization.
+This relationship does not hold for the {\C} application where the perf(O1) > perf(O3).
+The results for the {\C} application shows that optimizing for size provides a higher performance enhancement than applying the most aggressive optimization.
