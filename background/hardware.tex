@@ -151,19 +151,19 @@ This section will shortly introduce the peripherals that are relevant in this pr
 \label{fig:efm32gg990_block_diagram}
 \end{figure}
 
-Communication is important in every modern computing system, the \texttt{Gecko} supports a handful of different serial communication protocols through different peripherals.
+Communication is important in every modern computing system, the {\gecko} supports a handful of different serial communication protocols through different peripherals.
 The \gls{usart}, and the \gls{uart}, together with the \gls{i2c}, are serial protocols that allows for efficient communication between a high range of external devices.
 Different areas of use can be e.g. reading and writing to SD memory cards or transferring data over a serial interface to a computer.
 Peripherals like the \gls{usart} and the \gls{uart} can be used in combination with \gls{dma}, which is useful for energy constraint applications.
 This combination make it possible to implement applications that can gather data from a range of external sensors, and transfer or store it to other peripherals with minimal interaction from the \gls{cpu}.
 
 \gls{gpio} is used for pin configuration and manipulation of the \gls{mcu} pins, and are often used in order to configure the pins that are required by other peripherals.
-Simple Push Buttons and LEDs are configured with the \gls{gpio}, and e.g. the \gls{usart} needs to have configured at least two \gls{GPIO} pins for both receiving and transmitting data.
+Simple Push Buttons and LEDs are configured with the \gls{gpio}, and e.g. the \gls{usart} needs to have configured at least two \gls{gpio} pins for both receiving and transmitting data.
 
 Many applications are used to gather data by measuring different sensors and signals.
 The \gls{adc} is a peripheral that is used to measure analogue signals, like e.g. sound or light intensity, and convert them to digital signals.
 Oppositely, the \gls{dac} can be used to convert digital signals back to e.g. analogue sound signals.
 
-Timers are another important peripheral type, the \texttt{Gecko} supports a number different timers that operate with different frequencies and at different energy levels.
+Timers are another important peripheral type, the {\gecko} supports a number different timers that operate with different frequencies and at different energy levels.
 The Timer peripheral is used to keep track of timing and counting of different events, without intervention of the \gls{cpu}, it can e.g. be used to initiate \gls{dma} transfer over \gls{uart} at timed intervals.
 The \gls{rtc} is another timer that work at low energy levels which is useful for energy constraint applications.
