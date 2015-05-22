@@ -233,5 +233,5 @@ The resulting files of compiling the libraries are presented in \autoref{fig:lib
 
 The figure shows that all of the libraries except for \lib{modules} consists of both a {\C} static archive (\format{*.a}) and a {\rust} library (\format{*.rlib}).
 The \lib{modules} library is a high level library that is built on top of {\emlib} and \lib{emdrv}.
-The reset of the libraries provides the {\rust} bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
+The rest of the libraries provides the {\rust} bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
 We also see the dependencies, denoted by the arrows, between the libraries generally flowing from the top level abstraction down to the lower level abstractions.
