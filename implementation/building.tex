@@ -42,8 +42,9 @@ Note: The initial build did not contain the \gls{RCL}.
 The build system was then evolved to include the \gls{RCL} library by building it manually for the architecture producing a \file{libcore.rlib} library file which was linked to the \file{blinky.rs} file before compiling it to assembly.
 The initial bindings to emlib was created and compiled together with the startup and system files.
 
-The final revision on the build system using Makefiles was to eliminate the \prog{gcc} build step for the Rust files.
-This revision utilizes the \cmd{link-args} argument to the {\rustc} compiler to specify the arguments to the linker.
+The final revision on the build system using Makefiles was to eliminate the assembly step for the Rust sources and to use the {\rustc} compiler as the last step to create the executable binary.
+This was done by building an archive file for the object files generated {\C} compiled sources with the \cmd{arm-none-eabi-ar}.
+The archive along with linker arguments was supplied to the {\rustc} compiler in order to make the binary.
 Making this change resulting in the a build system with three steps as listed in \autoref{tab:build-steps}.
 
 \begin{table}[H]
