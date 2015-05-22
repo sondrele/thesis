@@ -167,7 +167,7 @@ pub enum CCMode {
 \subsection{The Bindings Libraries}
 \label{ssub:the_bindings_library}
 
-We have written many example applications in Rust that are based on bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
+We have written many example applications in {\rust} that are based utilizes the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
 In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \todo{Refer to sections about circle-game and sensor-tracker}.
 
@@ -276,7 +276,7 @@ Uses the {\chip{STK}}'s light sensor to measure the light intensity, and signal 
 \gls{lesense}, \gls{acmp}, \gls{gpio}, \gls{rtc}\\
 
 \prog{boxes}         &
-Demonstrates dynamic memory allocation with \code{Box}'es, provided by the Rust \lib{alloc} library. &
+Demonstrates dynamic memory allocation with \code{Box}'es, provided by the {\rust} \lib{alloc} library. &
 \lib{alloc} \\
 
 \prog{vec}           &
@@ -400,7 +400,7 @@ fn test_init_called_with_default() {
   adc0.init(&Default::default());
 }
     \end{minted}
-    \caption{Rust side of \code{ADC\_Init} test}
+    \caption{{\rust} side of \code{ADC\_Init} test}
     \label{lst:test:adc:rust}
   \end{listing}
   \end{minipage}
