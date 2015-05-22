@@ -1,4 +1,4 @@
-\subsubsection{Closures as interrupt handlers}
+\section{Handling interrupts with Closures}
 \label{sec:irq-closures}
 
 This section describes an experimental approach to handling interrupts with closures.
@@ -7,8 +7,8 @@ The Rust programming language frowns upon using global variables, especial when 
 Using such variables forces the programmer to use unsafe blocks thus transfering the responsibility of the safety analysis from the compiler to the programmer.
 Therefore avoiding mutable global state is a goal of any Rust program.
 
-\paragraph{Motivation}
-\label{par:irq:motivation}
+\subsection{Motivation}
+\label{sec:irq:motivation}
 
 Lets consider a simple example for motiviating the use of closures to handle interrupts.
 The example application samples an analogue signal and saves the result to a memory buffer.
@@ -84,7 +84,7 @@ The core of this example is the line \texttt{adc.on\_single(move |sample| ch.sen
 This creates a closure which takes ownership over the \textit{write end} for the circular buffer.
 The closure is passed as a argument to the \texttt{on\_single} method on the \gls{adc} ensuring that the closure is called each time a new sample is ready with the sample as an argument.
 
-\paragraph{Implementation}
+\subsection{Implementation}
 We now look at how we can provide this behaviour in Rust and present the problems that arised along the way.
 
 The process of handling an interrupt is described in \autoref{sec:impl:handling-interrupts}.
@@ -260,9 +260,9 @@ fn ADC0_IRQHandler() {
 
 Now looking back at out target implementation in \autoref{lst:irq:local} we augment the example to be functional with the library presented in this section.
 
-\paragraph{Working example with closure as interrupt handler}
+\subsection{An example}
 
-\autoref{lst:irq:closure} shows a runnable version of the example application from \autoref{par:irq:motivation}.
+\autoref{lst:irq:closure} shows a runnable version of the example application from \autoref{sec:irq:motivation}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -316,7 +316,7 @@ pub fn init() {
 
 This lets us have an Event Hub with truly static lifetime without allocating it in the \texttt{main} function stack frame.
 
-\subsubsection{Discussion}
+\subsection{Discussion}
 
 The issue with the end solution presented in \autoref{lst:irq:init} which makes it unsuited for Servo is the fact that when converting the \texttt{Box} to a raw pointer, the programmar takes on the responsibility of deallocating the object.
 In Servos use case, the desired behaviour is to deallocate the object when the \texttt{main} stack frame is deallocated.
