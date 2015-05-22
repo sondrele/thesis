@@ -16,11 +16,11 @@ These are, similarly with the EFM32 series, also based on the Cortex-M series of
 
 The project got up and running pretty fast based on how \texttt{armboot} was built.
 We looked at armboot's Makefile to figure out what flags to pass to {\rustc} in order to make it cross-compile for an ARM target architecture.
-The components listed in \autoref{tab:build:components} were identified as the minimal set of needed to build an executable for the Gecko.
+The components listed in \autoref{tab:build:components} were identified as the minimal set of files needed to build an executable for the Gecko.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{l l l}
+  \begin{tabular}{l l}
     \file{thumbv7m-none-eabi.json} & llvm spec for compiler backend \\ \hline
     \file{zero.rs} & minimal runtime requirements \\ \hline
     \file{blinky.rs} & a program to execute \\ \hline
@@ -28,21 +28,21 @@ The components listed in \autoref{tab:build:components} were identified as the m
     \file{startup\_efm32gg.s} & ResetHandler and interrupt vector \\ \hline
     \file{system\_efm32gg.c} & System Clock management \\
   \end{tabular}
-  \caption{Initial Components for building Rust for ARM Cortex-M}
+  \caption{Initial Components for building {\rust} for ARM Cortex-M}
   \label{tab:build:components}
 \end{table}
 
 The components in \autoref{tab:build:components} are the files included in the initial successfull build for the Gecko located at geckoboot.rs \cite{web:geckoboot-initial} for references.
 In order to compile these components into an executable a Makefile was developed.
+The executable program, called \prog{blinky}, blinks the LEDs on the STK.
 The compilation process consisted of compiling the \file{blinky.rs} file to assembly by passing the target architecture and assembly output flag to the {\rustc} compiler.
-This file was then, along with the startup and system files compiled into object files with {\arm-gcc} and linked into an executable with the linker script using {\arm-ld}.
+This file was then, along with the startup and system files, compiled into object files with {\arm-gcc} and linked into an executable with the linker script using {\arm-ld}.
+Note: The initial build did not contain the \gls{rcl}.
 
-Note: The initial build did not contain the \gls{RCL}.
+The build system was then was modified to include the \gls{rcl} library by building it manually for the architecture producing a \file{libcore.rlib} library file which was linked to the \file{blinky.rs} file before compiling it to assembly.
+The initial bindings to {\emlib} was created and compiled together with the startup and system files.
 
-The build system was then evolved to include the \gls{RCL} library by building it manually for the architecture producing a \file{libcore.rlib} library file which was linked to the \file{blinky.rs} file before compiling it to assembly.
-The initial bindings to emlib was created and compiled together with the startup and system files.
-
-The final revision on the build system using Makefiles was to eliminate the assembly step for the Rust sources and to use the {\rustc} compiler as the last step to create the executable binary.
+The final revision on the build system using Makefiles was to eliminate the assembly step for the {\rust} sources and to use the {\rustc} compiler as the last step to create the executable binary.
 This was done by building an archive file for the object files generated {\C} compiled sources with the \cmd{arm-none-eabi-ar}.
 The archive along with linker arguments was supplied to the {\rustc} compiler in order to make the binary.
 Making this change resulting in the a build system with three steps as listed in \autoref{tab:build-steps}.
@@ -53,15 +53,15 @@ Making this change resulting in the a build system with three steps as listed in
     & \textbf{Description} & \textbf{Output} & \textbf{Output Type} \\
     &&&\\
     1. & Building emlib+system+startup & \file{libcompiler-rt.a} & static archive \\
-    2. & Building \gls{RCL} & \file{libcore.rlib} & static Rust crate \\
+    2. & Building \gls{RCL} & \file{libcore.rlib} & static {\rust} crate \\
     3. & Building and linking executable & \format{\%.bin} & executable {\elf} file \\
   \end{tabular}
   \caption{Build steps}
   \label{tab:build-steps}
 \end{table}
 
-At this stage of the evolution of the build system the emlib bindings was buils as part of the Rust application code.
-Later this was separated out to produce an \file{libemlib.rlib} which complements an \file{libemlib.a} containing the C porting of the emlib code.
+At this stage of the evolution of the build system the {\emlib} bindings was build as part of the {\rust} application code.
+Later this was separated out to produce an \file{libemlib.rlib} which complements an \file{libemlib.a} containing the {\C} porting of the emlib code.
 By doing this the system and startup code was separated to \file{libstartup.rlib} and \file{libstartup.a}.
 This lead to the final library design given in \autoref{fig:lib:structure}.
 
@@ -221,7 +221,7 @@ After it was reviewed by one of the project maintainers, the pull-request was ac
 
 \subsection{Final Library Build Artifacts}
 
-The collection of the output file for the library is presented in \autoref{fig:lib:structure}.
+The resulting files of compiling the libraries are presented in \autoref{fig:lib:structure}.
 
 \begin{figure}[H]
   \begin{center}
@@ -231,7 +231,7 @@ The collection of the output file for the library is presented in \autoref{fig:l
   \label{fig:lib:structure}
 \end{figure}
 
-The figure shows that all of the libraries except for \lib{modules} consists of both a C static archive (\format{*.a}) and a Rust library (\format{*.rlib}).
-The \lib{modules} library is a high level library over the {\emlib} and \lib{emdrv} libraries.
-The reset of the libraries provides the Rust bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
+The figure shows that all of the libraries except for \lib{modules} consists of both a {\C} static archive (\format{*.a}) and a {\rust} library (\format{*.rlib}).
+The \lib{modules} library is a high level library that is built on top of {\emlib} and \lib{emdrv}.
+The reset of the libraries provides the {\rust} bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
 We also see the dependencies, denoted by the arrows, between the libraries generally flowing from the top level abstraction down to the lower level abstractions.
