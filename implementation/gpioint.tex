@@ -5,7 +5,7 @@ The issue was discoverd when annotating the \texttt{unsafe} blocks for referenci
 
 \subsection{Presenting the Problem}
 
-The \texttt{gpioint} driver lets the user registers a callback function to be called when an interrupt occures at a given \gls{gpio} pin.
+The \texttt{gpioint} driver lets the user register a callback function to be called when an interrupt occur at a given \gls{gpio} pin.
 It is implemented with a global mutable list of 16 function pointers, a register function to assign functions to indices of the list corresponding to \gls{gpio} pins, and a dispatch mechanisms which calls the correct functions when an interrupt occurs.
 The issue arises in the dispatch function in \autoref{lst:irq-dispatch:c}.
 
@@ -113,7 +113,7 @@ GPIOINT_IRQDispatcher:
 \end{listing}
 
 At O1 the compiler has performed \gls{cse} to remove the duplicate load present in \autoref{lst:gpio:asm:O0}.
-This can be elimintated with the assumption that the gpioCallback will not be changed by external code.
+This can be elimintated with the assumption that the \code{gpioCallbacks} will not be changed by external code.
 But as the Rust version in \autoref{lst:irq-dispatch:rust} suggests this code can lead to a \concept{data race} because it is referencing a global mutable variable.
 
 \subsection{Proposed solution}
