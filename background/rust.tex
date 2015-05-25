@@ -254,7 +254,7 @@ Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter
 
 \subsubsection{Loops}
 
-\rust provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
+{\rust} provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
 The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
 \rust's \code{for} statement is merely syntactic sugar for a \code{loop} with an internal \code{match} around the iterator's \code{next()} function.
 \autoref{lst:rust:desugared-for} shows a simplified, expanded version of the code presented in \autoref{lst:rust:for}.
@@ -315,34 +315,36 @@ loop {
 \subsubsection{Closures}
 \label{sec:back:rust:closures}
 
-Closures, a type of anonymous functions, exposes many expressive programming patterns which have emerged the last few years through the popularization of JavaScript, and several functional languages.
+Closures, a type of anonymous functions, exposes many expressive programming patterns which have emerged the last few years through the popularization of JavaScript \todo{Is this statement true? Maybe its gotten more recognized because of JS, but  closures have been around since at least the 70s...}, and several functional languages.
 The consquence is that both C++ and Java has added support for creating anonymous functions called lambda expressions.
 
 A closure is a function has free variable which is contained within the scope the function is defined.
 The function is said to close over these variables called the environment of the closure.
 The closure can be used as an argument to another function or returned from a maker function.
 \autoref{lst:closure:filter} shows how a closure can be used to filter a list of numbers.
+\todo{Grammar in this paragraph needs to be fixed}
 
 \begin{listing}[H]
   \begin{minted}{rust}
 fn main() {
-  let limit = 3;
-
-  let nums = vec![1,2,3,4];
-  let filtered = nums.iter().filter(|el| el < limit).collect();
-
-  println!("{}", filtered);
+  let (nums, limit) = (vec![1, 2, 3, 4], 3);
+  let filtered: Vec<&u32> = nums.iter()
+                                .filter(|&el| *el < limit)
+                                .collect();
+  println!("{:?}", filtered); // prints: `[1, 2]'
 }
   \end{minted}
-  \caption{}
+  \caption{Using a closure to filter the entries of a vector.}
   \label{lst:closure:filter}
 \end{listing}
-\todo{This example does not work}
 
-The example creates a list of 4 numbers, makes an iterator which is filtered with the closure and collected into a new vector.
-The expression \texttt{|el| el < limit} defines the closure with a regular parameter \texttt{el}.
-The \texttt{limit} is a free variable which is found in the scope of the \texttt{main} function.
-This variable is added to the closures environment.
+\autoref{lst:closure:filter} shows how a closure can be used to filter a list of numbers, it also demonstrates one of the \code{Iterator} trait's many use cases.
+The example initializes a vector with four numbers and makes an iterator by calling the \code{iter()} function.
+Once the iterator is acquired, the \code{filter()} function is called with a closure as argument.
+The expression \code{|&el| *el < limit} defines the closure, which takes an argument \code{el} and returns a \code{bool}.
+The \code{limit} is a free variable which is found in the scope of the \texttt{main} function, this variable is part of the environment that is \emph{enclosed} by the closure.
+When the \code{collect()} function is called, the closure is executed with every element in the vector, and they are collected into a new vector if the closure's condition is satisfied.
+
 
 \subsection{Organization}
 \label{ssub:rust:organization}
