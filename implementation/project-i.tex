@@ -1,2 +1,134 @@
 \section{Project I - Sensor Tracker}
 \label{sec:impl:project:i}
+
+The following section gives an overview of the Project I - Sensor Tracker application.
+In the report we will use the name {\tracker} to refere to the application.
+
+\subsection{Goal}
+The project specification was developed in order to measure the energy efficiency of the {\rust} language used in an embedded system compared to {\C}.
+An energy efficient application is largely concerned with performing its task quick and going to sleep implying that parts of the chip is disabled and not consuming power.
+Given the design of the Gecko, certain operations like memory transfers can also offload the CPU by using DMA.
+
+
+\subsection{Specification}
+
+The full specification of the {\tracker} is given in \autoref{app:project:i}, here we only provide a brief summary.
+
+The application should record samples from selected peripherals on the STK and BIO-EXP boards described in \autoref{tab:hw:boards}.
+These samples should be stored internaly on the {\gecko}.
+When a computer is connected to the UART peripheral on the {\gecko}, the samples should be extractable over a textual serial interface.
+
+\subsection{Implementation}
+
+The application has two modes of operation, sample collection and sample transfer.
+
+\subsubsection{Sample Collection}
+
+The main part of the application, gathering the samples, was implemented as described in \autoref{fig:projec:i:samples}.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.5]{figures/ProjectI.png}
+  \end{center}
+  \caption{Sample Collection Phase}
+  \label{fig:project:i:samples}
+\end{figure}
+
+The RTC clock is set up to generate interrupts each \emph{n} milliseconds.
+On each interrupt from the RTC a new sample is created by the Sensors and pushed into a circular buffer structure.
+The main loop which is executed once after each interrupt has been handled extracts all the sample currently in the circular buffer and stores them in a sample store in RAM.
+
+The Sensors used in the application is shown in \autoref{tab:project:i:sensors}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| l | l | l | l | l | l |}
+    \hline
+    \# & Name & Part & Connection & Measured Data & Data Type \\
+    \hline \hline
+    0 & Internal Temperature Sensor & & ADC0 & CPU Temperature & \code{u8} \\
+    \hline
+    1 & Humidity Relative Sensor & Si7013 & I2C1 & Room Humidity & \code{u32} \\
+    \hline
+    2 & Temperature Sensor & Si7013 & I2C1 & Room Temperature & \code{i32} \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:project:i:sensors}
+\end{table}
+
+\subsubsection{Sample Transfer}
+
+The sample transfer mode is implemented by a \gls{cli} over the UART serial communication protocol.
+The \gls{cli} offers a read command which is used to read all the samples collected from one of the three sensors described in \autoref{tab:project:i:sensors}
+
+\subsection{Operation}
+
+There are two interfaces for operating the application.
+
+\subsubsection{Application Modes}
+The mode of operation is set by using the push buttons on the STK, see \autoref{fig:efm32gg-stk3700}.
+The operation of the buttons are shown in \autoref{tab:project:i:buttons}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Mode & Button & Action \\
+    \hline \hline
+    Collect & PB0 & Go to Transfer \\
+    \hline
+    Collect & PB1 & Stay in Collect \\
+    \hline
+    Transfer & PB0 & Stay in Transfer \\
+    \hline
+    Transfer & PB1 & Go to Collect after current transfer \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:project:i:buttons}
+\end{table}
+
+\subsubsection{Connecting to the STK}
+When the application is in transfer mode, it is controlled by a \gls{cli} connected to over UART.
+To connect to the STK in transfer mode a USB cable with and FTDI chip can be used.
+Connect the RX and TX wires as shown in \autoref{fig:project:i:connect}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.5]{figures/project-i-connect.png}
+  \end{center}
+  \caption{Connecting to the STK}
+  \label{fig:project:i:connect}
+\end{figure}
+
+When a USB cable with FTDI is connected to the STK as shown in \autoref{fig:project:i:connect} a file handle for the serial port will be available under the \dir{/dev/} directory of a Unix like operating system.
+The application can then be interacted with, with an terminal application like \prog{picocom}.
+Connecting to the device with baudrate 9600 and error correction set to 8-1 (the defaults of \prog{picocom} will provide access to the {\tracker} \gls{cli}.
+
+\subsubsection{Command Line Interface}
+The \gls{cli} of the {\tracker} application contains a single command, read.
+The read command takes one argument and is on the format \cmd{r n}, where \emph{n} is the integer 0, 1 or 2.
+A read command is terminated by a cariage return, ascii symbol \code{\\n}.
+All non-conforming commands are ignored by the application.
+The \emph{n} parameter select the sensor data for \autoref{tab:project:i:sensors} which are queried.
+Each time a command conforming command is sent the application will repond by outputting all collected samples separated by a space.
+
+An example run of the \gls{cli} is shown in \autoref{lst:project:i:sample-run} with comments.
+
+\begin{listing}[H]
+  \begin{minted}{bash}
+> r 3 // non-conformant command ignored
+> r 0 // read Internal Temperature sensor
+-- insert data here --
+> r 0 // read Internal Temperature sensor
+-- insert data here --
+> r 1 // read Humidity Relative sensor
+-- insert data here --
+> // prompt ready for next command
+  \end{minted}
+  \caption{Example run of Command Line Interface}
+  \label{lst:project:i:sample-run}
+\end{listing}
+
+\subsection{Discussion}
