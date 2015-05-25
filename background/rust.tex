@@ -108,23 +108,6 @@ Even though the \code{Option} is analogous to a {\C} pointer, it is important to
 It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
 The usage of {\enum} types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
 
-\subsubsection{Case Study - List}
-
-A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
-Each list item is either a value and a pointer to the next item, as the \code{Cons}, or a termination value as \code{Nil}.
-\todo{I think this should be an example of Boxed types in stead of a case study of Enums}
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    enum List<T> {
-      Cons(T, Box<List>),
-      Nil,
-    }
-  \end{minted}
-  \caption{Definition of Linked List}
-  \label{lst:rust:list}
-\end{listing}
-
 \subsubsection{Structs}
 \label{ssub:structs}
 
@@ -179,6 +162,26 @@ The representation of the string type is closely related to slices, as a string-
 It is important to note that an arbitrary slice of bytes are not necessarily a valid string.
 The \keyword{str} type differs from a \code{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
 
+\subsubsection{Boxed values}
+
+\autoref{lst:rust:list} shows an example of how a linked list can be represented with an enum.
+Each list item is either a value and a pointer to the next item, as in \code{Cons}, or a termination value as in \code{Nil}.
+One important thing to notice in this example is the usage of a \code{Box<...>} instead of the mentioned pointer.
+As mentioned earlier, {\rust} provides abstractions on top of its raw pointers, the \code{Box} is an example of this in action.
+A boxed value, is simply a value that is stored on the heap, with its owning handle stored in a \code{Box} structure.
+This structure implements the same operators that are otherwise associated with pointers, so they are semantically the same for this piece of code.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    enum List<T> {
+      Cons(T, Box<List>),
+      Nil,
+    }
+  \end{minted}
+  \caption{Definition of Linked List}
+  \label{lst:rust:list}
+\end{listing}
+
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
 
@@ -211,6 +214,7 @@ We can also see that both \code{Some} and \code{None}, i.e. all possible outcome
 \end{listing}
 
 \subsubsection{Traits}
+
 Traits in {\rust} are similar to Interfaces in Java, they are used to facilitate code reuse and polymorphism.
 A \code{trait} can define a set methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
 The definition of one of {\rust}'s more integral traits is the \code{Iterator} trait, which is shown in \autoref{lst:rust:iterator}.
