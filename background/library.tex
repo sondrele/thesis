@@ -29,7 +29,7 @@ The \gls{cmsis} library is a \gls{hal} provided by ARM for their Cortex-M \glspl
 It is divided into a few modules, namely; Core, DSP, RTOS and SVD.
 \todo{I think its wierd to mention all these names without any further explanation. DSP, SVD etc. does not tell you much...}
 The Core module is the only part of \gls{cmsis} that we utilize in this project.
-It provides functionality to control interrupts though \gls{nvic}, manage the system clocks, and program tracing through ITM \todo{what is this?}.
+It provides functionality to control interrupts though \gls{nvic}, manage the system clocks, and program tracing through \gls{itm}.
 The different peripherals that comes with ARM's \glspl{cpu} are memory mapped, which means that reading and writing to certain addresses can be used to modify the peripheral's internal registers, this is explained further in \autoref{sec:back:oo}.
 
 \subsection{Emlib}
