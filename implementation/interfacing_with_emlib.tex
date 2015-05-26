@@ -378,7 +378,7 @@ To meet this problem, a lightweight testing framework was developed which enable
 The goal of the framework was to initialize the data on the {\rust} side, call functions via the \gls{ffi}, and verify that the correct functions were called with the exact data as supplied.
 In order to do this, we made a framework that could replace {\emlib}'s code with statically generated test mocks, before calling these mocked functions from {\rust} and then verify that the functions where called correctly in {\C}.
 
-The implemented framework is a small test runner that utilizes CMock \cite{web:cmock} and Unity \cite{web:unity}, for mocking and assertions, respectively.
+The implemented framework is a small test runner that utilizes CMock and Unity\footnote{\url{http://www.throwtheswitch.org/}}, for mocking and assertions, respectively.
 All of the unit tests were compiled into a binary that was executed on the {\gecko}, which reported back via \gls{usart} whether the tests failed or ran successfully.
 An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
 
