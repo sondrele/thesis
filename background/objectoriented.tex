@@ -179,6 +179,12 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
+The layout of the Java object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
+This is not the case as this would map the object tag to the base address of the \gls{adc} minus 4 bytes.
+This location is, in the case of the {\gecko}, an unmapped memory section used to as padding the previous \gls{mmio}.
+Java uses this object tag to store a reference used to dynamicaly dispatch method calls to the object.
+And using the reference in place of a regular Java object would cause the the method dispatch mechanism to fail.
+
 \subsection{Adding Object Functionality}
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
