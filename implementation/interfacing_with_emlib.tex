@@ -307,8 +307,10 @@ extern {
 
 If we compare the call-stacks between calling the \code{timer0.int\_enable} function in {\rust} and calling the \func{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
 These are simple wrappers which require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one to two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
-By compiling the code with optimization, {\rust} will get rid of the overhead introduced by the function that wraps around the call to the foreign function.
-Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will remove the overhead entirely, which results in the same performance and similar call-stacks between {\C} and {\rust}.
+However, by applying optimization this overhead can be removed completely and {\C} code can be called with no overhead \cite{web:rust_once_run_everywhere}.
+The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial inlining when the code is compiled with optimization as the only contents of the wrapper is a call to the actual function.
+Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will inline the C implementation into the Rust defined \code{timer0.int\_enable}.
+This results in the same performance and similar call-stacks for both {\C} and {\rust}.
 This is a working example of one of {\rust}'s many zero-cost abstractions.
 
 \subsection{Naming Conventions}
