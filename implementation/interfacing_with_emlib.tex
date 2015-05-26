@@ -197,18 +197,13 @@ When the user presses a button the {\chip{STK}} will initiate a transfer that re
 
 \subsection{Defining the Bindings}
 
-The \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
+The {\emlib} module for controlling the \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
 The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
-First, in order to use a peripheral, its clock need to be enabled.
-Every external clock is disabled by default \todo{Is this true? Is every clock disabled?} in order for the peripherals not to draw any power.
-By enabling the clock, the \gls{mcu} will get access to control it.
 Then an initialization structure for the Timer module is acquired, this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 
 \begin{listing}[h]
 \begin{minted}{c}
-// Enable clock for TIMER0 module
-CMU_ClockEnable(cmuClock_TIMER0, true);
 // Select TIMER0 parameters
 TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
 // Enable overflow interrupt
@@ -246,14 +241,12 @@ void TIMER0_IRQHandler(void) {
 The equivalent program written in {\rust} is shown in \autoref{lst:timer_program_rust}.
 Semantically they are the same, but the usage differs slightly, which is natural since we are using a higher level programming language.
 Instead of calling functions that are included through a {\C} header file, we are calling functions that are available through a {\rust} module.
-For example, the \code{Clock} enum is part of the \code{cmu} module, and the \func{enable\_irq} function is part of the \code{nvic} module.
+For example the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
 It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
 
 \begin{listing}[h]
 \begin{minted}{rust}
-// Enable clock for TIMER0 module
-cmu::clock_enable(cmu::Clock::TIMER0, true);
 // Select TIMER0 parameters
 let timer_init = Default::default();
 // Enable overflow interrupt
