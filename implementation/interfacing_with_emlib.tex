@@ -380,7 +380,6 @@ In addition an easy to assess feedback was given by one LED lit for faliure and 
 
 An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
 
-
 \begin{listing}[H]
   \centering
   \begin{minipage}{\textwidth}
@@ -450,9 +449,7 @@ Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s o
 
 % Consequently, given that the testing framework in the standard library relies heavily on the  that was discussed in \autoref{sec:back:lib}, this renders the framework unusable for our embedded platform.
 
-\subsection{Thoughts and Review}
-
-\todo{Does it make sense to have this section here? Should content like this be mover somewhere else (like in the discussion chapter), or is this a good place?}
+\subsection{Discussion}
 
 Writing the bindings for the different peripherals was a tedious work, that required careful review of the {\emlib} source code in order to correctly port enum- and struct-definitions from {\C} to {\rust}.
 Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various {\C} macros defined in header files that are used throughout the library.
