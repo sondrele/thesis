@@ -360,8 +360,8 @@ This was provoked by the fact that testing software on an embedded system is a t
 More often than not you find yourself running the code in the debugger, inspecting the call stack and function arguments, to ensure that the bindings are calling the correct functions, with the correct arguments.
 The fact about arguments has a subtle point to it.
 
-We are working in two statically typed languages which leads the compiler to statically assure that the correct types are passed around.
-However, there are no checks to assure that the memory layout of the datatypes in {\C} and {\rust} match at the borders between the two languages.
+We are working in two statically typed languages which leads the compiler to statically ensure that the correct types are passed around.
+However, there are no checks to ensure that the memory layout of the datatypes in {\C} and {\rust} match at the borders between the two languages.
 Currently, the {\rust} \gls{ffi} requires the programmer to redefine the {\C} datatypes in {\rust}, like structs and enums, in order to call into the {\C} functions that takes these datatypes as arguments.
 The process of verifying this manually proved to be both error prone and time consuming, which suggested the need for an automated system to verify the correctness of the bindings.
 
@@ -371,8 +371,13 @@ To meet this problem, a lightweight testing framework was developed which enable
 The goal of the framework was to initialize the data on the {\rust} side, call functions via the \gls{ffi}, and verify that the correct functions were called with the exact data as supplied.
 In order to do this, we made a framework that could replace {\emlib}'s code with statically generated test mocks, before calling these mocked functions from {\rust} and then verify that the functions where called correctly in {\C}.
 
-The implemented framework is a small test runner that utilizes CMock and Unity\footnote{\url{http://www.throwtheswitch.org/}}, for mocking and assertions, respectively.
+The implemented framework is a small test runner that utilizes CMock\footnote{\url{http://www.throwtheswitch.org/}\label{foot:throw}} and Unity\footref{foot:throw}, for mocking and assertions, respectively.
+Given a {\C} header file, the CMock library generates an \emph{mock} implementation of the interface for the module.
+The test code is then compiled by linking to the mock implementation instead of the library, {\emlib} in our case.
+In the test case, the mock can be configured to verify that our bindings, are using the mock as expected.
 All of the unit tests were compiled into a binary that was executed on the {\gecko}, which reported back via \gls{usart} whether the tests failed or ran successfully.
+In addition an easy to assess feedback was given by one LED lit for faliure and two LED lit for success.
+
 An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
 
 
@@ -415,12 +420,12 @@ void adc_expect_init_called_with_default() {
 
 When using mocking in unit tests, the workflow for the user seems reversed compared to standard unit tests.
 First, you set up the expected results by calling the \texttt{ADC\_Init\_Expect} function on the mock, as shown in \autoref{lst:test:adc:c}.
-This method is in fact called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
-When the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
+This method is called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
+Then after the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
 When the test returns, the test runner is responsible for calling a \texttt{Verify} function on the mock object.
 This function causes the program to fail and report its status over \gls{usart} if the expected result was not met.
 
-\autoref{fig:test-framework} shows a diagram of the program flow between the \textit{Test Runner}, the \textit{Test Case}, the \textit{emlib bindings} as \gls{CUT} \todo{what is CUT?}, and the \textit{emlib mock}, for when the test case above is executed.
+\autoref{fig:test-framework} shows a diagram of the program flow between the \textit{Test Runner}, the \textit{Test Case}, the \textit{emlib bindings} as \gls{cut}, and the \textit{emlib mock}, for when the test case above is executed.
 We see that the two boxes marked with \textit{Test Case} are the pieces of code the user of the framework, presented in \autoref{lst:test:adc}, writes.
 The stippled vertical line shows the separation between {\rust} and {\C} code, all the three function calls which cross this line is implemented using the {\rust} \gls{ffi}.
 
