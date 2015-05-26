@@ -18,8 +18,9 @@ In this way, the bindings have been defined incrementally during the development
 \subsubsection{CMSIS}
 \label{sub:cmsis_bindings}
 
-Interrupt support through NVIC was the only interesting part of the \gls{cmsis} library that we have written bindings for.
+Interrupt support through \gls{nvic} was the only interesting part of the \gls{cmsis} library that we have written bindings for.
 Most of the examples implement one or several IRQ handlers for the peripheral bindings that they demonstrate.
+\gls{nvic} provides utility functions for enabling and disabling the interrupt handling mechanisms of the Cortex-M3 processor.
 
 \subsubsection{Emlib}
 
@@ -231,7 +232,7 @@ TIMER_Init(TIMER0, &timerInit);
 \label{lst:timer_program_c}
 \end{listing}
 
-The next lines enable interrupts for the Timer, and the NVIC interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
+The next lines enable interrupts for the Timer, and the \gls{nvic} interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
 All this function does is to clear the interrupt signal and toggle the value of an LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
 Interrupts like this are an important part of programming the {\gecko}.
