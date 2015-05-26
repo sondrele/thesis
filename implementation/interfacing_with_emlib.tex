@@ -1,15 +1,20 @@
 % !TEX root = ../main.tex
 
-\section{Bindings for emlib}
+\section{Library Bindings}
 \label{sub:interfacing_with_emlib}
 
-The \gls{ffi} available in {\rust} has been used to interface with Silabs' emlib.
-This way, we have been able to create thin wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
-The following sections explain the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
-We will start by showing an example of what it is like to use Silab's emlib (with C), and then move on to what it looks like to use the bindings in {\rust}.
+This section describes the peripheral library \emph{bindings} developed for the platform.
 
-\subsection{The Bindings Libraries}
+The \gls{ffi} available in {\rust} has been used to interface with Silabs' suite of C libraries used to control the {\gecko}.
+This way, we have been able to create wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
+These wrappers are called language bindings.
+The following sections explain the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
+
+\subsection{The Libraries}
 \label{ssub:the_bindings_library}
+
+In \autoref{sec:back:lib} we presented the three libraries we have created partially binding support for, CMSIS, Emlib and Emdrv.
+Here we will take a closer look at which modules have been developed and an reasoning for chosing each one.
 
 We have written many example applications in {\rust} that utilize the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
