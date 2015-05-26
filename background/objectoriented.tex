@@ -1,10 +1,12 @@
 \section{Object Oriented Embedded Programming}
 \label{sec:back:oo}
 
+The interface of many of the modules defined in {\emlib} resembles that of objects found in Object Oriented programming.
+This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
+
 In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
 The paradigms essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
-This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
-We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
+We will look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
 \subsection{Memory Mapped I/O}
 \label{ssec:memory_mapped_io}
@@ -272,11 +274,11 @@ const ADC0_BASE: *mut Adc
 
 fn main() {
   let adc0 = unsafe {
-    ADC0_BASE.as_mut()
-      .unwrap_or(panic!("..."))
+    ADC0_BASE.as_mut().unwrap()
   };
 }
     \end{minted}
+    \caption{Rust}
   \end{listing}
   \end{minipage}
   \hfill
@@ -289,43 +291,11 @@ void main() {
   ADC* adc0 = (ADC*)ADC0_BASE;
 }
     \end{minted}
+    \caption{C}
   \end{listing}
   \end{minipage}
-  \caption{Instantiating \glspl{mmio} in {\rust} and C, respectively.}
+  \caption{Instantiating a \glspl{mmio}}
   \label{fig:oo:instantiate}
 \end{listing}
 
-\todo{Move this to discussion}
-The {\rust} code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword.
-As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
-The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \keyword{unsafe}.
-The underlying reason is a bit more subtle.
-The unsafety here comes from the fact that \code{as\_mut} converts a raw pointer to a safe reference.
-After the conversion the pointer must be safe to dereference.
-This is the programmars part of the contract to ensure when using a unsafe block.
-So what is unsafe about derefencing raw pointer?
-Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
-The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the {\gecko} to HardFault on a Bus Error.
-In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
-
-The last point about unsafety that can be made here, is the fact we can create multiple mutable aliases to the \glspl{mmio}.
-Consider the code in \autoref{lst:oo:aliasing-mutability}.
-\todo{Need to explain why this is a problem}
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-fn new_adc0() -> Adc {
-  unsafe { match ADC0_BASE.as_mut()
-                  .unwrap_or(panic!("..."))
-  }
-}
-
-fn main() {
-  let mut adc0 = new_adc0();
-  let mut _adc0 = new_adc0();
-}
-  \end{minted}
-  \caption{Creating mutable aliases}
-  \label{lst:oo:aliasing-mutability}
-\end{listing}
+For a further discussion of this pattern in {\rust}, see \autoref{sec:res:aliasing-mmios}.
