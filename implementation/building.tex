@@ -6,7 +6,7 @@ This section describes how building the project have changed over time.
 This includes managing dependencies, compiling the {\core} library and \gls{rel}, and the Silicon Labs EFM32 {\emlib}.
 We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of {\rust}, and to make sure that the builds have been consistent across the systems it has been built on.
 
-\subsection{Early days}
+\subsection{Manually Makefile}
 \label{ssub:using_make}
 
 When the project first started out it was based upon the \texttt{armboot} \cite{github:armboot} git repository available on GitHub.
@@ -32,7 +32,7 @@ The components listed in \autoref{tab:build:components} were identified as the m
 \end{table}
 
 \autoref{tab:build:components} lists the files included in the initial successfull build for the Gecko\footnote{GitHub link for reference: https://github.com/havardh/geckoboot.rs/tree/8eb1df2417da0d7016d478de9cd011c98d77c592}.
-In order to compile these components into an executable a Makefile was developed.
+The build process was contained within a manually developed Makefile.
 The compilation process consisted of compiling the \file{blinky.rs}, which blinks the LEDs on the STK, file to assembly by passing the target architecture and assembly output flag to the {\rustc} compiler.
 This file was then, along with the \file{startup\_efm32gg.s} and \file{system\_efm32gg.c} files, compiled into object files with {\armgcc} and linked into an executable with the linker script, \file{efm32gg.ld}, using {\armld}.
 
@@ -59,9 +59,9 @@ Making this change resulting in the a build system with three steps as listed in
   \label{tab:build-steps}
 \end{table}
 
-At this stage of the evolution of the build system the {\emlib} bindings was build as part of the {\rust} application code.
+At this stage of the evolution of the build system the {\emlib} bindings were build as part of the {\rust} application code.
 Later this was separated out to produce a \file{libemlib.rlib} which complements a \file{libemlib.a} containing the object files for the implementation of {\emlib}.
-By doing this also the system and startup code was separated to \file{libstartup.rlib} and \file{libstartup.a}.
+By doing this also the system and startup code were separated to \file{libstartup.rlib} and \file{libstartup.a}.
 
 \subsection{Transitioning to Cargo}
 \label{ssub:transitioning_to_cargo}
@@ -70,7 +70,7 @@ It was always a goal to use Cargo for building, distributing, and managing the p
 An obvious reason for this was to lower the bar for other potential users of the library, and to make our project as standalone as possible, so that it is easier to include and extend it as a part of other potential projects.
 By letting {\cargo} handle as much as possible in its build routine, it would automate a lot of the work that every programmer using the library otherwise would have to do manually
 
-When the project first started out it was built by compiling {\rust}'s core library and Silabs' {\emlib} {\C} sources separately, and then linking them with the \gls{ffi} bindings for {\emlib} by hand.
+When the project first started out it was built by compiling {\rust}'s core library and Silabs' {\emlib} {\C} sources separately, and then linking them with the \gls{ffi} bindings for {\emlib} by hand as described in the previous section.
 While this approach worked, built it was far from optimal for a number of reasons:
 
 \begin{itemize}
