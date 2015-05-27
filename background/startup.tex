@@ -16,7 +16,7 @@ Then the reset signal is sent to the \gls{cpu} to start execution.
 \subsection{Executable and Linkable File Format}
 \label{sec:back:elf}
 %\todo{Reference: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0044e/IHI0044E\_aaelf.pdf}
-\elf is a file format for storing code and data for a program.
+{\elf} is a file format for storing code and data for a program.
 This file format can be loaded onto a microcontroller and executed.
 For our purposes, this format defines three interesting sections, namely \elfsec{.text}, \elfsec{.data} and \elfsec{.bss}.
 \autoref{fig:elf} describes the contents of the these sections an {\elf} file.
@@ -34,7 +34,7 @@ For our purposes, this format defines three interesting sections, namely \elfsec
     \elfsec{.data} & Section containing values for non-zero initialized data \\
     \hline
   \end{tabular}
-  \caption{Sections of elf file format}
+  \caption{Sections of {\elf} file format}
   \label{fig:elf}
 \end{table}
 
