@@ -45,7 +45,7 @@ END   = 1
 OUT   = main_p$(START)-$(END).pdf
 
 cut:
-	pdftk A=main.pdf cat A$(START)-$(END) output $(OUT)
+	pdftk main.pdf cat $(START)-$(END) output $(OUT)
 
 ls:
 	@tree -P "*.tex|*.bib"
