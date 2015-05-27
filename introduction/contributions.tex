@@ -1,0 +1,38 @@
+\section{Contributions}
+
+\newcommand{\cbuild}[0]{\textbf{C1}}
+\newcommand{\crustc}[0]{\textbf{C2}}
+\newcommand{\cmethods}[0]{\textbf{C3}}
+\newcommand{\cbugfix}[0]{\textbf{C4}}
+\newcommand{\ceval}[0]{\textbf{C5}}
+
+The contributions of this thesis are given in \autoref{tab:contributions}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r | l}
+    \textbf{Contribution} & \textbf{Description} \\
+    \hline
+    {\cbuild} & Build System \\
+    {\crustc} & The {\rustc} {\cargo} Subcommand \\
+    {\cmethods} & Methods for using Rust abstractions \\
+    {\cbugfix} & Minor bugfix in a Silicon Labs library \\
+    {\ceval} & Evaluation of Embedded Rust \\
+    \hline
+  \end{tabular}
+  \caption{Contributions of the Thesis}
+  \label{tab:contributions}
+\end{table}
+
+The {\cbuild} build system is to our knowledge the first ergonomic build system using the {\rust} standard package manager to build executables for non standard targets.
+Other projects have resorted to custom Makefiles to handle the build process and dependencies.
+
+In order to develop the build system {\cbuild}, the standard package manager had to be modified.
+This was at first done by a problem specific plugin, but was later made more generic and resulted in implementing and contributing the \cmd{rustc} subcommand {\crustc}, to the Cargo package manager.
+
+Throughout the development phase of the projects the high level abstractions of Rust was tested out in an embedded environment.
+These experimentations resulted in the a few successfull and promissing patterns {\cmethods}.
+
+By porting a driver in the Silicon Labs library from {\C} to {\rust} a minor bug was found and reported with a suggested patch {\cbugfix}, to fix the issue.
+
+At last the results reported and discussed in this thesis provides an evaluation {\ceval}, of the Rust platform in an embedded system.

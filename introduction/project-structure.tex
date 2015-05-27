@@ -31,23 +31,6 @@ The initial phase of the project defined two main activities.
 Firstly the initial direction of the project along with major challenges was identified in a meeting with Silicon Labs w/Marius Grannæs and Mikael Berg.
 Secondly the milestone of running the first {\rust} application on the {\gecko} was reached.
 
-\paragraph{Major Challenges}
-The major challenges identified in the initial meeting with Silicon Labs are given in \autoref{fig:meth:challenges}
-
-\begin{listing}[H]
-  \begin{itemize}
-    \item Volatile read and write
-    \item Handling Interrupts
-    \item Reading and Writing Hardware registers
-    \item Statical object construction
-    \item Heap allocation
-    \item Error Handling without allocation
-  \end{itemize}
-  \caption{Major Challenges}
-  \label{fig:meth:challenges}
-\end{listing}
-
-These challenges and their relation to the project are described in \autoref{} \todo{Write this section in discussion chapter.}
 
 \subsection{Phase 2 - Library Support}
 
@@ -58,7 +41,7 @@ The library support was continouosly evolved when needed in the Development Phas
 \subsection{Phase 3 - Development}
 \label{sec:projects}
 
-The goal of the development phase was to create application that would provide enough empirical data to evaluate the system in Phase 4.
+The goal of the development phase was to create applications that would provide enough empirical data to evaluate the system in Phase 4.
 Two complementary projects were specified given in \autoref{tab:meth:projects}.
 
 \begin{table}[H]
@@ -74,10 +57,10 @@ Two complementary projects were specified given in \autoref{tab:meth:projects}.
   \label{tab:meth:projects}
 \end{table}
 
-Both projects are implemented in both {\rust}, using the framework developed for this thesis, and {\C} using the libraries provided by Silicon Labs.
+Both projects are implemented in both {\rust}, using the platform developed for this thesis, and {\C} using the libraries provided by Silicon Labs.
 
 \subsection{Phase 4 - Evaluating}
-During the evaluating phase the develop platform was evaluated based on the following metrics in \autoref{lst:evaluation:criterias}.
+During the evaluating phase the develop platform was evaluated based on the metrics in \autoref{lst:evaluation:criterias}.
 The results of the evaluation is presented in \autoref{chap:results} along side with results obtained by considering the existing platform in {\C}.
 
 \begin{listing}
