@@ -57,16 +57,6 @@ rust_reallocate(*mut u8, usize, usize, usize) -> *mut u8;
 \subsection{The Collection Library}
 
 The {\rust} collection library provides general purpose data structures.
-Of which the \code{Vector} and the \code{String} are the most notable, described below.
+Of which the \code{Vector}, a growable heap allocated list, and the \code{String}, heap allocated mutable strings, are the most notable.
 As one would guess the collection library depends on the allocation library as it needs to allocate memory on the heap.
 The \lib{unicode} dependency is due to the \code{String} type is defined as a valid UTF-8 string.
-
-\subsubsection{Vector}
-
-The Vector is an important data structure both in direct usage but also as a building block for other data structures.
-In essence it is a growable heap allocated list of values of the same type.
-
-\subsubsection{String}
-
-The \code{String} defined in the collection library is a owned heap allocated mutable string.
-This type is in contrast to the primitive \code{str} type implemented in \gls{rcl}.
