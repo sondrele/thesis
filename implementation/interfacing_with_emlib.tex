@@ -1,25 +1,31 @@
 % !TEX root = ../main.tex
 
-\section{Bindings for emlib}
+\section{Library Bindings}
 \label{sub:interfacing_with_emlib}
 
-The \gls{ffi} available in {\rust} has been used to interface with Silabs' emlib.
-This way, we have been able to create thin wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
-The following sections explains the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
-We will start by showing an example of what it is like to use Silab's emlib (with C), and then move on to what it looks like to use the bindings in {\rust}.
+This section describes the peripheral library \emph{bindings} developed for the platform.
 
-\subsection{The Bindings Libraries}
+The \gls{ffi} available in {\rust} has been used to interface with Silabs' suite of C libraries used to control the {\gecko}.
+This way, we have been able to create wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
+These wrappers are called language bindings.
+The following sections explain the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
+
+\subsection{The Libraries}
 \label{ssub:the_bindings_library}
 
-We have written many example applications in {\rust} that utilizes the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
+In \autoref{sec:back:lib} we presented the three libraries we have created partially binding support for, CMSIS, Emlib and Emdrv.
+Here we will take a closer look at which modules have been developed and an reasoning for chosing each one.
+
+We have written many example applications in {\rust} that utilize the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
-In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \todo{Refer to sections about circle-game and sensor-tracker}.
+In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \autoref{sec:impl:project:i} and \autoref{sec:impl:project:ii}.
 
 \subsubsection{CMSIS}
 \label{sub:cmsis_bindings}
 
-Interrupt support through NVIC was the only interesting part of the \gls{cmsis} library that we have written bindings for.
-Most of the examples implement one or several IRQ handlers for the peripheral bindings that they demonstrate.
+Interrupt support through \gls{nvic} was the only interesting part of the \gls{cmsis} library that we have written bindings for.
+Most of the examples uses one or several IRQ handlers for the peripheral bindings that they demonstrate.
+\gls{nvic} provides utility functions for enabling and disabling the interrupt handling mechanisms of the Cortex-M3 processor.
 
 \subsubsection{Emlib}
 
@@ -39,7 +45,7 @@ The \gls{cmu} provides functions to manage the different clocks and oscillators 
 This module is necessary in order to configure the clocks that are required by other peripherals to function. \\
 
 \prog{dma}     &
-We wanted to use \gls{dma} for the {\prog{sensor-tracker}} application because it can be used to transfer data without intercepting the \gls{cpu}. \\
+We wanted to use \gls{dma} for the {\prog{sensor-tracker}} application because it can be used to transfer data without using the \gls{cpu}. \\
 
 \prog{ebi}     &
 The \gls{ebi} is used in the {\gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the {\chip{DK}}. \\
@@ -68,8 +74,8 @@ The \gls{leuart} was ported a while after the \gls{usart}.
 It has the same functionality, but it works with a lower-frequency clock and at requires less energy than the \gls{usart}. \\
 
 \prog{i2c}     &
-The \gls{i2c} has many of the same use cases as the different \gls{uart} types, but it works at lower energy levels.
-It is used in by the {\prog{sensor-tracker}}. \\
+The \gls{i2c} protocol has many of the same use cases as the different \gls{uart} types, bbut it works at lower energy levels.
+It is used by the {\prog{sensor-tracker}}. \\
 
 \prog{rtc}     &
 The \gls{rtc} was an easy module to write bindings for, it is used in several examples for timing purposes, as well as in the {\prog{sensor-tracker}}. \\
@@ -87,52 +93,41 @@ The Timer was one of the first modules to be ported, it worked as a proof-of-con
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{r|p{7cm}|p{2.1cm}}
-    \textbf{Example} & \textbf{Purpose} & \textbf{Uses} \\
+  \begin{tabular}{r|p{8cm}|c}
+    \textbf{Example} & \textbf{Purpose} & \textbf{Ported} \\
     \hline
 \prog{buttons\_int}  &
-Demonstrates interrupts by lighting a led on the {\chip{STK}} when the respective button has been pressed. &
-\gls{gpio}, IRQ \\
+Demonstrates interrupts by lighting a led on the {\chip{STK}} when the respective button has been pressed. & \cmark \\
 
 \prog{rtc\_blink}    &
-Toggle a led with an interval of 2 seconds. &
-\gls{rtc}, \gls{gpio} \\
+Toggle a led with an interval of 2 seconds. & \cmark \\
 
 \prog{energy\_modes} &
-Demonstrates the four stages of sleep on the {\gecko}. &
-\gls{emu}, \gls{gpio}, \gls{cmu}, IRQ \\
+Demonstrates the four stages of sleep on the {\gecko}. & \cmark \\
 
 \prog{uart}          &
-Demonstrates serial communication over \gls{usart} by echoing back every byte it receives. &
-\gls{usart}, \gls{gpio}, \gls{cmu} \\
+Demonstrates serial communication over \gls{uart} by echoing back every byte it receives. & \cmark \\
 
 \prog{leuart}        &
-Similar example as \prog{uart}, but the \gls{cpu} is turned off and the functionality is moved to an interrupt handler instead. &
-\gls{leuart}, \gls{cmu}, IRQ, \gls{gpio}, \gls{emu} \\
+Similar example as \prog{uart}, but the \gls{cpu} is turned off and the functionality is moved to an interrupt handler instead. & \cmark \\
 
 \prog{i2c}           &
-Sends and receives a data-buffer between two devices that supports \gls{i2c}. &
-\gls{i2c}, \gls{gpio}, \gls{cmu}, IRQ \\
+Sends and receives a data-buffer between two devices that supports \gls{i2c}. & \cmark \\
 
 \prog{joystick}      &
-Reads analog signals generated by a Joystick that is connected to the {\chip{STK}}. &
-\gls{adc}, \gls{cmu} \\
+Reads analog signals generated by a Joystick that is connected to the {\chip{STK}}. & \\
 
 {\prog{dma}}           &
-Transfer a data-buffer from one memory location to another. &
-\gls{dma} \\
+Transfer a data-buffer from one memory location to another. & \cmark \\
 
 \prog{light\_sense}  &
-Uses the {\chip{STK}}'s light sensor to measure the light intensity, and signal when it goes dark by lighting a LED. &
-\gls{lesense}, \gls{acmp}, \gls{gpio}, \gls{rtc}\\
+Uses the {\chip{STK}}'s light sensor to measure the light intensity, and ligts a LED when the intensity goes below a threshold & \cmark \\
 
 \prog{boxes}         &
-Demonstrates dynamic memory allocation with \code{Box}'es, provided by the {\rust} \lib{alloc} library. &
-\lib{alloc} \\
+Demonstrates dynamic memory allocation with \code{Box}'es, provided by the {\rust} \lib{alloc} library.  &  \\
 
 \prog{vec}           &
-Demonstrates dynamically allocated strings and vectors from the \lib{collections} library. &
-\lib{collections} \\
+Demonstrates dynamically allocated strings and vectors from the \lib{collections} library. & \\
 
     \hline
   \end{tabular}
@@ -166,7 +161,7 @@ This driver is ported from {\C} to {\rust}, the implementation differs slightly 
 The reasoning for porting this driver is described in \autoref{}. \\
 
 \prog{i2c}  &
-This driver is used by the {\prog{sensor-tracker}} application, it exposes functions initialize normal \gls{i2c} data transfers. \\
+This driver is used by the {\prog{sensor-tracker}} application, it exposes functions to initalize a commonly used \gls{i2c} data transfer configuration. \\
 
 \prog{tft}  &
 This binding exposes one function to initialize the TFT screen on the {\chip{DK}}.
@@ -181,19 +176,17 @@ It is used in the \prog{circle-game}. \\
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{r|p{6.6cm}|p{1.9cm}}
-    \textbf{Example} & \textbf{Purpose} & \textbf{Uses} \\
+  \begin{tabular}{r|p{8cm}|c}
+    \textbf{Example} & \textbf{Purpose} & \textbf{Ported} \\
     \hline
 
 \prog{flash} &
-Demonstrates reading and writing to the {\chip{STK}}'s flash memory. &
-flash-driver, \gls{gpio} \\
+Demonstrates reading and writing to the {\chip{STK}}'s flash memory. & \cmark \\
 
 \prog{light\_measure} &
 Based on the \prog{light\_sense} example from \autoref{tab:emlib_examples}.
 The results from measuring the light intensity is saved to flash.
-When the user presses a button the {\chip{STK}} will initiate a transfer that reeds all the data stored to flash and transmits it over a \gls{usart} connection. &
-flash-driver, \gls{lesense}, \gls{usart}, \gls{acmp}, \gls{gpio}, \gls{rtc} \\
+When the user presses a button the {\chip{STK}} will initiate a transfer that reeds all the data stored to flash and transmits it over a \gls{usart} connection. & \cmark \\
 
     \hline
   \end{tabular}
@@ -204,17 +197,13 @@ flash-driver, \gls{lesense}, \gls{usart}, \gls{acmp}, \gls{gpio}, \gls{rtc} \\
 
 \subsection{Defining the Bindings}
 
-The \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
+The {\emlib} module for controlling the \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
 The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
-First, in order to use a peripheral, its clock need to be enabled.
-Every external clock are disabled by default \todo{Is this true? Is every clock disabled?} in order for the peripherals not to draw any power, by enabling the clock the \gls{mcu} will get access to control it.
 Then an initialization structure for the Timer module is acquired, this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 
 \begin{listing}[h]
 \begin{minted}{c}
-// Enable clock for TIMER0 module
-CMU_ClockEnable(cmuClock_TIMER0, true);
 // Select TIMER0 parameters
 TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
 // Enable overflow interrupt
@@ -230,7 +219,7 @@ TIMER_Init(TIMER0, &timerInit);
 \label{lst:timer_program_c}
 \end{listing}
 
-The next lines enables interrupts for the Timer, and the NVIC interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
+The next lines enable interrupts for the Timer, and the \gls{nvic} interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
 All this function does is to clear the interrupt signal and toggle the value of an LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
 Interrupts like this are an important part of programming the {\gecko}.
@@ -252,14 +241,12 @@ void TIMER0_IRQHandler(void) {
 The equivalent program written in {\rust} is shown in \autoref{lst:timer_program_rust}.
 Semantically they are the same, but the usage differs slightly, which is natural since we are using a higher level programming language.
 Instead of calling functions that are included through a {\C} header file, we are calling functions that are available through a {\rust} module.
-For example, the \code{Clock} enum is part of the \code{cmu} module, and the \func{enable\_irq} function is part of the \code{nvic} module.
+For example the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
 It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
 
 \begin{listing}[h]
 \begin{minted}{rust}
-// Enable clock for TIMER0 module
-cmu::clock_enable(cmu::Clock::TIMER0, true);
 // Select TIMER0 parameters
 let timer_init = Default::default();
 // Enable overflow interrupt
@@ -279,7 +266,7 @@ timer0.init(&timer_init);
 \subsection{Exposing Static Inline Functions to Rust}
 
 In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
-The header files in the peripheral \gls{api} also defines many functions as \code{static inline}, which only make the functions accessible by including the header file.
+The header files in the peripheral \gls{api} also define many functions as \code{static inline}, which only make the functions accessible by including the header file.
 Since it is not possible to include {\C} header files directly in {\rust}, we had to expose these functions through one extra layer of {\C} code.
 As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}, in order to call this function through {\rust} we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
 
@@ -318,8 +305,10 @@ extern {
 
 If we compare the call-stacks between calling the \code{timer0.int\_enable} function in {\rust} and calling the \func{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
 These are simple wrappers which require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one to two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
-By compiling the code with optimization, {\rust} will get rid of the overhead introduced by the function that wraps around the call to the foreign function.
-Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will remove the overhead entirely, which results in the same performance and similar call-stacks between {\C} and {\rust}.
+However, by applying optimization this overhead can be removed completely and {\C} code can be called with no overhead \cite{web:rust_once_run_everywhere}.
+The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial inlining when the code is compiled with optimization as the only contents of the wrapper is a call to the actual function.
+Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will inline the C implementation into the Rust defined \code{timer0.int\_enable}.
+This results in the same performance and similar call-stacks for both {\C} and {\rust}.
 This is a working example of one of {\rust}'s many zero-cost abstractions.
 
 \subsection{Naming Conventions}
@@ -340,9 +329,9 @@ typedef enum {
 \label{lst:enum_naming_c}
 \end{listing}
 
-As an example, two fields of an enum from \file{em\_timer.h} is shown in \autoref{lst:enum_naming_c}.
+As an example, two fields of an enum from \file{em\_timer.h} are shown in \autoref{lst:enum_naming_c}.
 From each field in the enum we can extract 1) its module name \file{timer}, 2) its typedef name \code{CCMode} and 3) its field name \code{Off} or \code{Capture}.
-\rust allows us to keep the same naming convention at the same time as utilizing its modularity.
+{\rust} allows us to keep the same naming convention at the same time as utilizing its modularity.
 \autoref{lst:enum_naming_rust} shows the enum ported to {\rust}, where both the module name and the typedef name has been left out, and only the field names have remained.
 However, the naming convention remains the same when the fields are used, e.g. the expression ``\code{let mode = timer::CCMode::Capture;}'' in {\rust} shows the similarity with the equivalent expression in C: ``\code{int mode = timerCCModeCapture;}''.
 
@@ -371,21 +360,25 @@ This was provoked by the fact that testing software on an embedded system is a t
 More often than not you find yourself running the code in the debugger, inspecting the call stack and function arguments, to ensure that the bindings are calling the correct functions, with the correct arguments.
 The fact about arguments has a subtle point to it.
 
-We are working in two statically typed languages which leads the compiler to statically assure that the correct types are passed around.
-However, there are no checks to assure that the memory layout of the datatypes in {\C} and {\rust} match at the borders between the two languages.
+We are working in two statically typed languages which leads the compiler to statically ensure that the correct types are passed around.
+However, there are no checks to ensure that the memory layout of the datatypes in {\C} and {\rust} match at the borders between the two languages.
 Currently, the {\rust} \gls{ffi} requires the programmer to redefine the {\C} datatypes in {\rust}, like structs and enums, in order to call into the {\C} functions that takes these datatypes as arguments.
 The process of verifying this manually proved to be both error prone and time consuming, which suggested the need for an automated system to verify the correctness of the bindings.
 
 \subsubsection{Framework}
 
-To meet this problem, a featherlight testing framework was developed which enabled this verification to be automated.
+To meet this problem, a lightweight testing framework was developed which enabled this verification to be automated.
 The goal of the framework was to initialize the data on the {\rust} side, call functions via the \gls{ffi}, and verify that the correct functions were called with the exact data as supplied.
 In order to do this, we made a framework that could replace {\emlib}'s code with statically generated test mocks, before calling these mocked functions from {\rust} and then verify that the functions where called correctly in {\C}.
 
-The implemented framework is a small test runner that utilizes CMock \cite{web:cmock} and Unity \cite{web:unity}, for mocking and assertions, respectively.
+The implemented framework is a small test runner that utilizes CMock\footnote{\url{http://www.throwtheswitch.org/}\label{foot:throw}} and Unity\footref{foot:throw}, for mocking and assertions, respectively.
+Given a {\C} header file, the CMock library generates an \emph{mock} implementation of the interface for the module.
+The test code is then compiled by linking to the mock implementation instead of the library, {\emlib} in our case.
+In the test case, the mock can be configured to verify that our bindings, are using the mock as expected.
 All of the unit tests were compiled into a binary that was executed on the {\gecko}, which reported back via \gls{usart} whether the tests failed or ran successfully.
-An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
+In addition an easy to assess feedback was given by one LED lit for faliure and two LED lit for success.
 
+An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
 
 \begin{listing}[H]
   \centering
@@ -426,12 +419,12 @@ void adc_expect_init_called_with_default() {
 
 When using mocking in unit tests, the workflow for the user seems reversed compared to standard unit tests.
 First, you set up the expected results by calling the \texttt{ADC\_Init\_Expect} function on the mock, as shown in \autoref{lst:test:adc:c}.
-This method is in fact called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
-When the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
+This method is called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
+Then after the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
 When the test returns, the test runner is responsible for calling a \texttt{Verify} function on the mock object.
 This function causes the program to fail and report its status over \gls{usart} if the expected result was not met.
 
-\autoref{fig:test-framework} shows a diagram of the program flow between the \textit{Test Runner}, the \textit{Test Case}, the \textit{emlib bindings} as \gls{CUT} \todo{what is CUT?}, and the \textit{emlib mock}, for when the test case above is executed.
+\autoref{fig:test-framework} shows a diagram of the program flow between the \textit{Test Runner}, the \textit{Test Case}, the \textit{emlib bindings} as \gls{cut}, and the \textit{emlib mock}, for when the test case above is executed.
 We see that the two boxes marked with \textit{Test Case} are the pieces of code the user of the framework, presented in \autoref{lst:test:adc}, writes.
 The stippled vertical line shows the separation between {\rust} and {\C} code, all the three function calls which cross this line is implemented using the {\rust} \gls{ffi}.
 
@@ -449,18 +442,16 @@ The stippled vertical line shows the separation between {\rust} and {\C} code, a
 The {\rust} programming language contains a testing framework within the standard library.
 The reasons for not using it to test the bindings is that we needed to run the tests on the {\gecko}.
 The rational for this is that the tests are mostly checking that the datatypes used on the {\rust} and {\C} side of the bindings are compatible.
-Therefore we need to use the proper compilers and compile the test targets for the ARM platform, verifying that the platform-specific \prog{gcc} and {\rustc} has compatible types does not help in respect to this.
+Therefore we need to use the proper compilers and compile the test targets for the ARM platform, verifying that the platform-specific \prog{gcc} and {\rustc} have compatible types does not help in respect to this.
 Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s own {\std} library, which renders the framework unusable for our embedded platform.
 
 % Consequently, {\rust}'s standard testing framework is rendered unusable for our embedded platform because it relies heavily on the {\rust}'s own {\std} library.
 
 % Consequently, given that the testing framework in the standard library relies heavily on the  that was discussed in \autoref{sec:back:lib}, this renders the framework unusable for our embedded platform.
 
-\subsection{Thoughts and Review}
+\subsection{Discussion}
 
-\todo{Does it make sense to have this section here? Should content like this be mover somewhere else (like in the discussion chapter), or is this a good place?}
-
-Writing the bindings for different the peripherals was a tedious work, that required careful review of the \emlib source code in order to correctly port enum- and struct-definitions from {\C} to {\rust}.
+Writing the bindings for the different peripherals was a tedious work, that required careful review of the {\emlib} source code in order to correctly port enum- and struct-definitions from {\C} to {\rust}.
 Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various {\C} macros defined in header files that are used throughout the library.
 We had to retrieve the value of the constants by debugging the source code and explicitly look up the value of these constants if they were only implicitly defined in the header files.
 
