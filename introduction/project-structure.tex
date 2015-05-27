@@ -36,29 +36,12 @@ In addition to the main phases in the project, the build system has evolved cont
 
 The rest of this section describes each phase in more detail.
 
-\subsubsection{Phase 1 - Getting Started}
+\subsubsection{Phase 1 - Initial Programmability}
 The initial phase of the project defined two main activities.
 Firstly the initial direction of the project along with major challenges was identified in a meeting with Silicon Labs w/Marius Grannæs and Mikael Berg.
-Secondly the milestone of getting up and running with {\rust} on the {\gecko} was reached.
-
-\paragraph{Initial direction}
-The initial direction set in the first meeting with Silicon Labs.
-Here a tentative project plan was set, given in \autoref{fig:meth:initial}
-
-\begin{listing}[H]
-  \begin{itemize}
-    \item Get up and running with {\rust}
-    \item Port/bind central libraries
-    \item Evaluate system
-    \item Handle Interrupts
-    \item Evaluate system for performance/energy
-  \end{itemize}
-  \caption{Initial Project Plan}
-  \label{fig:meth:initial}
-\end{listing}
+Secondly the milestone of running the first {\rust} application on the {\gecko} was reached.
 
 \paragraph{Major Challenges}
-
 The major challenges identified in the initial meeting with Silicon Labs are given in \autoref{fig:meth:challenges}
 
 \begin{listing}[H]
@@ -74,14 +57,7 @@ The major challenges identified in the initial meeting with Silicon Labs are giv
   \label{fig:meth:challenges}
 \end{listing}
 
-These challenges and their relation to the project are described in \autoref{} \todo{Write this section in implementation chapter.}
-
-\paragraph{Up and running}
-The activity identified as getting up and running consists of successfully compiling, linking and executing a {\rust} program on the EFM32GG.
-There were two options for assessing a successfull program on the {\gecko}, a complete and a simple.
-The complete would be to start the program in debugging with the GDB debugger and verify the success.
-While the simple was to create the simplest program with visual feedback on the STK.
-The latter was chosen as the starting point and is described in \autoref{} \todo{Add to Implementation chapter}
+These challenges and their relation to the project are described in \autoref{} \todo{Write this section in discussion chapter.}
 
 \subsubsection{Phase 2 - Library Support}
 
@@ -110,11 +86,7 @@ As described in \autoref{} \todo{Background section on emlib design} the librari
 
 In addition to the
 
-\subsubsection{Phase 3 - Evaluation}
-
-\subsubsection{Phase 4 - Communication}
-
-\subsubsection{Phase 5 - Development}
+\subsubsection{Phase 3 - Development}
 \label{sec:projects}
 
 The goal of the development phase was to get enough empirical data to evaluate the system in Phase 5.
@@ -151,22 +123,16 @@ The game is a interactive graphical application written for the DK.
 
 A full specification of Project II is included in Appendix \autoref{app:project:ii}
 
-\subsubsection{Phase 6 - Evaluating}
-\subsubsection{Phase 7 - Reporting}
-
-\section{Toolchain}
-
-About using
-\begin{itemize}
- \item arm-none-eabi-gcc/newlib
- \item CMSIS/emlib
- \item rustc/cargo
-\end{itemize}
-
-\section{Using C as a framework for Rust}
-
-About
-\begin{itemize}
- \item why link to c vs only rust/zinc.rs
- \item ffi
-\end{itemize}
+\subsubsection{Phase 4 - Evaluating}
+During the evaluating phase the develop platform was evaluated based on the following metrics in \autoref{lst:evaluation:criterias}.
+The results of the evaluation is presented in \autoref{chap:results} along side with results obtained by considering the existing platform in {\C}.
+\begin{listing}
+  \begin{itemize}
+  \item Performance
+  \item Code Size
+  \item Energy Consumption
+  \end{itemize}
+  \caption{Metrics for evaluation of the platform}
+  \label{lst:evaluation:criterias}
+\end{listing}
+This phase also included tuning the applications and libraries to minimize the bias in the results.
