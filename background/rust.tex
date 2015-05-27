@@ -19,11 +19,11 @@ Because {\rust} is a multi-paradigm language it offers a wider range of language
 
 The \gls{rsl} is included into all {\rust} programs and strives to be an abstraction layer to write portable applications.
 The library is implemented as a facade, meaning that the crate {\std} provides a thin wrapper which reexports a stable interface for crates like \lib{alloc} (for memory allocation), \lib{collections} (general purpose data structures) and {\core} (described in the next section).
-In addition to providing the facade, {\std} crate defines platform abstractions like files, network protocols and threading, all of these assumes an OS.
-This basic fact renders the {\std} crate unusable in a barebone embedded system as these dependencies will not be met.
+In addition to providing the facade, {\std} crate defines platform abstractions like files, network protocols and threading, all of which depends on an OS.
+This basic fact renders the {\std} crate unusable in an embedded system as these dependencies will not be met.
 Luckly it is possible to opt-out of using the library.
 
-Notice the distinction between the \gls{rsl} which includes the functionality provided by the underlying Collection, Allocation and Core libraries, and the {\std} crate which defines the facade and the mentioned additional abstractions.
+It is important to notice the distinction between the \gls{rsl} which includes the functionality provided by the underlying Collection, Allocation and Core libraries, and the {\std} crate which defines the facade and the mentioned additional abstractions.
 
 \subsubsection{The Rust Core Library}
 \label{sec:rcl}
