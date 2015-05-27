@@ -343,7 +343,7 @@ fn main() {
 \autoref{lst:closure:filter} shows how a closure can be used to filter a list of numbers, it also demonstrates one of the \code{Iterator} trait's many use cases.
 The example initializes a vector with four numbers and makes an iterator by calling the \code{iter()} function.
 Once the iterator is acquired, the \code{filter()} function is called with a closure as argument.
-The expression \code{|&el| *el < limit} defines the closure, which takes an argument \code{el} and returns a \code{bool}.
+The expression \code{|\&el| *el < limit} defines the closure, which takes an argument \code{el} and returns a \code{bool}.
 The \code{limit} is a free variable which is found in the scope of the \texttt{main} function, this variable is part of the environment that is \emph{enclosed} by the closure.
 When the \code{collect()} function is called, the closure is executed with every element in the vector, and they are collected into a new vector if the closure's condition is satisfied.
 
@@ -416,7 +416,7 @@ The main difference is that the vector itself is placed on the stack, and the st
 The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
 
 There is still one really important difference between the two examples; we can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in {\Cpp} can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
-\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in {\cpp} can lead to a dangling pointer?}.
+\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in {\Cpp} can lead to a dangling pointer?}.
 In {\rust}'s case, all structures are allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
 References to such stack-allocated variables can be passed around and accessed, just like in {\Cpp},
 but {\rust} also introduces a set of rules that have to be followed in order to safely use these references.
