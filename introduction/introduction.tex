@@ -9,25 +9,26 @@ Maybe even a project outline...
 \section{Rust Instead of C} % (fold)
 \label{sec:intro:rust_as_replacement_to_c}
 
-\rust is a new programming language that reached a stable 1.0 in May 2015.
+{\rust} is a new programming language that reached a stable 1.0 in May 2015.
 Like most other programming languages it aims to solve a few specific problems better than other languages can.
 Mainly, its goal is ``to design and implement a safe, concurrent, practical, static systems language'' \cite{web:rust_faq}.
 With these goals in mind, {\rust} focuses on being a memory safe language without sacrificing performance, and it implements a few paradigms in order to provide a solid concurrency model that are suited for many modern applications that runs on the internet.
 
 C has become the industry standard for developing on embedded systems.
-It is a small, low-level language, at least considering todays standards, that has been adapted to virtually every target platform that exists on the market.
+It is a small, low-level language, at least considering today's standards, that has been adapted to virtually every target platform that exists on the market.
 It is an easy language without many language constructs that makes it easy to adapt it to different platforms, it has a minimal runtime system and does not require an operating system in order to utilize the underlying hardware.
-\rust have adapted many of the features that are available in C, among it are a minimal runtime, full control over the memory and a \gls{ffi} that is exactly the same as C's \cite{web:rust_once_run_everywhere}.
+{\rust} have adapted many of the features that are available in C, among it are a minimal runtime, full control over the memory and a \gls{ffi} that is exactly the same as C's \cite{web:rust_once_run_everywhere}.
 
 Gradually, while the {\rust} programming language started to take shape, a few people in the community took a notice to {\rust}'s low level of implementation and how it could be a suitable programming language for embedded systems.
 Combined with its strong guarantees about memory safety and absence of data races and other common errors like stack- and buffer-overflows, it makes for an interesting language to run on bare-metal systems.
-Early projects that worked with running {\rust} bare-metal on ARM microcontrollers had to do a few workarounds in order to make it work, but since the language is implemented in the open, with great influence from the community, it is now easy to rely on only the core functionality of the language that is platform independent.
+Early projects that experimented with running {\rust} bare-metal on ARM microcontrollers had to do a few workarounds in order to make it work.
+As the language is implemented in the open, with great influence from the community, it is now easy to rely on only the core functionality of the language that is platform independent.
 
 The purpose of this project has been to try and give a rough comparison of {\rust} and {\C} on a bare-metal system.
 In the process of doing this, we decided that the EFM32 microcontrollers from Silicon Labs would be well suited for the task, which gives us a couple of metrics where we can compare the two languages.
 Mainly, we want to compare the performance of the two languages against each other on a small system with limited computing power, and we want to compare energy usage, or power consumption, of programs written in the two languages.
 Typically, the two problems go hand-in-hand; the best way to save power is to shut down the hardware, and in order to shut down the processor, the programs need to finish quickly - basically, executing as few instructions as possible.
-\rust claims to provide zero-cost abstractions, meaning that its high-level abstractions do not come at the cost of performance and program overhead.
+{\rust} claims to provide zero-cost abstractions, meaning that its high-level abstractions do not come at the cost of performance and program overhead, this claim is especially important to verify in an embedded systems where excess resources are limited.
 
 \include{introduction/project-structure}
 
