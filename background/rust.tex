@@ -3,15 +3,15 @@
 \section{The Rust Programming Language} % (fold)
 \label{sub:the_rust_programming_language}
 
-\rust \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
-It is a strongly and statically typed, multi-paradigm programming language.
-The language borrows many constructs and features from other programming languages, some of which is described in the following sections.
+{\rust} \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
+It is a strongly and statically typed, multi-paradigm programming language, that incorporates features from the functional, object-oriented, and imperative paradigms.
+The language borrows many constructs and features from other programming languages, some of which are described in the following sections.
 Over the course of {\rust}'s development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
 
 \subsection{Language Features}
 \label{ssub:rust:features}
 
-This section starts by describing {\rust}'s standard library and its type-system, before moving on to presenting some of the language features that makes {\rust} so different from C.
+This section starts by describing {\rust}'s standard library and its type-system, before moving on to presenting some of the language features that makes {\rust} so different from {\C}.
 Because {\rust} is a multi-paradigm language it offers a wider range of language constructs that are not present in the procedural paradigm usually found in embedded programming.
 
 \subsubsection{The Rust Standard Library}
@@ -71,7 +71,7 @@ The distinction between \gls{rcl} and the {\core} crate is not that clear as the
 
 \subsubsection{Variables and Bindings}
 
-\rust features a handful of different data types, all which can be assigned to a \emph{variable} by using a \emph{binding}.
+{\rust} features a handful of different data types, all which can be assigned to a \emph{variable} by using a \emph{binding}.
 The most important types are described in the following sections, but we will first look at how variables work.
 A value gets bound to a variable by utilizing the \keyword{let} keyword.
 A variable in {\rust} has a name and a value, much like other programming languages, but there is a distinct difference between the \emph{mutability} of those variables.
@@ -85,7 +85,7 @@ The example will not work because we try to change the value of an immutable var
   \begin{minted}{rust}
     // bind the value `5' to the immutable variable `a'
     let a: i32 = 5;
-    // bind the value `10' to the mutable variable `a'
+    // bind the value `10' to the mutable variable `b'
     let mut b = 10;
     b = a; // change the value of `b'
     a = b; // <- error: re-assignment of immutable variable `a'
@@ -97,9 +97,9 @@ The example will not work because we try to change the value of an immutable var
 An important part of variable bindings is {\rust}'s way to automatically infer the data type of the variables.
 We can see from the example that \code{a} is defined to be a 32-bit integer with the value 5, and because the variable \code{b} later gets assigned to \code{a}'s value, {\rust} will automatically infer \code{b} to be of the same type.
 
-\subsubsection{Sum types - Enum}
+\subsubsection{Enums}
 
-A sum type, also known as a tagged union, or an {\enum} in {\rust}, is a data structure that is used to hold only one out of a small set of possible values.
+An {\enum} in {\rust} (otherwise known as a sum type, or a tagged union, from type theory), is a data structure that is used to hold only one out of a small set of possible values.
 \rust's {\enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
 This makes the {\enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
 \autoref{lst:rust:option} shows the definition of one of {\rust}'s most commonly used types that is used extensively throughout its standard library and other third party libraries and applications.
@@ -116,38 +116,21 @@ This makes the {\enum} a powerful feature of the language that can be used to de
 \end{listing}
 
 Every \code{Option} variable is an {\enum} that can either have the algebraic value \code{Some} or the \emph{named value} \code{None}.
-If the variable is is \code{Some}, the definition also says that it needs to contain another type \code{T}.
+If the variable is \code{Some}, the definition also says that it needs to contain another type \code{T}.
 This is also an example of generics in {\rust}, \code{T} can be anything, e.g. an integer, a string, or a user defined type.
 The \code{Option} type is analogous with a normal {\C} pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that that points to a structure at a place in memory (analogous to \code{Some}).
 Even though the \code{Option} is analogous to a {\C} pointer, it is important to note their differences.
-It acts more like a wrapper around a potential other value and its internal type is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
+It acts more like a wrapper around a potential value, where its internal value is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
 The usage of {\enum} types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
-
-\subsubsection{Case Study - List}
-
-A canonical example of a Sum type is the representation of a linked list in \autoref{lst:rust:list}.
-Each list item is either a value and a pointer to the next item, as the \code{Cons}, or a termination value as \code{Nil}.
-\todo{I think this should be an example of Boxed types in stead of a case study of Enums}
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    enum List<T> {
-      Cons(T, Box<List>),
-      Nil,
-    }
-  \end{minted}
-  \caption{Definition of Linked List}
-  \label{lst:rust:list}
-\end{listing}
 
 \subsubsection{Structs}
 \label{ssub:structs}
 
 A \keyword{struct} in {\rust} is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
 With a \keyword{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
-An example of a \keyword{struct} is shown in \autoref{lst:book_struct}, anyone that is familiar with {\C} will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
+An example of defining a \code{Book} is shown in \autoref{lst:book_struct}, anyone that is familiar with {\C} will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
 Everything in {\rust} is \emph{private} by default, the \code{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
-The \keyword{impl} keyword lets us implement member functions for the \code{Book}, similar to class-declarations in C++ and other object-oriented languages.
+The \keyword{impl} keyword lets us implement member functions for the \code{Book}, similar to class-declarations in {\Cpp} and other object-oriented languages.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -175,6 +158,7 @@ Instead, the library offers higher-level structures as an abstraction between th
 \subsubsection{Slices}
 
 The \code{slice} type is simply a view into an array, it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
+The length is used to determine how many elements the slice represents.
 Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a finite array with type \code{T}'.
 They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
 
@@ -192,7 +176,27 @@ They are a fundamental type that abstracts away the underlying block of data ref
 An example of common slice type in {\rust} is the \keyword{str} type, which can either be a statically allocated string defined as a literal, or a borrowed reference into another string.
 The representation of the string type is closely related to slices, as a string-slice denoted as \code{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \code{\&[u8]}.
 It is important to note that an arbitrary slice of bytes are not necessarily a valid string.
-The \keyword{str} type differs from a \code{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
+% The \keyword{str} type differs from a \code{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
+
+\subsubsection{Boxed values}
+
+\autoref{lst:rust:list} shows an example of how a linked list can be represented with an enum.
+Each list item is either a value and a pointer to the next item, as in \code{Cons}, or a termination value as in \code{Nil}.
+One important thing to notice in this example is the usage of a \code{Box<...>} instead of the mentioned pointer.
+As mentioned earlier, {\rust} provides abstractions on top of its raw pointers, the \code{Box} is an example of this in action.
+A boxed value, is simply a value that is stored on the heap, with its owning handle stored in a \code{Box} structure.
+This structure implements the same operators that are otherwise associated with pointers, so they are semantically the same for this piece of code.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+    enum List<T> {
+      Cons(T, Box<List>),
+      Nil,
+    }
+  \end{minted}
+  \caption{Definition of Linked List}
+  \label{lst:rust:list}
+\end{listing}
 
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
@@ -230,13 +234,14 @@ We can also see that both \code{Some} and \code{None}, i.e. all possible outcome
 Traits in {\rust} are similar to Interfaces in Java, they are used to facilitate code reuse and polymorphism.
 A \code{trait} can define a set methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
 The definition of one of {\rust}'s more integral traits is the \code{Iterator} trait, which is shown in \autoref{lst:rust:iterator}.
+An iterator can be used to manipulate stream- or list-like data structures, the trait implements functions like e.g. map, zip, and filter, which are modifier functions that are commonly found in functional programming languages.
 
 \begin{listing}[H]
   \begin{minted}{rust}
     pub trait Iterator {
       type Item;
       fn next(&mut self) -> Option<Self::Item>;
-      fn size_hint(&self) -> (usize, Option<usize) { (0, None) }
+      fn size_hint(&self) -> (usize, Option<usize) { ... }
       // ...
     }
   \end{minted}
@@ -244,7 +249,9 @@ The definition of one of {\rust}'s more integral traits is the \code{Iterator} t
   \label{lst:rust:iterator}
 \end{listing}
 
-Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter} involves the discussed features enums, pattern matching and traits.
+\autoref{lst:rust:list-iter} \todo{We should remove the clone() from this example} shows an example of how the \code{Iterator} trait can be implemented for the \code{List} type.
+This code involves some of the previously discussed language features like enums, pattern matching, and traits.
+An example that shows how to use the filter-iterator is displayed later in this section.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -255,9 +262,9 @@ Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter
         match self.clone() {
           Cons(val, next) => {
             *self = *next;
-            Some(val)
+            Some(val) // Returns the value `Some(val)'
           },
-          Nil => None
+          Nil => None // Returns the value `None'
         }
       }
     }
@@ -269,18 +276,15 @@ Implementing the Iterator trait for the List type in \autoref{lst:rust:list-iter
 
 \subsubsection{Loops}
 
-\rust provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
+{\rust} provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
 The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
 \rust's \code{for} statement is merely syntactic sugar for a \code{loop} with an internal \code{match} around the iterator's \code{next()} function.
-\autoref{lst:rust:desugared-for} shows a simplified, expanded version of the code presented in \autoref{lst:rust:for}.
-
-% To understand the functionality we look the approximate desugaring of the for loop into a loop and a match expression in \autoref{lst:rust:for}
-\todo{Why not provide an example using List, instead of a Vector?}
+\autoref{lst:rust:for} shows a how a \code{for} loop is used to loop over a vector of numbers, this code is de-sugared by {\rust} into the equivalent (simplified) code shown in \autoref{lst:rust:desugared-for}.
 
 \begin{listing}[!h]
- \begin{minipage}{0.45\textwidth}
-\begin{listing}[H]
-  \begin{minted}{rust}
+\begin{minipage}{0.45\textwidth}
+  \begin{listing}[H]
+    \begin{minted}{rust}
 let values = vec![1, 2, 3];
 
 for x in values {
@@ -288,12 +292,12 @@ for x in values {
 }
 
 
-\end{minted}
-\caption{A \code{for} loop for an iterators}
-\label{lst:rust:for}
-\end{listing}
- \end{minipage}
- \begin{minipage}{0.45\textwidth}
+    \end{minted}
+    \caption{A \code{for} loop for an iterators}
+    \label{lst:rust:for}
+  \end{listing}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
   \begin{listing}[H]
     \begin{minted}{rust}
 let mut it = values.into_iter();
@@ -304,10 +308,10 @@ loop {
   }
 }
     \end{minted}
-    \caption{\rust's \code{for} loop expanded to a \code{loop}}
+    \caption{\rust's \code{for} loop de-sugared to a \code{loop}}
     \label{lst:rust:desugared-for}
   \end{listing}
- \end{minipage}
+\end{minipage}
 \end{listing}
 
 % \subsubsection{Case Study - Result}
@@ -327,7 +331,37 @@ loop {
 % \label{lst:rust:result}
 % \end{listing}
 
-\include*{background/rust/closures}
+\subsubsection{Closures}
+\label{sec:back:rust:closures}
+
+% Closures, a type of anonymous functions, exposes many expressive programming patterns which have emerged the last few years through the popularization of JavaScript \todo{Is this statement true? Maybe its gotten more recognized because of JS, but  closures have been around since at least the 70s...}, and several functional languages.
+% The consquence is that both {\Cpp} and Java has added support for creating anonymous functions called lambda expressions.
+
+A closure is an anonymous function that closes around the environment that it is defined in.
+Any freestanding variables that are defined in this environment are accessible to the closure.
+A closure can be used as an argument to another function, or be returned from a maker function.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+fn main() {
+  let (nums, limit) = (vec![1, 2, 3, 4], 3);
+  let filtered: Vec<&u32> = nums.iter()
+                                .filter(|&el| *el < limit)
+                                .collect();
+  println!("{:?}", filtered); // prints: `[1, 2]'
+}
+  \end{minted}
+  \caption{Using a closure to filter the entries of a vector.}
+  \label{lst:closure:filter}
+\end{listing}
+
+\autoref{lst:closure:filter} shows how a closure can be used to filter a list of numbers, it also demonstrates one of the \code{Iterator} trait's many use cases.
+The example initializes a vector with four numbers and makes an iterator by calling the \code{iter()} function.
+Once the iterator is acquired, the \code{filter()} function is called with a closure as argument.
+The expression \code{|&el| *el < limit} defines the closure, which takes an argument \code{el} and returns a \code{bool}.
+The \code{limit} is a free variable which is found in the scope of the \texttt{main} function, this variable is part of the environment that is \emph{enclosed} by the closure.
+When the \code{collect()} function is called, the closure is executed with every element in the vector, and they are collected into a new vector if the closure's condition is satisfied.
+
 
 \subsection{Organization}
 \label{ssub:rust:organization}
@@ -351,8 +385,9 @@ The {\rust} compiler comes bundled with a handful of standard libraries that are
 By default, every {\rust} application is linked with the the {\rust} {\std} library, which \concept{re-exports} functionality from the standard libraries, like e.g. the \lib{collections} crate.
 \todo{This figure looks broken...}
 \autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
-Many of these libraries contains functionality that depends on an operating system to be present, which is not necessarily a safe assumption to make for a bare-metal system.
-This means that the {\std} library can not be utilized in this project, instead it has to be based on {\rust}'s {\core} library, which lays the foundation for all of the standard libraries.
+Many of these libraries contains functionality that depends on an \gls{os} to be present, which is not necessarily a safe assumption to make for a bare-metal system.
+Because of this, the {\std} library can not be utilized in this project.
+Instead it have to be based on {\rust}'s {\core} library, which lays a foundation for all of the standard libraries, and does not depend on an \gls{os}.
 
 \begin{figure}[H]
   \begin{center}
@@ -365,45 +400,49 @@ This means that the {\std} library can not be utilized in this project, instead 
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
 
+One of {\rust}'s goals is to achieve performance similar to {\C} and {\Cpp}, at the same time as providing complete memory safety.
+{\rust} aims to achieve this with \emph{zero-cost abstractions}, which means that the various high-level language constructs it implements does not come with an execution overhead.
+This section gives a detailed example of one of {\rust}'s zero-cost abstractions.
+
 Abstractions, in the form of references and pointers to objects or structures, and how they are
 structured on the heap, is a common source of overhead in programming languages.
-\autoref{fig:java_abstractions} \todo{Update with nicer figure} shows how {\Java} lays out a vector of
+\autoref{fig:java_abstractions} shows how {\Java} lays out a vector of
 strings in memory.
-Fundamentally, a reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that is placed elsewhere on the heap.
+Fundamentally, a reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that are placed elsewhere on the heap.
 % There are four levels of indirection between the reference to the vector on stack, and the actual character data of its strings.
 If we want to access the first character of a string stored in the vector, we would have to go through four levels of indirection - two objects need to be both dereferenced and indexed.
 If the nesting of objects is deep it can result in many heap-lookups in order to get the desired data.
 
 \begin{figure}[tb]
   \begin{center}
-    \includegraphics[scale=0.5]{figures/java_abstractions}
+    \includegraphics[width=0.8\textwidth]{figures/java_abstractions}
   \end{center}
   \caption{Abstractions of a Vector of Strings in Java.}
   \label{fig:java_abstractions}
 \end{figure}
 
 An important part about zero-cost abstractions, is the ability to define new abstractions, like a vector, that optimize away to the bare minimal.
-\rust introduces the same zero-cost abstractions that are present in C++, among other programming languages.
+{\rust} introduces the same zero-cost abstractions that are present in {\Cpp}, among other programming languages.
 This is both important for performance, and in general, in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
 % when working with embedded devices.
 % \todocite{This is a bogus sentence. Also, need to cite zero-cost abstraction articles}
-\autoref{fig:cpp_abstractions} shows how C++ places a vector of strings in memory.
+\autoref{fig:cpp_abstractions} shows how {\Cpp} places a vector of strings in memory.
 The main difference is that the vector itself is placed on the stack, and the string data is placed directly inside the memory block owned by the vector.
 The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
 
-There is still one really important difference between the two examples; we can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in C++ can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
-\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in c++ can lead to a dangling pointer?}.
-In {\rust}'s case, all structures is allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
-References to such stack-allocated variables can be passed around and accessed, just like in C++,
+There is still one really important difference between the two examples; we can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in {\Cpp} can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
+\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in {\cpp} can lead to a dangling pointer?}.
+In {\rust}'s case, all structures are allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
+References to such stack-allocated variables can be passed around and accessed, just like in {\Cpp},
 but {\rust} also introduces a set of rules that have to be followed in order to safely use these references.
 These rules are based upon variable ownership and lifetimes, which are discussed in \autoref{sec:guaranteed_memory_safety}.
 A {\rust} program will not successfully compile if the programmer is failing to properly maintain these rules.
 
 \begin{figure}[tb]
   \begin{center}
-    \includegraphics[scale=0.5]{figures/cpp_abstractions}
+    \includegraphics[width=0.8\textwidth]{figures/cpp_abstractions}
   \end{center}
-  \caption{Abstractions of a Vector of Strings in {\rust} and C++.}
+  \caption{Abstractions of a Vector of Strings in {\rust} and {\Cpp}.}
   \label{fig:cpp_abstractions}
 \end{figure}
 
@@ -412,7 +451,7 @@ A {\rust} program will not successfully compile if the programmer is failing to 
 
 One of {\rust}'s biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing performance.
 The memory safety boils down to how {\rust} manages its variables and their memory throughout the course of a program.
-\rust introduces a few concepts that are all centered around the \concept{ownership} of these variables and their \concept{lifetimes}, and how references to these variables can be \concept{borrowed}.
+{\rust} introduces a few concepts that are all centered around the \concept{ownership} of these variables and their \concept{lifetimes}, and how references to these variables can be \concept{borrowed}.
 These concepts are defined in {\rust}, but a lot of the inspiration behind those rules comes from other type-safe languages, like Haskell and OCaml, and especially Cyclone's \cite{Grossman2002,Swamy2006} region-based memory management.
 \rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically during compilation.
 
@@ -433,10 +472,10 @@ Another common implementation is a stop-the-world garbage collector.
 It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the \concept{root} set of variables, i.e. global variables, local variables in the stack and any variable that may be accessible from the current state of the registers \cite{Wilson1992}.
 The memory that are accessible from these references are then marked as valid, and all the invalid memory will then be freed and accessible through new calls to the memory allocation function.
 The downside of such an approach is the requirement of halting the entire program in order to release the invalid memory.
-There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
+There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in resource constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
 
 Another approach to keeping track of the memory resources have been to give the programmer full control of every memory allocation and deallocation.
-This is the most common approach for systems programming languages like {\C} and C++, where performance and predictability is important.
+This is the most common approach for systems programming languages like {\C} and {\Cpp}, where performance and predictability is important.
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
 Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
 
@@ -444,7 +483,7 @@ Memory leaks like this will eventually lead a running program into crashing due 
 background chapter}
 
 It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
-\rust operates a little different from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
+{\rust} operates differently from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
 When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
@@ -460,11 +499,9 @@ fn read_book(b: Book) {
 fn main() {
   // `b' is the owning handle to a Book
   let b = Book { pages: 150 };
-
   // when this line is reached, `read_book' takes ownership of `b'
   read_book(b);
   // when `read_book' returns, the book is also deallocated
-
   // this makes it impossible to  read the book two times
   read_book(b); // <- error: use of moved value: `b'
  }
@@ -484,7 +521,7 @@ The only way to continue using the handle in its original scope would have been 
 \label{ssec:borrowing}
 
 \concept{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
-\rust allows the programmer to \concept{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
+{\rust} allows the programmer to \concept{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
 There can exist multiple \emph{references} to the same place in memory, as long there is only one \concept{owner} of the actual handle.
 A reference is denoted with an \code{\&} in front of the handle, this will tell {\rust} that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
 Consider a modification of the previous example shown in \autoref{lst:borrowing_handle}.
@@ -500,10 +537,8 @@ fn read_book(b: &Book) {
 fn main() {
   // `b' is the owning handle to a Book
   let b = Book { pages: 150 };
-
   // only a reference to the book is given to `read_book'
   read_book(&b);
-
   // it is possible to read the book two times, because `b'
   // still lives in the scope defined by the `main' function
   read_book(&b);
@@ -516,9 +551,10 @@ fn main() {
 \subsubsection{Lifetimes}
 \label{ssec:lifetimes}
 
-\rust needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
-\rust achieves this with a concept called \concept{lifetimes}, in which the compiler with the help of \concept{lifetime elisions} or \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
+{\rust} needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
+{\rust} achieves this with a concept called \concept{lifetimes}, in which the compiler with the help of \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
 Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in {\C} that returns a reference into a variable allocated in its own stackframe.
+When the function returns the variable will be de-allocated, and the returned reference will point to invalid memory.
 The {\C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
 A similar implementation of \code{name\_as\_ref} in {\rust} is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
 
@@ -544,15 +580,14 @@ fn name_as_ref() -> &str { // <- error: missing lifetime specifier
 \label{lst:invalid_ref_rust}
 \end{listing}
 
-\todo{Sentence is unclear? Needs rewrite?}
-Lifetime elisions are applied to structures and trait declarations, among others, and they are described in function definitions in order to tell {\rust} that the named lifetime is valid in the scope in which the function-call is issued.
-Such elisions are used extensively together with parameters and return values, and helps the compiler to reason about the liveliness of the references and whether they are valid or not.
-There are two kinds of lifetimes; the ones associated with \emph{input parameters} to a function, and the ones associated with the \emph{returned value} from a function.
-These are referred to as \emph{input-lifetimes} and \emph{output-lifetimes}, respectively.
-We have an error if a function attempts to return a value with an output lifetime that lives shorter than the input lifetime, because this would result in a use-after-free.
-As an example, consider the updated version of the \code{name\_as\_ref} function shown in \autoref{lst:valid_ref_rust}.
-Here we annotate a lifetime by giving it the name \code{'a}, the explicit name of the lifetime does not matter, what matters is that we tell {\rust} that our function is passed a reference to a book that is alive \emph{before} the function is called.
-Since {\rust} \emph{knows} that the book is alive before calling the function, it knows that it would be safe to return a reference to a field of that book because the returned value have the \emph{same} lifetime.
+An example of the same function, but with applied lifetime specifiers, is shown in \autoref{lst:valid_ref_rust}.
+We can see from this example that {\rust} requires us to annotate all references that are associated the function's arguments and return values with a name, in this case we have chosen the name \code{'a}.
+The explicit name of the lifetime does not matter, what matters is that {\rust} forces us to allocate the book elsewhere, so that it is alive in the stackframe that encloses the function call to \code{get\_name\_as\_ref}.
+Note that this example just demonstrates what lifetime specifiers look like in {\rust} and shows one way the language can catch use-after free errors.
+
+Another thing to notice is that the usage of lifetime specifiers in this example is somewhat verbose.
+{\rust} will often let us elide the lifetimes associated with the variables completely, so we can usually get by without annotating the lifetimes like this.
+The reader is encouraged to see The Rust Programming Language Book \cite{web:rust_book} for an in-depth explanation of {\rust}'s ownership- and lifetime-system.
 
 \begin{listing}[tb]
 \begin{minted}{rust}
@@ -562,40 +597,39 @@ fn name_as_ref<'a>(b: &'a Book) -> &'a str {
 
 fn main() {
   let b = Book { name: "Gecko's".to_string(), pages: 150 };
-  let n = name_as_ref(&b);
+  let n = name_as_ref(&b); // no use-after-free error
 }
 \end{minted}
 \caption{Retuning a reference with correct use of lifetime elisions}
 \label{lst:valid_ref_rust}
 \end{listing}
 
-\subsection{Concurrency Model} % (fold)
-\label{ssub:concurrency_model}
+% \subsection{Concurrency Model} % (fold)
+% \label{ssub:concurrency_model}
 
-Solving both memory safety and concurrency might sound like two entirely different problems, but the ownership system described in \autoref{sec:guaranteed_memory_safety} actually turned out to go a long way of being the solution of them both \cite{web:fearless_concurrency_with_rust}.
-While we do not utilize or focus on the concurrency of {\rust} in this project, it is still a very important feature for the language, so it will shortly describe parts of it in this section.
+% Solving both memory safety and concurrency might sound like two entirely different problems, but the ownership system described in \autoref{sec:guaranteed_memory_safety} actually turned out to go a long way of being the solution of them both \cite{web:fearless_concurrency_with_rust}.
+% While we do not utilize or focus on the concurrency of {\rust} in this project, it is still a very important feature for the language, so it will be shortly introduced in this section.
 
-As already mentioned, {\rust}'s ownership system helps us to reason about the liveliness of variables, and it helps us to catch errors like use-after-free, and data races by not allowing us to have multiple references to the same mutable data.
-This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
-Thus, {\rust}'s way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
-Indeed, the core concurrency functionality in {\rust} is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
-This is an important distinction, because it allows for any number 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms provided in the standard library.
+% As already mentioned, {\rust}'s ownership system helps us to reason about the liveliness of variables, and it helps us to catch errors like use-after-free, and data races by not allowing us to have multiple references to the same mutable data.
+% This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
+% Thus, {\rust}'s way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
+% Indeed, the core concurrency functionality in {\rust} is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
+% This is an important distinction, because it allows for any number 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms provided in the standard library.
 
 \subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
 
-\rust's strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
-There exists many programs that are indeed safe, but still not possible for the compiler to verify.
+{\rust}'s strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
+There exist many programs that are indeed safe, but still not possible for the compiler to verify.
 Examples of code that the compiler cannot verify is code that dereference \concept{raw pointers}, or code that utilize {\rust}'s \gls{ffi} or directly call any of the compiler intrinsics functions.
 Raw pointers in {\rust} are similar to a normal pointer in C, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
 The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
-The ability to make new abstractions that optimize away to essentially nothing is an important feature of {\rust}.
+The ability to define new abstractions with efficient implementations is an important goal of {\rust}.
 Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
 For these tasks, {\rust} provides the keyword {\unsafe}.
 It is important to note that this {\unsafe} keyword is introduced in order to \emph{keep} {\rust}'s semantics about memory safety.
 When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the {\unsafe} block is indeed safe.
-\todo{Maybe add reference for this? Don't really think its necessary}
 
 \begin{table}[ht]
 \begin{center}
@@ -621,7 +655,7 @@ When the compiler can no longer guarantee safety, it is up to the programmer to 
 
 \autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an {\unsafe} block, and some examples of why the operations are considered unsafe.
 Compiler intrinsics are functions that are provided by the compiler itself, not {\rust}, and are functions that are closely related with raw pointers.
-These are all considered unsafe and provides core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
-It is important to note that {\rust}'s borrow checker is still active \emph{across} the unsafe code, and that normal ownership rules still applies even though the code is unsafe.
+These are all considered unsafe, they provide core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
+It is important to note that {\rust}'s borrow-checker is still active \emph{across} the unsafe code, and that normal ownership rules still apply even though the code is unsafe.
 The borrow-checker can can never be disabled, but for for certain operations it will simply not work.
 As an example, it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues, as described in \autoref{ssec:lifetimes}.
