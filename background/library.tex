@@ -25,24 +25,22 @@ These are libraries written specifically for the the EFM32's (or the Cortex-M's)
 \subsection{CMSIS}
 \label{sub:cmsis}
 
-The \gls{cmsis} library is a \gls{hal} provided by ARM for their Cortex-M \glspl{mcu}.
+The \gls{cmsis} library is a \gls{hal} provided by ARM for their Cortex-M \glspl{cpu}.
 It is divided into a few modules, namely; Core, DSP, RTOS and SVD.
-\todo{I think its wierd to mention all these names without any further explanation. DSP, SVD etc. does not tell you much...}
-The Core module is the only part of \gls{cmsis} that we utilize in this project.
+Most of these modules are not relevant for this project, only the Core module is.
 It provides functionality to control interrupts though \gls{nvic}, manage the system clocks, and program tracing through \gls{itm}.
 The different peripherals that comes with ARM's \glspl{cpu} are memory mapped, which means that reading and writing to certain addresses can be used to modify the peripheral's internal registers, this is explained further in \autoref{sec:back:oo}.
 
 \subsection{Emlib}
 \label{sub:emlib}
 
-The \emlib peripheral \gls{api} by Silicon Labs is a general library written in {\C} that provides functionality to control the vast range of peripherals that are supported by the EFM32's.
+The {\emlib} peripheral \gls{api} by Silicon Labs is a general library written in {\C} that provides functionality to control the vast range of peripherals that are supported by the EFM32's.
 It provides a thin layer of abstraction over each of the peripherals' registers, which are memory-mapped as described in \autoref{sec:back:oo}, and us is built on ARM's \gls{cmsis}.
 It is possible to control the EFM32's with this library as well, or a combination between the two, but {\emlib} is designed to function as a standalone library.
 
-The \gls{api} is divided into separate files that define interfaces for modules such as e.g. ADC, DAC, Timer, and DMA, and it provides functions to easily control sleep modes and interrupt handlers.
+The \gls{api} is divided into separate files that define interfaces for modules such as e.g. \gls{adc}, \gls{dac}, Timer, and \gls{dma}, and it provides functions to easily control sleep modes and interrupt handlers.
 The library functions are exposed in three different API patterns, either as standalone utility methods, singleton object methods, or {\C} object oriented fashion.
 Examples of these patterns are shown for the \code{timer} in \autoref{lst:back:lib:timer}, the \code{RTC} in \autoref{lst:back:lib:rtc}, and for the \code{gpio} module in \autoref{lst:back:lib:gpio}.
-\todo{We can not assume that anyone reading this knows what RTC, GPIO, TIMER etc is...}
 
 \begin{listing}[H]
   \begin{minted}{c}
@@ -83,15 +81,14 @@ unsigned int GPIO_PinOutGet(GPIO_Port_TypeDef port,
 
 Another library provided by Silicon Labs is called \lib{emdrv}, and it provides higher-level drivers for some of the more general EFM32 peripherals.
 Commonly used modules with common usage patterns usually have their own drivers that makes them easier to initialize and use.
-Examples of modules that have their own drivers are the \texttt{flash} which features a common read-write pattern, and the GPIO which exposes a common pattern for registering handler functions to be executed when an event is triggered.
+Examples of modules that have their own drivers are the flash memory which features a common read-write pattern, and the \gls{gpio} module which exposes a common pattern for registering handler functions to be executed when an event is triggered.
 
 \subsection{newlib}
 
-\todo{maybe present this section before CMSIS?}
 % Newlib is an implementation of a {\C} library \todo{Do you mean a {\C} standard library or something? Or is it just a {\C} library?} for embedded devices.
 Newlib is a {\C} library that is implemented specifically to be used by embedded devices.
 Most notably this library defines heap memory management facilities through \func{malloc}, \func{realloc} and \func{free}.
-These base functions are needed in order to compile both \emlib and \lib{emdrv}, and {\rust}'s \lib{alloc} library.
+These base functions are needed in order to compile both {\emlib} and \lib{emdrv}, and {\rust}'s \lib{alloc} library.
 The functions in newlib are used directly by the {\C} libraries, or in {\rust} through its \lib{libc} library, which exposes the memory management symbols mentioned above.
 This library is distributed as a part of the GNU ARM Toolchain.
 % which is described in \autoref{}

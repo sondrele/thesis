@@ -6,11 +6,10 @@ The following sections presents the EFM32 family of microcontrollers and a coupl
 
 \subsection{EFM32}
 \label{sub:emf32}
-\todo{There's some rough edges of the language in this section. Needs to be rephrased}
 
 ARM Cortex-M is a family of 32-bit RISC processor cores, intended to be used by applications that require low cost and energy-usage.
 These factors are crucial in modern systems and applications where energy efficiency is of great importance.
-For example with the \gls{iot} \cite{Valhouli2010}, where we predict a future where tens of billions of devices will be connected to the Internet, ranging from Super Computers down to small embedded devices that might be used to power up and control everything from cars to light bulbs via the Internet.
+For example with the \gls{iot} \cite{Valhouli2010}, where it is predicted that tens of billions of devices will be connected to the Internet in the future, ranging from Super Computers down to small embedded devices that might be used to power up and control everything from cars to light bulbs via the Internet.
 The different processor cores of the Cortex-M family are summarized in \autoref{tab:cortex_m}.
 
 \begin{table}[h]
@@ -42,7 +41,7 @@ The most important way to achieve low power consumption is by turning off the di
 The EFM32 processors features five different energy modes, or sleep modes, ranging from EM0 (Energy Mode 0) where the core is on, to EM4 where the processor can only wake up on specific interrupt signals.
 The different peripherals provided with the EFM32's operate in different energy modes.
 This system allows applications to utilize many different peripherals for data collection, while the processor itself is turned off.
-The peripherals then has the opportunity to wake up the processor on different interrupt-signals and transfer data to it, in order to do general processing.
+The peripherals then have the opportunity to wake up the processor on different interrupt-signals and transfer data to it, in order to do general processing.
 
 \begin{table}[b]
 \begin{center}
@@ -156,7 +155,7 @@ Communication is important in every modern computing system, the {\gecko} suppor
 The \gls{usart}, and the \gls{uart}, together with the \gls{i2c}, are serial protocols that allows for efficient communication between a high range of external devices.
 Different areas of use can be e.g. reading and writing to SD memory cards or transferring data over a serial interface to a computer.
 Peripherals like the \gls{usart} and the \gls{uart} can be used in combination with \gls{dma}, which is useful for energy constraint applications.
-This combination make it possible to implement applications that can gather data from a range of external sensors, and transfer or store it to other peripherals with minimal interaction from the \gls{cpu}.
+This combination makes it possible to implement applications that can gather data from a range of external sensors, and transfer or store it to other peripherals with minimal interaction from the \gls{cpu}.
 
 \gls{gpio} is used for pin configuration and manipulation of the \gls{mcu} pins, and are often used in order to configure the pins that are required by other peripherals.
 Simple Push Buttons and LEDs are configured with the \gls{gpio}, and e.g. the \gls{usart} needs to have configured at least two \gls{gpio} pins for both receiving and transmitting data.
