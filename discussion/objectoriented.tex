@@ -2,29 +2,15 @@
 \label{sec:res:aliasing-mmios}
 
 In \autoref{sec:back:oo} we looked at how the Object Oriented paradigm can be applied to \glspl{mmio}.
-Here we will first discuss the usage of {\unsafe} as an case study of the consideration taken when using this keyword.
-Then we look an issue which arises from this pattern in {\rust}.
-
-The {\rust} code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword, note the discussed code is reimplemented as the \func{new\_adc0} function in \autoref{lst::oo::aliasing-mutability}
-As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
-The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must also be marked as \keyword{unsafe}.
-The underlying reason is a bit more subtle.
-The unsafety here comes from the fact that \code{as\_mut} converts a raw pointer to a safe reference.
-After the conversion the pointer must be safe to dereference.
-This is the programmers part of the contract to ensure when using a unsafe block.
-So what is unsafe about derefencing raw pointer?
-Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
-The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer \code{0x0} causes the {\gecko} to trigger an Bus Fault.
-In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
-
-The issue which arises from using this way to instantiate a \gls{mmio} is exemplified in \autoref{lst:oo:aliasing-mutability}
-We see that we can create multiple mutable aliases to the \glspl{mmio}.
+Here we will first discuss the usage of {\unsafe} in the initialization of \gls{mmio} as an case study of the consideration taken when using this keyword.
+The issue is present in the {\C} code aswell, but the requirements of the safe subset of {\rust} exposes it.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-fn new_adc0() -> Adc {
-  unsafe { match ADC0_BASE.as_mut().unwrap() }
+const ADC0_BASE: *mut Adc = 0x40002000 as *mut Adc;
+
+fn new_adc0() -> &'static mut Adc {
+  unsafe { ADC0_BASE.as_mut().unwrap() }
 }
 fn main() {
   let mut adc0_alias1 = new_adc0();
@@ -35,31 +21,25 @@ fn main() {
   \label{lst:oo:aliasing-mutability}
 \end{listing}
 
+An example function for initializing a \gls{mmio} is given in \autoref{lst:oo:aliasing-mutability} as the \func{new\_adc0}.
+The issue which arises from using this way to instantiate a \gls{mmio} is exemplified in the {\main} function.
+We see that we can create multiple mutable aliases to the \glspl{mmio}.
 To account for this issue the initialization method for the \gls{mmio} should be marked as {\unsafe} to signalize to the programmer that using the method can return a mutable alias.
+
+In the following subsections we look at different approaches to dealing with these mutable aliases.
 
 \subsubsection{The zinc take on MMIO initializing}
 
-The \lib{zinc.rs} project discussed in \autoref{zinc} take on problem is to move the initialization of \glspl{mmio} out of the hands of the programmer.
-\lib{zinc.rs} provides a macro called \code{platform\_tree} which takes an specification of the MMIO used in the application and generates objects to operate on them.
-These objects are passed to the \main function as parameters, and the programmer must use these objects to interact with the \glspl{mmio}.
+The \lib{zinc.rs} project discussed in \autoref{sec:zinc} take on problem, is to move the initialization of \glspl{mmio} out of the hands of the programmer.
+\lib{zinc.rs} provides a macro called \code{platform\_tree} which takes an specification of the \glspl{mmio} used in the application and generates objects to operate on them.
+These objects are passed to the {\main} function as parameters, and the programmer must use these objects to interact with the \glspl{mmio}.
+This prevents the programmer from creating mutable aliases to the \glspl{mmio}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
 platform_tree!(
-  timer {
-    timer@1 {
-      counter = 25;
-      divisor = 4;
-    }
-  }
-  os {
-    single_task {
-      loop = "run";
-      args = {
-        timer = &timer;
-      }
-    }
-  }
+  timer { timer@1 { counter = 25; divisor = 4; } }
+  os { single_task { loop = "run"; args = { timer = &timer; } } }
 )
 
 fn run(args: &pt::run_args) {
@@ -70,23 +50,19 @@ fn run(args: &pt::run_args) {
   \label{lst:zinc:platformtree}
 \end{listing}
 
-This method by it self prevents the programmer from using interrupts as a means for controlling the MMIOs, if the this single point of initialization is held.
-Consider the code in \autoref{lst:irq:global} where both the \main function and the \func{ADC0_IRQHandler} creates a reference to the \gls{adc} \gls{mmio}.
-Translating this code to use the \lib{zinc.rs} \code{platform\_tree} provokes the issue of how reference the \gls{mmio} inside the interrupt handler as seen in \autoref{lst:zinc:irq}.
+Although this prevents the mutable aliasing problem on initialization it requires the programmer to resort to global variables when using interrupts as a means for controlling the \glspl{mmio}.
+Considering a simple example of initializing and using a \gls{adc} in \autoref{lst:zinc:irq} we see, as described in \autoref{sec:irq:motivation}, the reference to the \gls{adc} must be bleed to the global scope in order to be used in the interrupt handler.
 
 \begin{listing}[H]
   \begin{minted}{rust}
 platform_tree!(
-  //
-  adc {
-    mode: single
-  }
+  adc { mode: single }
 );
 
 static mut ADC0: Option<&mut Adc> = None;
 
 fn run(args: &pt::run_args) {
-  unsafe { ADC0 = Some(plt.adc0); }
+  unsafe { ADC0 = Some(args.adc0); }
 }
 
 pub extern fn ADC0_IRQHandler() {
@@ -99,9 +75,25 @@ pub extern fn ADC0_IRQHandler() {
   \label{lst:zinc:irq}
 \end{listing}
 
-As \autoref{lst:zinc:irq} shows the adc reference must be bleed into a global variable which again {\unsafe} to use.
-
 \subsubsection{Using Closures}
 
 In \autoref{sec:irq-closures} we explored a technique to employ closures to create handlers for interrupts.
-By considering \autoref{lst:irq:closures} we see that the issue mentioned in this section is mitigated.
+By considering \autoref{lst:oo:closure} we see that the issue with mutable aliases are avoided entirely by employing closures to handle the .
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+platform_tree!(
+  adc { mode: single }
+);
+
+fn run(args: &pt::run_args) {
+  args.adc0.on_single(move |sample| {
+    // use sample
+  });
+}
+  \end{minted}
+  \caption{Using Zinc and Closures to initialize and use \gls{adc}}
+  \label{lst:oo:closure}
+\end{listing}
+
+Note that the \lib{zinc} project does not currently support for \gls{adc}, but concepts described here stays the same.
