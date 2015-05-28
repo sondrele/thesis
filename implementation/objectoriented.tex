@@ -2,10 +2,10 @@
 \label{sec:impl:oo}
 
 The interface of many of the modules defined in {\emlib} resembles that of objects found in Object Oriented programming.
-This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
+This section looks at how Object Oriented programming can be used in conjunction with \gls{mmio} in embedded programming.
 
 In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigms essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
+The paradigm's essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
 In this section, we look at how control over the memory layout of objects and static dispatch, can be used to enable the Object Oriented paradigm in conjunction with \gls{mmio} in embedded programming.
 
 Static dispatch, as opposed to dynamic dispatch, is the mechanism in which the function to be called can be decided statically by the compiler, and a \code{call} instruction to the function can be inserted into the code directly.
