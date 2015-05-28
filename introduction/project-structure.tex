@@ -34,9 +34,9 @@ Secondly the milestone of running the first {\rust} application on the {\gecko} 
 
 \subsection{Phase 2 - Library Support}
 
-After the initial compilation process was in place, the bindings for the \lib{cmsis} and {\emlib} libraries were started.
-Early in this phase the technical challenges involved in creating the FFI bindings was in focus when selecting which part of the libraries to develop.
-The library support was continouosly evolved when needed in the Development Phase.
+After the initial compilation process was in place, the focus shifted to developing the platform for writing larger applications
+Early in this phase the technical challenges involved was in focus when selecting which part of the libraries to develop.
+The library support was continouosly evolved when needed in the development phase.
 
 \subsection{Phase 3 - Development}
 \label{sec:projects}
@@ -59,9 +59,9 @@ Two complementary projects were specified given in \autoref{tab:meth:projects}.
 
 Both projects are implemented in both {\rust}, using the platform developed for this thesis, and {\C} using the libraries provided by Silicon Labs.
 
-\subsection{Phase 4 - Evaluating}
-During the evaluating phase the develop platform was evaluated based on the metrics in \autoref{lst:evaluation:criterias}.
-The results of the evaluation is presented in \autoref{chap:results} along side with results obtained by considering the existing platform in {\C}.
+\subsection{Phase 4 - Evaluation}
+During the phase for evaluation of the platform was evaluated based on the metrics in \autoref{lst:evaluation:criterias}.
+The results from the evaluation are presented in \autoref{chap:results} along side with results obtained by considering the existing platform in {\C}.
 
 \begin{listing}
   \begin{itemize}
@@ -72,4 +72,3 @@ The results of the evaluation is presented in \autoref{chap:results} along side 
   \caption{Metrics for evaluation of the platform}
   \label{lst:evaluation:criterias}
 \end{listing}
-This phase also included tuning the applications and libraries to minimize the bias in the results.
