@@ -7,18 +7,18 @@ Then we look an issue which arises from this pattern in {\rust}.
 
 The {\rust} code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword, note the discussed code is reimplemented as the \func{new\_adc0} function in \autoref{lst::oo::aliasing-mutability}
 As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
-The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \keyword{unsafe}.
+The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must also be marked as \keyword{unsafe}.
 The underlying reason is a bit more subtle.
 The unsafety here comes from the fact that \code{as\_mut} converts a raw pointer to a safe reference.
 After the conversion the pointer must be safe to dereference.
-This is the programmars part of the contract to ensure when using a unsafe block.
+This is the programmers part of the contract to ensure when using a unsafe block.
 So what is unsafe about derefencing raw pointer?
 Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
 The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
 For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the {\gecko} to HardFault on a Bus Error.
 In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
 
-The issue which arises from using this way to instantiate a \gls{mmio} is examplified in \autoref{lst:oo:aliasing-mutability}
+The issue which arises from using this way to instantiate a \gls{mmio} is exemplified in \autoref{lst:oo:aliasing-mutability}
 We see that we can create multiple mutable aliases to the \glspl{mmio}.
 
 \begin{listing}[H]
@@ -45,15 +45,26 @@ These objects are passed to the \main function as parameters, and the programmer
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    platform_tree!(
-    timer0: {
-      clk: ...
+platform_tree!(
+  timer {
+    timer@1 {
+      counter = 25;
+      divisor = 4;
     }
-    );
+  }
+  os {
+    single_task {
+      loop = "run";
+      args = {
+        timer = &timer;
+      }
+    }
+  }
+)
 
-    fn run(plt: &Platform) {
-      // plt.timer0 holds a reference to the timer MMIO
-    }
+fn run(args: &pt::run_args) {
+  // args.timer holds a reference to the timer MMIO
+}
   \end{minted}
   \caption{}
   \label{lst:zinc:platformtree}
@@ -66,14 +77,15 @@ Translating this code to use the \lib{zinc.rs} \code{platform\_tree} provokes th
 \begin{listing}[H]
   \begin{minted}{rust}
 platform_tree!(
-  adc0: {
+  //
+  adc {
     mode: single
   }
 );
 
 static mut ADC0: Option<&mut Adc> = None;
 
-fn run(plt: &Platform) {
+fn run(args: &pt::run_args) {
   unsafe { ADC0 = Some(plt.adc0); }
 }
 
