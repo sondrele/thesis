@@ -1,6 +1,5 @@
-\section{Project}
-
-\subsection{Project Breakdown}
+\section{Project Outline}
+\label{sec:project-outline}
 
 The aim of this thesis is to evaluate the {\rust} language used in an embedded computer system.
 The work was divided into several phases each having its own primary goal and subgoals.
@@ -8,24 +7,14 @@ The work was divided into several phases each having its own primary goal and su
 
 \begin{table}[H]
   \begin{center}
-    \begin{tabular}{|l|l|}
+    \begin{tabular}{l|l}
+      \textbf{Phase}&\textbf{Goal} \\
       \hline
-      Phase&Goal \\
-      \hline
-      \hline
-      Initial programmability&Getting Hello World up an running.\\
-      \hline
-      Library Support&Define a standard for creating library bindings\\
-      \hline
-      Evaluation&Evaluate the work so far and define how to proceed\\
-      \hline
-      Communication&Add support for communcation protocol (UART/I2C)\\
-      \hline
-      Development&Developing projects for evaluating the platform\\
-      \hline
-      Evaluating&Measuring performance\\
-      \hline
-      Reporting&Finalize project report\\
+      Initial Programmability & Getting Hello World up an running.\\
+      Library Support & Define a standard for creating library bindings\\
+      Development & Developing projects for evaluating the platform\\
+      Evaluating & Measuring performance\\
+      Reporting & Finalize project report\\
       \hline
     \end{tabular}
   \end{center}
@@ -37,98 +26,30 @@ In addition to the main phases in the project, the build system has evolved cont
 
 The rest of this section describes each phase in more detail.
 
-\subsubsection{Phase 1 - Getting Started}
+\subsection{Phase 1 - Initial Programmability}
 The initial phase of the project defined two main activities.
 Firstly the initial direction of the project along with major challenges was identified in a meeting with Silicon Labs w/Marius Grannæs and Mikael Berg.
-Secondly the milestone of getting up and running with {\rust} on the {\gecko} was reached.
+Secondly the milestone of running the first {\rust} application on the {\gecko} was reached.
 
-\paragraph{Initial direction}
-The initial direction set in the first meeting with Silicon Labs.
-Here a tentative project plan was set, given in \autoref{fig:meth:initial}
 
-\begin{listing}[H]
-  \begin{itemize}
-    \item Get up and running with {\rust}
-    \item Port/bind central libraries
-    \item Evaluate system
-    \item Handle Interrupts
-    \item Evaluate system for performance/energy
-  \end{itemize}
-  \caption{Initial Project Plan}
-  \label{fig:meth:initial}
-\end{listing}
+\subsection{Phase 2 - Library Support}
 
-\paragraph{Major Challenges}
+After the initial compilation process was in place, the focus shifted to developing the platform for writing larger applications
+Early in this phase the technical challenges involved was in focus when selecting which part of the libraries to develop.
+The library support was continouosly evolved when needed in the development phase.
 
-The major challenges identified in the initial meeting with Silicon Labs are given in \autoref{fig:meth:challenges}
-
-\begin{listing}[H]
-  \begin{itemize}
-    \item Volatile read and write
-    \item Handling Interrupts
-    \item Reading and Writing Hardware registers
-    \item Statical object construction
-    \item Heap allocation
-    \item Error Handling without allocation
-  \end{itemize}
-  \caption{Major Challenges}
-  \label{fig:meth:challenges}
-\end{listing}
-
-These challenges and their relation to the project are described in \autoref{} \todo{Write this section in implementation chapter.}
-
-\paragraph{Up and running}
-The activity identified as getting up and running consists of successfully compiling, linking and executing a {\rust} program on the EFM32GG.
-There were two options for assessing a successfull program on the {\gecko}, a complete and a simple.
-The complete would be to start the program in debugging with the GDB debugger and verify the success.
-While the simple was to create the simplest program with visual feedback on the STK.
-The latter was chosen as the starting point and is described in \autoref{} \todo{Add to Implementation chapter}
-
-\subsubsection{Phase 2 - Library Support}
-
-After the initial compilation process was in place, the bindings for the \lib{cmsis} and {\emlib} libraries were started.
-In this phase the technical difficulities for creating the FFI bindings was in focus when selecting which part of the libraries to develop.
-As described in \autoref{} \todo{Background section on emlib design} the libraries to bind to expose their interfaces either as static utility functions or object oriented-like interfaces.
-\autoref{tab:meth:lib} describes the initial modules developed with a description of their interaface and rational for chosing to develop the module.
-
-\begin{table}[H]
-  \begin{center}
-    \begin{tabular}{|l|l|l|}
-      \hline
-      Module/Library & Interface & Rational \\
-      \hline
-      \hline
-      core/cmsis & Static Utility & Low level dependency needed for Interrupts \\
-      rtc/emlib & Singleton Object Oriented & Simple example of the interface type \\
-      timer/emlib & Object Oriented & Example of the interface type \\
-      cmu/emlib & Object Oriented & Dependency for handling clocks in emlib \\
-      gpio/emlib & Static Utility & Simple module to provide testablility \\
-    \end{tabular}
-  \end{center}
-  \caption{Table of initial library modules}
-  \label{tab:meth:lib}
-\end{table}
-
-In addition to the
-
-\subsubsection{Phase 3 - Evaluation}
-
-\subsubsection{Phase 4 - Communication}
-
-\subsubsection{Phase 5 - Development}
+\subsection{Phase 3 - Development}
 \label{sec:projects}
 
-The goal of the development phase was to get enough empirical data to evaluate the system in Phase 5.
-Two complementary projects was specified given in \autoref{tab:meth:projects}.
+The goal of the development phase was to create applications that would provide enough empirical data to evaluate the system in Phase 4.
+Two complementary projects were specified given in \autoref{tab:meth:projects}.
 
 \begin{table}[H]
-  \begin{tabular}{|l|l|l|}
-    \hline
-    & Name & Emphasis \\
-    \hline
+  \centering
+  \begin{tabular}{l|l|l}
+    & \textbf{Name} & \textbf{Emphasis} \\
     \hline
     Project I & Sensor Tracker & Energy Efficiency \\
-    \hline
     Project II & Classic Game & Performance \\
     \hline
   \end{tabular}
@@ -136,38 +57,18 @@ Two complementary projects was specified given in \autoref{tab:meth:projects}.
   \label{tab:meth:projects}
 \end{table}
 
-Both projects are implemented in both {\rust}, using the framework developed for this thesis, and {\C} using the libraries provided by Silicon Labs.
+Both projects are implemented in both {\rust}, using the platform developed for this thesis, and {\C} using the libraries provided by Silicon Labs.
 
-\paragraph{Project I - Sensor Tracker}
-The Sensor Tracker application was chosen to measure the energy efficiency of the system.
-The application tracks sensor data periodically from the sensors provided on the STK and the BIOMETRIC-EXP-EVB expansion board.
-Sensor data is stored in RAM and can be extracted over UART.
+\subsection{Phase 4 - Evaluation}
+During the phase for evaluation of the platform was evaluated based on the metrics in \autoref{lst:evaluation:criterias}.
+The results from the evaluation are presented in \autoref{chap:results} along side with results obtained by considering the existing platform in {\C}.
 
-A full specification of Project I is included in Appendix \autoref{app:project:i}.
-
-\paragraph{Project II - Classic Game}
-The Game project was developed to measure the performance of the complete system.
-As a starting point for the project the game assignment for the course TDT4258 developed by Antonio Garcia Guirado was used.
-The game is a interactive graphical application written for the DK.
-
-A full specification of Project II is included in Appendix \autoref{app:project:ii}
-
-\subsubsection{Phase 6 - Evaluating}
-\subsubsection{Phase 7 - Reporting}
-
-\section{Toolchain}
-
-About using
-\begin{itemize}
- \item arm-none-eabi-gcc/newlib
- \item CMSIS/emlib
- \item rustc/cargo
-\end{itemize}
-
-\section{Using C as a framework for Rust}
-
-About
-\begin{itemize}
- \item why link to c vs only rust/zinc.rs
- \item ffi
-\end{itemize}
+\begin{listing}
+  \begin{itemize}
+  \item Performance
+  \item Code Size
+  \item Energy Consumption
+  \end{itemize}
+  \caption{Metrics for evaluation of the platform}
+  \label{lst:evaluation:criterias}
+\end{listing}

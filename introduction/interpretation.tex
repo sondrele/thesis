@@ -1,0 +1,39 @@
+\section{Interpretation of Assignment}
+
+The interpreted requirements from the Project Description is summarized in \autoref{tab:project-requirements}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r | p{8cm}}
+    \textbf{Requirement} & \textbf{Description} \\
+    \hline
+    \textbf{R1} & Identify and describe the reqirements for an embedded platform in Rust \\
+    \textbf{R2} & Develop an embedded software platform for the Rust language on the EFM32 series \\
+    \textbf{R2} & Evaluate code size, performance and energy consumption \\
+    \hline
+  \end{tabular}
+  \caption{Requirements from Project Description}
+  \label{tab:project-requirements}
+\end{table}
+
+Challenges related to \textbf{R1} was identified in an \emph{Kickoff} meeting with Silicon Labs and are given in \autoref{tab:lang-challenges}.
+These challenges was deemed vital to solve in order to provide an embedded platform in Rust.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{r | l}
+    \textbf{Language Challenge} & \textbf{Description} \\
+    \hline
+    \textbf{LC1} & Volatile read and write \\
+    \textbf{LC2} & Handling Interrupts \\
+    \textbf{LC3} & Reading and Writing Hardware registers \\
+    \textbf{LC4} & Statical object construction \\
+    \textbf{LC5} & Heap allocation \\
+    \textbf{LC6} & Error Handling without allocation \\
+    \hline
+  \end{tabular}
+  \caption{Language challenges in providing an embedded platform in Rust}
+  \label{tab:lang-challenges}
+\end{table}
+
+These language challenges are discussed in \autoref{sec:disc:lang-challenges}.
