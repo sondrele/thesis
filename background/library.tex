@@ -89,7 +89,6 @@ Examples of modules that have their own drivers are the flash memory which featu
 Newlib is a {\C} library that is implemented specifically to be used by embedded devices.
 Most notably this library defines heap memory management facilities through \func{malloc}, \func{realloc} and \func{free}.
 These base functions are needed in order to compile both {\emlib} and \lib{emdrv}, and {\rust}'s \lib{alloc} library.
-The functions in newlib are used directly by the {\C} libraries, or in {\rust} through its \lib{libc} library, which exposes the memory management symbols mentioned above.
-This library is distributed as a part of the GNU ARM Toolchain.
+The functions in newlib are used directly by the {\C} libraries, or in {\rust} through \gls{RCL}, which exposes the memory management symbols mentioned above.
+This library is distributed as a part of the GNU ARM Toolchain\footnote{https://launchpad.net/gcc-arm-embedded}.
 % which is described in \autoref{}
-\todo{Refer to toolchain section}

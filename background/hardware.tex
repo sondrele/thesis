@@ -45,39 +45,21 @@ The peripherals then have the opportunity to wake up the processor on different 
 
 \begin{table}[b]
 \begin{center}
-    \begin{tabular}{r|l|l}
-    \textbf{Name} & \textbf{Processor} & \textbf{Speed (MHz)} \\
+    \begin{tabular}{r|l|l|l}
+    \textbf{Name} & \textbf{Processor} & \textbf{Speed (MHz)} & \textbf{Flash Memory (KB)} \\
     \hline
-    Zero Gecko    & ARM Cortex-M0+ & 24 \\
-    Tiny Gecko    & ARM Cortex-M3  & 32 \\
-    Gecko         & ARM Cortex-M3  & 32 \\
-    Leopard Gecko & ARM Cortex-M3  & 48 \\
-    Giant Gecko   & ARM Cortex-M3  & 48 \\
-    Wonder Gecko  & ARM Cortex-M4  & 48 \\
+    Zero Gecko    & ARM Cortex-M0+ & 24 & 4, 8, 16, 32    \\
+    Tiny Gecko    & ARM Cortex-M3  & 32 & 4, 8, 16, 32    \\
+    Gecko         & ARM Cortex-M3  & 32 & 16, 32, 64, 128 \\
+    Leopard Gecko & ARM Cortex-M3  & 48 & 64, 128, 256    \\
+    Giant Gecko   & ARM Cortex-M3  & 48 & 512, 1024       \\
+    Wonder Gecko  & ARM Cortex-M4  & 48 & 64, 128, 256    \\
     \hline
     \end{tabular}
 \end{center}
 \caption{EFM32 Product Family \cite{web:silabs}}
 \label{tab:efm32_family}
 \end{table}
-
-% \begin{table}[H]
-%   \centering
-%   \begin{tabular}{|l|l|l|l|l|}
-%     \hline
-%     Family & Core & Speed (MHz) & Flash Memory (kB) & RAM (kB) \\
-%     \hline
-%     Zero Gecko & ARM Cortex-M0+ & 24 & 4, 8, 16, 32 & 2, 4 \\
-%     Tiny Gecko & ARM Cortex-M3 & 32 & 4, 8, 16, 32 & 2, 4 \\
-%     Gecko & ARM Cortex-M3 & 32 & 16, 32, 64, 128 & 8, 16 \\
-%     Leopard Gecko & ARM Cortex-M3 & 48 & 64, 128, 256 & 32 \\
-%     Giant Gecko & ARM Cortex-M3 & 48 & 512, 1024 & 128 \\
-%     Wonder Gecko & ARM Cortex-M4 & 48 & 64, 128, 256 & 32 \\
-%     \hline
-%   \end{tabular}
-%   \caption{EFM32 Product Family \cite{web:silabs}}
-%   \label{tab:efm32-family}
-% \end{table}
 
 \subsection{Evaluation boards}
 

@@ -130,7 +130,7 @@ The Object Oriented concepts used for \gls{mmio} uses static dispatch and the st
 \autoref{lst:back:adc-objects} shows how to define a {\Java} class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
-\begin{table}[H]
+\begin{figure}[H]
 
   \centering
   \begin{subfigure}{0.31\textwidth}
@@ -181,7 +181,7 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
   \caption{Memory layout of objects}
   \label{fig:back:memlayout}
 
-\end{table}
+\end{figure}
 
 By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
@@ -309,4 +309,4 @@ void main() {
   \label{fig:oo:instantiate}
 \end{listing}
 
-For a further discussion of this pattern in {\rust}, see \autoref{sec:res:aliasing-mmios}.
+%For a further discussion of this pattern in {\rust}, see \autoref{sec:res:aliasing-mmios}.

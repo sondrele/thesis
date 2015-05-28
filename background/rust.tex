@@ -475,9 +475,6 @@ This is the most common approach for systems programming languages like {\C} and
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
 Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
 
-\todo{This subsection about GC and memory handling might be better suited in a different
-background chapter}
-
 It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
 {\rust} operates differently from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.

@@ -123,7 +123,6 @@ By design Cargo only supported passing two flags further on to {\rustc}, those w
 The last step in the build process involved linking {\emlib} and the other libraries with an actual executable for the Cortex-M3.
 This was not possible to do with Cargo since it required us to pass a couple of extra linker-flags further on to {\rustc}.
 The flags were needed by {\rustc} in order to tell it to link with an external library for a different architecture and to include a separate linker-script that took care of booting up the executable on this architecture.
-\todo{Reference section explaining these flags in detail?}
 
 Another issue that was introduced by automatic compilation with Cargo, was how it structured the packages it compiled.
 When Cargo builds a project and its dependencies it structures all the generated metadata and the compiled libraries within a \dir{target} directory, and an extra filename gets appended to all of these libraries.
@@ -143,7 +142,6 @@ If Cargo is to be invoked with a command that it does not have by default, it wi
 This means that if Cargo is invoked with e.g. the command \cmd{cargo foo <args>...}, it will query the system for an executable with the name \file{cargo-foo} and it will invoke this command with the trailing arguments if it exists.
 By looking at Cargo's source code, we could see that every triggered build included a structure called \code{CompileOptions}.
 The arguments passed to Cargo's different build commands are then used to compose this structure and trigger an internal compilation process, this process handles the compilation of all dependencies and generates all the different targets for the current package to be compiled.
-\todo{Would it be nice with some kind of figure that describes the build process?}
 
 \begin{table}[ht]
 \begin{center}
