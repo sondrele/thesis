@@ -379,19 +379,19 @@ This gives the programmer the ability to import only the components of the libra
 
 The {\rust} compiler comes bundled with a handful of standard libraries that are used as a basis for almost all third party libraries and executables.
 By default, every {\rust} application is linked with the the {\rust} {\std} library, which \concept{re-exports} functionality from the standard libraries, like e.g. the \lib{collections} crate.
-\todo{This figure looks broken...}
-\autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
-Many of these libraries contains functionality that depends on an \gls{os} to be present, which is not necessarily a safe assumption to make for a bare-metal system.
-Because of this, the {\std} library can not be utilized in this project.
-Instead it have to be based on {\rust}'s {\core} library, which lays a foundation for all of the standard libraries, and does not depend on an \gls{os}.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
-  \end{center}
-  \caption{Some crates re-exported in the {\std} library}
-  \label{fig:rust:librust}
-\end{figure}
+%\todo{This figure looks broken...}
+%\autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
+%Many of these libraries contains functionality that depends on an \gls{os} to be present, which is not necessarily a safe assumption to make for a bare-metal system.
+%Because of this, the {\std} library can not be utilized in this project.
+%Instead it have to be based on {\rust}'s {\core} library, which lays a foundation for all of the standard libraries, and does not depend on an \gls{os}.
+%
+%\begin{figure}[H]
+%  \begin{center}
+%    \includegraphics[scale=0.3]{figures/background/rust/rust-lib.png}
+%  \end{center}
+%  \caption{Some crates re-exported in the {\std} library}
+%  \label{fig:rust:librust}
+%\end{figure}
 
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
