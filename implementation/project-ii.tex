@@ -18,11 +18,11 @@ However, an application like this gives us a good indication of weather the two 
 
 \subsection{Requirements}
 
-The requirements that was made for the game is summarized in \autoref{tab:project:ii:requirements}.
-{\gi} and {\gii} sets the hardware requirements for the application, we chose to restrict it to the {\DK} because of its on-board LCD screen and header pins.
+The requirements that was made for the game are summarized in \autoref{tab:project:ii:requirements}.
+{\gi} and {\gii} sets the hardware requirements for the application, we chose to restrict it to the {\DK} because of its on-board \gls{lcd} screen and header pins.
 The two modes mentioned in {\giii} was deemed necessary for testing purposes and for measuring performance, respectively.
 {\giv} specifies the performance-metric, \gls{fps} was chosen because it is an intuitive way of measuring performance.
-The result will be a number that represents how many iterations of the game's main loop have been executed every second.
+The result will be a number that represents how many iterations of the game's main loop have been executed each second.
 
 \begin{table}[H]
   \centering
@@ -30,7 +30,7 @@ The result will be a number that represents how many iterations of the game's ma
     \textbf{Requirement} & \textbf{Description} \\
     \hline
      \gi & The game should be made for the {\DK}. \\
-     \gii & The graphics should be rendered on the LCD screen. \\
+     \gii & The graphics should be rendered on the \gls{lcd} screen. \\
      \giii & The game should support two modes, it should be controlled with a gamepad, or be self-playable. \\
      \giv & The performance should be measured in the number of \gls{fps}. \\
     \hline
@@ -95,5 +95,3 @@ extern fn SysTick_Handler() {
   \caption{Pseudo code of the Circle Game.}
   \label{lst:game_loop}
 \end{listing}
-
-\subsection{Discussion}
