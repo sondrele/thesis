@@ -2,7 +2,6 @@
 \label{sec:impl:project:i}
 
 The following section gives an overview of the Project I - Sensor Tracker application.
-In the report we will use the name {\tracker} to refere to the application.
 
 \subsection{Goal}
 The project specification was developed in order to measure the energy efficiency of the {\rust} language used in an embedded system compared to {\C}.
@@ -12,10 +11,8 @@ Given the design of the Gecko, certain operations like memory transfers can also
 
 \subsection{Specification}
 
-The full specification of the {\tracker} is given in \autoref{app:project:i}, here we only provide a brief summary.
-
 The application should record samples from selected peripherals on the STK and BIO-EXP boards described in \autoref{tab:hw:boards}.
-These samples should be stored internaly on the {\gecko}.
+These samples should be stored internally on the {\gecko}.
 When a computer is connected to the UART peripheral on the {\gecko}, the samples should be extractable over a textual serial interface.
 
 \subsection{Implementation}
@@ -24,7 +21,7 @@ The application has two modes of operation, sample collection and sample transfe
 
 \subsubsection{Sample Collection}
 
-The main part of the application, gathering the samples, was implemented as described in \autoref{fig:projec:i:samples}.
+The main part of the application, gathering the samples, was implemented as described in \autoref{fig:project:i:samples}.
 
 \begin{figure}[H]
   \begin{center}
@@ -109,10 +106,10 @@ Connecting to the device with baudrate 9600 and error correction set to 8-1 (the
 \subsubsection{Command Line Interface}
 The \gls{cli} of the {\tracker} application contains a single command, read.
 The read command takes one argument and is on the format \cmd{r n}, where \emph{n} is the integer 0, 1 or 2.
-A read command is terminated by a cariage return, ascii symbol \code{\\n}.
+A read command is terminated by a carriage return, ascii symbol \code{\\n}.
 All non-conforming commands are ignored by the application.
 The \emph{n} parameter select the sensor data for \autoref{tab:project:i:sensors} which are queried.
-Each time a command conforming command is sent the application will repond by outputting all collected samples separated by a space.
+Each time a command conforming command is sent the application will respond by outputting all collected samples separated by a space.
 
 An example run of the \gls{cli} is shown in \autoref{lst:project:i:sample-run} with comments.
 
