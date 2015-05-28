@@ -122,3 +122,27 @@ As these are immutable they are allocated in the read-only section called \elfse
 On line 5 and 6 the declarations are marked with \code{static mut}.
 Here we see that the zero initializes variable is assigned to the \elfsec{.bss} section in the {\elf} file.
 On line 6 we have a non-zero value that has to be stored in Flash memory prior to execution and is copied to RAM in the \func{ResetHandler}.
+
+\subsection{Bootstrapping startup}
+\label{sec:startup}
+
+The Rust program presented in \autoref{lst:embedded-rust-hello-world} is quite obscure.
+For this reason the \lib{startup} crate was developed to minimize the effort to make a simple program and to contain the details.
+
+A minimal `Hello World' program using the \lib{startup} crate is given in \autoref{lst:embedded-rust-bootstrapped}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+#![no_std]
+#![feature(no_std)]
+
+extern crate startup;
+
+fn main() {
+
+    loop {}
+}
+  \end{minted}
+  \caption{Embedded Hello World using startup library to bootstrap}
+  \label{lst:embedded-rust-bootstrapped}
+\end{listing}
