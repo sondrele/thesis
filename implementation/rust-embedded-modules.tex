@@ -1,2 +1,102 @@
+% !TEX root = ../main.tex
+
 \section{Rust Embedded Modules}
 \label{sec:rust-embedded-modules}
+
+This section describes a separate project, which we refer to as \gls{rem}.
+\gls{rem} have been developed alongside the implementation of the various binding libraries, and contains a handful of higher-level modules for {\emlib}'s different peripheral bindings.
+The peripheral abstractions that have been implemented as part of \gls{rem} are still in very early development
+
+\subsection{Peripheral Abstractions}
+\label{sub:peripheral_abstractions}
+
+ % and act as playground to experiment with how {\rust} can be used to define high-level
+
+This section describes the different peripheral abstractions that are part of \gls{rem}.
+Some of these modules are more complete than others.
+
+\subsubsection{Usart}
+\label{ssub:usart}
+
+The \gls{usart} have many different use-cases, it is a peripheral that is used for transferring of data, but it is also a very convenient tool to use for simple debugging of programs.
+It can be used to send single strings of text between a PC and the \gls{mcu}, which is convenient for ``println''-debugging, and it is a good tool for defining \gls{cli} programs.
+
+The {\gecko} has a total of three different \glspl{usart} which can be configured to run on a total of eleven different locations i.e. \gls{gpio} Ports and Pins.
+If the \gls{gpio} configuration for a \gls{usart}  is not specified correctly, the peripheral will not function correctly either.
+The goal of the \gls{usart} abstraction was to make it easy to initialize the peripheral, as well as providing simple methods to read and write strings, and transfer data between two end-points.
+
+The \texttt{Usart} module has an initialization procedure that takes care of initializing its required \gls{gpio} pins based on a specified location.
+This is similar to the approach made by {\zinc}, but instead failing with a compilation-error if it is incorrectly configured, as in {\zinc}, it will fail at run-time.
+A minimal example that shows how to initialize an \gls{usart}, and send and receive strings, is shown in \autoref{lst:usart_abstraction}.
+Note that the example is simplified slightly, we have trimmed away some \code{extern} and \code{use} statements in order to make the important parts more clear.
+The point of this example is to demonstrate a program that initializes and uses an \gls{usart} with only four lines of code.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+extern crate emlib;         // Include emlib bindings
+extern crate modules;       // Include `REM'
+use modules::Usart;         // The USART module
+
+#[no_mangle]
+pub extern fn main() {
+  // Acquire a USART with default configuration...
+  let mut usart: Usart = Default::default();
+  // ... and initialize its GPIO.
+  usart.init_async();
+
+  loop {
+    // Perform a blocking read operation...
+    let name = usart.read_line();
+    // ... and echo back with a nice message.
+    usart.write_line(&format!("Thank you, {}!", name));
+  }
+}
+  \end{minted}
+  \caption{Example usage of \gls{REM}'s \gls{usart} module.}
+  \label{lst:usart_abstraction}
+\end{listing}
+
+\subsubsection{GPIO} % (fold)
+\label{ssub:gpio}
+
+The \gls{gpio} peripheral are used extensively as a dependency for many other peripherals throughout {\emlib}.
+The microcontroller's \gls{cpu} pins are configurable as \gls{gpio}, all these pins are ordered into 10 ports (Port A - Port H) with up to 16 pins each (Pin 0 - Pin 15).
+The pins can be configured individually to be used as input, output, or both, to the \gls{mcu}.
+
+The \gls{gpio} module in \gls{rem} consists of a \code{GpioPin} structure, and two traits for \code{Button}'s and \code{Led}'s, respectively.
+The \code{GpioPin} is an abstraction on top of {\emlib}'s \gls{gpio} definition, and the two traits implements a few convenient methods that abstracts away the underlying \code{GpioPin}.
+An example that shows how to initialize and use a button and a LED on the {\STK} is shown in \autoref{lst:gpio_abstraction}.
+Notice from the code that we only ever interfere directly with the two traits, and that we do not really care about the underlying \code{GpioPin}, apart from when we define the button and the LED.
+
+It is important to note the \emph{current} limitations of this module.
+The two implemented traits provides an intuitive abstraction layer for their purposes, but \gls{gpio} in general is so much more than just buttons and LEDs.
+The module was first developed for buttons and LEDs because they are easy to interfere with, but it will require some alteration in order to be more `general purpose'.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+extern crate emlib;         // Include emlib bindings
+extern crate modules;       // Include `REM'
+use emlib::gpio::Port;
+use modules::{GpioPin, Button, Led};
+// Define a button and a LED. The 'static lifetime tells
+// us that BTN and LED is alive for the whole program
+const BTN: &'static Button = &GpioPin { port: Port::B, pin: 9 };
+const LED: &'static Led    = &GpioPin { port: Port::E, pin: 2 };
+
+#[no_mangle]
+pub extern fn main() {
+    // Initialize the underlying GPIO pins
+    BTN.init();
+    LED.init();
+    // Register a callback function for the button
+    BTN.on_click(blink_led);
+    loop {}
+}
+// This function gets called when the button is pressed
+fn blink_led(_pin: u8) {
+    LED.toggle();
+}
+  \end{minted}
+  \caption{Example usage of \gls{rem}'s \gls{gpio} module.}
+  \label{lst:gpio_abstraction}
+\end{listing}

@@ -1,65 +1,64 @@
-\section{Rust Embedded Library}
-\label{sec:rust_embedded_library}
+\section{The Rust Embedded Library}
+\label{sec:rel}
 
-When we consider {\std}'s dependencies, shown in \autoref{fig:rust:librust}, we see that the crate is not suitable for a bare-metal application because it depends on an \gls{os} to be present.
-The dependency on either a Unix or a Windows \gls{os} excludes {\std} and all of its dependents from being used directly with the EFM32.
-This section presents some of the libraries provided by {\rust} that can be used in a bare-metal system, and how and why they are composed into what we refer to as the \gls{rel}.
+As mentioned in \autoref{sec:rsl}, \gls{rsl} is built with the assumption that the application is running on an OS.
+This section presents some of the libraries provided by {\rust} that can be used in a bare-metal system, and how and why they are composed into what we refer to as the \gls{rel}, shown in \autoref{fig:rust:rel}.
+\gls{rel} is, unlike \gls{rsl}, not built as a facade, in fact it is not implemented at all.
+It is just a way to provide a well defined definition of the {\rust} library in an embedded system.
 
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.3]{figures/background/rust/embedded-rust-lib.png}
   \end{center}
-  \caption{\rust Embedded Library}
+  \caption{{\rust} Embedded Library}
   \label{fig:rust:rel}
 \end{figure}
 
-\subsection{Allocation}
+\subsection{The Core Library}
+\label{sec:rust:core}
+
+As described in \autoref{sec:rcl} the \gls{rcl} defines the \emph{core} functionality of the {\rust} language.
+The \gls{rcl} does not have any library dependencies, but in order to use the library without \gls{rsl} a few definitions given in \autoref{tab:core:definitions} is needed.
+
+\begin{table}[H]
+  \begin{tabular}{l | l}
+    \textbf{Functions} & \textbf{Description} \\
+    \hline
+    \code{memcpy, memcmp, memset} & basic memory management \\
+    \code{rust\_begin\_unwind} & handling panicking \\
+    \hline
+  \end{tabular}
+  \caption{External dependencies of \gls{rcl}}
+  \label{tab:core:definitions}
+\end{table}
+
+The memory management functions given in \autoref{tab:core:definitions} are provided by \lib{newlib} and are exposed through the \lib{startup} library described in \autoref{sec:startup}.
+The \code{rust\_begin\_unwind} is also defined in \lib{startup}, but the implementation is only an infinite loop to aid debugging.
+In contrast the definition of \code{rust\_begin\_unwind} given in \gls{rsl} will abort the program and print an error message.
+\concept{Panicking} is {\rust}'s way of unwinding the currently executing thread, evidently resulting in the thread being terminated.
+
+\subsection{The Allocation Library}
 \label{sec:rust:allocation}
 
-The \gls{rcl} does not use or expose any heap allocation.
-Heap allocation is introduced through the \code{Box} type defined in the allocation library.
+Heap allocation is introduced in a library called \lib{alloc}.
+The library defines the owned pointer \code{Box} which is {\rust}'s main means of allocating memory on the heap.
+In addition the allocation library defines the types \code{Rc} and \code{Arc} which are {\rust}'s reference counted and atomically reference counted heap pointers.
+The allocation library is by default dependent on \lib{libc}, but this dependency can be broken by supplying the \flag{--cfg feature="external\_funcs"} flag to the compilation process.
+When breaking this dependency the allocation library requires the functions in \autoref{tab:alloc:external-funcs} to be defined.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+fn rust_allocate(usize, usize) -> *mut u8;
+fn rust_deallocate(*mut u8, usize, usize);
+fn rust_reallocate(*mut u8, usize, usize, usize) -> *mut u8;
+  \end{minted}
+  \caption{External Dependencies of Allocation Library}
+  \label{tab:alloc:external-funcs}
+\end{listing}
 
 \subsection{The Collection Library}
 
-The {\rust} collection library provides the data structures shown in \autoref{tab:rust:collections}.
-
-\begin{table}[H]
-  \begin{tabular}{l}
-    Binary Heap \\
-    Binary Tree Map \\
-    Binary Tree Set \\
-    Bit Set \\
-    Bit Vector \\
-    Enum Set \\
-    Linked List \\
-    Vector \\
-    Vector Dequeue \\
-    Vector Map \\
-    String \\
-  \end{tabular}
-  \caption{\rust Collection Library}
-  \label{tab:rust:collections}
-\end{table}
-
-We look at some of the data structures in this section.
-
-\subsubsection{Vector}
-
-The Vector is an important data structure both in direct usage but also as a building block for other data structures.
-In essence it is a growable heap allocated list of values of the same type.
-
-\subsubsection{String}
-
-In \autoref{par:rust:str} we discussed the \concept{string slice}.
-The \code{String} defined in the collection library is a heap allocated mutable string.
-
-\subsection{libc}
-
-The heap allocation library described in \autoref{sec:rust:allocation} depends on the \lib{libc} crate abstraction.
-The \lib{libc} library provided in the standard library provides bindings for the {\C} standard library and platform specific libraries.
-\gls{rel} depends on \lib{libc} for the low level memory operations \func{malloc}, \func{realloc} and \func{free}.
-The details of this implementation is found in \autoref{sec:impl:libc}. \todo{Update reference to implementation chapter part about libc implementation}
-
-\subsection{Notable missing functionality in REL}
-
-- Reference Counted GC
+The {\rust} collection library provides general purpose data structures.
+Of which the \code{Vector}, a growable heap allocated list, and the \code{String}, heap allocated mutable strings, are the most notable.
+As one would guess, the collection library depends on the allocation library as it needs to allocate memory on the heap.
+The \lib{unicode} dependency is due to the \code{String} type is defined as a valid UTF-8 string.

@@ -1,21 +1,28 @@
 \section{Object Oriented Embedded Programming}
-\label{sec:back:oo}
+\label{sec:impl:oo}
+
+The interface of many of the modules defined in {\emlib} resembles that of objects found in Object Oriented programming.
+This section looks at how Object Oriented programming can be used in conjunction with \gls{mmio} in embedded programming.
 
 In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigms essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
-This section looks at how Object Oriented programming is used in conjunction with \gls{mmio} in embedded programming.
+The paradigm's essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
+In this section, we look at how control over the memory layout of objects and static dispatch, can be used to enable the Object Oriented paradigm in conjunction with \gls{mmio} in embedded programming.
+
+Static dispatch, as opposed to dynamic dispatch, is the mechanism in which the function to be called can be decided statically by the compiler, and a \code{call} instruction to the function can be inserted into the code directly.
+Dynamic dispatch on the other hand requires runtime information which requires the call to be the function to be made though an level of indirection.
+
 We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
 \subsection{Memory Mapped I/O}
 \label{ssec:memory_mapped_io}
 
 \gls{mmio} is a method for interfacing with peripheral devices in a computer system.
-The method entails connecting the control registers of hardware devices to the same address bus as RAM.
+The method entails connecting the control registers of hardware devices to the same address bus as \gls{ram}.
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
 Let us consider the \gls{adc} on the {\gecko}.
 The \gls{adc} converts an analoge signal to a digital representation.
-The \gls{adc} on the {\gecko} is memory mapped to the location \mem{0x40002000}.
+The base address of the \gls{adc} on the {\gecko} is memory mapped to the location \mem{0x40002000} in the memory space.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
 
 \begin{figure}[H]
@@ -47,8 +54,8 @@ This means that writing to a pointer that points to this address will write to t
   \label{fig:back:memorymapped}
 \end{figure}
 
-\todo{Is the table supposed to look like this? it seems broken}
-A subsection of the \gls{adc} control register is given in \autoref{fig:back:memorymapped}
+\autoref{fig:back:memorymapped} shows a subsection of \gls{ram} that contains the \gls{adc} control register.
+Only the relevant registers for our discussion in included in the figure.
 It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
 We see that the CTRL register is at offset \mem{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \mem{0x4} bytes.
@@ -179,11 +186,17 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
+The layout of the Java object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
+This is not the case as this would map the object tag to the base address of the \gls{adc} minus 4 bytes.
+This location is, in the case of the {\gecko}, an unmapped memory section used to as padding between the \gls{adc} and the previous \gls{mmio}.
+Java uses this object tag to store a reference used to dynamicaly dispatch method calls to the object.
+And using the reference in place of a regular Java object would cause the the method dispatch mechanism to fail.
+
 \subsection{Adding Object Functionality}
 
 This sections shows how we add functionality called methods to the \gls{mmio} objects.
-Both {\C} and {\rust} uses static dispatch where the compiler knows the address of the function to apply at compile time \todo{I think this sentence is a little weird, but can't come up with a better one atm.}.
-This ensures that {\C} and {\rust} provides the same Zero Cost Abstractions when interacting with the \gls{mmio}.
+Both {\C} and {\rust} uses static dispatch.
+This ensures that {\C} and {\rust} provide the same Zero Cost Abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
@@ -257,9 +270,9 @@ We use the \keyword{impl} block to define the same behavior in {\rust}, but the 
 
 Now that we have shown that \glspl{mmio} can be represented as objects defined by structs, we consider how to instantiate them.
 Usually an object in the object oriented paradigm is created with a constructor and deallocated with a destructor.
-The constructor is responsible for allocating the object and initialize the fields with values.
+The constructor is responsible for allocating the object and initializing the fields with values.
 Analogously, the destructor is responsible for deallocating the object and any other member objects that it owns.
-\gls{mmio} devices have a fixed position in the memory and does not need to be allocated, they also generally do not have any owned members.
+\gls{mmio} devices have a fixed position in the memory and do not need to be allocated, they also generally do not have any owned members.
 Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate the variable that holds the reference to the \gls{mmio} and cast it to the desired type.
 \autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both {\C} and {\rust}.
 
@@ -272,11 +285,11 @@ const ADC0_BASE: *mut Adc
 
 fn main() {
   let adc0 = unsafe {
-    ADC0_BASE.as_mut()
-      .unwrap_or(panic!("..."))
+    ADC0_BASE.as_mut().unwrap()
   };
 }
     \end{minted}
+    \caption{Rust}
   \end{listing}
   \end{minipage}
   \hfill
@@ -289,43 +302,11 @@ void main() {
   ADC* adc0 = (ADC*)ADC0_BASE;
 }
     \end{minted}
+    \caption{C}
   \end{listing}
   \end{minipage}
-  \caption{Instantiating \glspl{mmio} in {\rust} and C, respectively.}
+  \caption{Instantiating a \glspl{mmio}}
   \label{fig:oo:instantiate}
 \end{listing}
 
-\todo{Move this to discussion}
-The {\rust} code in \autoref{fig:oo:instantiate} contains the {\unsafe} keyword.
-As \autoref{ssub:unsafe_code} describes, using this keyword requires the programmer to ensure that the code is still safe.
-The direct reason for the need to annotate the block with unsafe is the fact that the function \code{as\_mut} is marked unsafe and therefore code that calls this function must aslo be marked as \keyword{unsafe}.
-The underlying reason is a bit more subtle.
-The unsafety here comes from the fact that \code{as\_mut} converts a raw pointer to a safe reference.
-After the conversion the pointer must be safe to dereference.
-This is the programmars part of the contract to ensure when using a unsafe block.
-So what is unsafe about derefencing raw pointer?
-Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
-The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the {\gecko} to HardFault on a Bus Error.
-In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
-
-The last point about unsafety that can be made here, is the fact we can create multiple mutable aliases to the \glspl{mmio}.
-Consider the code in \autoref{lst:oo:aliasing-mutability}.
-\todo{Need to explain why this is a problem}
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-fn new_adc0() -> Adc {
-  unsafe { match ADC0_BASE.as_mut()
-                  .unwrap_or(panic!("..."))
-  }
-}
-
-fn main() {
-  let mut adc0 = new_adc0();
-  let mut _adc0 = new_adc0();
-}
-  \end{minted}
-  \caption{Creating mutable aliases}
-  \label{lst:oo:aliasing-mutability}
-\end{listing}
+For a further discussion of this pattern in {\rust}, see \autoref{sec:res:aliasing-mmios}.
