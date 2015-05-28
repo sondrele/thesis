@@ -17,7 +17,7 @@ Because {\rust} is a multi-paradigm language it offers a wider range of language
 \subsubsection{The Rust Standard Library}
 \label{sec:rsl}
 
-The \gls{rsl} is included into all {\rust} programs and strives to be an abstraction layer to write portable applications.
+The \gls{rsl} is included into all {\rust} programs and is an abstraction layer to write portable applications.
 The library is implemented as a facade, meaning that \gls{rsl} provides a thin wrapper which reexports a stable interface for libraries like \lib{alloc} (for memory allocation), \lib{collections} (general purpose data structures) and {\core} (described in the next section).
 In addition to providing the facade, \gls{rsl} defines platform abstractions like files, network protocols and threading, all of which depends on an OS.
 This basic fact renders the \gls{rsl} unusable in an embedded system as these dependencies will not be met.
