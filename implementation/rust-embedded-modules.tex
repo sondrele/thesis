@@ -19,14 +19,17 @@ Some of these modules are more complete than others.
 \label{ssub:usart}
 
 The \gls{usart} have many different use-cases, it is a peripheral that is used for transferring of data, but it is also a very convenient tool to use for simple debugging of programs.
-It can be used to send single strings of text between a PC and the \gls{mcu} which is convenient for ``println''-debugging of programs.
+It can be used to send single strings of text between a PC and the \gls{mcu}, which is convenient for ``println''-debugging, and it is a good tool for defining \gls{cli} programs.
 
-The goal of the \gls{usart} abstraction was to make it easy to initialize the peripheral, as well as providing simple methods to read and write strings and transfer data between two end-points.
 The {\gecko} has a total of three different \glspl{usart} which can be configured to run on a total of eleven different locations i.e. \gls{gpio} Ports and Pins.
-If the \gls{gpio} configuration for a \gls{usart}  is not specified correctly the peripheral will not function correctly either.
+If the \gls{gpio} configuration for a \gls{usart}  is not specified correctly, the peripheral will not function correctly either.
+The goal of the \gls{usart} abstraction was to make it easy to initialize the peripheral, as well as providing simple methods to read and write strings, and transfer data between two end-points.
+
 The \texttt{Usart} module has an initialization procedure that takes care of initializing its required \gls{gpio} pins based on a specified location.
-If a \gls{usart} is configured with wrong \gls{gpio} it will not work, thus the initialization procedure in this module handles all \gls{gpio} configuration based automatically.
-An minimal example that shows how to initialize a \gls{usart}, and send and receive strings, is shown in \autoref{lst:usart_abstraction}.
+This is similar to the approach made by {\zinc}, but instead failing with a compilation-error if it is incorrectly configured, as in {\zinc}, it will fail at run-time.
+A minimal example that shows how to initialize an \gls{usart}, and send and receive strings, is shown in \autoref{lst:usart_abstraction}.
+Note that the example is simplified slightly, we have trimmed away some \code{extern} and \code{use} statements in order to make the important parts more clear.
+The point of this example is to demonstrate a program that initializes and uses an \gls{usart} with only four lines of code.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -44,7 +47,7 @@ fn main() {
     // Perform a blocking read operation...
     let name = usart.read_line();
     // ... and echo back with a nice message.
-    usart.write_line(&format!("Thank you {}!", name));
+    usart.write_line(&format!("Thank you, {}!", name));
   }
 }
   \end{minted}
