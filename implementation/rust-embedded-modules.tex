@@ -37,7 +37,8 @@ extern crate emlib;         // Include emlib bindings
 extern crate modules;       // Include `REM'
 use modules::Usart;         // The USART module
 
-fn main() {
+#[no_mangle]
+pub extern fn main() {
   // Acquire a USART with default configuration...
   let mut usart: Usart = Default::default();
   // ... and initialize its GPIO.
@@ -51,6 +52,51 @@ fn main() {
   }
 }
   \end{minted}
-  \caption{Example usage of the Usart module.}
+  \caption{Example usage of \gls{REM}'s \gls{usart} module.}
   \label{lst:usart_abstraction}
+\end{listing}
+
+\subsubsection{GPIO} % (fold)
+\label{ssub:gpio}
+
+As already mentioned, the \gls{gpio} is a module that are used extensively throughout {\emlib}, as well as being a dependency for many other peripherals, like e.g. the \gls{usart} described above.
+The microcontroller's \gls{cpu} pins are configurable as \gls{gpio}, all these pins are ordered into 10 ports (Port A - Port H) with up to 16 pins each (Pin 0 - Pin 15).
+The pins can be configured individually to be used as input, output, or both, to the \gls{mcu}.
+
+The \gls{gpio} module in \gls{rem} consists of a \code{GpioPin} structure, and two traits for \code{Button}'s and \code{Led}'s, respectively.
+The \code{GpioPin} is an abstraction on top of {\emlib}'s \gls{gpio} definition, and the two traits implements a few convenient methods that abstracts away the underlying \code{GpioPin}.
+An example that shows how to initialize and use a button and a LED on the {\STK} is shown in \autoref{lst:gpio_abstraction}.
+Notice from the code that we only ever interfere directly with the two traits, and that we do not really care about the underlying \code{GpioPin}, apart from when we define the button and the LED.
+
+It is important to note the \emph{current} limitations of this module.
+The two implemented traits provides an intuitive abstraction layer for their purposes, but \gls{gpio} in general is so much more than just buttons and LEDs.
+The module was first developed for buttons and LEDs because they are easy to interfere with, but it will require some alteration in order to be more `general purpose'.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+extern crate emlib;         // Include emlib bindings
+extern crate modules;       // Include `REM'
+use emlib::gpio::Port;
+use modules::{GpioPin, Button, Led};
+// Define a button and a LED. The 'static lifetime tells
+// us that BTN and LED is alive for the whole program
+const BTN: &'static Button = &GpioPin { port: Port::B, pin: 9 };
+const LED: &'static Led    = &GpioPin { port: Port::E, pin: 2 };
+
+#[no_mangle]
+pub extern fn main() {
+    // Initialize the underlying GPIO pins
+    BTN.init();
+    LED.init();
+    // Register a callback function for the button
+    BTN.on_click(blink_led);
+    loop {}
+}
+// This function gets called when the button is pressed
+fn blink_led(_pin: u8) {
+    LED.toggle();
+}
+  \end{minted}
+  \caption{Example usage of \gls{rem}'s \gls{gpio} module.}
+  \label{lst:gpio_abstraction}
 \end{listing}
