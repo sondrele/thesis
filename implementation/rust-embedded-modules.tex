@@ -74,7 +74,6 @@ trait Readable {
   fn size(&self) -> dma::DataSize;     // Element size in bytes (1, 2 or 4)
   fn n(&self) -> Option<u32>;          // Number of elements to transfer
 }
-
 trait Writable {
   fn as_ptr(&self) -> *mut c_void;
   fn inc_size(&self) -> dma::DataInc;
@@ -96,7 +95,6 @@ As mentioned, both \keyword{traits} can be applicable for some peripherals, and 
 static mut BUFFER: [u8, 4] = [0; 4];
 
 fn main() {
-
   // Initialization omitted
   // Assume adc0 and dma0 hold references to the peripherals
 
@@ -106,15 +104,12 @@ fn main() {
     unsafe { &mut BUFFER }, // The RAM buffer implements Writable
     AdcSingle               // This is a reference to the interrupt signal
   );
-
   loop {}
 }
 
 // The signature for the start_basic is included for the discussion
 impl Dma {
-
   pub fn start_basic(&mut self, src: &Readable, dst: &Writable, on: Signal);
-
 }
   \end{minted}
   \caption{DMA transfer utilizing the trait abstractions}
