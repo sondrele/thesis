@@ -51,3 +51,80 @@ fn main() {
   \caption{Example usage of the Usart module.}
   \label{lst:usart_abstraction}
 \end{listing}
+
+
+\subsection{DMA}
+
+The \gls{dma} peripheral on the {\gecko} is used for transferring data from one location to another without intervention from the \gls{cpu}.
+The interface to the \gls{dma} provided by {\emlib} is a low level API which deals with hardware descriptors and raw pointers for controlling the \gls{dma}.
+Here we look at a higher level abstraction over the \gls{dma} module which considers devices and buffers and the specification of the flow between these devices.
+
+The core of the approach defines two types of endpoints which can be interacted upon with \gls{dma}, \emph{readable} and \emph{writable}.
+In this classification, an \gls{adc} is readable as it produces samples and the \gls{dac} is writable as it can consume samples.
+An \gls{usart} fits both descriptions, this is because data can both be written to and read from the peripheral.
+Both descriptions does also apply to memory allocated buffers.
+
+These abstractions are modeled by providing the two \keyword{traits} \code{Readable} and \code{Writable} as shown in \autoref{lst:dma:traits}.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+trait Readable {
+  fn as_ptr(&self) -> *mut c_void;     // Base pointer to device
+  fn inc_size(&self) -> dma::DataInc;  // Increment in bytes (0, 1, 2 or 4)
+  fn size(&self) -> dma::DataSize;     // Element size in bytes (1, 2 or 4)
+  fn n(&self) -> Option<u32>;          // Number of elements to transfer
+}
+
+trait Writable {
+  fn as_ptr(&self) -> *mut c_void;
+  fn inc_size(&self) -> dma::DataInc;
+  fn size(&self) -> dma::DataSize;
+  fn n(&self) -> Option<u32>;
+}
+  \end{minted}
+  \caption{Traits used for \gls{dma} transfers}
+  \label{lst:dma:traits}
+\end{listing}
+
+Both \keyword{traits} defined in \autoref{lst:dma:traits} requires the same set of methods.
+These methods are required by the underlying \gls{dma} implementation and are described in the {\emlib} documentation for \gls{dma}.
+As mentioned, both \keyword{traits} can be applicable for some peripherals, and this demonstrates {\rust}'s facility to do method resolution when a type implements multiple \keyword{traits} that results in function name collisions.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+// Create a static RAM buffer
+static mut BUFFER: [u8, 4] = [0; 4];
+
+fn main() {
+
+  // Initialization omitted
+  // Assume adc0 and dma0 hold references to the peripherals
+
+  // Start a dma transfer from adc to RAM
+  dma0.start_basic(
+    &adc0,                  // The adc0 implements Readable
+    unsafe { &mut BUFFER }, // The RAM buffer implements Writable
+    AdcSingle               // This is a reference to the interrupt signal
+  );
+
+  loop {}
+}
+
+// The signature for the start_basic is included for the discussion
+impl Dma {
+
+  pub fn start_basic(&mut self, src: &Readable, dst: &Writable, on: Signal);
+
+}
+  \end{minted}
+  \caption{DMA transfer utilizing the trait abstractions}
+  \label{lst:using:dma}
+\end{listing}
+
+\autoref{lst:using:dma} shows an example of using the \gls{dma} abstraction to transfer samples from the \gls{adc} to \gls{ram}.
+The \func{start\_basic} function relies on the \code{traits} to set up the hardware specifiers using the low level \gls{api}.
+Both the \code{Readable} and \code{Writable} \code{traits} are implemented for the memory buffer.
+In this use case the type of the \code{dst} parameter in the \func{start\_basic} funciton ensures that the correct implementation is chosen.
+
+The \gls{dma} abstraction described here is only implemented for the simplest use-cases of the {\emlib} \gls{dma} \gls{api}, such as \func{start\_auto} and \func{start\_basic}.
+The {\emlib} \gls{api} provides more complex facilities (e.g. scatter-gather) which can cause the interfaces to change if they are to be supported.
