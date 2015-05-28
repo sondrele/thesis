@@ -1,4 +1,16 @@
 % !TEX root = ../main.tex
 
-\frontchapter{Problem Description}
+\frontchapter{Project Description}
 \label{chap:problem}
+
+The Rust programming language is a new system language developed by Mozilla.
+With the language being statically compiled and built on the LLVM compiler infrastructure, and due to features like low level control and zero-cost abstractions, the language is a candidate for use in embedded systems.
+
+The EFM32 series of microcontrollers focuses on energy efficiency and for the microcontrollers to function in power constrained environments.
+The tool suite by the vendor, Silicon Labs, includes energy monitoring tools to analyze energy consumption at the source code level.
+The series is based on the ARM Cortex M processor family.
+With ARMs move towards using LLVM in their own toolchain, a back-end for the Cortex M series is already available.
+
+The goal of the project is to explore programming for the EFM32 series of microprocessors with the Rust Programming Language.
+This should be realized through using as much of the features and tools available in the Rust ecosystem as deemed fit.
+This whole platform should be evaluated and compared to the existing C platform provided by Silicon Labs.
