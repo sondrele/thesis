@@ -2,9 +2,9 @@
 \label{sec:impl:oo}
 
 In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-In this section we look at how control over the memory layout of objects and static dispatch enables the use of the Object Oriented paradigm in conjunction with \gls{mmio} in embedded programming.
+In this section, we look at how control over the memory layout of objects and static dispatch, can be used to enable the Object Oriented paradigm in conjunction with \gls{mmio} in embedded programming.
 
-Static dispatch, as opposed to dynamic dispatch, is the mechanism in which the function to be called can be decided statically by the compiler and a \code{call} instruction to the function can be inserted into the code directly.
+Static dispatch, as opposed to dynamic dispatch, is the mechanism in which the function to be called can be decided statically by the compiler, and a \code{call} instruction to the function can be inserted into the code directly.
 Dynamic dispatch on the other hand requires runtime information which requires the call to be the function to be made though an level of indirection.
 
 We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
@@ -13,7 +13,7 @@ We look at the memory layout of a memory-mapped \gls{adc} and see how this can b
 \label{ssec:memory_mapped_io}
 
 \gls{mmio} is a method for interfacing with peripheral devices in a computer system.
-The method entails connecting the control registers of hardware devices to the same address bus as RAM.
+The method entails connecting the control registers of hardware devices to the same address bus as \gls{ram}.
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
 Let us consider the \gls{adc} on the {\gecko}.
@@ -50,7 +50,7 @@ This means that writing to a pointer that points to this address will write to t
   \label{fig:back:memorymapped}
 \end{figure}
 
-\autoref{fig:back:memorymapped} shows a subsection of RAM containing the control register \gls{adc}.
+\autoref{fig:back:memorymapped} shows a subsection of \gls{ram} that contains the \gls{adc} control register.
 Only the relevant registers for our discussion in included in the figure.
 It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
@@ -184,7 +184,7 @@ This suggests that, if a pointer to the \gls{mmio} device is considered as a ref
 
 The layout of the Java object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
 This is not the case as this would map the object tag to the base address of the \gls{adc} minus 4 bytes.
-This location is, in the case of the {\gecko}, an unmapped memory section used to as padding the previous \gls{mmio}.
+This location is, in the case of the {\gecko}, an unmapped memory section used to as padding between the \gls{adc} and the previous \gls{mmio}.
 Java uses this object tag to store a reference used to dynamicaly dispatch method calls to the object.
 And using the reference in place of a regular Java object would cause the the method dispatch mechanism to fail.
 
