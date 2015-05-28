@@ -10,8 +10,8 @@ Therefore avoiding mutable global state is a goal of any Rust program.
 \subsection{Motivation}
 \label{sec:irq:motivation}
 
-Lets consider a simple example for motiviating the use of closures to handle interrupts.
-The example application samples an analogue signal and saves the result to a memory buffer.
+Let us consider a simple example for motiviating the use of closures to handle interrupts.
+The example application samples an analog signal and saves the result to a memory buffer.
 An example of such an application is an audio filter which samples an audio input connected to the \gls{adc} and stores a window of samples in RAM for processing.
 
 \begin{listing}[H]
@@ -55,7 +55,7 @@ fn main() {
   // a new sample is ready with the sample
   // as an argument.
   // The move keyword is used to move ownership
-  // of the ch cariable
+  // of the ch variable
   adc.on_single(move |sample| ch.send(sample));
 
   // Reading from buffer is safe
@@ -69,13 +69,13 @@ fn main() {
 
 In \autoref{lst:irq:local} we present an example implementation using a closure as an interrupt handler.
 The global state is now replaced with a buffer which is owned by the main function stack frame.
-In this discussion we consider the \textbf{main} stack frame, the stack fram for the main function, as a special frame.
+In this discussion we consider the \textbf{main} stack frame, the stack frame for the main function, as a special frame.
 This comes by the fact that the main function contains an infinite loop causing it to never terminate and the frame will not get deallocated.
-On an embedded system this is true as long as a fatal error does not occure.
-So we can relie on variables owned by the main stack frame to live for the duration of the application.
+On an embedded system this is true as long as a fatal error does not occur.
+So we can rely on variables owned by the main stack frame to live for the duration of the application.
 This ensures that the \textbf{buffer} for pratical purposes has the same lifetime as the \textbf{BUFFER} from \autoref{lst:irq:global}, but the fact that the variable is not a \textbf{static mut} lets the programmer avoid \textbf{unsafe} blocks and let the compiler ensure safety.
-One implementation detail here is the imangined \textbf{CircularBuffer} type.
-The type is based on the same principal as the Rust standard library \textbf{channel} type, which provides a facility for interprocess communication.
+One implementation detail here is the imagined \textbf{CircularBuffer} type.
+The type is based on the same principle as the Rust standard library \textbf{channel} type, which provides a facility for interprocess communication.
 The channel has one \textit{read end} and one \textit{write end} enabling the producing process to send a stream of messages to the consuming process.
 This is required for the \gls{adc} callback to be able to write to the buffer while the main function retains ownership of the buffer.
 In the example the \texttt{in} function creates the \textit{write end} of the circlar buffer.
@@ -87,15 +87,16 @@ The closure is passed as a argument to the \texttt{on\_single} method on the \gl
 \subsection{Implementation}
 We now look at how we can provide this behaviour in Rust and present the problems that arised along the way.
 
-The process of handling an interrupt is described in \autoref{sec:impl:handling-interrupts}.
+The process of handling an interrupt was described in \autoref{sec:impl:handling-interrupts}.
+In short, a public function with a specific name handles the corresponding interrupt.
 In order to implement the pattern above we need to get the globally defined interrupt handler \texttt{ADC0\_IRQHandler} to call a closure created in the main function.
-So lets first consider what a closure is.
+
 A closure is the \textbf{environment} it closes over, in \autoref{lst:irq:local} the \texttt{ch} variable, and a \textbf{function pointer}, that simple.
 See \autoref{sec:back:rust:closures} for additional details of closures.
 
 An initial naive idea of registering the function pointer from the clousre in the interrupt vector will not work as the function nees to be called with the environment in the closure.
-Therfore we need to store the whole closure in a datastructure and ensure that it is called by the interrupt handler.
-First we try to store the closure in a global datastructure which the handler can access as implemented in \autoref{lst:global-closure}.
+Therfore we need to store the whole closure in a data structure and ensure that it is called by the interrupt handler.
+First we try to store the closure in a global data structure which the handler can access as implemented in \autoref{lst:global-closure}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -106,10 +107,10 @@ static mut CLOSURE: Option<Fn()> = None;
 \end{listing}
 
 In \autoref{lst:global-closure} we introduce the \texttt{Fn} trait.
-This is a trait which a represent closure in Rust.
+This is a trait which represent closure in Rust.
 Wrapping the closure in an \texttt{Option} is done to enable the handler to be undefined.
 Compiling this will yield an error due to the fact that the compiler cannot statically determine the size of the closure and therefore does not know how much memory to allocate.
-This problem occures quite common in programming and the default solution is to put the value behind a pointer as shown in \autoref{lst:global-pointer-to-closure}
+This problem occurs quite commonly in programming and the default solution is to put the value behind a pointer as shown in \autoref{lst:global-pointer-to-closure}.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -136,7 +137,7 @@ static mut CLOSURE: Option<*const Fn()> = None;
 \end{listing}
 
 Now we've managed to store a closure in a statically allocated location.
-\autoref{lst:pub-sub} shows a safe abstraction to register and dispatch events with this handle.
+\autoref{lst:reg-disp} shows a safe abstraction to register and dispatch events with this handle.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -151,7 +152,10 @@ fn register(f: Box<Fn()>) {
       // to a managed box, this will ensure
       // that the contents is deallocated when
       // the box variable goes out of scope
-      let box= boxed::from_raw(old);
+      let _ = boxed::from_raw(old);
+      // Omitting the above line will not trigger
+      // compilation error, but the old closure value
+      // will be leaked.
     }
     // Consume the Box pointer and
     // return a raw pointer to the closure
@@ -179,6 +183,12 @@ fn dispatch() {
   \label{lst:reg-disp}
 \end{listing}
 
+The above listing uses {\unsafe} code in order to provide a safe abstraction to interact with the globaly stored closure.
+In the listing we see two of the three operations which were defined as {\unsafe} in \autoref{tab:reasons_for_unsafe}.
+These are \concept{mutating a static mutable variable}, the \code{CLOSURE}, and calling unsafe functions, \code{into\_raw} and \code{from\_raw}.
+The unsafe functions deals with transfering the ownership of the heap allocated pointer from the compiler to the callee and back to compiler.
+The unsafety here comes from the fact that, used inproperly these functions can lead to memory problems like double-free, or use-after-free.
+
 As discussed in the beginning of this section the Gecko provides a vector of interrupts.
 The design for the closure described this far is only capable of storing a single closure.
 We now alter the design to handle an arbritrary number of handlers.
@@ -200,6 +210,9 @@ enum Event {
 
 \begin{listing}[H]
   \begin{minted}{rust}
+// Global reference to the Hub
+static mut HUB: Option<*mut Hub> = None;
+
 // Datastructure with a Binary Map from Event to handler
 struct Hub {
   handlers: BTreeMap<Event, Box<Fn()>>
@@ -221,6 +234,9 @@ pub fn dispatch(event: Event) { /*...*/ }
   \caption{Event Hub structure}
   \label{lst:struct:Hub}
 \end{listing}
+
+The \code{register} and \code{dispatch} functions implemented on the \code{Hub} \code{struct} in \autoref{lst:struct:Hub} are expanded from those in \autoref{lst:reg-disp} to look access the closure based on a the given event.
+The public interface \code{register} and \code{dispatch} looks up the global \code{HUB} and calls the corresponding function on the \code{Hub} object.
 
 And finally the interface used in \autoref{lst:irq:local} is created using the utilities \texttt{register} and \texttt{dispatch}.
 \begin{listing}[H]
@@ -266,6 +282,10 @@ Now looking back at out target implementation in \autoref{lst:irq:local} we augm
 
 \begin{listing}[H]
   \begin{minted}{rust}
+
+// Defined in the Event Hub structure listing
+// static mut HUB: Option<*mut Hub> = None;
+
 fn main() {
   // Create Event Hub and save it to the global variable
   let mut hub = Hub::new();
@@ -318,11 +338,11 @@ This lets us have an Event Hub with truly static lifetime without allocating it 
 
 \subsection{Discussion}
 
-The issue with the end solution presented in \autoref{lst:irq:init} which makes it unsuited for Servo is the fact that when converting the \texttt{Box} to a raw pointer, the programmar takes on the responsibility of deallocating the object.
+The issue with the end solution presented in \autoref{lst:irq:init} which makes it unsuited for Servo is the fact that when converting the \texttt{Box} to a raw pointer, the programmer takes on the responsibility of deallocating the object.
 In Servos use case, the desired behaviour is to deallocate the object when the \texttt{main} stack frame is deallocated.
 Letting the reference live on the \texttt{main} stack frame ensures this behaviour is provided automatically by the Rust compiler.
 
-The approach taken in \autoref{lst:irq:init} is similary to the one taken by the \textit{lazy\_statics} \cite{web:lazy_statics} library.
+The approach taken in \autoref{lst:irq:init} is similar to the one taken by the \textit{lazy\_statics} \cite{web:lazy_statics} library.
 \textit{lazy\_statics} provides a macro for declaring static variables which need initializers executed at runtime.
 This macro avoids the need for the initilizer method used here as it implements the \texttt{Deref} trait for the hidden `static mut` variable, the \texttt{HUB} variable in our example.
 The library uses a Rust RSL feature to register an initializer function which is guaranteed to run once only on the first dereference of the variable.

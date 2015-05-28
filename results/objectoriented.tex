@@ -15,7 +15,7 @@ This is the programmers part of the contract to ensure when using a unsafe block
 So what is unsafe about derefencing raw pointer?
 Well, firstly the pointer can be \code{null}, this case is handled in \code{as\_mut} by returning \code{None}.
 The next unsafe thing about dereferencing a raw pointer is if the pointer points into invalid memory.
-For instance, dereferencing the pointer \code{0x} \todo{Find a funky address} causes the {\gecko} to HardFault on a Bus Error.
+For instance, dereferencing the pointer \code{0x0} causes the {\gecko} to trigger an Bus Fault.
 In our case we have defined the pointer to point to the constant address of the \gls{adc} \gls{mmio}, so we know that this address can be safely dereferenced.
 
 The issue which arises from using this way to instantiate a \gls{mmio} is exemplified in \autoref{lst:oo:aliasing-mutability}
