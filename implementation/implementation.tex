@@ -6,6 +6,7 @@ The last sections dives into two projects which were developed in order to drive
 
 We start in \autoref{sec:impl:booting} by describing the startup process of a Rust program on a Microcontroller.
 Secondly we define the parts of the Rust standard library \gls{rel} which are applicable for an embedded system.
+In \autoref{sec:impl:oo} we look at the how and why the Object Oriented paradigm can be applied to hardware devices.
 \autoref{sub:interfacing_with_emlib} goes on to describe the hardware specific bindings developed for controlling the Peripherals of the Microcontroller.
 In \autoref{sec:build_system} we take a look at the evolution of the building system from a traditional \file{Makefile} to the integration with the {\rust} package manager {\cargo}.
 The next two sections \autoref{sec:irq-closures} and \autoref{sec:rust-embedded-modules} explores a few experimentation with creating higher level abstractions for the lower level Peripheral libraries.
@@ -14,6 +15,7 @@ The last two sections \autoref{sec:impl:project:i} and \autoref{sec:impl:project
 
 \include{implementation/booting-rust}
 \include{implementation/rust-embedded-library}
+\include{implementation/objectoriented}
 \include{implementation/interfacing_with_emlib}
 \include{implementation/building}
 \include{implementation/irq-closures}

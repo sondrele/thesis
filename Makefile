@@ -40,6 +40,13 @@ glsmk:
 	$(GLS) $(REPORT:.tex=)
 	@latexmk -pdf -shell-escape main.tex
 
+START = 1
+END   = 1
+OUT   = main_p$(START)-$(END).pdf
+
+cut:
+	pdftk main.pdf cat $(START)-$(END) output $(OUT)
+
 ls:
 	@tree -P "*.tex|*.bib"
 
