@@ -95,7 +95,7 @@ We could not utilize the pre-compiled libraries that are already included with {
 \todo{Mention this in discussion. Is there a better way of solving this? Currently it fetches a release tarball of the language. It fetches more than it needs to for each library, but it's quicker/easier than using e.g. git to do it. It does however take a little while to compile all the dependencies on smaller machines.}
 This problem was solved by implementing a new Cargo build-dependency, called \texttt{rust-src} \cite{github:rust_src}, whose purpose is to download the entire {\rust} source code that is compliant with the instance of {\rustc} that is \emph{currently} compiling the library.
 By making it a task for each build to fetch its own source code, we were guaranteed that the dependencies we used for the project would always compile, independent of the current instance of {\rustc} that was installed on the system.
-The crates that we have fetched from {\rust}'s standard library that make up what we call \gls{rel} are already described in \autoref{sec:rust_embedded_library}, but they are also shown in \autoref{tab:compiled_libraries} for the sake of completeness.
+The crates that we have fetched from {\rust}'s standard library that make up what we call \gls{rel} are already described in \autoref{sec:rel}, but they are also shown in \autoref{tab:compiled_libraries} for the sake of completeness.
 % The crates\autoref{tab:compiled_libraries} summarizes the different crates that we have fetched from {\rust}'s standard library in order to use them with our project.
 % \todo{May not need this table here. Need to synchronize with the section that presents REL and such..}
 
