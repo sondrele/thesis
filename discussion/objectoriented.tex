@@ -1,9 +1,9 @@
 \subsection{Creating Mutable Aliases to MMIO's}
 \label{sec:res:aliasing-mmios}
 
-In \autoref{sec:back:oo} we looked at how the Object Oriented paradigm can be applied to \glspl{mmio}.
-Here we will first discuss the usage of {\unsafe} in the initialization of \gls{mmio} as an case study of the consideration taken when using this keyword.
-The issue is present in the {\C} code aswell, but the requirements of the safe subset of {\rust} exposes it.
+In \autoref{sec:impl:oo} we looked at how the Object Oriented paradigm can be applied to \glspl{mmio}.
+Here we will consider an issue which arose when applying the pattern used when programming with these \gls{mmio} from {\C} in {\rust}.
+The issue is present in the {\C} code as well, but the requirements of the safe subset of {\rust} exposes it.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -31,7 +31,7 @@ In the following subsections we look at different approaches to dealing with the
 \subsubsection{The zinc take on MMIO initializing}
 
 The \lib{zinc.rs} project discussed in \autoref{sec:zinc} take on problem, is to move the initialization of \glspl{mmio} out of the hands of the programmer.
-\lib{zinc.rs} provides a macro called \code{platform\_tree} which takes an specification of the \glspl{mmio} used in the application and generates objects to operate on them.
+\lib{zinc.rs} provides a compiler plugin called \code{platform\_tree} which takes an specification of the \glspl{mmio} used in the application and instantiates objects for them.
 These objects are passed to the {\main} function as parameters, and the programmer must use these objects to interact with the \glspl{mmio}.
 This prevents the programmer from creating mutable aliases to the \glspl{mmio}.
 
@@ -78,7 +78,7 @@ pub extern fn ADC0_IRQHandler() {
 \subsubsection{Using Closures}
 
 In \autoref{sec:irq-closures} we explored a technique to employ closures to create handlers for interrupts.
-By considering \autoref{lst:oo:closure} we see that the issue with mutable aliases are avoided entirely by employing closures to handle the .
+By considering \autoref{lst:oo:closure} we see that the issue with mutable aliases are avoided entirely by employing closures to handle the interrupt.
 
 \begin{listing}[H]
   \begin{minted}{rust}
