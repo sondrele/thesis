@@ -40,11 +40,11 @@ fn main() {
   \label{lst:rust-hello-world}
 \end{listing}
 
-A {\rust} program will by default include \gls{RSL} automatically.
-As explained in \autoref{sec:rsl}, this library is not usable in an embedded program and some the changes to the `Hello World' program mostly deals with removing the \gls{RSL}.
+A {\rust} program will by default include \gls{rsl} automatically.
+As explained in \autoref{sec:rsl}, this library is not usable in an embedded program and some the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
 
-The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world} does not print out "Hello, World!", as this requires irrelevant setup as we are conserned with only the boot process here.
-In addition to removing the \gls{RCL}, the {\main} function is \emph{exported} to be callable from the {\C} runtime.
+The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world} does not print out ``Hello, World!'', as this requires irrelevant setup as we are conserned with only the boot process here.
+In addition to removing the \gls{rcl}, the {\main} function is \emph{exported} to be callable from the {\C} runtime.
 
 \begin{listing}[H]
   \begin{minted}{rust}
