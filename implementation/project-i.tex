@@ -2,6 +2,7 @@
 \label{sec:impl:project:i}
 
 The following section gives an overview of the Project I - Sensor Tracker application.
+The application is an interrupt driven sensing application which uses sleep modes to save energy.
 
 \subsection{Goal}
 The project specification was developed in order to measure the energy efficiency of the {\rust} language used in an embedded system compared to {\C}.
@@ -13,44 +14,40 @@ Given the design of the Gecko, certain operations like memory transfers can also
 
 The application should record samples from selected peripherals on the STK and BIO-EXP boards described in \autoref{tab:hw:boards}.
 These samples should be stored internally on the {\gecko}.
-When a computer is connected to the UART peripheral on the {\gecko}, the samples should be extractable over a textual serial interface.
+When a computer is connected to the \gls{usart} peripheral on the {\gecko}, the samples should be available over a textual serial interface.
 
 \subsection{Implementation}
 
 The application has two modes of operation, sample collection and sample transfer.
+To change between the modes the push buttons on the STK are used as described below.
 
 \subsubsection{Sample Collection}
 
-The main part of the application, gathering the samples, was implemented as described in \autoref{fig:project:i:samples}.
-
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.5]{figures/ProjectI.png}
+    \includegraphics[scale=0.5]{figures/project-i.png}
   \end{center}
   \caption{Sample Collection Phase}
   \label{fig:project:i:samples}
 \end{figure}
-
+The main part of the application, gathering the samples, was implemented as described in \autoref{fig:project:i:samples}.
 The RTC clock is set up to generate interrupts each \emph{n} milliseconds.
-On each interrupt from the RTC a new sample is created by the Sensors and pushed into a circular buffer structure.
-The main loop which is executed once after each interrupt has been handled extracts all the sample currently in the circular buffer and stores them in a sample store in RAM.
+On each interrupt a new sample is created by the sensors and pushed into a circular buffer structure.
+The main loop, which is executed once after each interrupt has been handled, extracts all the sample currently in the circular buffer and stores them in a sample store in \gls{ram}.
 
-The Sensors used in the application is shown in \autoref{tab:project:i:sensors}.
+The sensors used in the application are shown in \autoref{tab:project:i:sensors}.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{| l | l | l | l | l | l |}
+  \begin{tabular}{ l | l | l | l | l }
+    \textbf{\#} & \textbf{Name} & \textbf{Part} & \textbf{Connection} & \textbf{Measured Data} \\
     \hline
-    \# & Name & Part & Connection & Measured Data & Data Type \\
-    \hline \hline
-    0 & Internal Temperature Sensor & & ADC0 & CPU Temperature & \code{u8} \\
-    \hline
-    1 & Humidity Relative Sensor & Si7013 & I2C1 & Room Humidity & \code{u32} \\
-    \hline
-    2 & Temperature Sensor & Si7013 & I2C1 & Room Temperature & \code{i32} \\
+    0 & Internal Temperature Sensor & & ADC0 & CPU Temperature \\
+    1 & Humidity Relative Sensor & Si7013 & I2C1 & Room Humidity \\
+    2 & Temperature Sensor & Si7013 & I2C1 & Room Temperature \\
     \hline
   \end{tabular}
-  \caption{}
+  \caption{Sensors used by the {\tracker}}
   \label{tab:project:i:sensors}
 \end{table}
 
@@ -61,24 +58,21 @@ The \gls{cli} offers a read command which is used to read all the samples collec
 
 \subsection{Operation}
 
-There are two interfaces for operating the application.
+The {\tracker} has two interfaces for operating the application.
+A manual mode switch using the buttons on the STK and a \gls{cli} interface when connected to a PC.
 
 \subsubsection{Application Modes}
-The mode of operation is set by using the push buttons on the STK, see \autoref{fig:efm32gg-stk3700}.
+The mode of operation is set by using the push buttons on the STK (a picture of the STK is found in \autoref{fig:efm32gg-stk3700}).
 The operation of the buttons are shown in \autoref{tab:project:i:buttons}.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{|l|l|l|}
+  \begin{tabular}{l|l|l}
+    \textbf{Currnet Mode} & \textbf{Button Pressed} & \textbf{Action} \\
     \hline
-    Mode & Button & Action \\
-    \hline \hline
     Collect & PB0 & Go to Transfer \\
-    \hline
     Collect & PB1 & Stay in Collect \\
-    \hline
     Transfer & PB0 & Stay in Transfer \\
-    \hline
     Transfer & PB1 & Go to Collect after current transfer \\
     \hline
   \end{tabular}
@@ -88,8 +82,8 @@ The operation of the buttons are shown in \autoref{tab:project:i:buttons}.
 
 \subsubsection{Connecting to the STK}
 When the application is in transfer mode, it is controlled by a \gls{cli} connected to over UART.
-To connect to the STK in transfer mode a USB cable with and FTDI chip can be used.
-Connect the RX and TX wires as shown in \autoref{fig:project:i:connect}
+To connect to the STK in transfer mode a USB cable with and FTDI chip\footnote{Future Technology Devices International provides chips for serial to USB conversion} can be used.
+Connect the RX (green) and TX (white) wires as shown in \autoref{fig:project:i:connect}
 
 \begin{figure}[H]
   \begin{center}
@@ -100,8 +94,8 @@ Connect the RX and TX wires as shown in \autoref{fig:project:i:connect}
 \end{figure}
 
 When a USB cable with FTDI is connected to the STK as shown in \autoref{fig:project:i:connect} a file handle for the serial port will be available under the \dir{/dev/} directory of a Unix like operating system.
-The application can then be interacted with, with an terminal application like \prog{picocom}.
-Connecting to the device with baudrate 9600 and error correction set to 8-1 (the defaults of \prog{picocom} will provide access to the {\tracker} \gls{cli}.
+The application can then be interacted with, with a terminal application like \prog{picocom}\footnote{\prog{picocom} is a serial terminal commonly found in many Unix-like systems}.
+Connecting to the device with baudrate 9600 and error correction set to 8-1 (the defaults of \prog{picocom}) will provide access to the {\tracker} \gls{cli}.
 
 \subsubsection{Command Line Interface}
 The \gls{cli} of the {\tracker} application contains a single command, read.
