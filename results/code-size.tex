@@ -1,36 +1,38 @@
 \section{Code Size}
 
-This section looks at the size of the end object files for various {\rust} libraries and examples.
-A comparison with the size of identical programs implemented in {\C} is also included.
+This section looks at the size of the compiled object files for various {\rust} libraries and runnable programs.
+A comparison between functionally equivalent programs in {\C} and {\rust} is provided.
 
 Code size is an important factor in an embedded system.
-Primarly the system is more restricted than conventional systems especially when it comes to storage.
+Primarily the system is more restricted than conventional systems especially when it comes to storage.
 For the EFM32 line of microcontrollers the code is stored in flash memory.
-In \autoref{sec:back:hw} we showed that the flash memory in the EFM32 family of microcontrollers ranges from 4kB to 1024kB.
+In \autoref{sec:back:hw} we showed that the flash memory in the EFM32 family of microcontrollers ranges from 4KB to 1MB.
 As \autoref{sec:before-main} explains the flash memory should not only contain the program code but also the constant data defined in the program.
 This limits the code size even further.
 
 Each program was compiled with optimization levels O0, O1, O2 and O3, the O0 level is compiled both with and without debugging symbols.
-Compiling the library results in a lib*.rlib file which is an archive containing object files for the code contained in the library.
-Compiling executable programs results in an elf binary file.
-The size is then calculated by executing the \emph{arm-none-eabi-gcc} program.
+Compiling the library results in a \file{lib*.rlib} file which is an archive containing object files for the code contained in the library.
+Compiling executable programs results in an {\elf} binary file.
+The size is then calculated by executing the \emph{arm-none-eabi-size} program.
 
 \subsection{Measuring Size}
+\label{sec:measure-size}
 
-The \emph{arm-none-eabi-gcc} program accepts an elf binary, an object file or an archive as argument.
-The program then reads the file and reports the size of the \textbf{text}, \textbf{data}, \textbf{bss} sections described in \autoref{sec:back:elf}.
-If the argument is an archive the program will iterate through all the objects in the archive an report the size for each individual file.
+The \emph{arm-none-eabi-size} program accepts an elf binary, an object file or an archive as argument.
+The program then reads the file and reports the size of the \elfsec{.text}, \elfsec{.data} and \elfsec{.bss} segments described in \autoref{sec:back:elf}.
+If the argument is an archive the program will iterate through all the objects in the archive an report the size for each individual object file.
+When reporting the size of the archives the sizes for all the objects files have been accumulated.
 
 \subsection{Parameters}
 \label{sec:size:params}
-The programs were generated setting the parameters in the \file{Cargo.toml} file.
+The various object files where compiled by setting the compiler optimization flags in the \file{Cargo.toml} file.
 The parameters used are shown in \autoref{tab:size:params} with their effect.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{|l|l|l|}
-    \hline
-    Parameter & Values & Effect \\
+  \begin{tabular}{l|l|l}
+
+    \textbf{Parameter} & \textbf{Values} & \textbf{Effect} \\
     \hline
     debug & true, false & sets the \textbf{-g} flag on the compilers  \\
     debug-assertions & true, false & a way to remove assertion statements \\
@@ -45,9 +47,8 @@ The parameters used are shown in \autoref{tab:size:params} with their effect.
 Each program in this section is compiled with 5 different settings as given by \autoref{tab:size:settings}.
 \begin{table}[H]
   \centering
-  \begin{tabular}{|l|l|l|l|l|l|}
-    \hline
-    & 1     & 2     & 3     & 4     & 5     \\
+  \begin{tabular}{l|l|l|l|l|l}
+    & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} \\
     \hline
     debug            & true  & false & false & false & false \\
     debug-assertions & true  & false & false & false & false \\
@@ -61,41 +62,44 @@ Each program in this section is compiled with 5 different settings as given by \
 
 \subsection{Libraries}
 
-This section looks at the code size of the \gls{rel} libraries along with the cmsis and startup libraries.
-The \gls{rel} libraries are all {\rust} code, while the \lib{cmsis} and \lib{startup} libraries contain bindings {\C} code and the actual {\C} code compiled with \prog{gcc}.
-The same compiler options from \autoref{sec:size:params} apply to the {\C} compiler as well.
-As the code size of libraries varies from a few bytes to 400KB the results are presented in two separate figures.
+We first look at the code size of the \gls{rel} libraries along with the \lib{cmsis} and \lib{startup} libraries.
+The \gls{rel} libraries, presented in \gls{rel}, all contain {\rust} code only, while the \lib{cmsis} and \lib{startup} libraries contain {\rust} binding code in addition to the actual {\C} implementation code compiled with \prog{gcc}.
+The same compiler options from \autoref{sec:size:params} are passed to the {\C} compiler as well.
+As the code size of libraries varies from a few bytes to 400KB,the results are presented in two separate figures.
 \autoref{fig:size:lib:small} shows the small libraries ranging from 4B to 3KB and \autoref{fig:size:lib:large} shows the large libraries in ranges 100KB to 400KB.
 
-Both figures make the distinction between the three sections reported by the \emph{size} program but only the \textbf{text} segment is prominent.
-This is because there is not much allocation in the the REL libraries, in fact the only allocation is 8B in the \textbf{data} section of the startup library.
+The \prog{arm-none-eabi-size} makes the distinction between three of the {\elf} segment.
+Here, only the size for the \elfsec{.text} segment are shown in the graphs, as the \elfsec{.data} and \elfsec{.bss} are mostly non-existing.
+This is because there is not any static allocation in the \gls{rel} {\rust} libraries, in fact the only static allocation is of 8B in the \textbf{data} section of the \lib{startup} library.
 
 The bars for each library from left to right represent the sizes of programs compiled with different parameters as described in \autoref{tab:size:settings}.
-The general trend is that the code size decreases when the optimization level is increased.
+The general trend is that the code size decreases as the optimization level is increased.
 
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.3]{results/plots/size/lib/small/size.png}
+    \includegraphics[scale=0.5]{results/plots/size/lib/small/size.png}
   \end{center}
   \caption{Code size for small Rust libraries}
   \label{fig:size:lib:small}
 \end{figure}
+
+A notable result in \autoref{fig:size:lib:small} is the increase in code size for the \lib{startup} library when moving from O2 to O3.
+This increase of 500B is not due to the {\rust} code of the \lib{startup} library, but the \gls{cmsis} Cortex-M3 System Layer provided by Silicon Labs, and written in {\C}.
+
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.3]{results/plots/size/lib/large/size.png}
+    \includegraphics[scale=0.5]{results/plots/size/lib/large/size.png}
   \end{center}
   \caption{Code size for large Rust libraries}
   \label{fig:size:lib:large}
 \end{figure}
 
-A notable result in \autoref{fig:size:lib:small} is the increase in code size for the startup library when moving from O2 to O3.
-This increase of 500B is not in the Rust section of the startup library but the \gls{cmsis} Cortex-M3 System Layer provided by Silicon Labs.
+From \autoref{fig:size:lib:large} we see that the \lib{collection} library is the largest one at ~137 KB when optimized.
 
-\autoref{fig:size:lib:large} shows that some of the central libraries in \gls{rel} are quite large.
-An important point here is that, although the \lib{core} library by itself is over 100KB, when optimized for an actual program utilizing the library, it can be substantially smaller.
-This is because of the fact that a library build must provide all the functionality of the source code, while an executable build can eliminate all the functionality of the library that is not used.
-
-By considering the size of the largest and the smallest build for each program we see that the compress factor when applying optimizations is 2.3x on average.
+%\todo{Move to discussion}
+%\autoref{fig:size:lib:large} shows that some of the central libraries in \gls{rel} are quite large.
+%An important point here is that, although the \lib{core} library by itself is over 100KB, when optimized for an actual program utilizing the library, it can be substantially smaller.
+%This is because of the fact that a library build must provide all the functionality of the source code, while an executable build can eliminate all the functionality of the library that is not used.
 
 \subsection{Executables}
 
@@ -114,7 +118,7 @@ The first figure, \autoref{fig:size:bin:large}, in this section looks at the siz
 \end{figure}
 
 The same trend as for the Libraries is seen for the {\rust} programs, higher optimizations levels provides a smaller binary.
-Again we see that the O2 level provides a small size gain over the O3 version.
+Notice we see that the O2 level provides a small size gain over the O3 version.
 
 The {\C} code does not exhibit the same size loss when optimized and the Os level builds produces consistently the smallest binary.
 
@@ -151,17 +155,17 @@ The number reported is generated by dividing the size of the {\rust} binary by t
 
 We see from \autoref{tab:size:c-vs-rust} that both the Circle Game and the Minimal Main  {\rust} binaries come quite close to the {\C} binaries in size.
 
-\subsection{Discussion}
+%\subsection{Discussion}
 
-This section has shown that the code size of all {\rust} binaries are larger than their {\C} counterparts.
-The optimized {\rust} builds does come close to {\C} builds with being 1.94x larger on average, while the debug builds are far bigger, 6.88x on average.
+%This section has shown that the code size of all {\rust} binaries are larger than their {\C} counterparts.
+%The optimized {\rust} builds does come close to {\C} builds with being 1.94x larger on average, while the debug builds are far bigger, 6.88x on average.
 
-The test hardware used to produce the results given here is the EFM32GGF1024, as mentioned in \autoref{sec:back:hw}.
-This chip has 1MB for storing the code and therefore running the debug builds which maxed out at ~176KB, was not a problem.
+%The test hardware used to produce the results given here is the EFM32GGF1024, as mentioned in \autoref{sec:back:hw}.
+%This chip has 1MB for storing the code and therefore running the debug builds which maxed out at ~176KB, was not a problem.
 
-Considering the Minimal Main debug binary presented in \autoref{fig:size:bin:small} and comparing to the chips with lower specifications in the EFM32 family (\autoref{tab:efm32-family}), we see that a debug build can not be executed at small versions of the Zero and Tiny Gecko.
-Looking at the Sensor Tracker application, even the heavily optimized version of the {\rust} build can not run on the largest version of the either the Zero or Tiny Gecko.
+%Considering the Minimal Main debug binary presented in \autoref{fig:size:bin:small} and comparing to the chips with lower specifications in the EFM32 family (\autoref{tab:efm32-family}), we see that a debug build can not be executed at small versions of the Zero and Tiny Gecko.
+%Looking at the Sensor Tracker application, even the heavily optimized version of the {\rust} build can not run on the largest version of the either the Zero or Tiny Gecko.
 
-Reading the results presented here should take in mind that the comparisons are made between a mature production proven compiler \textbf{gcc} and a pre/close to 1.0 compiler \textbf{rustc}.
-The design objectives for the 1.0 version of {\rust} as outlined in \autoref{sec:rust:roadmap} has been on stabilizing the language APIs and features.
-This indicates that non-breaking changes like compiler optimizations both for compiler speed and binary code sizes not has been a priority leading up to the 1.0 release.
+%Reading the results presented here should take in mind that the comparisons are made between a mature production proven compiler \textbf{gcc} and a pre/close to 1.0 compiler \textbf{rustc}.
+%The design objectives for the 1.0 version of {\rust} as outlined in \autoref{sec:rust:roadmap} has been on stabilizing the language APIs and features.
+%This indicates that non-breaking changes like compiler optimizations both for compiler speed and binary code sizes not has been a priority leading up to the 1.0 release.
