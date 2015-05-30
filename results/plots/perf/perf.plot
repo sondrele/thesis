@@ -1,5 +1,8 @@
 set terminal png enhanced
 
+set xlabel "Optimization Levels"
+set ylabel "Frames Per Second"
+
 set xrange [0:6]
 set xtics ('-O0' 0.75, '-O1' 1.75, '-O2' 2.75, '-O3' 3.75, '-Os' 4.75)
 
