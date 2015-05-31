@@ -1,46 +1,46 @@
 \section{Performance}
 
 This section describes the performance measurement of the system.
-The performance was measured by implemententing the game application described in \autoref{circle-game} in both {\C} and {\rust} and recording a performance metric.
+The performance was measured by implementing the game application described in \autoref{sec:impl:project:ii} in both {\C} and {\rust} and recording a performance metric.
 The performance metric chosen for the evaluation is \gls{fps}.
 This metric measures the amount of work/second.
 The metric is simple and commonly used when measuring relative performance of realtime graphic applications.
 
-\subsection{Measurment Bias}
+\subsection{Measurement Bias}
 \label{sec:perf:bias}
 
-When measuring performance one have to consider a number of biases that can and will occure while performing the measurement.
-A Bias is an arbitrary external noise that might distort the result of the measurements.
-Some of these biases can and should be elliminated before measuring, while others are harder or impossible to remove.
+When measuring performance one have to consider a number of biases that can and will occur while performing the measurement.
+A bias is an arbitrary external noise that might distort the result of the measurements.
+Some of these biases can and should be eliminated before measuring, while others are harder or impossible to remove.
 
-The following biases were found when analysing the game application:
+The following biases were found when analyzing the game application:
 \begin{itemize}
   \item User Input
   \item Random Number Generator
-  \item Code for recording the performance metric
+  \item Measurement Overhead
   \item Optimization Characteristics
 \end{itemize}
 Each bias is discussed in the following paragraphs.
 
 \paragraph{User Input}
 The game application was developed as a human playable game.
-When measuring performance desterministic results are preferable.
-This bias was removed by implementing a simple artificial intellegence which emulates the user input.
+When measuring performance deterministic results are preferable.
+This bias was removed by implementing a simple artificial intelligence which emulates the user input.
 
 \paragraph{Random Number Generator}
 A \gls{rng} is used to generate a stream of seemingly random numbers.
-To avoid performance inpacts from the different \gls{rng} implementations for {\C} and {\rust} an simple deterministic \gls{rng} was implemented an used.
+To avoid performance impacts from the different \gls{rng} implementations for {\C} and {\rust} a simple deterministic \gls{rng} was implemented and used.
 
-\paragraph{Code for the measurement}
+\paragraph{Measurement Overhead}
 Often when measuring the performance of an application at a course granularity, the measurement itself is a bias.
 This is largely the case when measuring \gls{fps} as it adds profiling code to the actual application, thus affecting the performance of the application.
-In this experiment we are interested in the releative performance between {\C} code and {\rust} code.
-Therefore the added bias by the \gls{fps} measurment is accetable as long as it is the same for both code bases.
+In this experiment we are interested in the relative performance between {\C} code and {\rust} code.
+Therefore the added bias by the \gls{fps} measurement is acceptable as long as it is the same for both code bases.
 
 \paragraph{Optimization Characteristics}
-Various application performs different when subject to differnet optimizations.
-This fact leads to a tradeoff when desciding the level of optimization to apply to the program.
-To account for this bias, we look at the performance metric for all optimization levels and do an analysis based on the best metric.
+Various application performs different when subject to different optimizations.
+This fact leads to a trade-off when deciding the level of optimization to apply to the program.
+To account for this bias, we look at the performance metric for all optimization levels.
 
 \subsection{Results}
 \label{sec:perf:res}
@@ -51,19 +51,19 @@ In this section the results obtained when measuring performance is presented.
   \begin{center}
     \includegraphics[scale=0.5]{results/plots/perf/perf.png}
   \end{center}
-  \caption{Frame/Second achived by {\C} and {\rust} code.}
+  \caption{Frame/Second achieved by {\C} and {\rust} code.}
   \label{fig:perf:res}
 \end{figure}
 
 \autoref{fig:perf:res} graphs the results for the performance measurements.
-The Y axis shows the number of Frames Per Seconds achived by running the game on the optimization level given by the X axis.
+The Y axis shows the number of Frames Per Seconds achieved by running the game on the optimization level given by the X axis.
 We see that the {\C} code is \~10x faster on O0 and O1, but {\rust} equates by providing a 1.07x speedup over {\C} at O2.
-C achives best performance at level O2 while {\rust} is slighly faster on O3 compared to O2.
+C achieves best performance at level O2 while {\rust} is slightly faster on O3 compared to O2.
 The optimization Os for size is not available for {\rust} and is included for the discussion of size vs performance in \autoref{sec:res:size-v-perf}.
 \todo{I'm thinking there will be a larger discussion taking all the results in consideration in the end of this chapter}
 
 %\subsection{Discussion}
 %\label{sec:perf:disc}
 %As \autoref{sec:perf:res} shows the performance of the application written in {\rust} not only matches the \gls{fps} performance of the {\C} version, it also provides a speedup of 1.07x.
-%We also see that the optimiziations are more predictable on this application in relation to optimization level, with perf(Ox) > perf(Oy) when x > y.
+%We also see that the optimizations are more predictable on this application in relation to optimization level, with perf(Ox) > perf(Oy) when x > y.
 %This relationship does not hold for the {\C} application where the perf(O1) > perf(O3).

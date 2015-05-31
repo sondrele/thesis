@@ -4,7 +4,7 @@ This section looks at the size of the compiled object files for various {\rust} 
 A comparison between functionally equivalent programs in {\C} and {\rust} is provided.
 
 Code size is an important factor in an embedded system.
-Primarily the system is more restricted than conventional systems especially when it comes to storage.
+The systems are more restricted than conventional systems especially when it comes to storage.
 For the EFM32 line of microcontrollers the code is stored in flash memory.
 In \autoref{sec:back:hw} we showed that the flash memory in the EFM32 family of microcontrollers ranges from 4KB to 1MB.
 As \autoref{sec:before-main} explains the flash memory should not only contain the program code but also the constant data defined in the program.
@@ -19,13 +19,13 @@ The size is then calculated by executing the \emph{arm-none-eabi-size} program.
 \label{sec:measure-size}
 
 The \emph{arm-none-eabi-size} program accepts an elf binary, an object file or an archive as argument.
-The program then reads the file and reports the size of the \elfsec{.text}, \elfsec{.data} and \elfsec{.bss} segments described in \autoref{sec:back:elf}.
-If the argument is an archive the program will iterate through all the objects in the archive an report the size for each individual object file.
-When reporting the size of the archives the sizes for all the objects files have been accumulated.
+The program then reads the file and reports the size of the \elfsec{.text}, \elfsec{.data} and \elfsec{.bss} segments, described in \autoref{sec:back:elf}.
+If the argument is an archive, the program will iterate through all the objects in the archive and report the size for each individual object file.
+When reporting the size of the archives, the sizes for all the objects files contained within the archive have been accumulated.
 
 \subsection{Parameters}
 \label{sec:size:params}
-The various object files where compiled by setting the compiler optimization flags in the \file{Cargo.toml} file.
+The various files where compiled by setting the compiler optimization flags in the \file{Cargo.toml} file.
 The parameters used are shown in \autoref{tab:size:params} with their effect.
 
 \begin{table}[H]
@@ -63,14 +63,14 @@ Each program in this section is compiled with 5 different settings as given by \
 \subsection{Libraries}
 
 We first look at the code size of the \gls{rel} libraries along with the \lib{cmsis} and \lib{startup} libraries.
-The \gls{rel} libraries, presented in \gls{rel}, all contain {\rust} code only, while the \lib{cmsis} and \lib{startup} libraries contain {\rust} binding code in addition to the actual {\C} implementation code compiled with \prog{gcc}.
-The same compiler options from \autoref{sec:size:params} are passed to the {\C} compiler as well.
+The \gls{rel} libraries, presented in \autoref{sec:rel}, all contain {\rust} code only, while the \lib{cmsis} and \lib{startup} libraries contain {\rust} binding code in addition to the actual {\C} implementation code compiled with \prog{gcc}.
+The same compiler options from \autoref{sec:size:params} are passed to the {\C} compiler.
 As the code size of libraries varies from a few bytes to 400KB,the results are presented in two separate figures.
 \autoref{fig:size:lib:small} shows the small libraries ranging from 4B to 3KB and \autoref{fig:size:lib:large} shows the large libraries in ranges 100KB to 400KB.
 
-The \prog{arm-none-eabi-size} makes the distinction between three of the {\elf} segment.
+The \prog{arm-none-eabi-size} makes the distinction between three of the {\elf} segments.
 Here, only the size for the \elfsec{.text} segment are shown in the graphs, as the \elfsec{.data} and \elfsec{.bss} are mostly non-existing.
-This is because there is not any static allocation in the \gls{rel} {\rust} libraries, in fact the only static allocation is of 8B in the \textbf{data} section of the \lib{startup} library.
+This is because there is not any static allocation in \gls{rel}, in fact the only static allocation is of 8B in the \textbf{data} section of the \lib{startup} library.
 
 The bars for each library from left to right represent the sizes of programs compiled with different parameters as described in \autoref{tab:size:settings}.
 The general trend is that the code size decreases as the optimization level is increased.
