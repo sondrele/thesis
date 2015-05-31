@@ -14,33 +14,31 @@ A bias is an arbitrary external noise that might distort the result of the measu
 Some of these biases can and should be eliminated before measuring, while others are harder or impossible to remove.
 
 The following biases were found when analyzing the game application:
-\begin{itemize}
-  \item User Input
-  \item Random Number Generator
-  \item Measurement Overhead
-  \item Optimization Characteristics
-\end{itemize}
-Each bias is discussed in the following paragraphs.
-
-\paragraph{User Input}
+\begin{description}
+  \item [User Input] \hfill \\
 The game application was developed as a human playable game.
 When measuring performance deterministic results are preferable.
 This bias was removed by implementing a simple artificial intelligence which emulates the user input.
 
-\paragraph{Random Number Generator}
+  \item [Random Number Generator] \hfill \\
 A \gls{rng} is used to generate a stream of seemingly random numbers.
 To avoid performance impacts from the different \gls{rng} implementations for {\C} and {\rust} a simple deterministic \gls{rng} was implemented and used.
 
-\paragraph{Measurement Overhead}
+  \item [Measurement Overhead] \hfill \\
 Often when measuring the performance of an application at a course granularity, the measurement itself is a bias.
 This is largely the case when measuring \gls{fps} as it adds profiling code to the actual application, thus affecting the performance of the application.
 In this experiment we are interested in the relative performance between {\C} code and {\rust} code.
 Therefore the added bias by the \gls{fps} measurement is acceptable as long as it is the same for both code bases.
 
-\paragraph{Optimization Characteristics}
+  \item [Optimization Characteristics] \hfill \\
 Various application performs different when subject to different optimizations.
 This fact leads to a trade-off when deciding the level of optimization to apply to the program.
 To account for this bias, we look at the performance metric for all optimization levels.
+\end{description}
+
+\begin{description}
+    \item[]
+\end{description}
 
 \subsection{Results}
 \label{sec:perf:res}
