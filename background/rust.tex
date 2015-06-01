@@ -3,7 +3,7 @@
 \section{The Rust Programming Language} % (fold)
 \label{sub:the_rust_programming_language}
 
-{\rust} \cite{web:rust_lang} is a new open source systems programming language developed with backing from the Mozilla Foundation \cite{web:mozilla_foundation}.
+{\rust} \footnote{\url{http://www.rust-lang.org/}} is a new open source systems programming language developed with backing from the Mozilla Foundation \footnote{\url{https://www.mozilla.org/en-US/foundation/}}.
 It is a strongly and statically typed, multi-paradigm programming language, that incorporates features from the functional, object-oriented, and imperative paradigms.
 The language borrows many constructs and features from other programming languages, some of which are described in the following sections.
 Over the course of {\rust}'s development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
@@ -445,7 +445,7 @@ A {\rust} program will not successfully compile if the programmer is failing to 
 \subsection{Guaranteed memory safety}
 \label{sec:guaranteed_memory_safety}
 
-One of {\rust}'s biggest features is full memory safety \cite{web:rust_book_unsafe} without sacrificing performance.
+One of {\rust}'s biggest features is full memory safety without sacrificing performance.
 The memory safety boils down to how {\rust} manages its variables and their memory throughout the course of a program.
 {\rust} introduces a few concepts that are all centered around the \concept{ownership} of these variables and their \concept{lifetimes}, and how references to these variables can be \concept{borrowed}.
 These concepts are defined in {\rust}, but a lot of the inspiration behind those rules comes from other type-safe languages, like Haskell and OCaml, and especially Cyclone's \cite{Grossman2002,Swamy2006} region-based memory management.
