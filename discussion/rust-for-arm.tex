@@ -1,7 +1,8 @@
 % !TEX root = ../main.tex
 
 \section{Rust for ARM} % (fold)
-\label{sec:rust_for_arm}
+\label{sec:disc:rust_for_arm}
+% \todo{Mention this in discussion. Is there a better way of solving this? Currently it fetches a release tarball of the language. It fetches more than it needs to for each library, but it's quicker/easier than using e.g. git to do it. It does however take a little while to compile all the dependencies on smaller machines.}
 
 Before we started on this thesis we were already aware that there were a couple of other projects that was running {\rust} bare-metal on ARM \glspl{mcu}.
 We did, however, not know how easy it would be to get up and running with {\rust} on the EFM32.
@@ -10,14 +11,15 @@ The {\rust} documentation was sufficient for figuring out how to define non-std 
 {\rust}'s runtime is comparable with the one that is available in {\C}, the startup-routine in the two languages are the same, but the {\core} library is larger and provides more functionality than the {\C} standard library, which we consider to be an added bonus of {\rust}.
 
 {\rust} has a rich standard library which offers a strong foundation for all the programs that want to depend on it.
-As we described in \autoref{ssub:rust:features}, the {\std} crate acts like an abstraction over all the different libraries in \gls{rsl} and the rustc compiler is itself dependent on a couple of \emph{marker-traits} to be present in this module.
-It is easy enough to define programs that are not dependent on this {\std} library, and instead only dependent on {\core}, but we think the distinction between {\std} and {\core} is too big.
+As we described in \autoref{ssub:rust:features}, the {\std} crate acts like an abstraction over all the different libraries in \gls{rsl} and the {\rustc} compiler is itself dependent on a couple of traits to be present in this module.
+It is easy enough to define programs that are not dependent on this {\std} library, and instead only dependent on {\core}, but we think the difference between {\std} and {\core} is too big.
 
 \gls{rcl} do provide us with with enough functionality to write idiomatic {\rust} code, but we had to implement a few workarounds in order to get support for {\rust}'s standard constructs for dynamic memory allocation.
 Currently, {\rust} does not have functionality to provide, or automatically compile, any of its standard libraries for other target architectures than the ones it support by default.
-Because our project targets an ARM processor architecture, we have to conditionally compile the libraries (like \lib{alloc} and \lib{collections}) that has functionality that we want to utilize, for this architecture.
+Because our project targets an ARM processor architecture, we have to conditionally download and compile the libraries (like \lib{alloc} and \lib{collections}) that has functionality that we want to utilize, like described in \autoref{ssub:transitioning_to_cargo}.
 This is not necessarily a big problem in itself, it does not complicate the process much more than the need to explicitly define the libraries as custom dependencies in the \texttt{Cargo.toml}.
 We do however think that the distinction between standard and non-standard programs make it considerably harder to enable us to use the great ecosystem that {\rust} is surrounded by.
+
 
 We have described {\cargo} and its ability to manage package dependencies, and closely associated with {\cargo} is its package repository called \texttt{crates.io} \footnote{\url{https://crates.io}}.
 This repository stores, at the time of this writing, a couple of thousand different {\rust} crates, all made available for anyone that builds {\rust} programs with {\cargo}.
@@ -25,7 +27,7 @@ The vast majority of these crates are, to the best of our knowledge, linked to {
 That being said, they do not necessarily use any functionality that we have not already made available through \gls{rel} in our project.
 This simple fact renders nearly all (if not all) packages available through \texttt{crates.io} unusable for our project, even though the same basis that many of these package depend on might already be available through \gls{rel}.
 
-As an example to demonstrate this problem, we look to the \texttt{lazy-static} \footnote{\url{ttps://crates.io/crates/lazy_static}} project available on \texttt{crates.io}.
+As an example to demonstrate this problem, we look to the \texttt{lazy-static} \footnote{\url{https://crates.io/crates/lazy_static}} project available on \texttt{crates.io}.
 This project allows the programmer to declare \emph{static} variables that gets initialized at \emph{runtime}, it provides some of the same functionality that we implemented for the event-hub described in \autoref{sec:irq-closures}.
 We can not use this project directly because it depends on {\std}, but if we look closer at the project's source code, we can even see that the project author has implemented an alternate (and outdated) version which is only dependent on {\core}.
 Another example is the \texttt{smallvec} \footnote{\url{https://crates.io/crates/smallvec}} project, which provides a handful of optimized versions of {\rust}'s vector structure that have a length-limit of 32 entries.
