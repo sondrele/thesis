@@ -1,0 +1,107 @@
+\section{Energy Consumption}
+
+In this section we look at the energy consumption of the Sensor Tracker application, described in \autoref{sec:impl:project:ii}.
+The Sensor Tracker is an interrupt driven application and has two modes of operation from an energy consumption perspective.
+It turns \emph{On} for each interrupt to perform the measurement and turns \emph{Off} when the measuring if done.
+
+\subsection{Measuring}
+The measurement was performed with the \emph{Energy Profiler} application supplied by Silicon Labs in their \emph{Simplicity Studio} software suite.
+The profiler measures on board current at a sample frequency of 6250Hz.
+Power, measured in J/s, is produced by the formula $P (J/s) = V*I $.
+By accumulating the Power over time we get the energy consumption given in \emph{Joule}.
+This metric is reported by the \emph{Energy Profiler}.
+
+Each measurement, called a \emph{run}, was gathered manually by executing the sample collection process (see \autoref{sec:project:i:sample-collection}) for 30s and recording the energy reported by the profiler.
+This was repeated 4 times for each data point and an average was calculated after removing the sample with the highest variance.
+This process was introduced to remove human error from the manual collection.
+The number of collected and discarded samples was based upon the stability of the results, and the largest variance in the collected samples are 0.174\%.
+
+\subsection{Parameter}
+
+The energy consumption was recorded for the Sensor Tracker, which was configured with different workloads.
+The workload is dependent on how many interrupts are trigger per run and how much work is performed to at each interrupt.
+To vary the workload, the number of triggered interrupts was varied by configuring the length of the interval between each interrupt, while the work was held constant for each interrupt.
+\autoref{tab:res:energy:parameters} gives the interrupt interval and the corresponding number of interrupts per \emph{run} used for the measurement.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|l}
+    \textbf{Interval} & \textbf{\# of Interrupts/\emph{run}} \\
+    \hline
+    25ms & 1200 \\
+    50ms & 600 \\
+    100ms & 300 \\
+    500ms & 60 \\
+    1000ms & 30 \\
+    \hline
+  \end{tabular}
+  \caption{Interrupt Interval Parameter}
+  \label{tab:}
+\end{table}
+
+The measurement was performed at all the standard optimization levels provided by the compilers.
+As noted in \autoref{sec:res:code-size} these are \emph{O0}, \emph{O1}, \emph{O2}, \emph{O3} and \emph{Os} (only available for {\C}).
+The \emph{O0} levels were only evaluated with debugging symbols.
+
+\subsubsection{Results}
+
+In this section we look at the results of the energy consumption measurement.
+We first look at the whole picture by presenting all the measurements produced by the set of possible parameters.
+Later we will consider the best configured {\C} application together with best configured {\rust} application, for each workload.
+
+\begin{figure}[H]
+
+  \centering
+  \begin{subfigure}{0.49\textwidth}
+    \includegraphics[width=\textwidth]{results/plots/energy/25.png}
+    \caption{25ms}
+    \label{}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.49\textwidth}
+    \includegraphics[width=\textwidth]{results/plots/energy/50.png}
+    \caption{50ms}
+    \label{}
+  \end{subfigure}
+
+    \begin{subfigure}{0.49\textwidth}
+    \includegraphics[width=\textwidth]{results/plots/energy/100.png}
+    \caption{100ms}
+    \label{}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.49\textwidth}
+    \includegraphics[width=\textwidth]{results/plots/energy/500.png}
+    \caption{500ms}
+    \label{}
+  \end{subfigure}
+
+  \begin{subfigure}{0.49\textwidth}
+    \includegraphics[width=\textwidth]{results/plots/energy/1000.png}
+    \caption{1000ms}
+    \label{}
+  \end{subfigure}
+
+  \caption{{\rust} vs {\C} comparison for each workload}
+  \label{fig:res:energy:comparison}
+\end{figure}
+
+\autoref{fig:res:energy:comparison} shows the energy consumption for each of the workloads and compares the optimization levels for {\rust} and {\C}.
+We see that {\rust} and {\C} has comparable consumption in each of the workload configurations.
+The {\rust} versions provides a more predictable result. where higher optimization levels perform generally well, while {\C}'s higher optimization levels perform worse than unoptimized code.
+
+Now we look at the relative performance comparing the version with lowest energy consumption for each workload.
+For the {\C} code we can easily see from \autoref{fig:res:energy:comparison} that this is produced by the \emph{Os} level.
+The {\rust} versions on the other hand are either \emph{O1}, \emph{O2} or \emph{O3}, although the difference is never larger that 1\%.
+
+\begin{figure}[H]
+  \includegraphics[width=\textwidth]{results/plots/energy/best.png}
+  \caption{{\rust} vs {\C} relative comparisons for best builds}
+  \label{fig:res:energy:best}
+\end{figure}
+
+\autoref{fig:res:energy:best} shows the relative energy consumption by setting the consumption of the {\C} \emph{Os} build to 1 for each of the workload.
+The {\rust} line plots the best performing {\rust} builds relative to this {\C} build.
+
+We see that the {\rust} code is always within 15\% of the {\C} code in energy consumption.
+A surprising result is that the difference increases as the workload decreases.
