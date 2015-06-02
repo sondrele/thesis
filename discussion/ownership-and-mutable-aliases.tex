@@ -3,4 +3,32 @@
 \section{Ownership Applied to Hardware}
 \label{sec:ownership_allied_to_hardware}
 
-One of the initial problems that we wanted to investigate in this project, was to see if we could apply Rust's ownership-semantics directly to hardware.
+The problem that arises with aliasing to mutable data \cite{web:problem_with_shared_mutability}, also known as shared mutable state, might not be obvious to everyone, but this is often the root to problems like race conditions and other write-after-write issues.
+One of the initial problems that we wanted to investigate during this project, was to see if we could apply {\rust}'s ownership-semantics directly to hardware.
+As was described in \autoref{sec:impl:oo}, ARM \glspl{mcu} like the EFM32 that we have targeted in this project, often comes bundled with a wide range of memory-mapped hardware peripherals.
+Obscure problems can occur if these peripherals are accessed from \emph{different} parts of a program \emph{at the same time}, this section discusses how such problems can arise and possibly presents a solution in which {\rust} might be used to prevent the issue, maybe.
+% presents a solution in which {\rust} might be used to prevent the issue.
+
+It is quite common to globally declare mutable variables in {\C} programs, these are accessible from every stack-frame throughout the running program.
+Such variables are also available in {\rust}, but as \autoref{ssub:unsafe_code} describes, reading and writing to and from these variables are considered to be unsafe operations.
+We have also seen that we can get access to the \gls{mcu}'s different peripherals by casting a chunk of data at a certain location in memory into a program structure which can be used as a handle to the peripheral.
+As an example, a \gls{usart} is located at memory address \mem{0x4000C000} on the {\gecko}, and the bindings that we have implemented for {\emlib} provide functions to easily initialize new handles to addresses like this.
+This means that every peripheral (that we have written bindings for) are accessible through common library routines.
+Ultimately, this also means and that multiple handles to shared mutable state can easily be acquired with sequential calls to the same initializer-function for a peripheral.
+
+We can demonstrate why this can be a problem with an example.
+Let us assume that that we have two handles, \texttt{H1} and \texttt{H2}, to the same \gls{usart}, and that we write the data \texttt{0x1111} and \texttt{0xFFFF} to the \gls{usart} with the two handles, respectively.
+We want the output from the \gls{usart} to be \texttt{0x1111FFFF}, but the output might be scrambled if the transfers take up sufficiently more time than it takes to initialize a data transfer, maybe the output is something like \texttt{0x111F1FFF} instead.
+
+Calling a library routine to acquire a handle to the same peripheral two times in a row is obviously not good practice, and using the two handles to interchangeably mutate the state of the peripheral is even worse.
+We can argue that a programmer would not intentionally do this on purpose within the same code block, and it might raise the question of how multiple handles to the same peripheral can occur in regular programs.
+
+This can be demonstrated with a new example.
+Let us say that we have a program in which we have configured two interrupts, \texttt{I1} and \texttt{I2}, to be triggered at differently timed intervals in the program.
+In the interrupt handler for \texttt{I1} we initiate a data transfer of \texttt{0x1111} over the \gls{usart}, and we initiate a data transfer of \texttt{0xFFFF} in the interrupt handler for \texttt{I2}.
+Now, what happens if the \texttt{I2} interrupt occur while the interrupt handler for \texttt{I1} is executing?
+If \texttt{I2} has higher priority than \texttt{I1}, the execution will change scope to \texttt{I2}'s interrupt handler, and a new \gls{usart} transfer will be initiated.
+Effectively, a race condition have occurred where two different interrupt handlers have acquired a handle to the same peripheral, and both are using this peripheral to transfer data at the same time.
+This might result in corrupted data being sent over the \gls{usart}.
+Even worse, the application at the receiving end of the \gls{usart} might end up with a program crash, if it relies on the data to be delivered in a certain format.
+

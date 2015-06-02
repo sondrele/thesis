@@ -615,7 +615,7 @@ fn main() {
 {\rust}'s strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
 There exist many programs that are indeed safe, but still not possible for the compiler to verify.
 Examples of code that the compiler cannot verify is code that dereference \concept{raw pointers}, or code that utilize {\rust}'s \gls{ffi} or directly call any of the compiler intrinsics functions.
-Raw pointers in {\rust} are similar to a normal pointer in C, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
+Raw pointers in {\rust} are similar to a normal pointer in {\C}, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
 The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
 The ability to define new abstractions with efficient implementations is an important goal of {\rust}.
