@@ -5,9 +5,11 @@
 
 The problem that arises with aliasing to mutable data \cite{web:problem_with_shared_mutability}, also known as shared mutable state, might not be obvious to everyone, but this is often the root to problems like race conditions and other write-after-write issues.
 One of the initial problems that we wanted to investigate during this project, was to see if we could apply {\rust}'s ownership-semantics directly to hardware.
-As was described in \autoref{sec:impl:oo}, ARM \glspl{mcu} like the EFM32 that we have targeted in this project, often comes bundled with a wide range of memory-mapped hardware peripherals.
+As was described in \autoref{sec:impl:oo}, ARM \glspl{mcu}, like the EFM32 that we have targeted in this project, often comes bundled with a wide range of memory-mapped hardware peripherals.
 Obscure problems can occur if these peripherals are accessed from \emph{different} parts of a program \emph{at the same time}, this section discusses how such problems can arise and possibly presents a solution in which {\rust} might be used to prevent the issue, maybe.
 % presents a solution in which {\rust} might be used to prevent the issue.
+
+\subsection{Identifying the Problem}
 
 It is quite common to globally declare mutable variables in {\C} programs, these are accessible from every stack-frame throughout the running program.
 Such variables are also available in {\rust}, but as \autoref{ssub:unsafe_code} describes, reading and writing to and from these variables are considered to be unsafe operations.
@@ -32,3 +34,20 @@ Effectively, a race condition have occurred where two different interrupt handle
 This might result in corrupted data being sent over the \gls{usart}.
 Even worse, the application at the receiving end of the \gls{usart} might end up with a program crash, if it relies on the data to be delivered in a certain format.
 
+\subsection{Presenting a Solution}
+% After the introduction to {\rust}'s ownership-rules presented in \autoref{sec:guaranteed_memory_safety}
+The question that we are left with after the previous section is then; is a way to apply {\rust}'s ownership-semantics directly to the peripherals, and let the {\rust} compiler do the reasoning for us of whether it is safe to use a peripheral or not?
+As it turns out, there is no easy or straight forward way to do this, at least not by our finding.
+
+One thing that can be attempted is to hide the hardware initialization process from the programmer and let it be done automatically by the compiler, similar to what {\zinc} does, as described in \autoref{sec:zinc}.
+{\zinc} uses the Platform Tree to specify the hardware which do the process of initializing the peripherals and save them into a \code{run\_args} structure which acts as their owner.
+This approach of initialization has two good advantages:
+
+\begin{enumerate}
+    \item Compile-time verification can ensure that the peripherals are initialized correctly.
+    \item The peripherals are owned by a variable, and access to these peripherals can be controlled by {\rust}'s borrow-checker.
+\end{enumerate}
+
+Point 1) is indeed a very interesting feature of {\zinc}, but it does not really help us to solve the problem that we are discussing in this section.
+Point 2) can help us to make sure that all peripheral access goes through the \code{run\_args} structure, but this structure is passed to the program's main loop.
+What happens if we want to use a peripheral in an interrupt handler which defines a different scope that is outside of the main loop?
