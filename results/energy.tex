@@ -40,7 +40,9 @@ To vary the workload, the number of triggered interrupts was varied by configuri
 \end{table}
 
 The measurement was performed at all the standard optimization levels provided by the compilers.
+This is done to remove the bias where different application have better performance on different optimization levels.
 As noted in \autoref{sec:res:code-size} these are \emph{O0}, \emph{O1}, \emph{O2}, \emph{O3} and \emph{Os} (only available for {\C}).
+As we will see in the results below, by including all the optimization levels we uncovered another bias related to energy consumptions.
 The \emph{O0} levels were only evaluated with debugging symbols.
 
 \subsubsection{Results}
@@ -88,7 +90,7 @@ Later we will consider the best configured {\C} application together with best c
 
 \autoref{fig:res:energy:comparison} shows the energy consumption for each of the workloads and compares the optimization levels for {\rust} and {\C}.
 We see that {\rust} and {\C} has comparable consumption in each of the workload configurations.
-The {\rust} versions provides a more predictable result. where higher optimization levels perform generally well, while {\C}'s higher optimization levels perform worse than unoptimized code.
+It is also evident that an external bias, investigated below, accounts for the variance between the various optimization levels.
 
 Now we look at the relative performance comparing the version with lowest energy consumption for each workload.
 For the {\C} code we can easily see from \autoref{fig:res:energy:comparison} that this is produced by the \emph{Os} level.
@@ -102,6 +104,39 @@ The {\rust} versions on the other hand are either \emph{O1}, \emph{O2} or \emph{
 
 \autoref{fig:res:energy:best} shows the relative energy consumption by setting the consumption of the {\C} \emph{Os} build to 1 for each of the workload.
 The {\rust} line plots the best performing {\rust} builds relative to this {\C} build.
+For reference the results for the \emph{O3} optimization level of the {\C} build is included.
+We see that the {\rust} code is always within the 15\% of the {\C} code in energy consumption and below the \emph{O3} line.
 
-We see that the {\rust} code is always within 15\% of the {\C} code in energy consumption.
-A surprising result is that the difference increases as the workload decreases.
+
+The variance between the different optimization levels in \autoref{fig:res:energy:comparison} was unexpected.
+In this application we anticipated that higher optimization levels would result in faster interrupt handlers and thus lower energy consumption.
+When the initial results did not meet these expectation we used the \emph{Energy Profiler} to plot the instantaneous current drawn by the application.
+
+\begin{figure}[H]
+  \includegraphics[width=\textwidth]{results/plots/energy/irq/50.png}
+  \caption{Current of 50ms workload}
+  \label{fig:res:energy:current}
+\end{figure}
+
+\autoref{fig:res:energy:current} plots the current drawn by the {\gecko} while handling an interrupt and the idle state between interrupts.
+The first thing to notice about the plot is that the time it takes to handle an interrupt is constant for the various optimization levels.
+This contradicts our assumptions of the higher optimization levels producing faster interrupt handlers.
+The second point is the difference in current drawn by the {\gecko} while handling the interrupts.
+We can see the O3 level draws more current compared to the Os level, to explain this result we looked at the instruction cache hit ratio.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l | l | l | l | l}
+    \textbf{Language} & \textbf{Level} & \textbf{Hits} & \textbf{Misses} & \textbf{Hit Ratio} \\
+    \hline
+    C & O3 & 110969 & 43429 & 71.9\% \\
+    C & Os & 162029 & 614 & 99.6\% \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:}
+\end{table}
+
+\autoref{tab:res:energy:cache} shows the cache hit ratios recorded for binaries presented in \autoref{fig:res:energy:current}.
+We see that the cache hit ratio for the binary compiled with O3 has a hit ratio of 72\% while the Os level has as high as 99\%.
+The lower instruction cache hit ratio causes the {\gecko} to load instructions from flash more frequently and thus consumes more energy.
