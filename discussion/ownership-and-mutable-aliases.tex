@@ -1,6 +1,6 @@
 % !TEX root = ../main.tex
 
-\section{Ownership Applied to Hardware}
+\section{Applying Ownership to Hardware}
 \label{sec:ownership_allied_to_hardware}
 
 The problem that arises with aliasing to mutable data \cite{web:problem_with_shared_mutability}, also known as shared mutable state, might not be obvious to everyone, but this is often the root to problems like race conditions and other write-after-write issues.
@@ -20,7 +20,7 @@ Ultimately, this also means and that multiple handles to shared mutable state ca
 
 We can demonstrate why this can be a problem with an example.
 Let us assume that that we have two handles, \texttt{H1} and \texttt{H2}, to the same \gls{usart}, and that we write the data \texttt{0x1111} and \texttt{0xFFFF} to the \gls{usart} with the two handles, respectively.
-We want the output from the \gls{usart} to be \texttt{0x1111FFFF}, but the output might be scrambled if the transfers take up sufficiently more time than it takes to initialize a data transfer, maybe the output is something like \texttt{0x111F1FFF} instead.
+We want the output from the \gls{usart} to be \texttt{0x1111FFFF}, but the output might be scrambled if the \emph{actual} transfers take up sufficiently more time than it takes to \emph{initialize} a data transfer, maybe the output is something like \texttt{0x111F1FFF} instead.
 
 Calling a library routine to acquire a handle to the same peripheral two times in a row is obviously not good practice, and using the two handles to interchangeably mutate the state of the peripheral is even worse.
 We can argue that a programmer would not intentionally do this on purpose within the same code block, and it might raise the question of how multiple handles to the same peripheral can occur in regular programs.
@@ -34,20 +34,70 @@ Effectively, a race condition have occurred where two different interrupt handle
 This might result in corrupted data being sent over the \gls{usart}.
 Even worse, the application at the receiving end of the \gls{usart} might end up with a program crash, if it relies on the data to be delivered in a certain format.
 
-\subsection{Presenting a Solution}
+\subsection{Inspiration?}
 % After the introduction to {\rust}'s ownership-rules presented in \autoref{sec:guaranteed_memory_safety}
-The question that we are left with after the previous section is then; is a way to apply {\rust}'s ownership-semantics directly to the peripherals, and let the {\rust} compiler do the reasoning for us of whether it is safe to use a peripheral or not?
+The question that we are left with after the previous section is then; is there a way to apply {\rust}'s ownership-semantics directly to the hardware, and let the {\rust} compiler do the reasoning for us of whether it is safe to use a peripheral or not?
 As it turns out, there is no easy or straight forward way to do this, at least not by our finding.
 
 One thing that can be attempted is to hide the hardware initialization process from the programmer and let it be done automatically by the compiler, similar to what {\zinc} does, as described in \autoref{sec:zinc}.
 {\zinc} uses the Platform Tree to specify the hardware which do the process of initializing the peripherals and save them into a \code{run\_args} structure which acts as their owner.
-This approach of initialization has two good advantages:
+This approach of initialization has two advantages:
 
-\begin{enumerate}
-    \item Compile-time verification can ensure that the peripherals are initialized correctly.
+\begin{enumerate}[\hspace{13}1)]
+    \item Compile-time verification can guarantee that the peripherals gets initialized correctly.
     \item The peripherals are owned by a variable, and access to these peripherals can be controlled by {\rust}'s borrow-checker.
 \end{enumerate}
 
 Point 1) is indeed a very interesting feature of {\zinc}, but it does not really help us to solve the problem that we are discussing in this section.
-Point 2) can help us to make sure that all peripheral access goes through the \code{run\_args} structure, but this structure is passed to the program's main loop.
-What happens if we want to use a peripheral in an interrupt handler which defines a different scope that is outside of the main loop?
+Point 2) can help us to make sure that all peripheral access goes through the \code{run\_args} structure, but this structure is only passed to the program's main loop.
+What happens if we want to use a peripheral in an interrupt handler, which defines a different scope that is outside of the main loop, like in the example from the previous section?
+As {\zinc} puts it on the project their project page; ``Accessing hardware directly is \emph{unsafe}, but you can do that as well if you want''.
+
+\subsection{Limitations with the Bindings}
+
+Our approach to define a software library for the {\gecko} has been to utilize what \emph{already} existed.
+We decided to write {\rust}-bindings for {\emlib} because it would get the project up an running fairly quickly.
+This choice also meant that we were able to quickly use a wide range of peripherals, and implement a couple of projects to test {\rust} in an embedded setting.
+It turns out, however, that this approach has introduced a few limitations to our system:
+
+\begin{enumerate}[\hspace{13}1)]
+    \item We access the peripherals through {\C}-bindings, which mean that {\rust} have no control over what happens on the other side of the \gls{ffi}.
+
+    \item Each peripheral structure that are used throughout the program is essentially a reference to a singleton \gls{mmio}.
+    This means that the peripherals can be treated as \emph{static mutable} objects, which by definition is unsafe in {\rust}.
+
+\end{enumerate}
+% It turns out that our approach to start programming th
+
+The biggest problem with both 1) and 2) is that the bindings hide away the fact that something unsafe is happening underneath the function calls, and that some of the functions expose \emph{internal mutable state}.
+An immediate proposal to fix some of the flaws in this design is:
+
+\begin{enumerate}[\hspace{13}1)]
+    \item Mark the {\rust}-bindings that instantiates and returns a peripheral as \texttt{unsafe}.
+    The other bindings do not need to be marked as unsafe because we trust them.
+
+    \item Modify the bindings that writes to (i.e. mutates) the peripheral control registers to require a \emph{mutable reference} to the respective peripheral.
+\end{enumerate}
+
+By implementing 1) across the bindings-library we will enforce the programmer to wrap every piece of code that is used to instantiate access to a peripheral with an \code{unsafe} block.
+This does not solve any problems directly, but it provokes the programmer to take extra caution when using the library.
+This extra caution to unsafe code have, as we described in \autoref{sec:porting-gpioint}, already helped us to  uncover a bug in \lib{emdrv}.
+If we implement 2) across the library, e.g. for the function that was used as an example in \autoref{ssec:exposing_static_inline_functions_to_rust}, {\rust}'s borrow-checker will be able to help us discover potential data races within a code block, but it will not be able to help us across different interrupt-handlers.
+
+\subsection{New Approach? Summary?}
+
+The weaknesses that we have described in this section are partly introduced in the border between {\rust} and {\C}, but the main problem with data races that can occur in interrupt-handlers are present in both languages.
+Thus, there is no obvious way that {\rust}'s ownership-semantics can be used \emph{directly} to discover and prevent data races across interrupt handlers.
+This is because the currently executing part of the program is put on hold in favor of the interrupt handler, and the new execution scope defines a different program environment.
+This makes it impossible to keep program state consistent between the different handlers, unless its kept in global variables.
+There are of course other approaches to this problem than to rely on the compiler to prevent the data races.
+
+One way to try and \emph{prevent} this problem during or after implementation can be to test the program for errors that happens due to simultaneously occurring interrupts.
+There are several different approaches to how this can be done [] [], but this has not been in the scope of this thesis.
+% but there is nothing special with {\rust} that makes the language more helpful than others for this purpose.
+
+Another approach can be to treat this as a concurrency-problem which we can try to solve \emph{dynamically} instead of \emph{statically}.
+In \autoref{sec:irq-closures} we described the implementation of a library that takes on the task of hiding the different interrupt handlers, and instead expose interrupts through \emph{closures} that can be registered at runtime.
+It is possible to extend this library to make it safe to dispatch new interrupts at runtime.
+E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the different actions that can be done depending on this state.
+The library can then provide to routines to either \emph{lock} the access to a peripheral during an interrupt, or provide \emph{channels} that can be used to communicate with the peripheral directly.
