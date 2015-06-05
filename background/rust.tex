@@ -46,7 +46,7 @@ The table shows that {\rust} is explicit about the size and signedness of intege
     \keyword{u8}, \keyword{u16}, \keyword{u32}, \keyword{u64} & Unsigned integers \\
     \keyword{i8}, \keyword{i16}, \keyword{i32}, \keyword{i64} & Signed integers \\
     \keyword{isize}, \keyword{usize}                        & `Pointer-sized' Integers \\
-    Pointer        & Raw unsafe pointers (\code{*const T}, \code{*mut T}) \\
+    Pointer        & Raw unsafe\footnote{Explained in \autoref{ssub:unsafe_code}} pointers (\code{*const T}, \code{*mut T}) \\
     Array          & Fixed-length array type, denoted with \code{[T]} \\
     \keyword{slice} & A view into a array, denoted with \code{\&[T]} \\
     \keyword{str}   & UTF-8 encoded byte array \\
