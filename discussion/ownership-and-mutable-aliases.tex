@@ -111,6 +111,6 @@ It is possible to extend this library to make it \emph{safe} to dispatch new int
 E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the various actions that can be done depending on this state.
 The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt or provide \emph{channels} that can be used to communicate directly with the peripheral in a safe manner.
 Note that this is not an issue that can only be solved with {\rust} (it can be implemented in any language), but {\rust} might prove to be exceptionally well-suited for the task.
-As we described in CONCURRENCY, {\rust} was specifically developed to be a good foundation for modern applications that require concurrency, and that it turned out that {\rust}'s notion of ownership was the key to make it both safe and efficient to implement different concurrency-paradigms.
+As we described in \autoref{ssub:concurrency_model}, {\rust} was specifically developed to be a good foundation for modern applications that require concurrency, and that it turned out that {\rust}'s notion of ownership was the key to make it both safe and efficient to implement different concurrency-paradigms.
 Unfortunately, we have not had enough time to look into the details of how this library can be expanded to handle this problem.
 Instead, we propose it as part of the future work, described in \autoref{chap:future}.
