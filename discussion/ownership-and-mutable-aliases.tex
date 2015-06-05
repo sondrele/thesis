@@ -74,16 +74,20 @@ The biggest problem with both 1) and 2) is that the bindings hide away the fact 
 An immediate proposal to fix some of the flaws in this design is:
 
 \begin{enumerate}[\hspace{13}1)]
-    \item Mark the {\rust}-bindings that instantiates and returns a peripheral as \texttt{unsafe}.
+    \item Mark the {\rust}-bindings that instantiates and returns a handle to a peripheral as \texttt{unsafe}.
     The other bindings do not need to be marked as unsafe because we trust them.
 
     \item Modify the bindings that writes to (i.e. mutates) the peripheral control registers to require a \emph{mutable reference} to the respective peripheral.
 \end{enumerate}
 
 By implementing 1) across the bindings-library we will enforce the programmer to wrap every piece of code that is used to instantiate access to a peripheral with an \code{unsafe} block.
-This does not solve any problems directly, but it provokes the programmer to take extra caution when using the library.
-This extra caution to unsafe code have, as we described in \autoref{sec:porting-gpioint}, already helped us to  uncover a bug in \lib{emdrv}.
+This does not solve any problems directly, but it provokes the programmer to take extra caution when using the library, by taking on the responsibility of analyzing where there is a chance for mutable aliasing to occur.
+This additional caution to unsafe code have, as we described in \autoref{sec:porting-gpioint}, already helped us to uncover a bug in \lib{emdrv}.
 If we implement 2) across the library, e.g. for the function that was used as an example in \autoref{ssec:exposing_static_inline_functions_to_rust}, {\rust}'s borrow-checker will be able to help us discover potential data races within a code block, but it will not be able to help us across different interrupt-handlers.
+
+
+% However, this is an application-dependent issue, this might be the right decision for the low level library the emlib bindings are intended to be. An auxiliary library can then be defined to handle the issue in an opinionated fashion, which might apply to alot of application, but not all.
+
 
 \subsection{New Approach? Summary?}
 
@@ -98,7 +102,11 @@ There are several different approaches to how this can be done [] [], but this h
 % but there is nothing special with {\rust} that makes the language more helpful than others for this purpose.
 
 Another approach can be to treat this as a concurrency-problem which we can try to solve \emph{dynamically} instead of \emph{statically}.
+The problem that we have described throughout this section can be considered to be an application-dependent issue, for some programs it might be acceptable to send or receive garbled data at small rates, while it might be unacceptable for other applications.
+Because of this, we can argue that it is not the right decision to solve this issue as part a low-level library like {\emlib} and its bindings.
+Instead, we can define an auxiliary library which can be implemented to handle the issue in an opinionated fashion, that might apply to a lot of different applications, but not to all.
+
 In \autoref{sec:irq-closures} we described the implementation of a library that takes on the task of hiding the different interrupt handlers, and instead expose interrupts through \emph{closures} that can be registered at runtime.
-It is possible to extend this library to make it safe to dispatch new interrupts at runtime.
+It is possible to extend this library to make it \emph{safe} to dispatch new interrupts at runtime.
 E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the different actions that can be done depending on this state.
-The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt, or provide \emph{channels} that can be used to communicate with the peripheral directly.
+The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt, or provide \emph{channels} that can be used to safely communicate directly with the peripheral.
