@@ -100,4 +100,4 @@ Another approach can be to treat this as a concurrency-problem which we can try 
 In \autoref{sec:irq-closures} we described the implementation of a library that takes on the task of hiding the different interrupt handlers, and instead expose interrupts through \emph{closures} that can be registered at runtime.
 It is possible to extend this library to make it safe to dispatch new interrupts at runtime.
 E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the different actions that can be done depending on this state.
-The library can then provide to routines to either \emph{lock} the access to a peripheral during an interrupt, or provide \emph{channels} that can be used to communicate with the peripheral directly.
+The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt, or provide \emph{channels} that can be used to communicate with the peripheral directly.
