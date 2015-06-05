@@ -3,24 +3,9 @@
 
 The contents of this section explains how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
 
-The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization before the {\main} function.
-In {\Cpp} however, the process is complicated by the fact that {\Cpp} supports static global constructors as shown in \autoref{lst:impl:cpp:static-constructor}.
+The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization\footnote{This is in contrast to languages like {\Cpp} where objects can be initialized with statically called constructors, this must be handled by the startup process.} before the {\main} function.
 
-\begin{listing}[H]
-  \begin{minted}{c++}
-class Foo { Foo() { } };
-Foo foo; // statically called constructor
-int main() { return 0; }
-  \end{minted}
-  \caption{{\Cpp} with static constructor call.}
-  \label{lst:impl:cpp:static-constructor}
-\end{listing}
-
-In \autoref{lst:impl:cpp:static-constructor} the \code{Foo} constructor call must be issued before the main function is executed.
-The runtime must therefore be augmented to issue calls to these constructors and handle errors that can occur.
-These types of constructors are not allowed in {\rust} by a compiler rule which allows only constant-expression as initializers.
-
-As this process is identical to {\C}, we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
+Therefore we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
 Silicon Labs' software suite provides the \func{ResetHandler} and linker script for the EFM32 microcontrollers.
 The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provided by the {\armgcc} toolchain, handles the setup in the \func{\_start} routine, as described in \autoref{sec:before-main}.
 
