@@ -101,12 +101,16 @@ One way to try and \emph{prevent} this problem during or after implementation ca
 There are several different approaches to how this can be done [] [], but this has not been in the scope of this thesis.
 % but there is nothing special with {\rust} that makes the language more helpful than others for this purpose.
 
-Another approach can be to treat this as a concurrency-problem which we can try to solve \emph{dynamically} instead of \emph{statically}.
-The problem that we have described throughout this section can be considered to be an application-dependent issue, for some programs it might be acceptable to send or receive garbled data at small rates, while it might be unacceptable for other applications.
+Another approach can be to treat this as a concurrency-problem that we can try to solve \emph{dynamically} instead of \emph{statically}.
+We can consider the problem that we have described throughout this section to be an application-dependent issue.
 Because of this, we can argue that it is not the right decision to solve this issue as part a low-level library like {\emlib} and its bindings.
-Instead, we can define an auxiliary library which can be implemented to handle the issue in an opinionated fashion, that might apply to a lot of different applications, but not to all.
+Instead, we can define an auxiliary library which can be implemented to handle the problem in an opinionated fashion, that might apply to a lot of different applications, but not to all.
 
 In \autoref{sec:irq-closures} we described the implementation of a library that takes on the task of hiding the different interrupt handlers, and instead expose interrupts through \emph{closures} that can be registered at runtime.
 It is possible to extend this library to make it \emph{safe} to dispatch new interrupts at runtime.
-E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the different actions that can be done depending on this state.
-The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt, or provide \emph{channels} that can be used to safely communicate directly with the peripheral.
+E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the various actions that can be done depending on this state.
+The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt or provide \emph{channels} that can be used to communicate directly with the peripheral in a safe manner.
+Note that this is not an issue that can only be solved with {\rust} (it can be implemented in any language), but {\rust} might prove to be exceptionally well-suited for the task.
+As we described in CONCURRENCY, {\rust} was specifically developed to be a good foundation for modern applications that require concurrency, and that it turned out that {\rust}'s notion of ownership was the key to make it both safe and efficient to implement different concurrency-paradigms.
+Unfortunately, we have not had enough time to look into the details of how this library can be expanded to handle this problem.
+Instead, we propose it as part of the future work, described in \autoref{chap:future}.
