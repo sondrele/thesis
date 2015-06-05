@@ -57,6 +57,7 @@ As {\zinc} puts it on the project their project page; ``Accessing hardware direc
 
 Our approach to define a software library for the {\gecko} has been to utilize what \emph{already} existed.
 We decided to write {\rust}-bindings for {\emlib} because it would get the project up an running fairly quickly.
+Another reason for not to port {\emlib} was the possibility to update the bindings to depend new revisions of {\emlib} without having to define any new logic.
 This choice also meant that we were able to quickly use a wide range of peripherals, and implement a couple of projects to test {\rust} in an embedded setting.
 It turns out, however, that this approach has introduced a few limitations to our system:
 
