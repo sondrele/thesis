@@ -7,7 +7,7 @@ It turns \emph{On} for each interrupt to perform the measurement and turns \emph
 \subsection{Measuring}
 The measurement was performed with the \emph{Energy Profiler} application supplied by Silicon Labs in their \emph{Simplicity Studio} software suite.
 The profiler measures on board current at a sample frequency of 6250Hz.
-Power, measured in J/s, is produced by the formula $P (J/s) = V*I $.
+Power, measured in J/s, is produced by the formula $P (J/s) = V*I $, where \emph{V} is voltage and \emph{I} is current.
 By accumulating the Power over time we get the energy consumption given in \emph{Joule}.
 This metric is reported by the \emph{Energy Profiler}.
 
@@ -19,24 +19,24 @@ The number of collected and discarded samples was based upon the stability of th
 \subsection{Parameter}
 
 The energy consumption was recorded for the Sensor Tracker, which was configured with different workloads.
-The workload is dependent on how many interrupts are trigger per run and how much work is performed to at each interrupt.
+The workload is dependent on how many interrupts are trigger per run, and how much work is performed during each interrupt.
 To vary the workload, the number of triggered interrupts was varied by configuring the length of the interval between each interrupt, while the work was held constant for each interrupt.
 \autoref{tab:res:energy:parameters} gives the interrupt interval and the corresponding number of interrupts per \emph{run} used for the measurement.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{l|l}
-    \textbf{Interval} & \textbf{\# of Interrupts/\emph{run}} \\
+  \begin{tabular}{l | c | c}
+    \textbf{Interval} & \textbf{\# of Interrupts/\emph{run}} & \textbf{Execution time} \\
     \hline
-    25ms & 1200 \\
-    50ms & 600 \\
-    100ms & 300 \\
-    500ms & 60 \\
-    1000ms & 30 \\
+    25ms & 1200 & 30s \\
+    50ms & 600 & 30s \\
+    100ms & 300 & 30s \\
+    500ms & 60 & 30s \\
+    1000ms & 30 & 30s \\
     \hline
   \end{tabular}
   \caption{Interrupt Interval Parameter}
-  \label{tab:}
+  \label{tab:res:energy:parameters}
 \end{table}
 
 The measurement was performed at all the standard optimization levels provided by the compilers.
@@ -45,7 +45,7 @@ As noted in \autoref{sec:res:code-size} these are \emph{O0}, \emph{O1}, \emph{O2
 As we will see in the results below, by including all the optimization levels we uncovered another bias related to energy consumptions.
 The \emph{O0} levels were only evaluated with debugging symbols.
 
-\subsubsection{Results}
+\subsection{Results}
 
 In this section we look at the results of the energy consumption measurement.
 We first look at the whole picture by presenting all the measurements produced by the set of possible parameters.
@@ -84,7 +84,7 @@ Later we will consider the best configured {\C} application together with best c
     \label{}
   \end{subfigure}
 
-  \caption{{\rust} vs {\C} comparison for each workload}
+  \caption{Comparison bewteen {\rust} and {\C} for each workload}
   \label{fig:res:energy:comparison}
 \end{figure}
 
@@ -105,10 +105,10 @@ The {\rust} versions on the other hand are either \emph{O1}, \emph{O2} or \emph{
 \autoref{fig:res:energy:best} shows the relative energy consumption by setting the consumption of the {\C} \emph{Os} build to 1 for each of the workload.
 The {\rust} line plots the best performing {\rust} builds relative to this {\C} build.
 For reference the results for the \emph{O3} optimization level of the {\C} build is included.
-We see that the {\rust} code is always within the 15\% of the {\C} code in energy consumption and below the \emph{O3} line.
+We see that the {\rust} code is always within the $\sim$15\% of the {\C} code in energy consumption and below the \emph{O3} line.
 
 
-The variance between the different optimization levels in \autoref{fig:res:energy:comparison} was unexpected.
+The variance between the different optimization levels of {\C} code in \autoref{fig:res:energy:comparison} was unexpected.
 In this application we anticipated that higher optimization levels would result in faster interrupt handlers and thus lower energy consumption.
 When the initial results did not meet these expectation we used the \emph{Energy Profiler} to plot the instantaneous current drawn by the application.
 
@@ -134,9 +134,9 @@ We can see the O3 level draws more current compared to the Os level, to explain 
     \hline
   \end{tabular}
   \caption{}
-  \label{tab:}
+  \label{tab:res:energy:cache}
 \end{table}
 
 \autoref{tab:res:energy:cache} shows the cache hit ratios recorded for binaries presented in \autoref{fig:res:energy:current}.
-We see that the cache hit ratio for the binary compiled with O3 has a hit ratio of 72\% while the Os level has as high as 99\%.
+We see that the cache hit ratio for the binary compiled with O3 has a hit ratio of $\sim$72\% while the Os level has as high as $\sim$99\%.
 The lower instruction cache hit ratio causes the {\gecko} to load instructions from flash more frequently and thus consumes more energy.
