@@ -1,4 +1,4 @@
-\section{Project II - Circle Game}
+\subsection{Project II - Circle Game}
 \label{sec:impl:project:ii}
 
 \newcommand{\gi}{\textbf{CG I}}
@@ -10,13 +10,13 @@ This section describes the implementation of a game that was developed for the {
 The game is simple, but \gls{cpu} intensive, and was developed as a part of measuring the performance of {\rust} on the {\gecko}.
 The results gathered from the measurements are presented and discussed in \autoref{chap:results}.
 
-\subsection{Goal}
+\subsubsection{Goal}
 
 The Circle Game application was developed to compare the performance between {\rust} and {\C}.
 It is not easy to give a performance-metric, and compare two languages directly against each other based on only one application like this.
 However, an application like this gives us a good indication of weather the two languages differ, or have roughly the same performance.
 
-\subsection{Requirements}
+\subsubsection{Requirements}
 
 The requirements that was made for the game are summarized in \autoref{tab:project:ii:requirements}.
 {\gi} and {\gii} sets the hardware requirements for the application, we chose to restrict it to the {\DK} because of its on-board \gls{lcd} screen and header pins.
@@ -40,7 +40,7 @@ The result will be a number that represents how many iterations of the game's ma
   \label{tab:project:ii:requirements}
 \end{table}
 
-\subsection{Description}
+\subsubsection{Description}
 
 The game was first written in {\C} by one of our supervisors as part of the TDT4258 \footnote{\url{http://www.ntnu.edu/studies/courses/TDT4258}} course at NTNU, and later ported by us to {\rust}.
 It is a simple game that consists of three components that are drawn to the screen; two circles and an obstacle.
