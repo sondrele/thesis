@@ -48,7 +48,7 @@ This module is necessary in order to configure the clocks that are required by o
 We wanted to use \gls{dma} for the {\prog{sensor-tracker}} application because it can be used to transfer data without using the \gls{cpu}. \\
 
 \prog{ebi}     &
-The \gls{ebi} is used in the {\gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the {\chip{DK}}. \\
+The \gls{ebi} is used to memory map external devices connected to bus to the {\gecko}, this simplifies the process of writing data to e.g. the LCD on the {\chip{DK}}. \\
 
 \prog{emu}     &
 The \gls{emu} module controls the different energy modes on the {\gecko}.
@@ -350,7 +350,7 @@ pub enum CCMode {
 \subsection{Testing}
 \label{ssub:testing}
 
-Verification of correctness is an important part of all software, weather it is done manually or with an automated framework.
+Verification of correctness is an important part of all software, whether it is done manually or with an automated framework.
 This section describes a small Unit test framework that was developed for testing the bindings for {\emlib}.
 
 \subsubsection{Why Unit testing}
