@@ -558,6 +558,10 @@ char *name_as_ref() {
     Book b = { .name = "Gecko's", .pages = 150 };
     return &b.name;
 }
+
+int main() {
+  char *name = name_as_ref();
+}
 \end{minted}
 \caption{Returning an invalid reference in C}
 \label{lst:invalid_ref_c}
@@ -568,6 +572,10 @@ char *name_as_ref() {
 fn name_as_ref() -> &str { // <- error: missing lifetime specifier
     let b = Book { name: "Gecko's".to_string(), pages: 150 };
     &b.name
+}
+
+fn main() {
+  let name = name_as_ref();
 }
 \end{minted}
 \caption{Attempting to return an invalid reference in {\rust}}
