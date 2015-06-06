@@ -43,12 +43,12 @@ The sensors used in the application are shown in \autoref{tab:project:i:sensors}
   \begin{tabular}{ l | l | l | l | l }
     \textbf{\#} & \textbf{Name} & \textbf{Part} & \textbf{Connection} & \textbf{Measured Data} \\
     \hline
-    0 & Internal Temperature Sensor & & ADC0 & CPU Temperature \\
-    1 & Humidity Relative Sensor & Si7013 & I2C1 & Room Humidity \\
-    2 & Temperature Sensor & Si7013 & I2C1 & Room Temperature \\
+    0 & Internal Temperature & EFM32GG & ADC0 & CPU Temperature \\
+    1 & Humidity Relative & Si7013 & I2C1 & Room Humidity \\
+    2 & Temperature & Si7013 & I2C1 & Room Temperature \\
     \hline
   \end{tabular}
-  \caption{Sensors used by the {\tracker}}
+  \caption{Sensors\footnote{The sensors \#1 and \#2 are physicaly the same sensor, but are exposed by the application separately.} used by the {\tracker}}
   \label{tab:project:i:sensors}
 \end{table}
 
@@ -69,7 +69,7 @@ The operation of the buttons are shown in \autoref{tab:project:i:buttons}.
 \begin{table}[H]
   \centering
   \begin{tabular}{l|l|l}
-    \textbf{Currnet Mode} & \textbf{Button Pressed} & \textbf{Action} \\
+    \textbf{Current Mode} & \textbf{Button Pressed} & \textbf{Action} \\
     \hline
     Collect & PB0 & Go to Transfer \\
     Collect & PB1 & Stay in Collect \\

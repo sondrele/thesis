@@ -36,7 +36,7 @@ The \gls{rcl} does not have any library dependencies, but in order to use the li
 The memory management functions given in \autoref{tab:core:definitions} are provided by \lib{newlib} and are exposed through the \lib{startup} library described in \autoref{sec:startup}.
 The \code{rust\_begin\_unwind} is also defined in \lib{startup}, but the implementation is only an infinite loop to aid debugging.
 In contrast the definition of \code{rust\_begin\_unwind} given in \gls{rsl} will abort the program and print an error message.
-\concept{Panicking} is {\rust}'s way of unwinding the currently executing thread, evidently resulting in the thread being terminated.
+\concept{Panicking} is {\rust}'s way of unwinding the currently executing thread, ultimately resulting in the thread being terminated.
 
 \subsection{The Allocation Library}
 \label{sec:rust:allocation}
