@@ -2,9 +2,7 @@
 \label{sec:impl:booting}
 
 The contents of this section explains how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
-
 The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization\footnote{This is in contrast to languages like {\Cpp} where objects can be initialized with statically called constructors, this must be handled by the startup process.} before the {\main} function.
-
 Therefore we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
 Silicon Labs' software suite provides the \func{ResetHandler} and linker script for the EFM32 microcontrollers.
 The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provided by the {\armgcc} toolchain, handles the setup in the \func{\_start} routine, as described in \autoref{sec:before-main}.
