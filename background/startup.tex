@@ -23,14 +23,11 @@ For our purposes, this format defines three interesting sections, namely \elfsec
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{|l|l|}
+  \begin{tabular}{l|l}
+    \textbf{ELF Header} & \textbf{Header describing size of sections} \\
     \hline
-    EFL Header & Header describing size of sections \\
-    \hline
-    \elfsec{.bss} & Logical section for zero-initialized data \\
-    \hline
+    \elfsec{.bss}  & Logical section for zero-initialized data \\
     \elfsec{.text} & Read-only section for code and constants \\
-    \hline
     \elfsec{.data} & Section containing values for non-zero initialized data \\
     \hline
   \end{tabular}
@@ -50,7 +47,7 @@ Before the \textbf{main} function executes, all static data must be initialized.
 The data is divided into two categories; zero and non-zero initialized.
 The non-zero initialized data are contained either in the \elfsec{.text} (read-only-data) or \elfsec{.data} sections of the {\elf} binary.
 On the chip the \elfsec{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into \gls{ram}.
-The \elfsec{.text} section contains the instructions and read-only data, this data does not need to be copied as thet can be read directly from flash at runtime.
+The \elfsec{.text} section contains the instructions and read-only data, this data does not need to be copied as they can be read directly from flash at runtime.
 All zero initialized data are represented by the \elfsec{.bss} section in the {\elf} binary.
 A portion of \gls{ram} corresponding to the size of the \elfsec{.bss} section must be set to zero.
 
