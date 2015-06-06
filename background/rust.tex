@@ -3,8 +3,8 @@
 \section{The Rust Programming Language} % (fold)
 \label{sub:the_rust_programming_language}
 
-{\rust} \footnote{\url{http://www.rust-lang.org/}} is a new open source systems programming language developed with backing from the Mozilla Foundation \footnote{\url{https://www.mozilla.org/en-US/foundation/}}.
-It is a strongly and statically typed, multi-paradigm programming language, that incorporates features from the functional, object-oriented, and imperative paradigms.
+{\rust}\footnote{\url{http://www.rust-lang.org/}} is a new open source systems programming language developed with backing from the Mozilla Foundation\footnote{\url{https://www.mozilla.org/en-US/foundation/}}.
+It is a strongly and statically typed, multi-paradigm programming language that incorporates features from the functional, object-oriented, and imperative paradigms.
 The language borrows many constructs and features from other programming languages, some of which are described in the following sections.
 Over the course of {\rust}'s development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
 
@@ -26,13 +26,13 @@ It is possible to opt-out of using the library.
 \subsubsection{The Rust Core Library}
 \label{sec:rcl}
 
-\gls{rcl}, defines the platform independent part of the language.
+\gls{rcl} defines the platform independent part of the language.
 This library is not intended to be directly interfaced with by the application programmer, instead a stable interface is reexported through \gls{rsl}.
 In this way, \gls{rcl} is not interfaced with directly in normal {\rust} programs.
 This gives the developer the ability to modify the library while the \gls{rsl} interface stays the same.
-%The standard library also reexports a handful of other libraries and does the task of implementing platform-dependent features for all of its target \glspl{os}.
 
-\autoref{tab:rust:datatypes} lists the primitive datatypes available in {\rust}, \gls{rcl} defines many functions and abstractions that are used to manage and manipulate these datatypes.
+\autoref{tab:rust:datatypes} lists the primitive datatypes available in {\rust}.
+\gls{rcl} defines many functions and abstractions that are used to manage and manipulate these datatypes.
 The table shows that {\rust} is explicit about the size and signedness of integer data types, and that in addition to the Pointer/Array distinction made by {\C}, {\rust} also provides \concept{slices}, \concept{strings} and \concept{tuples}.
 
 \begin{table}[H]
@@ -67,38 +67,38 @@ The table shows that {\rust} is explicit about the size and signedness of intege
 
 \subsubsection{Variables and Bindings}
 
-{\rust} features a handful of different data types, all which can be assigned to a \emph{variable} by using a \emph{binding}.
+{\rust} features a handful of different data types, all of which can be assigned to a \emph{variable} using a \emph{binding}.
 The most important types are described in the following sections, but we will first look at how variables work.
 A value gets bound to a variable by utilizing the \keyword{let} keyword.
 A variable in {\rust} has a name and a value, much like other programming languages, but there is a distinct difference between the \emph{mutability} of those variables.
 
 With a mutable variable binding, it is possible to change the value of the variable.
-However, if we try to change the value of an immutable variable binding, {\rust} will give us a compile-time error.
+However, if we try to alter the value of an immutable variable binding, {\rust} will give us a compile-time error.
 The example code in \autoref{lst:rust_variable_bindings} shows how to declare both mutable and immutable variables and how to modify their values.
-The example will not work because we try to change the value of an immutable variable.
+The example will not work because we attempt to change the value of an immutable variable.
 
 \begin{listing}[H]
   \begin{minted}{rust}
-    // bind the value `5' to the immutable variable `a'
-    let a: i32 = 5;
-    // bind the value `10' to the mutable variable `b'
-    let mut b = 10;
-    b = a; // change the value of `b'
-    a = b; // <- error: re-assignment of immutable variable `a'
+// bind the value `5' to the immutable variable `a'
+let a: i32 = 5;
+// bind the value `10' to the mutable variable `b'
+let mut b = 10;
+b = a; // change the value of `b'
+a = b; // <- compiler error: re-assignment of immutable variable `a'
   \end{minted}
   \caption{Variable bindings}
   \label{lst:rust_variable_bindings}
 \end{listing}
 
-An important part of variable bindings is {\rust}'s way to automatically infer the data type of the variables.
-We can see from the example that \code{a} is defined to be a 32-bit integer with the value 5, and because the variable \code{b} later gets assigned to \code{a}'s value, {\rust} will automatically infer \code{b} to be of the same type.
+An important part of variable bindings is {\rust}'s ability to automatically infer the data type of the variables.
+We can see from the example that \code{a} is defined as a 32-bit integer with the value 5, and because the variable \code{b} later gets assigned to \code{a}'s value, {\rust} will automatically infer \code{b} to be of the same type.
 
 \subsubsection{Enums}
 
 An {\enum} in {\rust} (otherwise known as a sum type, or a tagged union, from type theory), is a data structure that is used to hold only one out of a small set of possible values.
-\rust's {\enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining together other types.
+\rust's {\enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining other types together.
 This makes the {\enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
-\autoref{lst:rust:option} shows the definition of one of {\rust}'s most commonly used types that is used extensively throughout its standard library and other third party libraries and applications.
+\autoref{lst:rust:option} shows the definition of one of {\rust}'s most commonly used types which are used extensively throughout its standard library and other third party libraries and applications.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -113,8 +113,8 @@ This makes the {\enum} a powerful feature of the language that can be used to de
 
 Every \code{Option} variable is an {\enum} that can either have the algebraic value \code{Some} or the \emph{named value} \code{None}.
 If the variable is \code{Some}, the definition also says that it needs to contain another type \code{T}.
-This is also an example of generics in {\rust}, \code{T} can be anything, e.g. an integer, a string, or a user defined type.
-The \code{Option} type is analogous with a normal {\C} pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that that points to a structure at a place in memory (analogous to \code{Some}).
+This is also an example of generics in {\rust}, as \code{T} can be anything, e.g. an integer, a string, or a user defined type.
+The \code{Option} type is analogous with a normal {\C} pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that points to a structure at a place in memory (analogous to \code{Some}).
 Even though the \code{Option} is analogous to a {\C} pointer, it is important to note their differences.
 It acts more like a wrapper around a potential value, where its internal value is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
 The usage of {\enum} types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
@@ -123,10 +123,11 @@ The usage of {\enum} types described in this section become very expressive in c
 \label{ssub:structs}
 
 A \keyword{struct} in {\rust} is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
-With a \keyword{struct} it is possible to combine multiple variables into a single type, each of them identified with its own name.
-An example of defining a \code{Book} is shown in \autoref{lst:book_struct}, anyone that is familiar with {\C} will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
-Everything in {\rust} is \emph{private} by default, the \code{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
-The \keyword{impl} keyword lets us implement member functions for the \code{Book}, similar to class-declarations in {\Cpp} and other object-oriented languages.
+With a \keyword{struct}, it is possible to combine multiple variables into a single type, each of them identified with its own name.
+An example of defining a \code{Book} is shown in \autoref{lst:book_struct}.
+Anyone that is familiar with {\C} will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
+Everything in {\rust} is \emph{private} by default, but the \code{pub} keywords on type definitions and member fields make them \emph{publicly accessible}.
+The \keyword{impl} keyword allows us to implement member functions for the \code{Book}, similar to class-declarations in {\Cpp} and other object-oriented languages.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -147,15 +148,15 @@ The \keyword{impl} keyword lets us implement member functions for the \code{Book
 
 \subsubsection{Pointers}
 
-\rust's {\core} library exposes two pointer types which are considered \emph{unsafe} by the language, \autoref{ssub:unsafe_code} explains why.
-Pointers in {\rust} are a very fundamental part of the language, but they are not used much outside of low-level code and bindings.
+\rust's {\core} library exposes two pointer types that are considered \emph{unsafe} by the language, which \autoref{ssub:unsafe_code} explains.
+Pointers in {\rust} are a fundamental part of the language, but they are not used much outside of low-level code and bindings.
 Instead, the library offers higher-level structures as an abstraction between the \emph{raw} pointers and their data.
 
 \subsubsection{Slices}
 
-The \code{slice} type is simply a view into an array, it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
+The \code{slice} type is simply a view into an array, and it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
 The length is used to determine how many elements the slice represents.
-Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a finite array with type \code{T}'.
+Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a finite array with type \code{T}.'
 They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
 
 \begin{listing}[H]
@@ -171,16 +172,16 @@ They are a fundamental type that abstracts away the underlying block of data ref
 
 An example of common slice type in {\rust} is the \keyword{str} type, which can either be a statically allocated string defined as a literal, or a borrowed reference into another string.
 The representation of the string type is closely related to slices, as a string-slice denoted as \code{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \code{\&[u8]}.
-It is important to note that an arbitrary slice of bytes are not necessarily a valid string.
+It is important to note that an arbitrary slice of bytes is not necessarily a valid string.
 % The \keyword{str} type differs from a \code{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
 
 \subsubsection{Boxed values}
 
 \autoref{lst:rust:list} shows an example of how a linked list can be represented with an enum.
-Each list item is either a value and a pointer to the next item, as in \code{Cons}, or a termination value as in \code{Nil}.
+Each list item is either a value and a pointer to the next item, as in \code{Cons}, or a termination value, as in \code{Nil}.
 One important thing to notice in this example is the usage of a \code{Box<...>} instead of the mentioned pointer.
-As mentioned earlier, {\rust} provides abstractions on top of its raw pointers, the \code{Box} is an example of this in action.
-A boxed value, is simply a value that is stored on the heap, with its owning handle stored in a \code{Box} structure.
+As discussed earlier, {\rust} provides abstractions on top of its raw pointers, and the \code{Box} is an example of this in action.
+A boxed value is simply a value that is stored on the heap, with its owning handle stored in a \code{Box} structure.
 This structure implements the same operators that are otherwise associated with pointers, so they are semantically the same for this piece of code.
 
 \begin{listing}[H]
@@ -197,10 +198,10 @@ This structure implements the same operators that are otherwise associated with 
 \subsubsection{Pattern Matching and Destructuring}
 \label{sub:pattern_matching}
 
-Pattern matching is a powerful language construct of {\rust} that resembles the \code{switch} statement from C.
+Pattern matching is a powerful language construct of {\rust} that resembles the \code{switch} statement from {\C}.
 It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \code{match}.
 Another important feature of the \keyword{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \keyword{match} need to be considered, otherwise {\rust} will issue an error during compilation.
-This is contrary to C, where only primitive values can be used in a \keyword{switch} statement, and there is no requirement to cover all switch cases, i.e. the \code{default} keyword is not required.
+This is contrary to {\C}, where only primitive values can be used in a \keyword{switch} statement, and there is no requirement to cover all switch cases, i.e. the \code{default} keyword is not required.
 
 An example of pattern matching on the \code{Option} type is given in \autoref{lst:rust:match}.
 We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
@@ -273,7 +274,7 @@ An example that shows how to use the filter-iterator is displayed later in this 
 \subsubsection{Loops}
 \label{sec:rust:loops}
 
-{\rust} provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
+{\rust} provides the two loop constructs known from {\C}, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
 The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
 \rust's \code{for} statement is merely syntactic sugar for a \code{loop} with an internal \code{match} around the iterator's \code{next()} function.
 \autoref{lst:rust:for} shows a how a \code{for} loop is used to loop over a vector of numbers, this code is de-sugared by {\rust} into the equivalent (simplified) code shown in \autoref{lst:rust:desugared-for}.
