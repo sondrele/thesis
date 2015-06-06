@@ -497,7 +497,7 @@ fn main() {
   read_book(b);
   // when `read_book' returns, the book is also deallocated
   // this makes it impossible to  read the book two times
-  read_book(b); // <- error: use of moved value: `b'
+  read_book(b); // <- compile-time error: use of moved value: `b'
  }
 \end{minted}
 \caption{Example of an owned handle}
