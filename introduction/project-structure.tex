@@ -6,18 +6,17 @@ The work was divided into several phases each having its own primary goal and su
 \autoref{tab:meth:phases} summarizes the phases with the primary goals annotated.
 
 \begin{table}[H]
-  \begin{center}
-    \begin{tabular}{l|l}
-      \textbf{Phase}&\textbf{Goal} \\
-      \hline
-      Initial Programmability & Getting Hello World up an running.\\
-      Library Support & Define a standard for creating library bindings\\
-      Development & Developing projects for evaluating the platform\\
-      Evaluating & Measuring performance\\
-      Reporting & Finalize project report\\
-      \hline
-    \end{tabular}
-  \end{center}
+  \centering
+  \begin{tabular}{l|l|l}
+    \textbf{Phase}&\textbf{Goal}&\textbf{Finished} \\
+    \hline
+    Initial Programmability & Getting Hello World up an running. & 09.01.15\\
+    Library Support & Design initial libraries & 13.03.15\\
+    Development & Develop projects evaluation &  09.04.15 \\
+    Evaluating & Measuring performance & 20.05.15 \\
+    Reporting & Finalize project report & 08.06.15\\
+    \hline
+  \end{tabular}
   \caption{Phases of the project}
   \label{tab:meth:phases}
 \end{table}
@@ -34,8 +33,9 @@ Secondly the milestone of running the first {\rust} application on the {\gecko} 
 
 \subsection{Phase 2 - Library Support}
 
-After the initial compilation process was in place, the focus shifted to developing the platform for writing larger applications
+After the initial compilation process was in place, the focus shifted to developing the platform for writing larger applications.
 Early in this phase the technical challenges involved was in focus when selecting which part of the libraries to develop.
+Throughout this Phase we developed initial support for the bindings described in \autoref{sub:interfacing_with_emlib} and the \gls{rel} described in \autoref{sec:rel}.
 The library support was continouosly evolved when needed in the development phase.
 
 \subsection{Phase 3 - Development}
@@ -72,3 +72,8 @@ The results from the evaluation are presented in \autoref{chap:results} along si
   \caption{Metrics for evaluation of the platform}
   \label{lst:evaluation:criterias}
 \end{listing}
+
+\subsection{Phase 5 - Reporting}
+
+Throughout the reporting phase all the other phases described above were concluded and improved to be presented in this report.
+The inconsistensies in results where investigated and a discussion of the project as whole was conducted and is presented in \autoref{chap:discussion}.
