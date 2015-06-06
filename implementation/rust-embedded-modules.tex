@@ -171,3 +171,5 @@ In this use case the type of the \code{dst} parameter in the \func{start\_basic}
 
 The \gls{dma} abstraction described here is only implemented for the simplest use-cases of the {\emlib} \gls{dma} \gls{api}, such as \func{start\_auto} and \func{start\_basic}.
 The {\emlib} \gls{api} provides more complex facilities (e.g. scatter-gather) which can cause the interfaces to change if they are to be supported.
+However there exists facilities for registering closures to handle reactivation of long running \gls{dma} transfers, the closure will be called on the interrupt signal given by the \gls{dma} controller when the transfer is finished.
+This facilitates a programming model similar to the one presented in \autoref{sec:irq-closures}.
