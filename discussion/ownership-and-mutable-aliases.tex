@@ -19,7 +19,7 @@ We have also seen that we can get access to the \gls{mcu}'s different peripheral
 As an example, a \gls{usart} is located at memory address \mem{0x4000C000} on the {\gecko}, and the bindings that we have implemented for {\emlib} provide functions to easily initialize new handles to addresses like this.
 This means that every peripheral (that we have written bindings for) are accessible through common library routines.
 Ultimately, this also means that multiple handles to the same \gls{usart} can be acquired.
-Note that acquiring two handles to the same peripheral will not necessarily cause any wrongdoing in a program, but problems can occur if handles to the same peripheral are acquired in different interrupt handlers.
+Note that acquiring two handles to the same peripheral will not necessarily cause any wrongdoing in a program, but problems can occur if handles to the same peripheral are acquired in different execution contexts.
 
 This problem can be demonstrated with an example.
 Let us say that we have a program in which we have configured two interrupts, \texttt{I1} and \texttt{I2}, to be triggered at differently timed intervals in the program.
