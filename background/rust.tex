@@ -8,6 +8,23 @@ It is a strongly and statically typed, multi-paradigm programming language, that
 The language borrows many constructs and features from other programming languages, some of which are described in the following sections.
 Over the course of {\rust}'s development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
 
+\subsection{Hello World}
+
+In \autoref{lst:rust:hello} we see the canonical 'Hello World' program implemented in {\rust}.
+We see that in {\rust} the program entry point is the {\main} function which is defined in the top level scope of the application.
+The body of the function contains an invocation of the \code{println!} macro\footnote{Macros are distigiushed from functions by the leading \code{!} symbol.}.
+This macro has similar functionality to the {\C} \code{printf} function, but verifies the usage of the function at compile time.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+fn main() {
+  println!("Hello, World!");
+}
+  \end{minted}
+  \caption{Hello World written in {\rust}}
+  \label{lst:rust:hello}
+\end{listing}
+
 \subsection{Language Features}
 \label{ssub:rust:features}
 
