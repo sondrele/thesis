@@ -2,24 +2,24 @@
 \label{sec:back:startup}
 
 This section describes the process of starting a program on an embedded system.
-The {\main} function is usually considered the starting point of a program.
-This is sometimes true from the point of view of the programmer, but as we will see in this section usually it is not.
-This section looks at what happens before the program reaches the main function.
+The {\main} function is typically considered as the starting point of a program.
+While this can be true from the programmer's point of view, in this section, it is evident that that is not usually the case.
+This section will present the reader with what occurs prior to the program reaching the \code{main} function.
 
 \subsection{Prelude}
 
 Before we look at the start of execution, lets look at the process between compilation and execution.
 The compiler outputs object-files which the linker combines into a {\elf} file.
 This file is loaded into the microcontrollers \gls{rom} Flash memory.
-Then the reset signal is sent to the \gls{cpu} to start execution.
+Then, the reset signal is sent to the \gls{cpu} to start execution.
 
 \subsection{Executable and Linkable File Format}
 \label{sec:back:elf}
 %\todo{Reference: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0044e/IHI0044E\_aaelf.pdf}
 {\elf} is a file format for storing code and data for a program.
 This file format can be loaded onto a microcontroller and executed.
-For our purposes, this format defines three interesting sections, namely \elfsec{.text}, \elfsec{.data} and \elfsec{.bss}.
-\autoref{fig:elf} describes the contents of the these sections an {\elf} file.
+For our purposes, this format defines three interesting sections, namely \elfsec{.text}, \elfsec{.data}, and \elfsec{.bss}.
+\autoref{fig:elf} describes the content of the these sections.
 
 \begin{table}[H]
   \centering
@@ -36,22 +36,22 @@ For our purposes, this format defines three interesting sections, namely \elfsec
 \end{table}
 
 The \elfsec{.text} section contains the program code and any read-only data defined in the code.
-Strings are for instance stored in the \elfsec{.text} section as read-only.
+Strings are, for instance, stored in the \elfsec{.text} section as read-only.
 The \elfsec{.data} section contains the values for non-zero initialized data.
 The \elfsec{.bss} section is a logical section so it is not really stored in the file.
-The header specfies the size of the \elfsec{.bss} section which describes the size of the zero-initialized data in the program.
+The header specfies the size of the \elfsec{.bss} section, which describes the size of the zero-initialized data in the program.
 
 \subsection{Before main}
 \label{sec:before-main}
-Before the \textbf{main} function executes, all static data must be initialized.
+All static data must be initialized before the \code{main} function starts executing.
 The data is divided into two categories; zero and non-zero initialized.
-The non-zero initialized data are contained either in the \elfsec{.text} (read-only-data) or \elfsec{.data} sections of the {\elf} binary.
-On the chip the \elfsec{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into \gls{ram}.
+The non-zero initialized data is contained either in the \elfsec{.text} (read-only-data) or \elfsec{.data} sections of the {\elf} binary.
+On the chip, the \elfsec{.data} section resides in flash memory, as these data structures might change at runtime they must be copied into \gls{ram}.
 The \elfsec{.text} section contains the instructions and read-only data, this data does not need to be copied as they can be read directly from flash at runtime.
-All zero initialized data are represented by the \elfsec{.bss} section in the {\elf} binary.
+All zero-initialized data is represented by the \elfsec{.bss} section in the {\elf} binary.
 A portion of \gls{ram} corresponding to the size of the \elfsec{.bss} section must be set to zero.
 
-Copying the \elfsec{.data} section into \gls{ram} is handled by the \func{ResetHandler} function shown in \autoref{lst:reset-handler}
+Copying the \elfsec{.data} section into \gls{ram} is handled by the \func{ResetHandler} function shown in \autoref{lst:reset-handler}.
 The function is the real entry point of the program and is executed when the \gls{cpu} receives the reset signal.
 
 \begin{listing}[H]
@@ -67,26 +67,25 @@ void ResetHandler() {
   _start();
 }
 \end{minted}
-\caption{ResetHandler}
+\caption{The \gls{mcu} \code{ResetHandler}}
 \label{lst:reset-handler}
 \end{listing}
 
-When the \func{ResetHandler} has copied the non-zero initialized data into \gls{ram} it calls the \func{\_start} function in the {\C} runtime.
-The \func{\_start} function finds the size of the \elfsec{.bss} section which describes the size of zero-initialized area in \gls{ram}.
-It then calls on the \func{memset} function to zero out the \gls{ram}.
-\func{\_start} then goes on to call the {\main} function supplied by the programmer.
+After the \func{ResetHandler} has copied the non-zero initialized data into \gls{ram}, it calls the \func{\_start} function in the {\C} runtime.
+The \func{\_start} function finds the size of the \elfsec{.bss} section, which describes the size of zero-initialized area in \gls{ram}.
+It then calls on the \func{memset} function to zero out the \gls{ram}, before it goes on to call the {\main} function defined by the programmer.
 
 \begin{listing}[H]
 \begin{minted}{c}
 // Variables set in linker script
-bss_start; // start of .bss segment in \gls{ram}
-bss_end;   // end of .bss segment in \gls{ram}
+bss_start; // start of .bss segment in RAM
+bss_end;   // end of .bss segment in RAM
 
 void _start() {
   memset(bss_start, 0, bss_end - bss_start);
-  main(); // User supplied main function
+  main(); // User defined main function
 }
 \end{minted}
-\caption{start routine}
+\caption{{\C} runtime start routine}
 \label{lst:start}
 \end{listing}
