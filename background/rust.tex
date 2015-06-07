@@ -200,12 +200,12 @@ This structure implements the same operators that are otherwise associated with 
 
 Pattern matching is a powerful language construct of {\rust} that resembles the \code{switch} statement from {\C}.
 It is possible to match against any value or variable in the language, and branch to different blocks of code based on the outcome of the \code{match}.
-Another important feature of the \keyword{match} statement is that it needs to be \emph{exhaustive}, this means that all possible outcomes of a \keyword{match} need to be considered, otherwise {\rust} will issue an error during compilation.
+Another important feature of the \keyword{match} statement is that it needs to be \emph{exhaustive}, which means that all possible outcomes of a \keyword{match} need to be considered, otherwise {\rust} will issue an error during compilation.
 This is contrary to {\C}, where only primitive values can be used in a \keyword{switch} statement, and there is no requirement to cover all switch cases, i.e. the \code{default} keyword is not required.
 
 An example of pattern matching on the \code{Option} type is given in \autoref{lst:rust:match}.
 We can see from the example that the match can be used to \emph{destructure} the matching value in order to get hold of its enclosing value.
-We can also see that both \code{Some} and \code{None}, i.e. all possible outcomes of the \code{Option}, are being matched against.
+We can also see that both \code{Some} and \code{None}, i.e. all possible outcomes of the \code{Option}, are being considered in the example.
 % In Listing \ref{lst:rust:match} the Option \code{Some(42)} is checked against the patterns in the match expression.
 % As the first pattern matches the value, the number \code{42} is bound to the variable number and the \code{println} function is executed.
 
@@ -222,16 +222,16 @@ We can also see that both \code{Some} and \code{None}, i.e. all possible outcome
       None => (),
     }
   \end{minted}
-  \caption{Matching an Option}
+  \caption{Matching an \code{Option}}
   \label{lst:rust:match}
 \end{listing}
 
 \subsubsection{Traits}
 
-Traits in {\rust} are similar to Interfaces in Java, they are used to facilitate code reuse and polymorphism.
-A \code{trait} can define a set methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
+Traits in {\rust} are similar to Interfaces in Java - they are used to facilitate code reuse and polymorphism.
+A \code{trait} can define a set of methods that other objects can implement, and in contrast to Java's Interfaces, a trait also supports default implementations for its methods which an object can inherit directly.
 The definition of one of {\rust}'s more integral traits is the \code{Iterator} trait, which is shown in \autoref{lst:rust:iterator}.
-An iterator can be used to manipulate stream- or list-like data structures, the trait implements functions like e.g. map, zip, and filter, which are modifier functions that are commonly found in functional programming languages.
+An iterator can be used to manipulate stream- or list-like data structures, where the trait implements functions like e.g. \code{map}, \code{zip}, and \code{filter}, which are modifier functions that are commonly found in functional programming languages.
 
 \begin{listing}[H]
   \begin{minted}{rust}
