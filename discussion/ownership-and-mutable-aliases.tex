@@ -22,7 +22,7 @@ Ultimately, this also means that multiple handles to the same \gls{usart} can be
 Note that acquiring two handles to the same peripheral will not necessarily cause any wrongdoing in a program, but problems can occur if handles to the same peripheral are acquired in different interrupt handlers.
 
 This problem can be demonstrated with an example.
-Let us say that we have a program in which we have configured two interrupts, \texttt{I1}, and \texttt{I2}, to be triggered at differently timed intervals in the program.
+Let us say that we have a program in which we have configured two interrupts, \texttt{I1} and \texttt{I2}, to be triggered at differently timed intervals in the program.
 In the interrupt handler for \texttt{I1} we initiate a data transfer of \texttt{0x1111} over the \gls{usart}, and we initiate a data transfer of \texttt{0xFFFF} in the interrupt handler for \texttt{I2}.
 Now, what happens if the \texttt{I2} interrupt occur while the interrupt handler for \texttt{I1} is executing?
 If \texttt{I2} has higher priority than \texttt{I1}, the execution will change scope to \texttt{I2}'s interrupt handler, and a new \gls{usart} transfer will be initiated.
