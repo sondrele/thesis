@@ -17,7 +17,7 @@ The interpreted requirements from the Project Description is summarized in \auto
 \end{table}
 
 Challenges related to \textbf{R1} was identified in an \emph{Kickoff} meeting with Silicon Labs and are given in \autoref{tab:lang-challenges}.
-These challenges was deemed vital to solve in order to provide an embedded platform in Rust.
+These challenge are important to consider in order to provide an embedded platform in Rust.
 
 \begin{table}[H]
   \centering
@@ -57,3 +57,5 @@ In an embedded system with no excess memory, the performance of heap allocation 
 On a system with a \gls{os} and large memory hierarchy a technique called swapping can be used when the number of heap allocations exceeds the capacity of the \gls{ram} storage.
 In an embedded system these facilities does not exist, when the application is out of memory, then there is no way to allocate more.
 A subtle problem here is that when the error has occurred, the mechanism handling this condition cannot allocate memory as this will also fail and trigger the mechanism in an infinite loop (\textbf{LC6}).
+
+These language challenges are revisted as a part of the discussion of our platform in \autoref{sec:disc:language-challenges}.
