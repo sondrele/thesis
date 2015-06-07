@@ -33,5 +33,7 @@ We can not use this project directly because it depends on {\std}, but if we loo
 Another example is the \texttt{smallvec} \footnote{\url{https://crates.io/crates/smallvec}} project, which provides a handful of optimized versions of {\rust}'s vector structure that have a length-limit of 32 entries.
 Similar to the \texttt{lazy-static} project, all the dependencies for \texttt{smallvec} are included from {\std}, but are also available in {\core}.
 We have implemented a structure that is similar to \texttt{smallvec} as part of the Sensor Tracker application, but it feels like an unnecessary addition because it is already available on \texttt{crates.io} \emph{and} it only depends on features from {\core}.
+
 This distinction between {\std} and \gls{rsl} feels somewhat contradictory to {\rust}'s focus on modularization and package distribution with {\cargo}.
 It also feels destructive for non-standard projects like ours, because we would either have to re-implement or modify the already existing projects in order to get them to work for our platform.
+We hope that it will get easier in time to define non-standard projects, while at the same time being able to utilize many of the great open-source libraries that are already available.
