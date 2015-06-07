@@ -1,48 +1,43 @@
 \section{Project Outline}
 \label{sec:project-outline}
 
-The aim of this thesis is to evaluate the {\rust} language used in an embedded computer system.
-The work was divided into several phases each having its own primary goal and subgoals.
-\autoref{tab:meth:phases} summarizes the phases with the primary goals annotated.
+In this section we break down the project into five phases.
+\autoref{tab:meth:phases} presents each of the phases with their primary goals, the rest of this section describes each phase in more detail.
+In addition to the main phases in the project, the build system has evolved continously.
 
 \begin{table}[H]
-  \begin{center}
-    \begin{tabular}{l|l}
-      \textbf{Phase}&\textbf{Goal} \\
-      \hline
-      Initial Programmability & Getting Hello World up an running.\\
-      Library Support & Define a standard for creating library bindings\\
-      Development & Developing projects for evaluating the platform\\
-      Evaluating & Measuring performance\\
-      Reporting & Finalize project report\\
-      \hline
-    \end{tabular}
-  \end{center}
+  \centering
+  \begin{tabular}{l|l|l}
+    \textbf{Phase}&\textbf{Goal}&\textbf{Finished} \\
+    \hline
+    Hello World     & Blink LED with {\rust} & 09.01.15 \\
+    Platform Design & Implement support libraries & 13.03.15 \\
+    Development     & Develop projects for measurements &  09.04.15 \\
+    Measurement     & Measuring the projects & 20.05.15 \\
+    Evaluation      & Evaluating the platform & 08.06.15 \\
+    \hline
+  \end{tabular}
   \caption{Phases of the project}
   \label{tab:meth:phases}
 \end{table}
 
-In addition to the main phases in the project, the build system has evolved continously.
-
-The rest of this section describes each phase in more detail.
-
-\subsection{Phase 1 - Initial Programmability}
+\subsection{Phase 1 - Hello World}
 The initial phase of the project defined two main activities.
-Firstly the initial direction of the project along with major challenges was identified in a meeting with Silicon Labs w/Marius Grannæs and Mikael Berg.
-Secondly the milestone of running the first {\rust} application on the {\gecko} was reached.
+Firstly, the direction of the project along with some major challenges was identified in a meeting with Marius Grannæs and Mikael Berg from Silicon Labs.
+Secondly, the milestone of running the first {\rust} application on the \gls{mcu} was reached.
 
+\subsection{Phase 2 - Platform Design}
 
-\subsection{Phase 2 - Library Support}
-
-After the initial compilation process was in place, the focus shifted to developing the platform for writing larger applications
-Early in this phase the technical challenges involved was in focus when selecting which part of the libraries to develop.
-The library support was continouosly evolved when needed in the development phase.
+After the initial compilation process was in place, the focus shifted towards developing the platform for writing larger applications.
+Throughout this phase we developed the support libraries for the MCU, which are described in \autoref{sec:rel} and \autoref{sub:interfacing_with_emlib}.
+Early in this phase, technical challenges guided the choice of which part of the platform to develop.
+The platform evovled continouosly during the development phase.
 
 \subsection{Phase 3 - Development}
 \label{sec:projects}
 
-The goal of the development phase was to create applications that would provide enough empirical data to evaluate the system in Phase 4.
-Two complementary projects were specified given in \autoref{tab:meth:projects}.
+The goal of the development phase was to create applications that would provide enough empirical data to evaluate the platform in phase 4.
+The two complementary projects in \autoref{tab:meth:projects} were specified and implemented as part of this phase.
 
 \begin{table}[H]
   \centering
@@ -57,18 +52,22 @@ Two complementary projects were specified given in \autoref{tab:meth:projects}.
   \label{tab:meth:projects}
 \end{table}
 
-Both projects are implemented in both {\rust}, using the platform developed for this thesis, and {\C} using the libraries provided by Silicon Labs.
+Both of the projects were implemented in {\rust}, using the platform developed for this thesis, and in {\C}, using the libraries provided by Silicon Labs.
 
-\subsection{Phase 4 - Evaluation}
-During the phase for evaluation of the platform was evaluated based on the metrics in \autoref{lst:evaluation:criterias}.
-The results from the evaluation are presented in \autoref{chap:results} along side with results obtained by considering the existing platform in {\C}.
+\subsection{Phase 4 - Measurement}
+During the measurement phase, the platform was evaluated based on the following metrics:
 
-\begin{listing}
-  \begin{itemize}
+\begin{itemize}
   \item Performance
   \item Code Size
   \item Energy Consumption
-  \end{itemize}
-  \caption{Metrics for evaluation of the platform}
-  \label{lst:evaluation:criterias}
-\end{listing}
+\end{itemize}
+
+The results from the evaluation are presented and compared with the existing {\C} platform in \autoref{chap:results}.
+
+\subsection{Phase 5 - Evaluation}
+
+
+Throughout this phase we investigated the results that was gathered in the previous phase.
+These results provided a basis for a discussion of the project as whole was conducted and is presented in \autoref{chap:discussion}.
+In this dicussion we look at the viability of using {\rust} in an embedded system and present our thoughts and experiences obtained during the work for this thesis.
