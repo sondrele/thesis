@@ -122,7 +122,7 @@ The usage of {\enum} types described in this section become very expressive in c
 \subsubsection{Structs}
 \label{ssub:structs}
 
-A \keyword{struct} in {\rust} is similar to that of C, and is a way of creating more advanced data types than primitives or enums.
+A \keyword{struct} in {\rust} is similar to that of {\C}, and is a way of creating more advanced data types than primitives or enums.
 With a \keyword{struct}, it is possible to combine multiple variables into a single type, each of them identified with its own name.
 An example of defining a \code{Book} is shown in \autoref{lst:book_struct}.
 Anyone that is familiar with {\C} will see the similarity of the \keyword{struct} definition, but there are also a couple of extra things to notice from the example.
@@ -386,7 +386,7 @@ strings in memory.
 Fundamentally, a reference to the heap-allocated vector is placed on the stack, and the vector itself stores internal references to different strings that are placed elsewhere on the heap.
 % There are four levels of indirection between the reference to the vector on stack, and the actual character data of its strings.
 If we want to access the first character of a string stored in the vector, we would have to go through four levels of indirection - two objects need to be both dereferenced and indexed.
-If the nesting of objects is deep it can result in many heap-lookups in order to get the desired data.
+If the nesting of objects is deep, it can result in many heap-lookups in order to get the desired data.
 
 \begin{figure}[tb]
   \begin{center}
@@ -396,22 +396,24 @@ If the nesting of objects is deep it can result in many heap-lookups in order to
   \label{fig:java_abstractions}
 \end{figure}
 
-An important part about zero-cost abstractions, is the ability to define new abstractions, like a vector, that optimize away to the bare minimal.
+An important part of zero-cost abstractions is the ability to define new abstractions, like a vector, that optimizes away to the bare minimal.
 {\rust} introduces the same zero-cost abstractions that are present in {\Cpp}, among other programming languages.
-This is both important for performance, and in general, in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
+This is both important for performance, and for general purposes in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
 % when working with embedded devices.
 % \todocite{This is a bogus sentence. Also, need to cite zero-cost abstraction articles}
 \autoref{fig:cpp_abstractions} shows how {\Cpp} places a vector of strings in memory.
 The main difference is that the vector itself is placed on the stack, and the string data is placed directly inside the memory block owned by the vector.
 The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
 
-There is still one really important difference between the two examples; we can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate, whereas multiple references to our vector in {\Cpp} can certainly lead to dangling pointers if the vector is to reallocate when we are holding such a reference
-\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in {\Cpp} can lead to a dangling pointer?}.
+There is still one vital difference between the two examples.
+We can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate.
+However, we can end up with dangling pointers if we happen to have multiple references to our vector in {\Cpp}, and it grows and reallocates while we are holding such a reference.
+\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in {\Cpp} can lead to a dangling pointer?}
 In {\rust}'s case, all structures are allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
 References to such stack-allocated variables can be passed around and accessed, just like in {\Cpp},
 but {\rust} also introduces a set of rules that have to be followed in order to safely use these references.
 These rules are based upon variable ownership and lifetimes, which are discussed in \autoref{sec:guaranteed_memory_safety}.
-A {\rust} program will not successfully compile if the programmer is failing to properly maintain these rules.
+A {\rust} program will not successfully compile if the programmer fails to properly maintain these rules.
 
 \begin{figure}[tb]
   \begin{center}
@@ -424,43 +426,48 @@ A {\rust} program will not successfully compile if the programmer is failing to 
 \subsection{Guaranteed memory safety}
 \label{sec:guaranteed_memory_safety}
 
-One of {\rust}'s biggest features is full memory safety without sacrificing performance.
-The memory safety boils down to how {\rust} manages its variables and their memory throughout the course of a program.
+One of {\rust}'s biggest features is its ability to maintain full memory safety without sacrificing performance.
+The memory safety boils down to how {\rust} manages its variables and memory throughout the course of a program.
 {\rust} introduces a few concepts that are all centered around the \concept{ownership} of these variables and their \concept{lifetimes}, and how references to these variables can be \concept{borrowed}.
-These concepts are defined in {\rust}, but a lot of the inspiration behind those rules comes from other type-safe languages, like Haskell and OCaml, and especially Cyclone's \cite{Grossman2002,Swamy2006} region-based memory management.
-\rust's ownership system are part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking, and ownership- and lifetime-analysis are done statically during compilation.
+These concepts are defined in {\rust}, but much of the inspiration behind those rules come from other type-safe languages, like {\lang{Haskell}} and {\lang{OCaml}}, and, in particular, {\lang{Cyclone}}'s \cite{Grossman2002,Swamy2006} region-based memory management.
+{\rust}'s ownership system is part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking and ownership- and lifetime-analysis are done statically during compilation.
 
 \subsubsection{Ownership and Move Semantics}
 \label{sec:back:rust:own}
 
-In order to achieve full memory safety, we have to remove all form for memory leaks and dangling pointers to invalid memory.
+In order to achieve full memory safety, we have to remove all forms for memory leaks and dangling pointers to invalid memory.
 This implies one \concept{memory deallocation} for every respective \concept{memory allocation}.
-Traditionally, when allocating memory for a variable, the programming language will return a \concept{pointer},  or a \concept{handle}, that is essentially an address to a record in memory, together with how many bytes it takes to store that record in memory.
-The memory can safely be deallocated when there is no longer any need for it, i.e. the variable holding the handle to the memory goes out of scope.
+Traditionally, when a programming language allocates memory for a variable, it will return a \emph{pointer} (or a \emph{handle}) and the number of bytes which is required to store the variable in memory.
+This handle is essentially an address to a record in memory, and it can either  be up to the language or the programmer to make sure that this memory is intact.
+When the variable is no longer needed, the memory that is used by the handle can safely be deallocated.
+% , this is usually the case when the variable goes out of scope and becomes unreachable in the program.
+% This memory can safely be deallocated when there is no longer any need for it, i.e. the variable holding the handle to the memory goes out of scope.
 
-Modern programming languages, like {\Java} and Python, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
-A common implementation is a reference counted garbage collector that keeps a count over the number of references to the variables and deallocates them when there are no valid references to them.
-The downside of such an approach to memory safety is the continuous use of resources it requires to keep track all the references.
-Every assignment to a variable and every time a variable enters a scope the reference count must be increased, and when it leaves a scope it must be decreased.
+Modern programming languages, like {\Java} and {\lang{Python}}, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
+A common implementation is a reference counted garbage collector \cite{Wilson1992} that keeps a count over the number of references to the variables and deallocates them when there are no valid references to them.
+The downside of such an approach to memory safety is the continuous use of resources it requires to keep track of all the references.
+The variables' reference counts must be altered every time they enters and leaves a program scope.
 
-Another common implementation is a stop-the-world garbage collector.
-It works differently, by regularly halting the executing program, before it recursively traces all references that are accessible from the \concept{root} set of variables, i.e. global variables, local variables in the stack and any variable that may be accessible from the current state of the registers \cite{Wilson1992}.
-The memory that are accessible from these references are then marked as valid, and all the invalid memory will then be freed and accessible through new calls to the memory allocation function.
+Another common implementation is a stop-the-world garbage collector \cite{Wilson1992}.
+It works differently by regularly halting the executing program, before it recursively traces all references that are accessible from the \concept{root set} of variables.
+The root set consists of global variables, local variables in the stack and any variable that may be accessible from the current state of the registers.
+The memory that is accessible from these references are then marked as valid, and all the invalid memory will then become freed and accessible through new calls to the memory allocation function.
 The downside of such an approach is the requirement of halting the entire program in order to release the invalid memory.
-There are also many other techniques of garbage collection, that are often a variation of the ones already described, but they are all troublesome in resource constraint environments such as found on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
+There are also many other techniques of garbage collection, that are often a variation of the ones already described.
+However, they are all problematic in resource constraint environments such as on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
 
-Another approach to keeping track of the memory resources have been to give the programmer full control of every memory allocation and deallocation.
+Another approach to keeping track of the memory resources has been to give the programmer full control of every memory allocation and deallocation.
 This is the most common approach for systems programming languages like {\C} and {\Cpp}, where performance and predictability is important.
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
-Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
+Memory leaks like this will eventually lead a running program to crash due to the unavailability of extra resources.
 
 It is important to always remember to deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
 {\rust} operates differently from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
 When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
-These two aspects of memory allocation and deallocation is combined into the concept of \concept{ownership} that {\rust} incorporates.
-When a handle that \concept{owns} a reference to a data-segment on the heap leaves its scope, {\rust} knows that it can safely free the memory that is referenced by it, because it is the \concept{owning handle} to that memory.
+These two aspects of memory allocation and deallocation are combined into the concept of \concept{ownership} that {\rust} incorporates.
+When a handle that \concept{owns} a reference to a data-segment on the heap leaves its scope, {\rust} knows that it can safely free the memory that is referenced by it because it is the \concept{owning handle} to that memory.
 
 \begin{listing}[tb]
 \begin{minted}{c}
@@ -470,23 +477,23 @@ fn read_book(b: Book) {
 
 fn main() {
   // `b' is the owning handle to a Book
-  let b = Book { pages: 150 };
+  let b = Book { name: "Gecko's".to_string(), pages: 150 };
   // when this line is reached, `read_book' takes ownership of `b'
   read_book(b);
   // when `read_book' returns, the book is also deallocated
   // this makes it impossible to  read the book two times
-  read_book(b); // <- compile-time error: use of moved value: `b'
- }
+  read_book(b); // <- compiler error: use of moved value: `b'
+}
 \end{minted}
 \caption{Example of an owned handle}
 \label{lst:owning_handle}
 \end{listing}
 
 An example of this ownership is shown in \autoref{lst:owning_handle}.
-There can only exist one owning handle for any heap- or a stack-allocated variable at any time during program execution.
-This means that if the handle gets passed as an argument to a function, this function will take \concept{ownership} of the variable, by \concept{moving} it to the new scope defined by the function.
+Only one owning handle can exist for any heap- or a stack-allocated variable at any time during program execution.
+This means that if the handle gets passed as an argument to a function, this function will take \concept{ownership} of the variable by \concept{moving} it to the new scope defined by the function.
 This move prevents any further use of the handle in its original scope and is necessary because {\rust} only allows one owned handle to any memory-segment at any time.
-If two or more handles to the memory had existed at the same time it would have resulted in several calls to \func{free}, one for every time the handle left the different scopes.
+If two or more handles to the memory had existed at the same time, it would have resulted in several calls to \func{free}, one for every time the handle left the different scopes.
 The only way to continue using the handle in its original scope would have been to give the ownership back after using it.
 
 \subsubsection{Borrowing}
@@ -494,10 +501,10 @@ The only way to continue using the handle in its original scope would have been 
 
 \concept{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
 {\rust} allows the programmer to \concept{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
-There can exist multiple \emph{references} to the same place in memory, as long there is only one \concept{owner} of the actual handle.
-A reference is denoted with an \code{\&} in front of the handle, this will tell {\rust} that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
+Multiple \emph{references} can exist to the same place in memory, as long as there is only one \concept{owner} of the actual handle.
+A reference is denoted with an \code{\&} in front of the handle, which will tell {\rust} that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
 Consider a modification of the previous example shown in \autoref{lst:borrowing_handle}.
-Here, the the \func{read\_book} function is modified to accept a reference to a book instead of overtaking its ownership, this allows us to lend out the book to be read as many times as we want.
+Here, the \func{read\_book} function is modified to accept a reference to a book instead of overtaking its ownership, thus allowing us to lend out the book to be read as many times as we want.
 Since the book's owning handle lives in the scope defined by the main function, the memory will be deallocated when the program exits.
 
 \begin{listing}[tb]
@@ -508,7 +515,7 @@ fn read_book(b: &Book) {
 
 fn main() {
   // `b' is the owning handle to a Book
-  let b = Book { pages: 150 };
+  let b = Book { name: "Gecko's".to_string(), pages: 150 };
   // only a reference to the book is given to `read_book'
   read_book(&b);
   // it is possible to read the book two times, because `b'
@@ -523,10 +530,10 @@ fn main() {
 \subsubsection{Lifetimes}
 \label{ssec:lifetimes}
 
-{\rust} needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references does not point to any deallocated memory.
-{\rust} achieves this with a concept called \concept{lifetimes}, in which the compiler with the help of \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
-Consider the example shown in \autoref{lst:invalid_ref_c}, of a function in {\C} that returns a reference into a variable allocated in its own stackframe.
-When the function returns the variable will be de-allocated, and the returned reference will point to invalid memory.
+{\rust} needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references do not point to any deallocated memory.
+{\rust} achieves this with a concept called \concept{lifetimes}, in which the compiler, with the help of \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
+Consider the example shown in \autoref{lst:invalid_ref_c}, which shows a function in {\C} that returns a reference into a variable allocated in its own stackframe.
+When the function returns, the variable will be de-allocated, and the returned reference will point to invalid memory.
 The {\C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
 A similar implementation of \code{name\_as\_ref} in {\rust} is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
 
@@ -541,13 +548,13 @@ int main() {
   char *name = name_as_ref();
 }
 \end{minted}
-\caption{Returning an invalid reference in C}
+\caption{Returning an invalid reference in {\C}}
 \label{lst:invalid_ref_c}
 \end{listing}
 
 \begin{listing}[tb]
 \begin{minted}{rust}
-fn name_as_ref() -> &str { // <- error: missing lifetime specifier
+fn name_as_ref() -> &str { // <- compiler error: missing lifetime specifier
     let b = Book { name: "Gecko's".to_string(), pages: 150 };
     &b.name
 }
@@ -561,8 +568,9 @@ fn main() {
 \end{listing}
 
 An example of the same function, but with applied lifetime specifiers, is shown in \autoref{lst:valid_ref_rust}.
-We can see from this example that {\rust} requires us to annotate all references that are associated the function's arguments and return values with a name, in this case we have chosen the name \code{'a}.
-The explicit name of the lifetime does not matter, what matters is that {\rust} forces us to allocate the book elsewhere, so that it is alive in the stackframe that encloses the function call to \code{get\_name\_as\_ref}.
+We can see from this example that {\rust} requires us to annotate all references that are associated with the function's arguments and return values with a name.
+In this case we have chosen the name \code{'a} for the lifetime specifier.
+The explicit name of the lifetime does not matter, what matters is that {\rust} forces us to allocate the book elsewhere so that it is alive in the stackframe that encloses the function call to \code{name\_as\_ref}.
 Note that this example just demonstrates what lifetime specifiers look like in {\rust} and shows one way the language can catch use-after free errors.
 
 Another thing to notice is that the usage of lifetime specifiers in this example is somewhat verbose.
@@ -599,14 +607,14 @@ fn main() {
 \subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
 
-{\rust}'s strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
-There exist many programs that are indeed safe, but still not possible for the compiler to verify.
-Examples of code that the compiler cannot verify is code that dereference \concept{raw pointers}, or code that utilize {\rust}'s \gls{ffi} or directly call any of the compiler intrinsics functions.
-Raw pointers in {\rust} are similar to a normal pointer in C, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
+{\rust}'s strong type system and static guarantees about memory safety goes a long way in verifying the safety of programs, but for certain programs, the restrictions set by the compiler might be too conservative.
+Many programs that exist are indeed safe, but still not possible for the compiler to verify.
+Examples of code that the compiler cannot verify is code that dereference \concept{raw pointers}, or code that utilize {\rust}'s \gls{ffi} or directly call on any of the compiler intrinsics functions.
+Raw pointers in {\rust} are similar to normal pointers in {\C}, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data - they are not even guaranteed to have non-null values.
 The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
 The ability to define new abstractions with efficient implementations is an important goal of {\rust}.
-Sometimes this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
+Sometimes, this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call in to external libraries.
 For these tasks, {\rust} provides the keyword {\unsafe}.
 It is important to note that this {\unsafe} keyword is introduced in order to \emph{keep} {\rust}'s semantics about memory safety.
 When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the {\unsafe} block is indeed safe.
@@ -634,8 +642,24 @@ When the compiler can no longer guarantee safety, it is up to the programmer to 
 \end{table}
 
 \autoref{tab:reasons_for_unsafe} summarizes the three things that are possible to do in an {\unsafe} block, and some examples of why the operations are considered unsafe.
-Compiler intrinsics are functions that are provided by the compiler itself, not {\rust}, and are functions that are closely related with raw pointers.
-These are all considered unsafe, they provide core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
-It is important to note that {\rust}'s borrow-checker is still active \emph{across} the unsafe code, and that normal ownership rules still apply even though the code is unsafe.
-The borrow-checker can can never be disabled, but for for certain operations it will simply not work.
-As an example, it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues, as described in \autoref{ssec:lifetimes}.
+Compiler Intrinsics are functions that are provided by the compiler itself, not {\rust}, and are functions that are closely related with raw pointers.
+These are all considered unsafe, as they provide core functionality to e.g. access and modify volatile data, transform the data of one type into another, or perform atomic operations.
+
+It is important to note that {\rust}'s borrow-checker is still active \emph{across} the unsafe code and that normal ownership rules still apply even though the code is unsafe.
+The borrow-checker can never be disabled, but for certain operations it will simply not work.
+\autoref{lst:unsafe_reference} demonstrates this with the same example that was used in \autoref{ssec:lifetimes}.
+We can see from this example that it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues.
+This also tells us that using an unsafe block is not the same as disabling the compiler, it is merely a mechanism for the programmer to handle the safety of a program in the cases where the compiler is unable to.
+
+\begin{listing}[H]
+\begin{minted}{rust}
+fn main() {
+  let name = unsafe {
+    let b = Book { name: "Gecko's".to_string(), pages: 150 };
+    &b.name // <- compiler error: `b.name' does not live long enough
+  };
+}
+\end{minted}
+\caption{Attempting to return an invalid reference from an \code{unsafe} block}
+\label{lst:unsafe_reference}
+\end{listing}
