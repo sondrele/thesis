@@ -76,7 +76,8 @@ This approach of initialization has two advantages:
 \end{enumerate}
 
 Point 1) is indeed a very interesting feature of {\zinc}, but it does not help us to solve the problem that we are discussing in this section.
-Point 2) can help us to make sure that all peripheral access goes through the \code{run\_args} structure, but this structure is only passed to the program's main loop, which has a different environment than the scopes that are defined by the interrupt handlers.
+Point 2) can help us to make sure that all peripheral access goes through the \code{run\_args} structure.
+However, this structure is only passed to the program's main loop, which has a different environment than the scopes that are defined by the interrupt handlers.
 Thus, we can defer our primary problem to be that {\rust} cannot statically reason about the peripherals' ownership because they are accessed from different program scopes.
 
 \subsection{Alternative Approaches}
