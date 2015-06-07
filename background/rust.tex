@@ -250,9 +250,10 @@ An iterator can be used to manipulate stream- or list-like data structures, wher
 \label{sec:rust:loops}
 
 {\rust} provides the two loop constructs known from {\C}, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
-The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
+The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead, it operates on iterators.
 \rust's \code{for} statement is merely syntactic sugar for a \code{loop} with an internal \code{match} around the iterator's \code{next()} function.
-\autoref{lst:rust:for} shows a how a \code{for} loop is used to loop over a vector of numbers, this code is de-sugared by {\rust} into the equivalent (simplified) code shown in \autoref{lst:rust:desugared-for}.
+\autoref{lst:rust:for} shows how a \code{for} loop is used to loop over a vector of numbers.
+This code is de-sugared by {\rust} into the equivalent (simplified) code shown in \autoref{lst:rust:desugared-for}.
 
 \begin{listing}[!h]
 \begin{minipage}{0.45\textwidth}
@@ -266,7 +267,7 @@ for x in values {
 
 
     \end{minted}
-    \caption{A \code{for} loop for an iterators}
+    \caption{An iterator \code{for} loop}
     \label{lst:rust:for}
   \end{listing}
 \end{minipage}
@@ -281,7 +282,7 @@ loop {
   }
 }
     \end{minted}
-    \caption{\rust's \code{for} loop de-sugared to a \code{loop}}
+    \caption{{\rust}'s \code{for} loop de-sugared to a \code{loop}}
     \label{lst:rust:desugared-for}
   \end{listing}
 \end{minipage}
@@ -328,11 +329,12 @@ fn main() {
   \label{lst:closure:filter}
 \end{listing}
 
-\autoref{lst:closure:filter} shows how a closure can be used to filter a list of numbers, it also demonstrates one of the \code{Iterator} trait's many use cases.
+\autoref{lst:closure:filter} shows how a closure can be used to filter a list of numbers.
+It also demonstrates one of the \code{Iterator} trait's many use cases.
 The example initializes a vector with four numbers and makes an iterator by calling the \code{iter()} function.
 Once the iterator is acquired, the \code{filter()} function is called with a closure as argument.
 The expression \code{|\&el| *el < limit} defines the closure, which takes an argument \code{el} and returns a \code{bool}.
-The \code{limit} is a free variable which is found in the scope of the \texttt{main} function, this variable is part of the environment that is \emph{enclosed} by the closure.
+The \code{limit} is a free variable that is found in the scope of the \texttt{main} function; this variable is part of the environment that is \emph{enclosed} by the closure.
 When the \code{collect()} function is called, the closure is executed with every element in the vector, and they are collected into a new vector if the closure's condition is satisfied.
 
 
@@ -340,11 +342,11 @@ When the \code{collect()} function is called, the closure is executed with every
 \label{ssub:rust:organization}
 
 A {\rust} library or executable is organized into a \concept{crate}, and such a crate can consist of many \concept{modules}.
-These modules are used to split up the library into separated pieces of code, giving it a logical structure.
+These modules are used to split up the library into separated pieces of code, which gives it a logical structure.
 The crate is a sharable part of {\rust} code that can be included into other projects and libraries.
-The modules are the hierarchical means of organizing a crate, and ensures that the design is modular.
+The modules are the hierarchical means of organizing a crate and it ensures that the design is modular.
 This gives the programmer the ability to import only the components of the library that is needed for a given program.
-\autoref{fig:rust:collections} shows a few or the modules contained within the {\rust} \lib{collections} crate.
+\autoref{fig:rust:collections} shows a few of the modules contained within the {\rust} \lib{collections} crate.
 
 \begin{figure}[H]
   \begin{center}
@@ -355,7 +357,7 @@ This gives the programmer the ability to import only the components of the libra
 \end{figure}
 
 The {\rust} compiler comes bundled with a handful of standard libraries that are used as a basis for almost all third party libraries and executables.
-By default, every {\rust} application is linked with the the {\rust} {\std} library, which \concept{re-exports} functionality from the standard libraries, like e.g. the \lib{collections} crate.
+By default, every {\rust} application is linked with the {\rust} {\std} library, which \concept{re-exports} functionality from the standard libraries, like e.g. the \lib{collections} crate.
 %\todo{This figure looks broken...}
 %\autoref{fig:rust:librust} shows some of the crates that make up the standard library, with their dependencies.
 %Many of these libraries contains functionality that depends on an \gls{os} to be present, which is not necessarily a safe assumption to make for a bare-metal system.
@@ -373,7 +375,7 @@ By default, every {\rust} application is linked with the the {\rust} {\std} libr
 \subsection{Zero-cost Abstractions}
 \label{chap:zero_cost_abstractions}
 
-One of {\rust}'s goals is to achieve performance similar to {\C} and {\Cpp}, at the same time as providing complete memory safety.
+One of {\rust}'s goals is to achieve performance similar to {\C} and {\Cpp}, while providing complete memory safety.
 {\rust} aims to achieve this with \emph{zero-cost abstractions}, which means that the various high-level language constructs it implements does not come with an execution overhead.
 This section gives a detailed example of one of {\rust}'s zero-cost abstractions.
 
