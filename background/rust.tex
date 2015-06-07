@@ -246,31 +246,6 @@ An iterator can be used to manipulate stream- or list-like data structures, wher
   \label{lst:rust:iterator}
 \end{listing}
 
-\autoref{lst:rust:list-iter} \todo{We should remove the clone() from this example} shows an example of how the \code{Iterator} trait can be implemented for the \code{List} type.
-This code involves some of the previously discussed language features like enums, pattern matching, and traits.
-An example that shows how to use the filter-iterator is displayed later in this section.
-
-\begin{listing}[H]
-  \begin{minted}{rust}
-    impl<T: Clone> Iterator for List<T> {
-      type Item = T;
-
-      fn next(&mut self) -> Option<T> {
-        match self.clone() {
-          Cons(val, next) => {
-            *self = *next;
-            Some(val) // Returns the value `Some(val)'
-          },
-          Nil => None // Returns the value `None'
-        }
-      }
-    }
-  \end{minted}
-  \caption{Implementing the Iterator trait for the List type}
-  \label{lst:rust:list-iter}
-\end{listing}
-
-
 \subsubsection{Loops}
 \label{sec:rust:loops}
 
