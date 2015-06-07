@@ -32,11 +32,12 @@ Even worse, the application at the receiving end of the \gls{usart} might end up
 
 \subsection{Limitations with the Bindings}
 
-The question that we are left with after the previous section is then; is there a way to apply {\rust}'s ownership-semantics directly to the hardware, and let the {\rust} compiler do the reasoning for us of whether it is safe to use a peripheral or not?
-As it turns out, there is no easy or straight forward way to do this, at least not by our finding.
+The questions that we are left with after the previous section is then; is there a way to apply {\rust}'s ownership-semantics directly to the hardware?
+Moreover, is there a way to the {\rust} compiler do the reasoning for us of whether it is safe to use a peripheral or not?
+As it turns out, there is no easy or straightforward way to do this, at least not by our finding.
 
 Our approach to define a software library for the {\gecko} has been to utilize what \emph{already} existed.
-We decided to write {\rust}-bindings for {\emlib} because it would get the project up an running fairly quickly.
+We decided to write {\rust}-bindings for {\emlib} because it would get the project up and running fairly quickly.
 Another reason for not to port {\emlib} was the possibility to update the bindings to depend new revisions of {\emlib} without having to define any new logic.
 This choice also meant that we were able to quickly use a wide range of peripherals, and implement a couple of projects to test {\rust} in an embedded setting.
 It turns out, however, that this approach has introduced a few limitations to our system:
