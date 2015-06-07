@@ -29,7 +29,7 @@ platformtree!(
     /* ... */
   }
 );
-
+// Blink the LED every second
 fn run(args: &pt::run_args) {
   args.led1.set_high();
   args.timer.wait(1);
