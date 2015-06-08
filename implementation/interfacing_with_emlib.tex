@@ -142,35 +142,36 @@ A complete overview of the progress of binding {\emlib} is given in \autoref{tab
 \newcommand{\high}{\cellcolor{green!25}}
 
 \begin{table}[H]
+  \centering
   \begin{tabular}{l | l | l | r | l | l | l | r }
     \textbf{Module} & \textbf{\#C} & \textbf{\#R} & \textbf{Ported} & \textbf{Module} & \textbf{\#C} & \textbf{\#R} & \textbf{Ported} \\
+
     \hline
-    acmp    & 15 & 3  & {\low}    20.00\% & lcd     & 51 &  0 & {\low}     0.00\% \\
-    adc     & 16 & 6  & {\medium} 37.50\% & lesense & 52 & 21 & {\medium} 40.38\% \\
-    aes     & 19 & 0  & {\low}     0.00\% & letimer & 14 &  0 & {\low}     0.00\% \\
-    assert  & 0  & 0  &            N/A    & leuart  & 19 & 12 & {\medium} 63.16\% \\
-    bitband & 4  & 0  & {\low}     0.00\% & mpu     &  3 &  0 & {\low}     0.00\% \\
-    burtc   & 28 & 0  & {\low}     0.00\% & msc     & 19 &  0 & {\low}     0.00\% \\
-    chip    & 1  & 1  & {\high}  100.00\% & opamp   &  2 &  0 & {\low}     0.00\% \\
-    cmu     & 45 & 7  & {\low}    15.56\% & part    &  0 &  0 &            N/A    \\
-    common  & 0  & 0  &            N/A    & pcnt    & 23 &  0 & {\low}     0.00\% \\
-    dac     & 16 & 0  & {\low}     0.00\% & prs     &  4 &  1 & {\medium} 25.00\% \\
-    dbg     & 4  & 0  & {\low}     0.00\% & rmu     &  6 &  0 & {\low}     0.00\% \\
-    dma     & 22 & 8  & {\medium} 36.36\% & rtc     & 14 & 13 & {\high}   92.86\% \\
-    ebi     & 42 & 9  & {\low}    21.43\% & system  & 11 &  0 & {\low}     0.00\% \\
-    emu     & 24 & 17 & {\medium} 70.83\% & timer   & 27 & 24 & {\high}   88.89\% \\
-    gpio    & 33 & 31 & {\high}   93.94\% & usart   & 26 &  6 & {\low}    23.08\% \\
-    i2c     & 17 & 6  & {\medium} 35.29\% & vcmp    & 29 &  0 & {\low}     0.00\% \\
-    idac    & 0  & 0  &            N/A    & version &  0 &  0 &            N/A    \\
-    int     & 2  & 2  & {\high}  100.00\% & wdog    &  5 &  0 & {\low}     0.00\% \\
+    \texttt{acmp}    & 15 & 3  & {\low}    20.00\% & \texttt{lcd}     & 51 &  0 & {\low}     0.00\% \\
+    \texttt{adc}     & 16 & 6  & {\medium} 37.50\% & \texttt{lesense} & 52 & 21 & {\medium} 40.38\% \\
+    \texttt{aes}     & 19 & 0  & {\low}     0.00\% & \texttt{letimer} & 14 &  0 & {\low}     0.00\% \\
+    \texttt{assert}  & 0  & 0  &            N/A    & \texttt{leuart}  & 19 & 12 & {\medium} 63.16\% \\
+    \texttt{bitband} & 4  & 0  & {\low}     0.00\% & \texttt{mpu}     &  3 &  0 & {\low}     0.00\% \\
+    \texttt{burtc}   & 28 & 0  & {\low}     0.00\% & \texttt{msc}     & 19 &  0 & {\low}     0.00\% \\
+    \texttt{chip}    & 1  & 1  & {\high}  100.00\% & \texttt{opamp}   &  2 &  0 & {\low}     0.00\% \\
+    \texttt{cmu}     & 45 & 7  & {\low}    15.56\% & \texttt{part}    &  0 &  0 &            N/A    \\
+    \texttt{common}  & 0  & 0  &            N/A    & \texttt{pcnt}    & 23 &  0 & {\low}     0.00\% \\
+    \texttt{dac}     & 16 & 0  & {\low}     0.00\% & \texttt{prs}     &  4 &  1 & {\medium} 25.00\% \\
+    \texttt{dbg}     & 4  & 0  & {\low}     0.00\% & \texttt{rmu}     &  6 &  0 & {\low}     0.00\% \\
+    \texttt{dma}     & 22 & 8  & {\medium} 36.36\% & \texttt{rtc}     & 14 & 13 & {\high}   92.86\% \\
+    \texttt{ebi}     & 42 & 9  & {\low}    21.43\% & \texttt{system}  & 11 &  0 & {\low}     0.00\% \\
+    \texttt{emu}     & 24 & 17 & {\medium} 70.83\% & \texttt{timer}   & 27 & 24 & {\high}   88.89\% \\
+    \texttt{gpio}    & 33 & 31 & {\high}   93.94\% & \texttt{usart}   & 26 &  6 & {\low}    23.08\% \\
+    \texttt{i2c}     & 17 & 6  & {\medium} 35.29\% & \texttt{vcmp}    & 29 &  0 & {\low}     0.00\% \\
+    \texttt{idac}    & 0  & 0  &            N/A    & \texttt{version} &  0 &  0 &            N/A    \\
+    \texttt{int}     & 2  & 2  & {\high}  100.00\% & \texttt{wdog}    &  5 &  0 & {\low}     0.00\% \\
     \hline
     &&&& \textbf{total} & 593 & 167 & {\medium}28.16\% \\
     \hline
+    \multicolumn{8}{l}{\textbf{\# C} - Number of functions exposed by {\emlib}} \\
+    \multicolumn{8}{l}{\textbf{\# R} - Number of functions bound by bindings} \\
   \end{tabular}
-  \caption{emlib Bindings Progress \\
-    \textbf{\# C} - Number of functions exposed by emlib \\
-    \textbf{\# R} - Number of functions bound by bindings
-  }
+  \caption{Bindings progress for {\emlib}}
   \label{tab:emlib:progress}
 \end{table}
 
@@ -496,8 +497,8 @@ Writing the bindings for the different peripherals was a tedious work, that requ
 Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various {\C} macros defined in header files that are used throughout the library.
 We had to retrieve the value of the constants by debugging the source code and explicitly look up the value of these constants if they were only implicitly defined in the header files.
 
-Since we have constrained our library to only support the EFM32GG990 devices we chose to manually write the bindings for the library, instead of generating the bindings through some kind of automated process.
-There were already a couple of tools available for generating such C-bindings automatically, that could possibly have made the process quicker.
+Since we have constrained our library to only support the Giant Gecko devices, we chose to manually write the bindings for the library, instead of generating the bindings through some kind of automated process.
+There were already a couple of tools available for generating such {\C}-bindings automatically, that could possibly have made the process quicker.
 However, we chose not to utilize such tools because of the reasons described below.
 
 \begin{itemize}
