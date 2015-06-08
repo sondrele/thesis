@@ -14,11 +14,11 @@ There are a few modification which have to be applied to the default `Hello Worl
 Let us first revisit the canonical version from \autoref{sub:the_rust_programming_language} given in \autoref{lst:rust-hello-world}, we can see that all we have to define is the \code{main} function.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 fn main() {
   println!("Hello, World!");
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Standard `Hello World' in {\rust}.}
   \label{lst:rust-hello-world}
 \end{listing}
@@ -30,7 +30,7 @@ The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello
 In addition to removing the \gls{rsl}, the {\main} function is \emph{exported} to be callable from the {\C} runtime.
 
 \begin{listing}[H]
-  \begin{minted}[linenos]{rust}
+  \begin{rustcode}
 // Annotations
 #![no_std]
 #![no_main]
@@ -49,7 +49,7 @@ pub extern fn main() {
 #[lang="stack_exhausted"] extern fn stack_executed() {}
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"] fn panic_fmt() -> ! { loop {} }
-\end{minted}
+\end{rustcode}
 \caption{Embedded `Hello World' in {\rust}.}
 \label{lst:embedded-rust-hello-world}
 \end{listing}
@@ -75,7 +75,7 @@ As described in \autoref{sec:back:startup} the startup procedure initializes all
 In this section we look at how each storage qualifier,  applicable to global variables in {\rust}, map to different sections of the {\elf} binary.
 
 \begin{listing}[H]
-\begin{minted}[linenos]{rust}
+\begin{rustcode}
 const      RUST_CONST_ZERO: u32 = 0;      // not allocated
 const      RUST_CONST: u32 = 0xFEED;      // not allocated
 static     RUST_STATIC_ZERO: u32 = 0;     // .text
@@ -84,7 +84,7 @@ static mut RUST_STATIC_MUT_ZERO: u32 = 0; // .bss
 static mut RUST_STATIC_MUT: u32 = 0xBEEF; // .data
 
 pub extern fn main() { /* Use the variables */ }
-\end{minted}
+\end{rustcode}
 \caption{{\rust} static initialization.}
 \label{lst:rust-static-init}
 \end{listing}
@@ -114,7 +114,7 @@ A minimal `Hello World' program using the \lib{startup} crate is given in \autor
 We still have to annotate the program with \code{\#[no\_std]}, but the \code{main} function is now much more similar to the one that was presented in the start of this section, due to the inclusion of the \lib{startup} library.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 #![no_std]
 #![feature(no_std)]
 extern crate startup;
@@ -122,7 +122,7 @@ extern crate startup;
 fn main() {
   loop {}
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Embedded Hello World using startup library to bootstrap}
   \label{lst:embedded-rust-bootstrapped}
 \end{listing}
@@ -146,9 +146,9 @@ The {\gecko} can be triggered to cause interrupts that occur at a timely basis, 
 This function will then be called when these interrupts occur.
 
 \begin{listing}[H]
-  \begin{minted}{c}
+  \begin{ccode}
 void SysTick_Handler(void) { /* Handler code */ }
-  \end{minted}
+  \end{ccode}
   \caption{Defining the SysTick Interrupt Handler in {\C}.}
   \label{lst:c:irq}
 \end{listing}
@@ -158,9 +158,9 @@ In {\rust}, a function can easly be defined to use the {\C} \gls{abi} required t
 \autoref{lst:rust:irq} shows how to override the same \func{SysTick\_Handler} function in {\rust}.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 #[no_mangle] pub extern fn SysTick_Handlder() { /* Handler code */ }
-  \end{minted}
+  \end{rustcode}
   \caption{SysTick Interrupt Handler in {\rust}.}
   \label{lst:rust:irq}
 \end{listing}
