@@ -42,7 +42,7 @@ Another reason for not to port {\emlib} was the possibility to update the bindin
 This choice also meant that we were able to quickly use a wide range of peripherals, and implement a couple of projects to test {\rust} in an embedded setting.
 It turns out, however, that this approach has introduced a few limitations to our system:
 
-\begin{enumerate}[\hspace{13}1)]
+\begin{enumerate}[\hspace{13pt}1)]
     \item We access the peripherals through {\C}-bindings, which mean that {\rust} have no control over what happens on the other side of the \gls{ffi}.
 
     \item Each peripheral structure that are used throughout the program is essentially a reference to a singleton \gls{mmio}.
@@ -54,7 +54,7 @@ It turns out, however, that this approach has introduced a few limitations to ou
 The biggest problem with both 1) and 2) is that the bindings hide away the fact that something unsafe is happening underneath the function calls, and that some of the functions expose \emph{internal mutable state}.
 An immediate proposal to fix some of the flaws in this design is:
 
-\begin{enumerate}[\hspace{13}1)]
+\begin{enumerate}[\hspace{13pt}1)]
     \item Mark the {\rust}-bindings that instantiates and returns a handle to a peripheral as \texttt{unsafe}.
     The other bindings do not need to be marked as unsafe because we trust them.
 
@@ -70,7 +70,7 @@ Another thing that can be attempted is to hide the hardware initialization proce
 {\zinc} uses the Platform Tree to specify the hardware, which do the process of initializing the peripherals and save them into a \code{run\_args} structure that acts as their owner.
 This approach of initialization has two advantages:
 
-\begin{enumerate}[\hspace{13}1)]
+\begin{enumerate}[\hspace{13pt}1)]
     \item Compile-time verification can guarantee that the peripherals get initialized correctly.
     \item The peripherals are owned by a variable, and access to these peripherals can be controlled by {\rust}'s borrow-checker.
 \end{enumerate}
