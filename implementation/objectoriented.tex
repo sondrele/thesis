@@ -72,9 +72,9 @@ Objects in a language like {\Java} also includes a tag field at the base of the 
 
 \begin{listing}[H]
   \centering
-  \begin{minipage}{0.31\textwidth}
+  \begin{minipage}{0.26\textwidth}
   \begin{listing}
-    \begin{minted}{java}
+    \begin{javacode}
 class ADC {
   int CTRL;
   int CMD;
@@ -84,13 +84,13 @@ class ADC {
   int SINGLEDATA;
   // ...
 }
-    \end{minted}
+    \end{javacode}
   \end{listing}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.31\textwidth}
+  \begin{minipage}{0.27\textwidth}
   \begin{listing}
-    \begin{minted}{rust}
+    \begin{rustcode}
 #[repr(C)]
 struct ADC {
   CTRL: u32,
@@ -101,13 +101,13 @@ struct ADC {
   SINGLEDATA: u32,
   // ...
 }
-    \end{minted}
+    \end{rustcode}
   \end{listing}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.31\textwidth}
+  \begin{minipage}{0.33\textwidth}
   \begin{listing}
-    \begin{minted}{c}
+    \begin{ccode}
 typedef struct {
   uint32_t CTRL;
   uint32_t CMD;
@@ -117,7 +117,7 @@ typedef struct {
   uint32_t SINGLEDATA;
   // ...
 } ADC;
-    \end{minted}
+    \end{ccode}
   \end{listing}
   \end{minipage}
 
@@ -209,13 +209,13 @@ The function then uses the object reference in the same manner as the implicit \
   \centering
   \begin{minipage}{0.47\textwidth}
   \begin{listing}
-      \begin{minted}{c}
-// ADC Member function with explicit
-// object reference
+      \begin{ccode}
+// ADC Member function with
+// explicit object reference
 uint32_t ADC_DataSingleGet(
            ADC *const adc) {
-  // The adc pointer is used as
-  // a reference to the this object
+  // The adc pointer is used as a
+  // reference to the this object
   return adc.SINGLEDATA;
 }
 
@@ -228,35 +228,36 @@ void main() {
   // reference to the object
   ADC_DataSingleGet(&adc);
 }
-      \end{minted}
+      \end{ccode}
   \end{listing}
   \end{minipage}
   \hfill
   \begin{minipage}{0.47\textwidth}
   \begin{listing}
-      \begin{minted}{rust}
+      \begin{rustcode}
 impl Adc {
   // Rust lets the programmer
   // specify how to accept the
   // object when invoked with
   // the dot notation
-  pub fn data_single_get(&self) -> u32 {
-    // self now is a refence to the ADC MMIO
+  pub fn data_single_get(&self)
+  -> u32 { // self is a reference
+    // to the ADC MMIO
     self.SINGLEDATA
   }
 }
 
 fn main() {
-  // Instantiation of MMIOs
-  // is handled in the next section
+  // Instantiation of MMIOs is
+  // handled in the next section
   let adc = Adc;
   // The Rust compiler issues
   // a static call to the
-  // member method and passes
-  // in the reference to the MMIO
+  // member method and passes in
+  // the reference to the MMIO
   adc.data_single_get();
 }
-      \end{minted}
+      \end{rustcode}
   \end{listing}
   \end{minipage}
   \caption{Member methods for {\C} and {\rust}, respectively.}
