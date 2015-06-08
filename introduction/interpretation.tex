@@ -7,9 +7,9 @@ The interpreted requirements from the Project Description is summarized in \auto
   \begin{tabular}{r | p{8cm}}
     \textbf{Requirement} & \textbf{Description} \\
     \hline
-    \textbf{R1} & Identify and describe the reqirements for an embedded platform in Rust \\
+    \textbf{R1} & Identify and describe the requirements for an embedded platform in Rust \\
     \textbf{R2} & Develop an embedded software platform for the Rust language on the EFM32 series \\
-    \textbf{R2} & Evaluate code size, performance and energy consumption \\
+    \textbf{R3} & Evaluate code size, performance and energy consumption \\
     \hline
   \end{tabular}
   \caption{Requirements from Project Description}
@@ -17,7 +17,7 @@ The interpreted requirements from the Project Description is summarized in \auto
 \end{table}
 
 Challenges related to \textbf{R1} was identified in an \emph{Kickoff} meeting with Silicon Labs and are given in \autoref{tab:lang-challenges}.
-These challenges was deemed vital to solve in order to provide an embedded platform in Rust.
+These challenge are important to consider in order to provide an embedded platform in Rust.
 
 \begin{table}[H]
   \centering
@@ -36,4 +36,26 @@ These challenges was deemed vital to solve in order to provide an embedded platf
   \label{tab:lang-challenges}
 \end{table}
 
-These language challenges are discussed in \autoref{sec:disc:lang-challenges}.
+In a regular program the values of variables do not change without the program directly modifying the values.
+Compilers exploit this assumption and might remove redundant access to the same variables to improve performance.
+In multi-threaded code with global mutable state this assumption does not hold.
+Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to make sure the compiler rereads the value in case it was updated.
+
+To program efficiently, both performance wise and concerning energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
+These interrupts must execute fast and will require support in the language.
+
+In an embedded system, like the one considered in this thesis, a given portion of the memory space is used to represent hardware registers.
+The language needs a facility to read and write these registers (\textbf{LC3}).
+
+Some languages allow object construction of statically allocated objects (\textbf{LC4}).
+These objects are constructed before the main entry point of the application.
+Thus, errors occurring while constructing these objects are challenging to handle.
+
+Allocation of heap memory is a convenient mechanism for creating data structures with dynamic size.
+In an embedded system with no excess memory, the performance of heap allocation with respect to reuse of deallocated memory is an important challenge (\textbf{LC5}).
+
+On a system with a \gls{os} and large memory hierarchy a technique called swapping can be used when the number of heap allocations exceeds the capacity of the \gls{ram} storage.
+In an embedded system these facilities does not exist, when the application is out of memory, then there is no way to allocate more.
+A subtle problem here is that when the error has occurred, the mechanism handling this condition cannot allocate memory as this will also fail and trigger the mechanism in an infinite loop (\textbf{LC6}).
+
+These language challenges are revisted as a part of the discussion of our platform in \autoref{sec:disc:language-challenges}.

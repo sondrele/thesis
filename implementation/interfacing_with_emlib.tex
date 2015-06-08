@@ -48,7 +48,7 @@ This module is necessary in order to configure the clocks that are required by o
 We wanted to use \gls{dma} for the {\prog{sensor-tracker}} application because it can be used to transfer data without using the \gls{cpu}. \\
 
 \prog{ebi}     &
-The \gls{ebi} is used in the {\gecko}'s internal memory map, and simplifies the process of writing data to e.g. the LCD on the {\chip{DK}}. \\
+The \gls{ebi} is used to memory map external devices connected to bus to the {\gecko}, this simplifies the process of writing data to e.g. the LCD on the {\chip{DK}}. \\
 
 \prog{emu}     &
 The \gls{emu} module controls the different energy modes on the {\gecko}.
@@ -264,6 +264,7 @@ timer0.init(&timer_init);
 \end{listing}
 
 \subsection{Exposing Static Inline Functions to Rust}
+\label{ssec:exposing_static_inline_functions_to_rust}
 
 In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
 The header files in the peripheral \gls{api} also define many functions as \code{static inline}, which only make the functions accessible by including the header file.
@@ -276,7 +277,7 @@ As an example, the \func{TIMER\_IntEnable} function is defined as \code{static i
 
 void STATIC_INLINE_TIMER_IntEnable(TIMER_TypeDef *timer,
                                    uint32_t flags) {
-    TIMER_IntEnable(timer, flags);
+  TIMER_IntEnable(timer, flags);
 }
 \end{minted}
 \caption{Exposing a \code{static inline} function to {\rust}.}
@@ -290,13 +291,13 @@ Thus, in order to make it practical to use the library in a seemingly safe manne
 \begin{listing}[h]
 \begin{minted}{rust}
 impl Timer {
-    pub fn int_enable(&self, flags: u32) {
-        unsafe { STATIC_INLINE_TIMER_IntEnable(self, flags)}
-    }
+  pub fn int_enable(&self, flags: u32) {
+    unsafe { STATIC_INLINE_TIMER_IntEnable(self, flags) }
+  }
 }
 
 extern {
-    fn STATIC_INLINE_TIMER_IntEnable(timer: &Timer, flags: u32);
+  fn STATIC_INLINE_TIMER_IntEnable(timer: &Timer, flags: u32);
 }
 \end{minted}
 \caption{Defining and using a function through the {\rust} \gls{ffi}.}
@@ -350,7 +351,7 @@ pub enum CCMode {
 \subsection{Testing}
 \label{ssub:testing}
 
-Verification of correctness is an important part of all software, weather it is done manually or with an automated framework.
+Verification of correctness is an important part of all software, whether it is done manually or with an automated framework.
 This section describes a small Unit test framework that was developed for testing the bindings for {\emlib}.
 
 \subsubsection{Why Unit testing}

@@ -13,7 +13,7 @@
 % For b5 papers instead of a4
 % The margins is from the example project at https://daim.idi.ntnu.no/faq_innlevering.php
 % If we don't explicitly set the margins, the indentation will be different for left/right pages
-% We can decide later weather we want margins like this or not
+% We can decide later whether we want margins like this or not
 \usepackage[lmargin=25mm,rmargin=25mm,tmargin=27mm,bmargin=30mm]{geometry}
 % \geometry{b5paper}
 
@@ -73,7 +73,11 @@
 
 % For listings. This package requires the pdf to be compiled with '-shell-escape' and that
 % python-pygments is found in the system path
+% Documentation: ftp://ftp.dante.de/tex-archive/macros/latex/contrib/minted/minted.pdf
 \usepackage{minted}
+% Predife style for Rust and C code. Usage: \begin{rustcode} ... \end{rustcode}
+\newminted{rust}{autogobble,linenos,frame=leftline}
+\newminted{c}{autogobble,linenos,frame=leftline}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -87,3 +91,6 @@
 
 % Used for multiple footnote with same number
 \usepackage{scrextend}
+
+% Can use \begin{enumerate}[1)]
+\usepackage{enumerate}

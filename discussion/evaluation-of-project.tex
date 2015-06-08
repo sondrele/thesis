@@ -3,4 +3,81 @@
 \section{Project Evaluations}
 \label{sec:disc:project_evaluations}
 
-This section discusses the results that was gathered as part of the Project Tracker and the Circle Game projects, and presented in \autoref{chap:results}.
+This section discusses the results that was gathered as part of the Sensor Tracker the Circle Game projects, and presented in \autoref{chap:results}.
+First we will look at the choice of projects and method of evaluation.
+Then we will discuss each of the separated metrics, energy efficiency, performance and code size in isolation, before we wrap up this section by discussing the current state of {\rust} programming on an embedded system in light of our results.
+
+\subsection{Projects and methods}
+
+For the platform evaluation of this project we choose to develop two main example applications, one to evaluate performance and one for energy efficiency.
+These two \emph{qualitative} studies where chosen in order to focus on evolving the platform guided by these metrics.
+The reason for not choosing a more \emph{quantitative} study with a larger number of applications was due to the focus on developing the platform and that there does not exist a benchmark suite written in {\rust} for embedded systems.
+The quantitative approach would produce a larger set of results, providing a better foundation to evaluate the platform.
+Our focus here was to create the platform and to include some preliminary evaluations to validate the feasibility for further development and evaluation.
+
+For this purpose the qualitative project approach provided us with a few driving metrics and feature sets, to motivate the development.
+And at the same time, keeping the total code base small enough to facilitate rapid changes if a better approach was discovered, like the build system described in \autoref{sec:build_system}.
+
+A third option could have been to develop a suite of micro benchmarks.
+This option was not chosen as we wanted to create \emph{larger} projects to stress the programmability and code organization of the platform.
+
+\subsection{Performance}
+In \autoref{sec:res:perf} we looked at the performance of the graphical game application, Circle Game.
+It is evident, from our results, that the performance of the {\rust} version is comparable and even greater than that of equivalent {\C} code.
+Although a graphical game application and the \gls{fps} performance metric is not typical for the embedded processors targeted here, this qualitative result suggests that the abstractions provided by the {\rust} language are \emph{zero cost} when considering performance.
+
+\subsection{Code Size}
+
+From our code size analysis we have made three discoveries which are worth to discuss.
+This discussion should be read in light of the fact that the {\rust} compiler is a newly released compiler and is being compared to a {\C} compiler which have been used in production for years.
+
+\begin{description}
+
+\item [Large unoptimized Rust build] \hfill \\
+  As seen throughout all of our measurements in {\rust}, the unoptimized binaries are significantly larger than the optimized binaries.
+  The cause for this seems to be that the many abstractions of the {\rust} language are implemented by adding levels of indirection through function calls, like the for loop described in \autoref{sec:rust:loops}.
+  These \emph{extra} functions, which are eliminated when optimized, makes the compiler produce substantially larger binaries without the optimizations.
+
+\item [Rust code can be significantly larger than C equivalents] \hfill \\
+  The optimized Sensor Tracker application written in {\rust} proved to be several times the size of the {\C} version.
+  This was further analyzed to reveal that the increase in size is due to three factors, reiterated here:
+\begin{itemize}
+\item The application code itself
+\item The Rust Library
+\item {\rust} expection mechanism (unwind)\footnote{There is a proposal make this mechansim optional by a compiler flag.}
+\end{itemize}
+
+\item [There is zero size overhead of using optimized Rust] \hfill \\
+  The Minimal Main application shows that using {\rust} by itself does not incur an increase in size.
+  It is the size of the software libraries that in our results increases the size of the {\rust} binaries
+
+\end{description}
+
+\subsection{Energy}
+
+We must emphasis that energy consumption measurements presented in \autoref{sec:res:energy} are preliminary, and that the focus for the Sensor Tracker application was primarily to provide an application in this domain.
+The main problem with reading to much into these results, is that the {\rust} and {\C} implementations share a substantial amount of the library code, which is written in {\C}.
+The application code here is just a thin wrapper around the libraries.
+When we dug deeper into the analysis of the application we found that most of the time, the application spends its time in a busy-wait state, waiting for sensor data to be available.
+In these circumstances the difference between the two languages are not evident.
+
+From the results, we can deduce that the variance in the energy consumption in the tested applications are larger within the different levels of optimization in the C compiler, compared to the introduction of the Rust application layer.
+As we saw in \autoref{sec:res:energy:cache} the variance is more correlated to the cache hit ratio than what programming language we are using.
+This result at least points in the direction of the two language being equal in this domain.
+
+In order to evaluate the {\rust} language thoroughly in this domain, a larger portion of the code constituting the library must be written in {\rust}.
+In addition, a more suitable example must be employed, where the actual code is the dominant factor and not the busy-waits.
+
+\subsection{{\rust} in Embedded Systems}
+
+The results discussed here are positive for further exploration of {\rust} in the embedded domain.
+One critical task in an embedded system is to meet a strict deadline imposed by timely interrupts.
+Both the Sensor Tracker and Circle Game expose similar performance for both language implementations and this provides an important result.
+
+On the other hand when we look at code size we see a larger challenge for the {\rust} language.
+The focus on \concept{Zero Cost Abstractions} seems not to take into account the size of the end binary.
+Especially not in the builds where optimizations are not applied.
+In a system where excess resources for storing code and data, this does not cause any problems, but this is not the case in an embedded system.
+By comparing the smallest processors of the EFM32 Product Familiy given in \autoref{sub:emf32} and the size of the debug builds presented in \autoref{sec:res:code-size}, we see that a debug build of the Minimal Main example will not fit in the smallest models.
+Further, the Sensor Tracker application will not fit on the any of the Tiny or Zero Geckos, as even the optimized binary is to large.
+Not being able to debug an application on the actual target hardware can be a significant problem in development and testing stages, but also for tracing bugs in production systems.

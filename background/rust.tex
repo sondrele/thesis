@@ -8,6 +8,23 @@ It is a strongly and statically typed, multi-paradigm programming language, that
 The language borrows many constructs and features from other programming languages, some of which are described in the following sections.
 Over the course of {\rust}'s development, the language has set out to solve two major problems concerning both safety and concurrency, as well as taking full utilization of the underlying hardware.
 
+\subsection{Hello World}
+
+In \autoref{lst:rust:hello} we see the canonical 'Hello World' program implemented in {\rust}.
+We see that in {\rust} the program entry point is the {\main} function which is defined in the top level scope of the application.
+The body of the function contains an invocation of the \code{println!} macro\footnote{Macros are distigiushed from functions by the leading \code{!} symbol.}.
+This macro has similar functionality to the {\C} \code{printf} function, but verifies the usage of the function at compile time.
+
+\begin{listing}[H]
+  \begin{minted}{rust}
+fn main() {
+  println!("Hello, World!");
+}
+  \end{minted}
+  \caption{Hello World written in {\rust}}
+  \label{lst:rust:hello}
+\end{listing}
+
 \subsection{Language Features}
 \label{ssub:rust:features}
 
@@ -46,7 +63,7 @@ The table shows that {\rust} is explicit about the size and signedness of intege
     \keyword{u8}, \keyword{u16}, \keyword{u32}, \keyword{u64} & Unsigned integers \\
     \keyword{i8}, \keyword{i16}, \keyword{i32}, \keyword{i64} & Signed integers \\
     \keyword{isize}, \keyword{usize}                        & `Pointer-sized' Integers \\
-    Pointer        & Raw unsafe pointers (\code{*const T}, \code{*mut T}) \\
+    Pointer        & Raw unsafe\footnote{Explained in \autoref{ssub:unsafe_code}} pointers (\code{*const T}, \code{*mut T}) \\
     Array          & Fixed-length array type, denoted with \code{[T]} \\
     \keyword{slice} & A view into a array, denoted with \code{\&[T]} \\
     \keyword{str}   & UTF-8 encoded byte array \\
@@ -271,6 +288,7 @@ An example that shows how to use the filter-iterator is displayed later in this 
 
 
 \subsubsection{Loops}
+\label{sec:rust:loops}
 
 {\rust} provides the two loop constructs known from C, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
 The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead it operates on iterators.
@@ -475,7 +493,7 @@ This is the most common approach for systems programming languages like {\C} and
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
 Memory leaks like this will eventually lead a running program into crashing due to the unavailability of extra resources.
 
-It is important to always remember and deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
+It is important to always remember to deallocate all memory referenced by a handle, before the handle leaves its scope in the program.
 {\rust} operates differently from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
 When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
@@ -496,7 +514,7 @@ fn main() {
   read_book(b);
   // when `read_book' returns, the book is also deallocated
   // this makes it impossible to  read the book two times
-  read_book(b); // <- error: use of moved value: `b'
+  read_book(b); // <- compile-time error: use of moved value: `b'
  }
 \end{minted}
 \caption{Example of an owned handle}
@@ -557,6 +575,10 @@ char *name_as_ref() {
     Book b = { .name = "Gecko's", .pages = 150 };
     return &b.name;
 }
+
+int main() {
+  char *name = name_as_ref();
+}
 \end{minted}
 \caption{Returning an invalid reference in C}
 \label{lst:invalid_ref_c}
@@ -567,6 +589,10 @@ char *name_as_ref() {
 fn name_as_ref() -> &str { // <- error: missing lifetime specifier
     let b = Book { name: "Gecko's".to_string(), pages: 150 };
     &b.name
+}
+
+fn main() {
+  let name = name_as_ref();
 }
 \end{minted}
 \caption{Attempting to return an invalid reference in {\rust}}
@@ -597,17 +623,17 @@ fn main() {
 \label{lst:valid_ref_rust}
 \end{listing}
 
-% \subsection{Concurrency Model} % (fold)
-% \label{ssub:concurrency_model}
+\subsection{Concurrency Model} % (fold)
+\label{ssub:concurrency_model}
 
-% Solving both memory safety and concurrency might sound like two entirely different problems, but the ownership system described in \autoref{sec:guaranteed_memory_safety} actually turned out to go a long way of being the solution of them both \cite{web:fearless_concurrency_with_rust}.
-% While we do not utilize or focus on the concurrency of {\rust} in this project, it is still a very important feature for the language, so it will be shortly introduced in this section.
+Solving both memory safety and concurrency might sound like two entirely different problems, but the ownership system described in \autoref{sec:guaranteed_memory_safety} actually turned out to go a long way of being the solution of them both \cite{web:fearless_concurrency_with_rust}.
+While we do not utilize or focus on the concurrency of {\rust} in this project, it is still a very important feature for the language, so it will be shortly introduced in this section.
 
-% As already mentioned, {\rust}'s ownership system helps us to reason about the liveliness of variables, and it helps us to catch errors like use-after-free, and data races by not allowing us to have multiple references to the same mutable data.
-% This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
-% Thus, {\rust}'s way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
-% Indeed, the core concurrency functionality in {\rust} is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
-% This is an important distinction, because it allows for any number 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms provided in the standard library.
+As already mentioned, {\rust}'s ownership system helps us to reason about the liveliness of variables, and it helps us to catch errors like use-after-free, and data races by not allowing us to have multiple references to the same mutable data.
+This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
+Thus, {\rust}'s way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
+Indeed, the core concurrency functionality in {\rust} is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
+This is an important distinction, because it allows for any number of 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms that are provided as part of the standard library.
 
 \subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
@@ -615,7 +641,7 @@ fn main() {
 {\rust}'s strong type system and static guarantees about memory safety goes a long way of verifying the safety of programs, but for certain programs the restrictions set by the compiler might be too conservative.
 There exist many programs that are indeed safe, but still not possible for the compiler to verify.
 Examples of code that the compiler cannot verify is code that dereference \concept{raw pointers}, or code that utilize {\rust}'s \gls{ffi} or directly call any of the compiler intrinsics functions.
-Raw pointers in {\rust} are similar to a normal pointer in C, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
+Raw pointers in {\rust} are similar to a normal pointer in {\C}, which means that they are not constrained by {\rust}'s ownership rules, and thus allows for aliasing to mutable data, they are not even guaranteed to have non-null values.
 The compiler can not protect against use-after-free errors or dangling pointers when raw pointers are involved.
 
 The ability to define new abstractions with efficient implementations is an important goal of {\rust}.

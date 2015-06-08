@@ -21,7 +21,7 @@ The method entails connecting the control registers of hardware devices to the s
 This results in a programming model where the programmer can use common memory operations to control the devices.
 
 Let us consider the \gls{adc} on the {\gecko}.
-The \gls{adc} converts an analoge signal to a digital representation.
+The \gls{adc} converts an analog signal to a digital representation.
 The base address of the \gls{adc} on the {\gecko} is memory mapped to the location \mem{0x40002000} in the memory space.
 This means that writing to a pointer that points to this address will write to the control registers in the \gls{adc} device.
 
@@ -209,7 +209,7 @@ The function then uses the object reference in the same manner as the implicit \
   \begin{minipage}{0.47\textwidth}
   \begin{listing}
       \begin{minted}{c}
-// ADC Member function with exlicit
+// ADC Member function with explicit
 // object reference
 uint32_t ADC_DataSingleGet(
            ADC *const adc) {
