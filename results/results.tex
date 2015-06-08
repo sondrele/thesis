@@ -3,8 +3,18 @@
 \chapter{Results}
 \label{chap:results}
 
-\include*{results/code-size}
+In this chapter we present the results after conduction measurements on applications written for the {\rg} platform.
+We mainly focus on the Sensor Tracker and Circle Game applications, but include some smaller applications to look at concepts in isolation.
+The three metric chosen for measurements are as follows:
+\begin{itemize}
+  \item Performance
+  \item Energy Consumption
+  \item Code Size
+\end{itemize}
+These metrics are integral to embedded computing systems and are somewhat related to each other.
+In the last section in this chapter we look how the heap allocation is performed in {\rust} and {\C}.
+
 \include*{results/perf}
 \include*{results/energy}
-
-\include*{results/objectoriented}
+\include*{results/code-size}
+\include*{results/heap}
