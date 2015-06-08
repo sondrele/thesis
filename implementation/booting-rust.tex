@@ -55,9 +55,8 @@ pub extern fn main() {
 \end{listing}
 
 \attrib{\#\![no\_std]} on line 2 in \autoref{lst:embedded-rust-hello-world} tells the {\rust} compiler not to include the standard library.
-
 Line 3 must be analyzed in conjunction with lines 10 and 11.
-Firstly we must guarantee that the function can be called by the \func{\_start} function.
+Firstly, we must guarantee that the function can be called by the \func{\_start} function.
 This is done by defining the {\main} function to be a publicly exported symbol denoted by \code{pub extern}.
 The second change is to ensure that the function is callable by a {\C} function.
 \code{extern} makes this possible by making the function use the {\C} \gls{abi}.
@@ -97,7 +96,7 @@ There is no need to allocate memory for globals declared as \code{const} as the 
 
 The static globals are immutable by default but can be made mutable by the \code{mut} keyword.
 The variables on line 3 and 4 are declared to be \code{static}.
-As these are immutable they are allocated in the read-only section called \elfsec{.text}.
+As these are immutable, they are allocated in the read-only section called \elfsec{.text}.
 
 On line 5 and 6 the declarations are marked with \code{static mut}.
 Here we see that the zero initializes variable is assigned to the \elfsec{.bss} section in the {\elf} file.
@@ -108,10 +107,11 @@ On line 6 we have a non-zero value that has to be stored in Flash memory prior t
 
 The {\rust} program that was presented earlier in \autoref{lst:embedded-rust-hello-world} is quite obscure.
 For this reason the \lib{startup} \footnote{\url{https://github.com/RustyGecko/startup/}} library was developed in order to minimize the effort of making a new {\rust} program for the {\gecko}.
-This library makes the startup process more intuitive and hides all the details that was presented in \autoref{ssec:minimal_rust_program_to_boot}.
+This library makes the startup process more intuitive and hides all the details that were presented in \autoref{ssec:minimal_rust_program_to_boot}.
 
 A minimal `Hello World' program using the \lib{startup} crate is given in \autoref{lst:embedded-rust-bootstrapped}.
-We still have to annotate the program with \code{\#[no\_std]}, but the \code{main} function is now much more similar to the one that was presented in the start of this section, due to the inclusion of the \lib{startup} library.
+We still have to annotate the program with \code{\#[no\_std]}, but the \code{main} function is now much more similar to the one that was presented at the start of this section.
+This is due to the inclusion of the \lib{startup} library.
 
 \begin{listing}[H]
   \begin{rustcode}
@@ -123,19 +123,19 @@ fn main() {
   loop {}
 }
   \end{rustcode}
-  \caption{Embedded Hello World using startup library to bootstrap}
   \label{lst:embedded-rust-bootstrapped}
+  \caption{Embedded Hello World bootstrapped with the \lib{startup} library}
 \end{listing}
 
 \subsection{Handling Interrupts in Rust}
 % \todo{This sections might be moved}
 \label{sec:impl:handling-interrupts}
 
-Interrupts are an integral part of embedded programs and having a native way of handling the interrupts provides a great benefit and flexibility for a programming language.
+Interrupts are an integral part of embedded programs, and having a native way of handling the interrupts provides a great benefit and flexibility for a programming language.
 
-To handle interrupts on the {\gecko} one have to register a function in the \emph{interrupt vector}.
-This vector is defined in the \textbf{startup} file provided by Silicon Labs, and is simply a list of function pointers defined in the \textbf{.isr\_vector} section of the \textbf{elf} binary.
-This is the first section in the \textbf{text} segment of the binary which ensures that it is located at memory address \mem{0x0} when the microcontroller starts executing.
+To handle interrupts on the {\gecko}, one have to register a function in the \emph{interrupt vector}.
+This vector is defined in the \textbf{startup} file provided by Silicon Labs, and is simply a list of function pointers defined in the \textbf{.isr\_vector} section of the {\elf} binary.
+This is the first section in the \textbf{text} segment of the binary which ensures that it is located at memory address \mem{0x0} when the \gls{mcu} starts executing.
 When an interrupt occurs, the microcontroller will inspect the interrupt vector and find the address of the handler function for the interrupt which occurred.
 Both the interrupt vector and the default interrupt handlers are defined in the \textbf{startup} file for the {\gecko}.
 The default implementations are simply infinite loops defined as weak symbols.
