@@ -3,9 +3,8 @@
 \section{Library Bindings}
 \label{sub:interfacing_with_emlib}
 
-This section describes the peripheral library \emph{bindings} developed for the platform.
-
-The \gls{ffi} available in {\rust} has been used to interface with Silabs' suite of C libraries used to control the {\gecko}.
+This section describes the different \emph{bindings}-libraries that was developed as part of the {\rg} platform.
+The \gls{ffi} available in {\rust} has been used to interface with Silicon Labs' suite of {\C} libraries used to control the {\gecko}.
 This way, we have been able to create wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
 These wrappers are called language bindings.
 The following sections explain the process of defining and implementing the \gls{ffi} in {\rust} that is used to access and control the peripherals on the {\gecko}.
@@ -13,10 +12,10 @@ The following sections explain the process of defining and implementing the \gls
 \subsection{The Libraries}
 \label{ssub:the_bindings_library}
 
-In \autoref{sec:back:lib} we presented the three libraries we have created partially binding support for, CMSIS, Emlib and Emdrv.
-Here we will take a closer look at which modules have been developed and an reasoning for chosing each one.
+In \autoref{sec:back:lib} we presented the three libraries that we have created partially binding support for; \gls{cmsis}, {\emlib} and {\emdrv}.
+Here, we will take a closer look at which modules from these libraries that we have written bindings for, and the reasoning for choosing each one.
 
-We have written many example applications in {\rust} that utilize the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
+We have also written many example applications in {\rust} that utilize the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
 In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \autoref{sec:impl:project:i} and \autoref{sec:impl:project:ii}.
 
@@ -32,7 +31,7 @@ Most of the examples uses one or several IRQ handlers for the peripheral binding
 The priority, when we first set out to make the bindings for {\emlib}, was to define a viable platform to write rust applications with, which we could use to evaluate the language on the embedded system.
 It has not been a priority of this project to fully support all of the {\gecko}'s peripherals or provide bindings for the entire {\emlib}.
 The bindings have been developed because we have needed functionality from the peripherals, not the other way around.
-\autoref{tab:emlib_peripheral_bindings} summarizes a number of modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
+\autoref{tab:emlib_peripheral_bindings} summarizes some modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
 A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}, these are either written from scratch, or directly ported from {\emlib}'s examples.
 
 \begin{table}[H]
@@ -141,7 +140,7 @@ Demonstrates dynamically allocated strings and vectors from the \lib{collections
 
 As with {\emlib}, it was not a goal to fully support all available peripheral drivers that are available in \prog{emdrv}.
 The drivers that we have partially implemented bindings for are summarized in \autoref{tab:emdrv_bindings}, they are not that hard to grasp or use since they are all fairly small.
-The project includes two examples that demonstrate how to use the flash driver, they are summarized in \autoref{tab:emdrv_examples}  \todo{table needs to refer to section about IRQ. Evt. flytt noe av innholdet fra IRQ-seksjonen inn i denne seksjonen.}.
+The project includes two examples that demonstrate how to use the flash driver, they are summarized in \autoref{tab:emdrv_examples}.
 
 \begin{table}[H]
   \centering
@@ -158,10 +157,10 @@ The Driver is used by the {\prog{sensor-tracker}}. \\
 
 \prog{gpioint}  &
 This driver is ported from {\C} to {\rust}, the implementation differs slightly between the two versions, but the functionality is the same.
-The reasoning for porting this driver is described in \autoref{}. \\
+The reasoning for porting this driver is described in \autoref{sec:porting-gpioint}. \\
 
 \prog{i2c}  &
-This driver is used by the {\prog{sensor-tracker}} application, it exposes functions to initalize a commonly used \gls{i2c} data transfer configuration. \\
+This driver is used by the {\prog{sensor-tracker}} application, it exposes functions to initialize a commonly used \gls{i2c} data transfer configuration. \\
 
 \prog{tft}  &
 This binding exposes one function to initialize the TFT screen on the {\chip{DK}}.
@@ -200,10 +199,9 @@ When the user presses a button the {\chip{STK}} will initiate a transfer that re
 The {\emlib} module for controlling the \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
 The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
-Then an initialization structure for the Timer module is acquired, this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 
 \begin{listing}[h]
-\begin{minted}{c}
+\begin{ccode}
 // Select TIMER0 parameters
 TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
 // Enable overflow interrupt
@@ -214,39 +212,40 @@ NVIC_EnableIRQ(TIMER0_IRQn);
 TIMER_TopSet(TIMER0, TOP);
 // Configure TIMER
 TIMER_Init(TIMER0, &timerInit);
-\end{minted}
-\caption{Initializing a Timer in C}
+\end{ccode}
+\caption{Initializing a Timer in {\C}}
 \label{lst:timer_program_c}
 \end{listing}
 
+First, an initialization structure for the Timer module is acquired, and this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 The next lines enable interrupts for the Timer, and the \gls{nvic} interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
-All this function does is to clear the interrupt signal and toggle the value of an LED.
+All this function does is to clear the interrupt signal and toggle the value of a LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
 Interrupts like this are an important part of programming the {\gecko}.
 They can be used for an asynchronous programming model where the application is defined by the code in the different interrupt handlers, and like in the example above, the \gls{mcu} can be put to sleep in between interrupts.
 
 \begin{listing}[h]
-\begin{minted}{c}
+\begin{ccode}
 void TIMER0_IRQHandler(void) {
   // Clear flag for TIMER0 overflow interrupt
   TIMER_IntClear(TIMER0, TIMER_IF_OF);
   // Toggle LED ON/OFF
   GPIO_PinOutToggle(LED_PORT, LED_PIN);
 }
-\end{minted}
-\caption{Timer Interrupt Handler}
+\end{ccode}
+\caption{Timer interrupt handler}
 \label{lst:timer_interrupt_handler}
 \end{listing}
 
 The equivalent program written in {\rust} is shown in \autoref{lst:timer_program_rust}.
-Semantically they are the same, but the usage differs slightly, which is natural since we are using a higher level programming language.
+Semantically, they are the same, but the usage differs slightly, which is natural since we are using a higher level programming language.
 Instead of calling functions that are included through a {\C} header file, we are calling functions that are available through a {\rust} module.
-For example the \func{enable\_irq} function is part of the \code{nvic} module.
+For example, the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
 It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
 
 \begin{listing}[h]
-\begin{minted}{rust}
+\begin{rustcode}
 // Select TIMER0 parameters
 let timer_init = Default::default();
 // Enable overflow interrupt
@@ -258,7 +257,7 @@ nvic::enable_irq(nvic::IRQn::TIMER0);
 timer0.top_set(TOP);
 // Configure TIMER
 timer0.init(&timer_init);
-\end{minted}
+\end{rustcode}
 \caption{Initializing a Timer in {\rust}}
 \label{lst:timer_program_rust}
 \end{listing}
@@ -266,30 +265,31 @@ timer0.init(&timer_init);
 \subsection{Exposing Static Inline Functions to Rust}
 \label{ssec:exposing_static_inline_functions_to_rust}
 
-In order to work with structures and enums originally defined in C, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
-The header files in the peripheral \gls{api} also define many functions as \code{static inline}, which only make the functions accessible by including the header file.
+In order to work with structures and enums originally defined in {\C}, we had to redefine them in {\rust} and mark them with \attrib{\#[repr(C)]} so that {\rust} can guarantee that the data-elements are {\C} compatible.
+The header files in the peripheral \gls{api} also define many functions as \code{static inline}, which only make the functions accessible to the program that includes the header file.
 Since it is not possible to include {\C} header files directly in {\rust}, we had to expose these functions through one extra layer of {\C} code.
-As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}, in order to call this function through {\rust} we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
+As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}.
+In order to call this function through the {\C} \gls{abi} in {\rust}, we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
 
 \begin{listing}[h]
-\begin{minted}{c}
+\begin{ccode}
 #include "en_timer.h"
 
 void STATIC_INLINE_TIMER_IntEnable(TIMER_TypeDef *timer,
                                    uint32_t flags) {
   TIMER_IntEnable(timer, flags);
 }
-\end{minted}
+\end{ccode}
 \caption{Exposing a \code{static inline} function to {\rust}.}
 \label{lst:exposing_static_inline}
 \end{listing}
 
-In the {\rust} module definition of Timer, the function has to be made available through the \code{extern} block shown in \autoref{lst:rust_ffi_example}.
+In the {\rust} module definition of Timer, the function has to be made available through an \code{extern} block, as shown in \autoref{lst:rust_ffi_example}.
 As described in \autoref{ssub:unsafe_code}, every function available through the \gls{ffi} are considered {\unsafe} because {\rust} knows nothing about the function, other than its parameters and its return value.
-Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an {\unsafe} block, in the respective function defined in {\rust}.
+Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an {\unsafe} block in the respective function defined in {\rust}.
 
 \begin{listing}[h]
-\begin{minted}{rust}
+\begin{rustcode}
 impl Timer {
   pub fn int_enable(&self, flags: u32) {
     unsafe { STATIC_INLINE_TIMER_IntEnable(self, flags) }
@@ -299,16 +299,16 @@ impl Timer {
 extern {
   fn STATIC_INLINE_TIMER_IntEnable(timer: &Timer, flags: u32);
 }
-\end{minted}
+\end{rustcode}
 \caption{Defining and using a function through the {\rust} \gls{ffi}.}
 \label{lst:rust_ffi_example}
 \end{listing}
 
-If we compare the call-stacks between calling the \code{timer0.int\_enable} function in {\rust} and calling the \func{TIMER\_IntEnable} function in C, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
-These are simple wrappers which require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one to two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
-However, by applying optimization this overhead can be removed completely and {\C} code can be called with no overhead \cite{web:rust_once_run_everywhere}.
-The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial inlining when the code is compiled with optimization as the only contents of the wrapper is a call to the actual function.
-Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will inline the C implementation into the Rust defined \code{timer0.int\_enable}.
+If we compare the call-stacks between calling the \code{timer0.int\_enable} function in {\rust}, and calling the \func{TIMER\_IntEnable} function in {\C}, we can see that every function call through the \gls{ffi} requires \emph{two} extra function calls.
+These are simple wrappers that require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one or two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
+However, this overhead can be removed completely by optimizing the code during compilation so that the {\C} code can be called with no overhead \cite{web:rust_once_run_everywhere}.
+The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial function inlining, as the only contents of the wrapper is a call to the actual function.
+Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will inline the {\C} implementation into the code for the \code{timer0.int\_enable} function in {\rust}.
 This results in the same performance and similar call-stacks for both {\C} and {\rust}.
 This is a working example of one of {\rust}'s many zero-cost abstractions.
 
@@ -316,16 +316,16 @@ This is a working example of one of {\rust}'s many zero-cost abstractions.
 
 We have tried to keep \emlib's naming convention across the layer of bindings.
 This makes it easy for anyone reading either the {\C}- or the {\rust}-code to translate and understand the code between the two languages.
-Since every constant, enum-field, or struct-name is directly accessible by name in C, if the corresponding header file is included, it is important that names of such fields can be separated from each other and do not cause a naming collision.
+Since every constant, enum-field, or struct-name is directly accessible by name in {\C}, if the corresponding header file is included, it is important that names of such fields can be separated from each other and do not cause a naming collision.
 
 \begin{listing}[h]
-\begin{minted}{c}
+\begin{ccode}
 typedef enum {
   timerCCModeOff     = _TIMER_CC_CTRL_MODE_OFF,
   timerCCModeCapture = _TIMER_CC_CTRL_MODE_INPUTCAPTURE,
   // ...
 } TIMER_CCMode_TypeDef;
-\end{minted}
+\end{ccode}
 \caption{Part of a Timer enum defined in {\C}.}
 \label{lst:enum_naming_c}
 \end{listing}
@@ -337,13 +337,13 @@ From each field in the enum we can extract 1) its module name \file{timer}, 2) i
 However, the naming convention remains the same when the fields are used, e.g. the expression ``\code{let mode = timer::CCMode::Capture;}'' in {\rust} shows the similarity with the equivalent expression in C: ``\code{int mode = timerCCModeCapture;}''.
 
 \begin{listing}[h]
-\begin{minted}{rust}
+\begin{rustcode}
 pub enum CCMode {
   Off     = _TIMER_CC_CTRL_MODE_OFF,
   Capture = _TIMER_CC_CTRL_MODE_INPUTCAPTURE,
   // ...
 }
-\end{minted}
+\end{rustcode}
 \caption{The enum ported to {\rust}.}
 \label{lst:enum_naming_rust}
 \end{listing}
@@ -351,7 +351,7 @@ pub enum CCMode {
 \subsection{Testing}
 \label{ssub:testing}
 
-Verification of correctness is an important part of all software, whether it is done manually or with an automated framework.
+Verification of correctness is an important part of all software, whether it is done manually or with an automated test framework.
 This section describes a small Unit test framework that was developed for testing the bindings for {\emlib}.
 
 \subsubsection{Why Unit testing}
@@ -385,7 +385,7 @@ An example of what the testing looks like is shown in \autoref{lst:test:adc}, it
   \centering
   \begin{minipage}{\textwidth}
   \begin{listing}
-    \begin{minted}{rust}
+    \begin{rustcode}
 fn test_init_called_with_default() {
   // FFI call to the C function below
   unsafe { adc_expect_init_called_with_default(); }
@@ -394,7 +394,7 @@ fn test_init_called_with_default() {
   // Call the emlib bindings with a default argument
   adc0.init(&Default::default());
 }
-    \end{minted}
+    \end{rustcode}
     \caption{{\rust} side of \code{ADC\_Init} test}
     \label{lst:test:adc:rust}
   \end{listing}
@@ -402,13 +402,13 @@ fn test_init_called_with_default() {
 
   \begin{minipage}{\textwidth}
   \begin{listing}
-    \begin{minted}{c}
+    \begin{ccode}
 void adc_expect_init_called_with_default() {
   static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
   // Set up the expected value on the Mock
   ADC_Init_Expect(ADC0, &init);
 }
-    \end{minted}
+    \end{ccode}
     \caption{C side of \code{ADC\_Init} test}
     \label{lst:test:adc:c}
   \end{listing}
