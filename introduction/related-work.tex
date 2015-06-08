@@ -2,7 +2,7 @@
 \subsection{Embedded Computer System}
 An \concept{embedded computer system} is a special purpose computer system where the computer is \emph{embedded} in the device it controls.
 These computers are much smaller than conventional server, desktop, and laptop computers, but are far more in numbers.
-A regular household contains embedded systems in devices like microwave-owens, dishwashers, and alarm systems.
+A regular household contains embedded systems in devices like microwave ovens, dishwashers, and alarm systems.
 In a car you find embedded computers which are controlling the breaks of the car, the automatic windows, navigation and entertainment systems.
 In recent years a trend of devices, called wearables, are emerging which also has an embedded computer at its core.
 The internet is growing, and according to Gartner the number of connected devices will increase form $\sim$5 billion in 2015 to $\sim$25 billion by 2015 \footnote{http://www.gartner.com/newsroom/id/2905717}.
@@ -19,25 +19,24 @@ In recent
 
 \subsubsection{Programming Languages}
 
-
-Assembly
-FORTH, FORTRAN
-C/C++
-Java Embedded
-
-As seen in \autoref{fig:vdc:langs} according to VDC Research the usage of C and assembly are on the way down in faviour of higher level languages like C++, Java, and C#.
+In embedded systems low level languages have are preferred.
+Traditionally a large portion of code bases consists of C, Assembly, and C++.
+As seen in \autoref{fig:vdc:langs} according to VDC Research \footnote{http://www.oracle.com/us/technologies/java/java-embedded-market-wp-2179018.pdf} the usage of C and assembly are on the way down in favor for higher level languages like C++, Java, and C\#.
 
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.5]{figures/plots/langs.png}
   \end{center}
-  \caption{}
+  \caption{Survey of language used on current project by VDC Research}
+
   \label{fig:vdc:langs}
 \end{figure}
 
 
-VDC Research indicate that the portion of embedded systems design projects powered by Java rose from 12.3 percent in 2008 to 27.8 percent in 2013. Meanwhile, use of C during the same period dropped from 91.6 percent to 59.8 percent, and use of Assembly fell from 47.4 percent to 19.1 percent.
 
+\subsubsection{Software Platforms}
+
+There are two major software platforms used in embedded, namely with and without an \gls{os}.
 
 
 Embed, Arduino
