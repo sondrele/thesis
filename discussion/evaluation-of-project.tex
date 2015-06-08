@@ -40,9 +40,12 @@ This discussion should be read in light of the fact that the {\rust} compiler is
 
 \item [Rust code can be significantly larger than C equivalents] \hfill \\
   The optimized Sensor Tracker application written in {\rust} proved to be several times the size of the {\C} version.
-  This was further analyzed to reveal that the increase in size is due to the {\rust} libraries, especially considering generic code.
-  As an example, the Sensor Tracker will output samples over the \gls{usart} interface, these samples are converted to strings using the {\core} library \code{format!} macro.
-  Using this macro for the types \code{u8, i32, u32} increases the size of the optimized binary with 1736B.
+  This was further analyzed to reveal that the increase in size is due to three factors, reiterated here:
+\begin{itemize}
+\item The application code itself
+\item The Rust Library
+\item {\rust} expection mechanism (unwind)\footnote{There is a proposal make this mechansim optional by a compiler flag.}
+\end{itemize}
 
 \item [There is zero size overhead of using optimized Rust] \hfill \\
   The Minimal Main application shows that using {\rust} by itself does not incur an increase in size.

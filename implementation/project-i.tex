@@ -36,16 +36,16 @@ The RTC clock is set up to generate interrupts each \emph{n} milliseconds.
 On each interrupt a new sample is created by the sensors and pushed into a circular buffer structure.
 The main loop, which is executed once after each interrupt has been handled, extracts all the sample currently in the circular buffer and stores them in a sample store in \gls{ram}.
 
-The sensors used in the application are shown in \autoref{tab:project:i:sensors}.
+The sensors\footnote{The sensors \#1 and \#2 are physicaly the same sensor, but are exposed by the application separately.} used in the application are shown in \autoref{tab:project:i:sensors}.
 
 \begin{table}[H]
   \centering
   \begin{tabular}{ l | l | l | l | l }
     \textbf{\#} & \textbf{Name} & \textbf{Part} & \textbf{Connection} & \textbf{Measured Data} \\
     \hline
-    0 & Internal Temperature Sensor & & ADC0 & CPU Temperature \\
-    1 & Humidity Relative Sensor & Si7013 & I2C1 & Room Humidity \\
-    2 & Temperature Sensor & Si7013 & I2C1 & Room Temperature \\
+    0 & Internal Temperature & EFM32GG & ADC0 & CPU Temperature \\
+    1 & Humidity Relative & Si7013 & I2C1 & Room Humidity \\
+    2 & Temperature & Si7013 & I2C1 & Room Temperature \\
     \hline
   \end{tabular}
   \caption{Sensors used by the {\tracker}}

@@ -2,25 +2,8 @@
 \label{sec:impl:booting}
 
 The contents of this section explains how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
-
-The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization before the {\main} function.
-In {\Cpp} however, the process is complicated by the fact that {\Cpp} supports static global constructors as shown in \autoref{lst:impl:cpp:static-constructor}.
-
-\begin{listing}[H]
-  \begin{minted}{c++}
-class Foo { Foo() { } };
-Foo foo; // statically called constructor
-int main() { return 0; }
-  \end{minted}
-  \caption{{\Cpp} with static constructor call.}
-  \label{lst:impl:cpp:static-constructor}
-\end{listing}
-
-In \autoref{lst:impl:cpp:static-constructor} the \code{Foo} constructor call must be issued before the main function is executed.
-The runtime must therefore be augmented to issue calls to these constructors and handle errors that can occur.
-These types of constructors are not allowed in {\rust} by a compiler rule which allows only constant-expression as initializers.
-
-As this process is identical to {\C}, we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
+The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization\footnote{This is in contrast to languages like {\Cpp} where objects can be initialized with statically called constructors, this must be handled by the startup process.} before the {\main} function.
+Therefore we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
 Silicon Labs' software suite provides the \func{ResetHandler} and linker script for the EFM32 microcontrollers.
 The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provided by the {\armgcc} toolchain, handles the setup in the \func{\_start} routine, as described in \autoref{sec:before-main}.
 
@@ -28,7 +11,7 @@ The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provi
 \label{ssec:minimal_rust_program_to_boot}
 
 There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in an embedded environment.
-Let us first look at the standard version given in \autoref{lst:rust-hello-world}, we can see that all we have to define is the \code{main} function.
+Let us first revisit the canonical version from \autoref{sub:the_rust_programming_language} given in \autoref{lst:rust-hello-world}, we can see that all we have to define is the \code{main} function.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -41,7 +24,7 @@ fn main() {
 \end{listing}
 
 A {\rust} program will by default include \gls{rsl} automatically.
-As explained in \autoref{sec:rsl}, this library is not usable in an embedded program and some the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
+As explained in \autoref{sec:rsl}, this library is not usable in an embedded program, and the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
 
 The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world}, does not print out the ``Hello, World!'' text because this would have required additional setup, and we are only concerned with the boot process in this example.
 In addition to removing the \gls{rsl}, the {\main} function is \emph{exported} to be callable from the {\C} runtime.
@@ -58,7 +41,7 @@ extern crate core;
 
 // Define main function
 #[no_mangle]
-pub extern "C" fn main() {
+pub extern fn main() {
   loop {}
 }
 
@@ -75,9 +58,9 @@ pub extern "C" fn main() {
 
 Line 3 must be analyzed in conjunction with lines 10 and 11.
 Firstly we must guarantee that the function can be called by the \func{\_start} function.
-This is done by defining the {\main} function to be an publicly exported symbol denoted by \code{pub extern}.
-The second change is to ensure that the function is callable by the a {\C} function.
-\code{extern "C"} makes this possible by making the function use the {\C} \gls{abi}.
+This is done by defining the {\main} function to be a publicly exported symbol denoted by \code{pub extern}.
+The second change is to ensure that the function is callable by a {\C} function.
+\code{extern} makes this possible by making the function use the {\C} \gls{abi}.
 The last thing is to disable the {\rust} name mangling so that the {\C} code can refere to the function by the unmangled name {\main}.
 Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
 Therefore we have to tell the compiler that the program does not contain a {\main} function, but that this is ok, hence the \attrib{\#\![no\_main]} on line 3.
