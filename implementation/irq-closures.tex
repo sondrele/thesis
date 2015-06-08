@@ -83,17 +83,16 @@ This creates a closure that takes ownership over the \textit{write end} for the 
 The closure is passed as an argument to the \code{on\_single} method on the \gls{adc} ensuring that the closure is called each time a new sample is ready with the sample as an argument.
 
 \subsection{Implementation}
-We now look at how we can provide this behaviour in {\rust}.
+
+This section looks at how we can achieve the same behavior as was presented in the previous section.
 
 The process of handling an interrupt was described in \autoref{sec:impl:handling-interrupts}.
 In short, a public function with a specific name handles the corresponding interrupt.
-In order to implement the pattern above, we need to get the globally defined interrupt handler \code{ADC0\_IRQHandler} to call a closure created in the main function.
+To implement the pattern above, we need to get the globally defined interrupt handler \code{ADC0\_IRQHandler} to call a closure created in the \code{main} function.
 
-A closure is the \concept{environment} it closes over, in \autoref{lst:irq:local} the \code{ch} variable, and a \concept{function pointer}, that simple.
-See \autoref{sec:back:rust:closures} for additional details of closures.
-
-To save a closure value in a static variable we need to use raw pointers.
-In addition we put the pointer inside a \code{Option} to avoid using a null pointer.
+As already discussed, the interrupt handlers can only access global variables, which requires us to store the closure value in a static variable.
+We can not do this directly because closures do not have static initializer functions, thus, we need to use raw pointers.
+\autoref{lst:raw-global-pointer-to-closure} shows what a raw pointer to a closure looks like in {\rust}, note that we put the pointer inside an \code{Option} to avoid using a null pointer.
 
 \begin{listing}[H]
   \begin{minted}{rust}
@@ -103,9 +102,9 @@ static mut CLOSURE: Option<*const Fn()> = None;
   \label{lst:raw-global-pointer-to-closure}
 \end{listing}
 
-This variable is unsafe to use because it is a static global mutable.
+This \code{CLOSURE} variable is unsafe to use because it is a static mutable variable.
 \autoref{lst:reg-disp} shows a safe abstraction to register and dispatch events with this handle.
-Notice how the responsibility of handling the ownership is transferred from the compiler to programmer and back in the {\unsafe} block in the \code{register} function.
+Notice how the responsibility of handling the ownership is transferred from the compiler the to programmer in the {\unsafe} block in the \code{register} function.
 
 \begin{listing}[H]
   \begin{minted}{rust}
