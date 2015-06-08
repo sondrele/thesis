@@ -134,7 +134,7 @@ fn main() {
 Interrupts are an integral part of embedded programs, and having a native way of handling the interrupts provides a great benefit and flexibility for a programming language.
 
 To handle interrupts on the {\gecko}, one have to register a function in the \emph{interrupt vector}.
-This vector is defined in the \textbf{startup} file provided by Silicon Labs, and is simply a list of function pointers defined in the \textbf{.isr\_vector} section of the {\elf} binary.
+This vector is defined in the \textbf{startup} file provided by Silicon Labs and is simply a list of function pointers defined in the \textbf{.isr\_vector} section of the {\elf} binary.
 This is the first section in the \textbf{text} segment of the binary which ensures that it is located at memory address \mem{0x0} when the \gls{mcu} starts executing.
 When an interrupt occurs, the microcontroller will inspect the interrupt vector and find the address of the handler function for the interrupt which occurred.
 Both the interrupt vector and the default interrupt handlers are defined in the \textbf{startup} file for the {\gecko}.
