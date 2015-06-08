@@ -135,6 +135,46 @@ Demonstrates dynamically allocated strings and vectors from the \lib{collections
   \label{tab:emlib_examples}
 \end{table}
 
+A complete overview of the progress of binding {\emlib} is given in \autoref{tab:emlib:progress}.
+
+\newcommand{\low}{\cellcolor{red!25}}
+\newcommand{\medium}{\cellcolor{yellow!25}}
+\newcommand{\high}{\cellcolor{green!25}}
+
+\begin{table}[H]
+  \begin{tabular}{l | l | l | r | l | l | l | r }
+    \textbf{Module} & \textbf{\#C} & \textbf{\#R} & \textbf{Ported} & \textbf{Module} & \textbf{\#C} & \textbf{\#R} & \textbf{Ported} \\
+    \hline
+    acmp    & 15 & 3  & {\low}    20.00\% & lcd     & 51 &  0 & {\low}     0.00\% \\
+    adc     & 16 & 6  & {\medium} 37.50\% & lesense & 52 & 21 & {\medium} 40.38\% \\
+    aes     & 19 & 0  & {\low}     0.00\% & letimer & 14 &  0 & {\low}     0.00\% \\
+    assert  & 0  & 0  &            N/A    & leuart  & 19 & 12 & {\medium} 63.16\% \\
+    bitband & 4  & 0  & {\low}     0.00\% & mpu     &  3 &  0 & {\low}     0.00\% \\
+    burtc   & 28 & 0  & {\low}     0.00\% & msc     & 19 &  0 & {\low}     0.00\% \\
+    chip    & 1  & 1  & {\high}  100.00\% & opamp   &  2 &  0 & {\low}     0.00\% \\
+    cmu     & 45 & 7  & {\low}    15.56\% & part    &  0 &  0 &            N/A    \\
+    common  & 0  & 0  &            N/A    & pcnt    & 23 &  0 & {\low}     0.00\% \\
+    dac     & 16 & 0  & {\low}     0.00\% & prs     &  4 &  1 & {\medium} 25.00\% \\
+    dbg     & 4  & 0  & {\low}     0.00\% & rmu     &  6 &  0 & {\low}     0.00\% \\
+    dma     & 22 & 8  & {\medium} 36.36\% & rtc     & 14 & 13 & {\high}   92.86\% \\
+    ebi     & 42 & 9  & {\low}    21.43\% & system  & 11 &  0 & {\low}     0.00\% \\
+    emu     & 24 & 17 & {\medium} 70.83\% & timer   & 27 & 24 & {\high}   88.89\% \\
+    gpio    & 33 & 31 & {\high}   93.94\% & usart   & 26 &  6 & {\low}    23.08\% \\
+    i2c     & 17 & 6  & {\medium} 35.29\% & vcmp    & 29 &  0 & {\low}     0.00\% \\
+    idac    & 0  & 0  &            N/A    & version &  0 &  0 &            N/A    \\
+    int     & 2  & 2  & {\high}  100.00\% & wdog    &  5 &  0 & {\low}     0.00\% \\
+    \hline
+    &&&& \textbf{total} & 593 & 167 & {\medium}28.16\% \\
+    \hline
+  \end{tabular}
+  \caption{emlib Bindings Progress \\
+    \textbf{\# C} - Number of functions exposed by emlib \\
+    \textbf{\# R} - Number of functions bound by bindings
+  }
+  \label{tab:emlib:progress}
+\end{table}
+
+
 \subsubsection{Emdrv}
 \label{sub:emdrv_bindings}
 
