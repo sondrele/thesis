@@ -57,16 +57,17 @@ This means that writing to a pointer that points to this address will write to t
 
 \autoref{fig:back:memorymapped} shows a subsection of \gls{ram} that contains the \gls{adc} control register.
 Only the relevant registers for our discussion in included in the figure.
-It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
-The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
+It shows the control register that is used when performing a single \gls{adc} conversion.
+Note that it only includes the register needed for this kind of conversion.
+The CTRL register is used to initialize the hardware device before performing a conversion, and the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
 We see that the CTRL register is at offset \mem{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \mem{0x4} bytes.
-The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single conversion and reading the results of a conversion, respectively.
+The two registers, SINGLECTRL and SINGLEDATA, are there for initializing the single conversion and read the results of a conversion, respectively.
 
 \subsection{Memory Layout of Objects}
 
 The traditional memory layout of an object in an object oriented language is an implementation detail.
-This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
-The layout is aslo a implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
+This is because the fields of the object might have different sizes, and optimizations can rearrange the memory layout to optimize for size.
+The layout is also an implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with {\C}'s \gls{ffi}.
 Objects in a language like {\Java} also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
 \begin{listing}[H]
@@ -120,16 +121,15 @@ typedef struct {
   \end{listing}
   \end{minipage}
 
-  \caption{Definition of an \gls{adc} in Java, {\rust}, and C}
+  \caption{Definition of an \gls{adc} in {\Java}, {\rust}, and {\C}}
   \label{lst:back:adc-objects}
 \end{listing}
 
-
-In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
-By using structs the programmer has full control over the layout of the object in memory.
-The object oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
+In {\C}, where classes and objects are not part of the language, structs are used to create the representations for objects.
+By using structs, the programmer has full control over the layout of the object in memory.
+The object-oriented concepts used for \gls{mmio} uses static dispatch, and the structs do not include tag fields or references to virtual tables.
 \autoref{lst:back:adc-objects} shows how to define a {\Java} class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
-The memory layout of these objects are given in \autoref{fig:back:memlayout}.
+The memory layout of these objects is given in \autoref{fig:back:memlayout}.
 
 \begin{figure}[H]
 
@@ -146,7 +146,7 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
       0x28&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-    \caption{Java}
+    \caption{{\Java}}
     \label{fig:back:memlayout:java}
   \end{subfigure}
   \hfill
@@ -176,7 +176,7 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
       0x24&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-        \caption{C}
+        \caption{{\C}}
     \label{fig:back:memlayout:c}
   \end{subfigure}
   \caption{Memory layout of objects}
@@ -187,11 +187,11 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
 This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
 
-The layout of the Java object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
+The layout of the {\Java} object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
 This is not the case as this would map the object tag to the base address of the \gls{adc} minus 4 bytes.
 This location is, in the case of the {\gecko}, an unmapped memory section used to as padding between the \gls{adc} and the previous \gls{mmio}.
-Java uses this object tag to store a reference used to dynamicaly dispatch method calls to the object.
-And using the reference in place of a regular Java object would cause the the method dispatch mechanism to fail.
+{\Java} uses this object tag to store a reference used to dynamicaly dispatch method calls to the object.
+And using the reference in place of a regular {\Java} object would cause the the method dispatch mechanism to fail.
 
 \subsection{Adding Object Functionality}
 
@@ -303,7 +303,7 @@ void main() {
   ADC* adc0 = (ADC*)ADC0_BASE;
 }
     \end{minted}
-    \caption{C}
+    \caption{{\C}}
   \end{listing}
   \end{minipage}
   \caption{Instantiating a \glspl{mmio}}
