@@ -1,17 +1,18 @@
-\section{Object Oriented Embedded Programming}
+\section{Object-oriented Embedded Programming}
 \label{sec:impl:oo}
 
-The interface of many of the modules defined in {\emlib} resembles that of objects found in Object Oriented programming.
-This section looks at how Object Oriented programming can be used in conjunction with \gls{mmio} in embedded programming.
+The interface of many of the modules defined in {\emlib} resembles that of objects found in object-oriented programming.
+In its essence, object-oriented programming focuses on organizing a computer program by looking at the data the program operates on.
+This is done by grouping related data into objects and defining methods that operate on the data contained within the objects.
 
-In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigm's essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
-In this section, we look at how control over the memory layout of objects and static dispatch, can be used to enable the Object Oriented paradigm in conjunction with \gls{mmio} in embedded programming.
+The paradigm's essential concept can be applied to embedded {\C} programming, even though the language itself does not directly define any language features to aid the design.
+In this section, we look at how control over the memory layout of objects, and static dispatch, can be used to enable the object-oriented paradigm in conjunction with \gls{mmio} in embedded programming.
+We use the memory layout of a memory-mapped \gls{adc} as an example to see how this peripheral can be represented as an object.
 
 Static dispatch, as opposed to dynamic dispatch, is the mechanism in which the function to be called can be decided statically by the compiler, and a \code{call} instruction to the function can be inserted into the code directly.
-Dynamic dispatch on the other hand requires runtime information which requires the call to be the function to be made though an level of indirection.
+Dynamic dispatch, on the other hand, requires extra runtime information about the function to be called, which adds an additional layer of indirection to the function call.
+% Dynamic dispatch, on the other hand, requires runtime information which requires the call to the function to be made through an extra layer of indirection.
 
-We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
 \subsection{Memory Mapped I/O}
 \label{ssec:memory_mapped_io}
@@ -126,7 +127,7 @@ typedef struct {
 
 In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
 By using structs the programmer has full control over the layout of the object in memory.
-The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
+The object oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
 \autoref{lst:back:adc-objects} shows how to define a {\Java} class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
 The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
