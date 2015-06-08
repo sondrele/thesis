@@ -15,7 +15,7 @@ The example application samples an analog signal and saves the result to a memor
 An example of such an application is an audio filter, which samples an audio input connected to the \gls{adc} and stores a window of samples in \gls{ram} for further processing.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 // Declaring a Circular Buffer Type globally
 const N: usize = 1024;
 static mut IDX = 0;
@@ -33,7 +33,7 @@ pub extern fn ADC0_IRQHandler() {
   // Writing to the buffer is considered unsafe
   unsafe { BUFFER[IDX % N] = sample; IDX += 1; }
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Analog sampler with global buffer}
   \label{lst:irq:global}
 \end{listing}
@@ -45,7 +45,7 @@ A huge restriction on variables defined in the global scope in {\rust}, is that 
 This is a fact which we praised in \autoref{sec:impl:booting}, as it provides a very simple startup procedure, but it limits the datatypes which can be shared between interrupt handlers and the rest of the code.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 fn main() {
   let mut adc = adc0();
   let buffer = CircularBuffer::new();
@@ -59,7 +59,7 @@ fn main() {
   // e.g.: &buffer[..];
   loop { /* ... */ }
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Analog sampler with local buffer}
   \label{lst:irq:local}
 \end{listing}
@@ -95,19 +95,21 @@ We can not do this directly because closures do not have static initializer func
 \autoref{lst:raw-global-pointer-to-closure} shows what a raw pointer to a closure looks like in {\rust}, note that we put the pointer inside an \code{Option} to avoid using a null pointer.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 static mut CLOSURE: Option<*const Fn()> = None;
-  \end{minted}
+  \end{rustcode}
   \caption{Storing a raw pointer to the closure globally}
   \label{lst:raw-global-pointer-to-closure}
 \end{listing}
 
 This \code{CLOSURE} variable is unsafe to use because it is a static mutable variable.
 \autoref{lst:reg-disp} shows a safe abstraction to register and dispatch events with this handle.
-Notice how the responsibility of handling the ownership is transferred from the compiler the to programmer in the {\unsafe} block in the \code{register} function.
+Notice how the responsibility of handling the ownership of the closure is transferred from the compiler to the programmer in the {\unsafe} block in the \code{register} function.
+This is done with the \code{from\_raw} and the \code{into\_raw} functions, which converts between \emph{managed} and \emph{raw} pointers.
+Respectively, these functions tell the compiler to start and stop the borrow-checker for the pointer that is returned from the two functions.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 // Registers an interrupt handler
 fn register(f: Box<Fn()>) {
   unsafe {
@@ -115,10 +117,10 @@ fn register(f: Box<Fn()>) {
     if let Some(old) = CLOSURE {
       // Remove the global reference
       CLOSURE = None;
-      // Return the ownership of the pointer to a managed box,
-      // this will ensure that the contents is deallocated when
-      // the box variable goes out of scope
-      let _ = boxed::from_raw(old);
+      // Return the ownership of the pointer to a managed Box.
+      // This transfers the responsibility of deallocating the
+      // closure back to the compiler.
+      let _ = boxed::Box::from_raw(old);
       // Omitting the above line will not trigger compilation
       // error, but the old closure value will be leaked.
     }
@@ -130,30 +132,34 @@ fn register(f: Box<Fn()>) {
     CLOSURE = Some(raw);
   }
 }
-// Dispatch a event by calling the closure if it is registered
+// Dispatch an event by calling the closure if it is registered
 fn dispatch() {
-  // The Closure is stored in a global variable mutable
-  // So the access to this variable is unsafe
+  // The closure is stored in a global mutable variable,
+  // so the access to this variable is unsafe
   unsafe {
     // Unwrap the closure value
     if let Some(func) = CLOSURE {
         // The closure is stored behind a pointer which must
-        // be dereferenced, it is called with is environment
-        // by invoking the function: call
+        // be dereferenced, it is called with its environment
+        // by invoking the `call' function
         (*func).call(())
     }
   }
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Safe abstraction over global raw pointer}
   \label{lst:reg-disp}
 \end{listing}
 
-The above listing uses {\unsafe} code in order to provide a safe abstraction to interact with the globally stored closure.
-In the listing we see all of the three operations which were defined as {\unsafe} in \autoref{tab:reasons_for_unsafe}.
-These are \concept{mutating a static mutable variable}, the \code{CLOSURE}, calling unsafe functions, \code{into\_raw} and \code{from\_raw} and dereferencing a raw pointer, the \code{func} variable in the \code{dispatch} function.
-The {\unsafe} functions deals with transfering the ownership of the heap allocated pointer from the compiler to the callee and back to compiler.
-The unsafety here comes from the fact that, used improperly these functions can lead to memory problems like double-free, or use-after-free.
+The above listing use {\unsafe} code in order to provide a safe abstraction to interact with the globally stored closure.
+The functionality is described throughout the comments.
+In the listing, we see all of the three operations which were defined as {\unsafe} in \autoref{ssub:unsafe_code}.
+These are mutating a static mutable variable (the \code{CLOSURE}), calling unsafe functions (\code{into\_raw} and \code{from\_raw}), and dereferencing a raw pointer (the \code{func} variable in the \code{dispatch} function).
+The {\unsafe} functions deal with transferring the ownership of the heap allocated pointer from the compiler, to the callee, and back to the compiler.
+If these functions are used improperly, it can lead to different memory related problems like double-free, use-after-free, and memory leaks.
+Dereferencing the \code{func} pointer is considered unsafe because it might point to invalid memory, the \code{register} function makes sure that this pointer is valid.
+
+% The unsafety here comes from the fact that, used improperly these functions can lead to memory problems like double-free, or use-after-free.
 
 %As discussed in the beginning of this section the {\gecko} provides a vector of interrupts.
 %The design for the closure described this far is only capable of storing a single closure.
@@ -163,19 +169,19 @@ The unsafety here comes from the fact that, used improperly these functions can 
 %The Event enumeration given in \autoref{lst:enum:Event} which mirrors the interrupt handlers defined in the interrupt vector and an event hub structure shown in \autoref{lst:struct:Hub}
 
 %\begin{listing}[H]
-%  \begin{minted}{rust}
+%  \begin{rustcode}
 %enum Event {
 %    ADC0,
 %    TIMER0
 %    // mirrors interrupt vector
 %}
-%  \end{minted}
+%  \end{rustcode}
 %  \caption{Enumeration for Irq Handler Tag}
 %  \label{lst:enum:Event}
 %\end{listing}
 %
 %\begin{listing}[H]
-%  \begin{minted}{rust}
+%  \begin{rustcode}
 %// Global reference to the Hub
 %static mut HUB: Option<*mut Hub> = None;
 %
@@ -196,7 +202,7 @@ The unsafety here comes from the fact that, used improperly these functions can 
 %// a public interface for registering and dispatching events
 %pub fn register(event: Event, f: Box<Fn()>) { /*...*/ }
 %pub fn dispatch(event: Event) { /*...*/ }
-%  \end{minted}
+%  \end{rustcode}
 %  \caption{Event Hub structure}
 %  \label{lst:struct:Hub}
 %\end{listing}
@@ -204,19 +210,23 @@ The unsafety here comes from the fact that, used improperly these functions can 
 %The \code{register} and \code{dispatch} functions implemented on the \code{Hub} \code{struct} in \autoref{lst:struct:Hub} are expanded from those in \autoref{lst:reg-disp} to look access the closure based on a the given event.
 %The public interface \code{register} and \code{dispatch} looks up the global \code{HUB} and calls the corresponding function on the \code{Hub} object.
 
-And finally the interface used in \autoref{lst:irq:local} is created using the utilities \texttt{register} and \texttt{dispatch}.
+\autoref{lst:adc-abstraction} implements the interface that was presented in \autoref{lst:irq:local} for the \gls{adc}, by utilizing the \code{register} and \code{dispatch} functions from \autoref{lst:reg-disp}.
+
+% And finally the interface used in \autoref{lst:irq:local} is created using the utilities \texttt{register} and \texttt{dispatch}.
+
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 impl Adc {
-  // This constructor is defined in emlib
+  // This constructor is defined in `emlib'
   pub fn adc0() -> &'static Adc { /*...*/ }
   pub fn on_single(&'static self, callback: Box<Fn(u32)>) {
-    // Make sure the callback for  a single conversion is enabled
+    // Make sure the callback for a single conversion is enabled
     self.int_enable(IEN_SINGLE);
-    // Call the utility to register a irq handler. The move keyword
-    // is used to move ownership of the callback function into the closure
+    // Call the utility to register an interrupt handler.
+    // The `move' keyword is used to move ownership of
+    // the callback function into the closure
     register(Box::new(move || {
-      // Clear interrupt signal to mark it as handled
+      // Clear the interrupt signal to mark it as handled
       self.int_clear(IF_SINGLE);
       // Call the interrupt handler with the ADC sample
       callback(self.data_single_get())
@@ -231,10 +241,10 @@ impl Adc {
 // This is defined as a part of the library
 #[allow(non_snake_case)]
 fn ADC0_IRQHandler() {
-    dispatch();
+  dispatch();
 }
-  \end{minted}
-  \caption{\gls{adc} abstraction over Event Hub}
+  \end{rustcode}
+  \caption{\gls{adc} abstraction over an Event Hub}
   \label{lst:adc-abstraction}
 \end{listing}
 
@@ -242,7 +252,7 @@ fn ADC0_IRQHandler() {
 %\autoref{lst:irq:closure} shows a runnable version of the example application from \autoref{sec:irq:motivation}.
 
 %\begin{listing}[H]
-%  \begin{minted}{rust}
+%  \begin{rustcode}
 %fn main() {
 %  let mut adc = adc0();
 %  let buffer = CircularBuffer::new();
@@ -253,20 +263,21 @@ fn ADC0_IRQHandler() {
 %  // e.g.: &buffer[..];
 %  loop {}
 %}
-%  \end{minted}
+%  \end{rustcode}
 %  \caption{Running example of example application}
 %  \label{lst:irq:closure}
 %\end{listing}
 
-As discussed in \autoref{sec:impl:handling-interrupts} the {\gecko} provides a vector of interrupts.
-To minimize the boilerplate code for this method, the registering and dispatch mechanisms are implemented as an \emph{event hub} in the actual library.
+As discussed in \autoref{sec:impl:handling-interrupts}, the {\gecko} provides a vector of interrupt handlers.
+To minimize the boilerplate code for this method, the registering and dispatch mechanisms are implemented as part of an \emph{event hub} in the actual library.
 This hub contains a map from event, corresponding to the interrupt names, to the interrupt handler closure.
+We have left out the implementation of the event hub in this section, in order to focus more on explaining how we have handled the ownership of the closures.
 
 \subsection{Discussion}
 
-The method for handling interrupts with closures discussed in this section provides nice facility to use idioms common in {\rust} code.
-They proved a means to avoid {\unsafe} \code{static mut} variables and as we showed in \autoref{lst:adc-abstraction}, let us build higher level abstractions.
-
+The method for handling interrupts with closures discussed in this section provides a nice facility to use idioms that are common in {\rust} code.
+They proved a means to avoid explicit use of {\unsafe} \code{static mut} variables and, as we showed in \autoref{lst:adc-abstraction}, let us build higher level abstractions.
+We revisit this section as part of a larger discussion concerning \emph{ownership to hardware} in \autoref{sec:ownership_allied_to_hardware}.
 
 %The changes in \autoref{lst:irq:closure} compared to the \autoref{lst:irq:local} is the callsite of registering the cloures where it is passed inside of a owning Box pointer. \todo{We should be able to pass it by value as std::thread::spawn does}
 %The other more significant change is the creation and registration of the \texttt{hub} variable, it is also stored in the global variable defined in \autoref{lst:struct:Hub}.
@@ -282,7 +293,7 @@ They proved a means to avoid {\unsafe} \code{static mut} variables and as we sho
 %\autoref{lst:irq:init} shows a initializing function which creates a \texttt{Hub} object and registrers it in the \texttt{HUB} reference.
 
 %\begin{listing}[H]
-%  \begin{minted}{rust}
+%  \begin{rustcode}
 %static mut HUB: Option<*mut Hub> = None;
 %pub fn init() {
 %  if unsafe { HUB.is_none() } {
@@ -293,7 +304,7 @@ They proved a means to avoid {\unsafe} \code{static mut} variables and as we sho
 %    // already registered so ignore the call
 %  }
 %}
-%  \end{minted}
+%  \end{rustcode}
 %  \caption{Function for initializing the Event Hub}
 %  \label{lst:irq:init}
 %\end{listing}
