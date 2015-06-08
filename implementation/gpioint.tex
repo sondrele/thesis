@@ -1,7 +1,11 @@
+% !TEX root = ../main.tex
+
 \section{Porting GPIO Interrupt Driver}
 \label{sec:porting-gpioint}
-This section considers a case study of an issue in the {\C} library, discovered while porting the \gls{gpio} interrupt driver from \lib{emdrv} to {\rust}.
-The issue was discoverd when annotating the \texttt{unsafe} blocks for referencing mutable global state, and gives an example of the awareness the inclusion of the {\unsafe} keyword provides.
+
+This section considers a case study of an issue in the {\emdrv} library, and it was discovered while we ported the \gls{gpio} interrupt driver from {\C} to {\rust}.
+This driver was ported to {\rust} because we wanted to issue \gls{gpio} interrupts with {\rust} function pointers, without needing to declare them with the {\C} \gls{abi} (which was required by {\emdrv}).
+The issue was discovered when annotating the \texttt{unsafe} blocks for referencing mutable global state, and gives an example of the awareness the inclusion of the {\unsafe} keyword provides.
 
 \subsection{Presenting the Problem}
 
