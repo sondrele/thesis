@@ -76,8 +76,10 @@
 % Documentation: ftp://ftp.dante.de/tex-archive/macros/latex/contrib/minted/minted.pdf
 \usepackage{minted}
 % Predife style for Rust and C code. Usage: \begin{rustcode} ... \end{rustcode}
-\newminted{rust}{autogobble,linenos,frame=leftline}
-\newminted{c}{autogobble,linenos,frame=leftline}
+\newminted{rust}{autogobble,linenos,frame=lines}
+\newminted{c}{autogobble,linenos,frame=lines}
+\newminted{java}{autogobble,linenos,frame=lines}
+\newminted{ca65}{autogobble,linenos,frame=lines}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -96,3 +98,8 @@
 
 % Can use \begin{enumerate}[1)]
 \usepackage{enumerate}
+
+% Possibly add this line to make the code listings smaller
+% \usepackage{etoolbox}
+% \AtBeginEnvironment{minted}{\singlespacing%
+%     \fontsize{10}{10}\selectfont}

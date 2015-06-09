@@ -1,7 +1,7 @@
 \section{Energy Consumption}
 
-In this section we look at the energy consumption of the Sensor Tracker application, described in \autoref{sec:impl:project:ii}.
-The Sensor Tracker is an interrupt driven application and has two modes of operation from an energy consumption perspective.
+In this section we look at the energy consumption of the {\tracker} application, described in \autoref{sec:impl:project:ii}.
+The {\tracker} is an interrupt driven application and has two modes of operation from an energy consumption perspective.
 It turns \emph{On} for each interrupt to perform the measurement and turns \emph{Off} when the measuring if done.
 
 \subsection{Measuring}
@@ -18,7 +18,7 @@ The number of collected and discarded samples was based upon the stability of th
 
 \subsection{Parameter}
 
-The energy consumption was recorded for the Sensor Tracker, which was configured with different workloads.
+The energy consumption was recorded for the {\tracker}, which was configured with different workloads.
 The workload is dependent on how many interrupts are trigger per run, and how much work is performed during each interrupt.
 To vary the workload, the number of triggered interrupts was varied by configuring the length of the interval between each interrupt, while the work was held constant for each interrupt.
 \autoref{tab:res:energy:parameters} gives the interrupt interval and the corresponding number of interrupts per \emph{run} used for the measurement.

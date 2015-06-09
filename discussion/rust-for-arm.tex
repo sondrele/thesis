@@ -32,7 +32,7 @@ This project allows the programmer to declare \emph{static} variables that gets 
 We can not use this project directly because it depends on {\std}, but if we look closer at the project's source code, we can even see that the project author has implemented an alternate (and outdated) version which is only dependent on {\core}.
 Another example is the \texttt{smallvec} \footnote{\url{https://crates.io/crates/smallvec}} project, which provides a handful of optimized versions of {\rust}'s vector structure that have a length-limit of 32 entries.
 Similar to the \texttt{lazy-static} project, all the dependencies for \texttt{smallvec} are included from {\std}, but are also available in {\core}.
-We have implemented a structure that is similar to \texttt{smallvec} as part of the Sensor Tracker application, but it feels like an unnecessary addition because it is already available on \texttt{crates.io} \emph{and} it only depends on features from {\core}.
+We have implemented a structure that is similar to \texttt{smallvec} as part of the {\tracker} application, but it feels like an unnecessary addition because it is already available on \texttt{crates.io} \emph{and} it only depends on features from {\core}.
 
 This distinction between {\std} and \gls{rsl} feels somewhat contradictory to {\rust}'s focus on modularization and package distribution with {\cargo}.
 It also feels destructive for non-standard projects like ours, because we would either have to re-implement or modify the already existing projects in order to get them to work for our platform.

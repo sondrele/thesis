@@ -1,4 +1,5 @@
 \section{Language Challenges}
+\label{sec:disc:lang-challenges}
 
 In \autoref{sec:assignment} we identified six language challenges that must be considered when using a language in an embedded system.
 Here we will look at each challenge and discuss how the challenges was solved for the {\rg} platform.
@@ -29,7 +30,8 @@ Here we will look at each challenge and discuss how the challenges was solved fo
 \item [LC5 Heap allocation] \hfill \\
   Dynamic allocation in {\rust} is implemented in the \lib{alloc} library.
   We were easily able to include this functionality in \gls{rel}.
-  The allocation algorithm is directly dependent on the \lib{newlib} \func{malloc} implementation, and therefore the memory fragmentation should be equal to that of the existing {\C} platform.
+  In \autoref{sec:res:heap} we showed that the heap allocation in {\rust} and {\C} work the same.
+  This is due to the allocation algorithm in {\rust} is directly dependent on the \lib{newlib} \func{malloc} implementation, and therefore the memory fragmentation is equal to that of the existing {\C} platform.
 
 \item [LC6 Error handling without allocation] \hfill \\
   When the {\rust} allocator runs out of memory it will call a function which is defined in the \lib{alloc} library.
