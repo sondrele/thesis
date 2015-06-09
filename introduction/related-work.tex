@@ -1,25 +1,32 @@
 
 \subsection{Embedded Computer System}
 An \concept{embedded computer system} is a special purpose computer system where the computer is \emph{embedded} in the device it controls.
-These computers are much smaller than conventional server, desktop, and laptop computers, but are far more in numbers.
+These computers are much smaller than conventional server, desktop, and laptop computers, but are by far more numerous.
 A regular household contains embedded systems in devices like microwave ovens, dishwashers, and alarm systems.
-In a car you find embedded computers which are controlling the breaks of the car, the automatic windows, navigation and entertainment systems.
-In recent years a trend of devices, called wearables, are emerging which also has an embedded computer at its core.
-The internet is growing, and according to Gartner the number of connected devices will increase form $\sim$5 billion in 2015 to $\sim$25 billion by 2015 \footnote{http://www.gartner.com/newsroom/id/2905717}.
-A was majority of this increase is due to the embedded computer systems known as the \gls{iot}.
+In a car you find embedded computers which are controlling the breaks of the car, the automatic windows, and navigation and entertainment systems.
 
-\subsubsection{Abstraction}
-In a conventional computer system the hardware interaction and resource management is abstracted away with an \gls{os}.
-This abstraction layer makes it possible for the programmers of these system to write portable programs built with higher level languages.
-The added complexities of using a high level language are small enough compared to the added productivity for the programmer.
+In recent years, a trend of devices called wearables are emerging, which also has an embedded computer at its core.
+The internet is growing, and according to Gartner\footnote{\url{http://www.gartner.com/newsroom/id/2905717}} the number of connected devices will increase form $\sim$5 billion in 2015 to $\sim$25 billion by 2020.
+A vast majority of this increase is due to the embedded computer systems known as the \gls{iot} \cite{Valhouli2010}.
 
-In an embedded system these complexities, which leads to lower performance and higher memory usage, are often to big for an \gls{os} or a higher level language to feasible.
-With the absence of a \gls{os}, applications for embedded system are usually written in a lower level language, which provides the low level control which is needed for the programmer to interact directly with the hardware.
-In recent
+\subsubsection{Abstraction Level}
+In most computer systems, the hardware interaction and resource management is abstracted away with an \gls{os}.
+This abstraction layer makes it possible for the programmers of these systems to write portable programs built with higher level languages.
+The added complexities of using a high level language are small enough compared to the added productivity and convenience for the programmer.
+Some embedded system are also based on an \gls{os}, projects like Raspberry PI\footnote{https://www.raspberrypi.org/} and Tessel\footnote{https://tessel.io/} employs reduced Linux versions to run Python and JavaScript respectively.
+
+In some embedded system, these complexities which leads to lower performance and higher memory usage, makes it hard to benefit from an \gls{os}.
+With the absence of an \gls{os}, applications for embedded system are usually written in a lower level languages.
+These languages must provide the low level control which is needed by the programmer to interact directly with the hardware.
+A well known project running without an \gls{os} is the electronic prototyping platform Arduino\footnote{http://www.arduino.cc/}.
+The EFM32 {\emlib} library used in this thesis is also a platform for {\C} programming without an \gls{os}.
+
+In this thesis we use the words \emph{embedded} and \emph{bare-metal} interchangeably, to refer to execution of code directly on the hardware, without the abstraction of an \gls{os}.
+This is the only execution mode that we have targeted in this project.
 
 \subsubsection{Programming Languages}
 
-In embedded systems low level languages have are preferred.
+In embedded systems low level languages have been preferred.
 Traditionally a large portion of code bases consists of C, Assembly, and C++.
 As seen in \autoref{fig:vdc:langs} according to VDC Research \footnote{http://www.oracle.com/us/technologies/java/java-embedded-market-wp-2179018.pdf} the usage of C and assembly are on the way down in favor for higher level languages like C++, Java, and C\#.
 
@@ -28,17 +35,40 @@ As seen in \autoref{fig:vdc:langs} according to VDC Research \footnote{http://ww
     \includegraphics[scale=0.5]{figures/plots/langs.png}
   \end{center}
   \caption{Survey of language used on current project by VDC Research}
-
   \label{fig:vdc:langs}
 \end{figure}
 
+The runtime system for \emph{managed} languages like Java, Python, and C\#, features automatic memory managements.
+This memory management lets the language ensure memory safety, but incurs a runtime cost and can make performance analysis non-deterministic.
+When these languages are used for bare-metal programming the memory management is usually altered \footnote{https://gcc.gnu.org/java/papers/nosb.html} \footnote{http://janvitek.github.io/pubs/jtres09a.pdf} \footnote{http://en.wikipedia.org/wiki/.NET_Micro_Framework}.
+
+\subsubsection{Benefits of the Rust language}
+The {\rust} programming langauge implements a novel approach to \emph{memory management} based on region based memory management from Cyclone \cite{Grossman2002,Swamy2006}.
+This kind of memory management substitute the runtime checks, performed by an automatic memory manager, to static analysis performed by the compiler.
+This lets the {\rust} language ensure memory safety without the runtime cost.
+
+One of the design goals for {\rust} is to provide \emph{Zero-Cost Abstraction}.
+One implication of this goal, is that abstractions in {\rust} should not have worse performance than the same less abstracted in other low level languages.
+This design goal makes the language a good fit for embedded systems as costly abstractions could have rendered parts of the langauge useless.
+
+{\rust} has a distinction between \emph{safe} and \emph{unsafe} code.
+For this, {\rust} provides a concept of {\unsafe} sections where the compiler relies on the programmer to ensure that the safe invariants are maintained.
+These section can be used when building abstractions in {\rust}, as the compilers rules for ensuring safety can sometimes become to strict.
+Containing these sections in {\unsafe} sections makes it easier for the programmer to reasoning about the safety of the code.
+
+The {\rust} langauge is developed by the Mozilla foundation.
+With this foundation comes a range of \emph{Open Source} projects and a vibrant community.
+This makes the community around {\rust} an open and inviting space to share knowledge and code.
+The {\rust} language and compiler is developed in the open using GitHub, which makes for a low entry cost both in learning from the project and contributing to it.
+Throughout the work for this thesis we have both had a huge benefit of the openness of the development and had the chance to contribute code back to project.
+
+One particularly good tool for sharing {\rust} is the \emph{Cargo} package manager.
+This tool makes sharing and reusing libraries of code very easy.
 
 
-\subsubsection{Software Platforms}
 
-There are two major software platforms used in embedded, namely with and without an \gls{os}.
+\subsubsection{The RustyGecko Platform}
 
-
-Embed, Arduino
-Raspberry PI, Tessel
-RTOS, Linux, Barebone
+In this thesis we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
+The platform consists of a subset of the {\rust} standard library (described in \autoref{sec:rel}) and a peripheral library for the \gls{mcu} (\autoref{sub:interfacing_with_emlib}).
+The platform aims to bring the safety and high level abstractions of {\rust} to embedded computer systems.
