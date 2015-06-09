@@ -464,7 +464,7 @@ They are defined here:
 \end{description}
 
 {\rust}'s ownership system is one of its zero-cost abstractions, since all borrow-checking and ownership- and lifetime-analysis are done statically during compilation.
-In this respect {\rust} is interesting to consider in an embedded system as it can provide somewhat memory management without the runtime cost of a managed languages.
+In this respect {\rust} is interesting to consider in an embedded system as it can provide memory management without the runtime cost of a garbage collector.
 
 \subsubsection{Definition of Memory Safety}
 To achieve full memory safety, we have to remove all forms for memory leaks and dangling pointers to invalid memory.
@@ -475,7 +475,7 @@ This implies one \concept{memory deallocation} for every respective \concept{mem
 %When the variable is no longer needed, the memory that is used by the handle can safely be deallocated.
 
 \subsubsection{Automatic Memory Management}
-Modern programming languages, like {\Java} and {\lang{Python}}, typically achieves this with a \emph{garbage collector} that runs while the program is being executed with the sole purpose of keeping the memory intact.
+Modern programming languages, like {\Java} and {\lang{Python}}, typically achieves memory safety with a \emph{garbage collector} that runs while the program is being executed with the sole purpose of keeping the memory intact.
 A common implementation is a reference counted garbage collector \cite{Wilson1992} that keeps a count of the number of references to the variables and deallocates them when there are no valid references to them.
 The downside of such an approach to memory safety is the continuous use of resources it requires to keep track of all the references.
 The variables' reference counts must be altered every time they enter and leave a program scope.
@@ -566,67 +566,43 @@ fn main() {
 \subsubsection{Lifetimes}
 \label{ssec:lifetimes}
 
-{\rust} needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references do not point to any deallocated memory.
-{\rust} achieves this with a concept called \concept{lifetimes}, in which the compiler, with the help of \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
-Consider the example shown in \autoref{lst:invalid_ref_c}, which shows a function in {\C} that returns a reference into a variable allocated in its own stackframe.
-When the function returns, the variable will be de-allocated, and the returned reference will point to invalid memory.
-The {\C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
-A similar implementation of \code{name\_as\_ref} in {\rust} is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
+The {\rust} compiler will assign a \emph{lifetime} to every value in an program.
+This lifetime is used by the compiler to prevent problems like \emph{use-after-write} by failing the compilation process if such errors are discovered.
+The lifetimes are, for many uses cases, inserted automaticaly by the compiler.
+This is done with a process called lifetime \emph{elision}.
+In \autoref{lst:block-lifetime} we see the lifetime annotated in the comments.
 
-\begin{listing}[tb]
-\begin{minted}{c}
-char *name_as_ref() {
-    Book b = { .name = "Gecko's", .pages = 150 };
-    return &b.name;
-}
-
-int main() {
-  char *name = name_as_ref();
-}
-\end{minted}
-\caption{Returning an invalid reference in {\C}}
-\label{lst:invalid_ref_c}
-\end{listing}
-
-\begin{listing}[tb]
-\begin{minted}{rust}
-fn name_as_ref() -> &str { // <- compiler error: missing lifetime specifier
-    let b = Book { name: "Gecko's".to_string(), pages: 150 };
-    &b.name
-}
-
+\begin{listing}[H]
+  \begin{minted}{rust}
 fn main() {
-  let name = name_as_ref();
-}
-\end{minted}
-\caption{Attempting to return an invalid reference in {\rust}}
-\label{lst:invalid_ref_rust}
+  let a = 42;   // `a' is an owning handle to the value 42.
+  {
+    let b = &a; // `b' is a reference to `a', thus `a' is borrowed.
+  }             // The lifetime of the `b' reference ends here.
+}               // Owning handle `a' goes out of scope and deallocates value 42.
+  \end{minted}
+  \caption{Block Lifetime}
+  \label{lst:block-lifetime}
 \end{listing}
 
-An example of the same function, but with applied lifetime specifiers, is shown in \autoref{lst:valid_ref_rust}.
-We can see from this example that {\rust} requires us to annotate all references that are associated with the function's arguments and return values with a name.
-In this case, we have chosen the name \code{'a} for the lifetime specifier.
-The explicit name of the lifetime does not matter, what matters is that {\rust} forces us to allocate the book elsewhere so that it is alive in the stackframe that encloses the function call to \code{name\_as\_ref}.
-Note that this example just demonstrates what lifetime specifiers look like in {\rust} and shows one way the language can catch use-after free errors.
+Let us consider a function with a reference as a parameter as shown in \autoref{lst:func-param-lifetime}.
+In the comment on line 1 we have included the explicit \emph{lifetime specifier} as it would be inserted by the compiler.
 
-Another thing to notice is that the usage of lifetime specifiers in this example is somewhat verbose.
-{\rust} will often let us elide the lifetimes associated with the variables completely, so we can usually get by without annotating the lifetimes like this.
-The reader is encouraged to see The Rust Programming Language Book \cite{web:rust_book} for an in-depth explanation of {\rust}'s ownership- and lifetime-system.
-
-\begin{listing}[tb]
-\begin{minted}{rust}
-fn name_as_ref<'a>(b: &'a Book) -> &'a str {
-    &b.name
-}
-
+\begin{listing}[H]
+  \begin{minted}{rust}
+// foo<'a>(x: &'a u32) { // lifetime specifier by compiler
+fn foo(x: &u32) {
+} // The lifetime of the `x' reference ends here.
 fn main() {
-  let b = Book { name: "Gecko's".to_string(), pages: 150 };
-  let n = name_as_ref(&b); // no use-after-free error
-}
-\end{minted}
-\caption{Retuning a reference with correct use of lifetime elisions}
-\label{lst:valid_ref_rust}
+  let a = 42; // `a' is an owning handle to the value 42.
+  foo(&a);    // `a' is borrowed by the foo function.
+}             // Owning handle `a' goes out of scope and deallocates value 42.
+  \end{minted}
+  \caption{Function Parameter Lifetime}
+  \label{lst:func-param-lifetime}
 \end{listing}
+
+For a complete introduction to lifetimes we refer the reader to the lifetime chapter of the Rust book \cite{web:rust_book}.
 
 \subsection{Concurrency Model} % (fold)
 \label{ssub:concurrency_model}
