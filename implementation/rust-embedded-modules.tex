@@ -55,26 +55,26 @@ fn main() {
 \label{ssub:gpio}
 
 The \gls{gpio} peripheral are used extensively as a dependency for many other peripherals throughout {\emlib}.
-The microcontroller's \gls{cpu} pins are configurable as \gls{gpio}, all these pins are ordered into 10 ports (Port A - Port H) with up to 16 pins each (Pin 0 - Pin 15).
+The microcontroller's \gls{cpu} pins are configurable as \gls{gpio}, all these pins are ordered into ten ports (Port A - Port H) with up to 16 pins each (Pin 0 - Pin 15).
 The pins can be configured individually to be used as input, output, or both, to the \gls{mcu}.
 
 The \gls{gpio} module in \gls{rem} consists of a \code{GpioPin} structure, and two traits for \code{Button}'s and \code{Led}'s, respectively.
 The \code{GpioPin} is an abstraction on top of {\emlib}'s \gls{gpio} definition, and the two traits implements a few convenient methods that abstracts away the underlying \code{GpioPin}.
 An example that shows how to initialize and use a button and a LED on the {\STK} is shown in \autoref{lst:gpio_abstraction}.
-Notice from the code that we only ever interfere directly with the two traits, and that we do not really care about the underlying \code{GpioPin}, apart from when we define the button and the LED.
+Notice from the code that we only ever interfere directly with the two traits, and that we do not care about the underlying \code{GpioPin}, apart from when we define the button and the LED.
 
 It is important to note the \emph{current} limitations of this module.
-The two implemented traits provides an intuitive abstraction layer for their purposes, but \gls{gpio} in general is so much more than just buttons and LEDs.
-The module was first developed for buttons and LEDs because they are easy to interface with, but it will require some alteration in order to be more `general purpose'.
+The two implemented traits provides an intuitive abstraction layer for their purposes, but \gls{gpio} in general, is so much more than just buttons and LEDs.
+The module was first developed for buttons and LEDs because they are easy to interface with, but it will require some alteration to be more `general purpose'.
 
 \begin{listing}[H]
   \begin{rustcode}
-extern crate emlib;         // Include emlib bindings
-extern crate modules;       // Include `REM'
+extern crate emlib;    // Include `emlib' bindings
+extern crate modules;  // Include `REM'
 use emlib::gpio::Port;
 use modules::{GpioPin, Button, Led};
 // Define a button and a LED. The 'static lifetime tells
-// us that BTN and LED is alive for the whole program
+// us that BTN and LED are alive for the whole program
 const BTN: &'static Button = &GpioPin { port: Port::B, pin: 9 };
 const LED: &'static Led    = &GpioPin { port: Port::E, pin: 2 };
 
