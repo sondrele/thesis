@@ -172,7 +172,8 @@ Thus, we needed to solve the problem of knowing where {\cargo} would store the p
 If {\cargo} is to be invoked with a command that it does not have by default, it will query the system for this command.
 This means that if {\cargo} is invoked with e.g. the command \cmd{cargo foo <args>...}, it will query the system for an executable with the name \file{cargo-foo} and it will invoke this command with the trailing arguments if it exists.
 By looking at {\cargo}'s source code, we could see that every triggered build included a structure called \code{CompileOptions}.
-The arguments passed to {\cargo}'s different build commands are then used to compose this structure and trigger an internal compilation process, this process handles the compilation of all dependencies and generates all the different targets for the current package to be compiled.
+The arguments passed to {\cargo}'s different build commands are then used to compose this structure and trigger an internal compilation process.
+This process handles the compilation of all dependencies and generates all the different binaries for the current package to be compiled.
 
 \begin{table}[ht]
 \begin{center}
@@ -228,26 +229,31 @@ An experimental process of testing and mocking the {\rg} bindings is described i
 \subsection{Contributing to Cargo}
 \label{ssub:contributing_to_cargo}
 
-As already mentioned, the ability to pass arbitrary flags further on to the invocation of {\rustc} was by design not supported by {\cargo}, but many people in the {\rust} community have wanted the ability to do so.
-The reasoning for not allowing arbitrary flags to be passed down is described here.
+As already mentioned, the ability to pass arbitrary flags further on to the invocation of {\rustc} was by design not supported by {\cargo}.
+However, many people in the {\rust} community have wanted the ability to do so.
+The reasoning for not allowing arbitrary flags to be passed down is described in this section.
 
-A compilation can go awry very quickly if it is up to the package \emph{author} what flags should be passed to {\rustc}, instead it should be up to the \emph{user} of the package.
+A compilation can go awry very quickly if it is up to the package \emph{author} what flags should be passed to {\rustc}.
+Instead, it should be up to the \emph{user} of the package.
 This would have given the author the ability to set the restriction for a library, and limit the possibilities of what a user could have done with it.
-Different systems do not necessarily support all flags and possibilities, so if a package dependency says that it is to be built in a specific way, it might not work for the system it is being built for.
+Different systems do not necessarily support all flags and possibilities.
+Thus, if a package dependency says that it is to be built in a particular way, it might not work on the system it is being built for.
 
-On the {\cargo} project's issue tracker, several related issues concerning passing arbitrary flags further to {\rustc}, was open.
+On the {\cargo} project's issue tracker, several related issues concerning passing arbitrary flags further on to {\rustc}, was open.
 All these were formalized in one issue\footnote{\url{https://github.com/rust-lang/cargo/issues/595}} for implementing a new subcommand (called \cmd{cargo-rustc}) for the package manager.
-This subcommand would have allowed for passing these flags on to {\rustc}, but with the restriction of only compiling a \emph{single} target at a time.
+This subcommand would have allowed for passing these flags on to {\rustc}, but with the restriction of only compiling a \emph{single} binary at a time.
 This means that only \emph{either} the library, a binary, an example or a test (or a package dependency), may be compiled with the extra flags, and \emph{not} the entire package.
 
-These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our {\emlib}, can depend on it for completing the build.
+These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our bindings, can depend on it for completing the build.
 Indeed, the functionality proposed with this subcommand would be enough to cover all the cases that we solved with our implementation of \cmd{cargo-linkargs}.
 
-After gaining insight into {\cargo}'s internals during the development of \cmd{cargo-linkargs}, it was interesting to see if we could get this same functionality into {\cargo} itself by implementing \cmd{cargo-rustc}.
-Even though \cmd{cargo-linkargs} worked great for its purpose, it was not very ergonomic for {\emlib} to depend on a third party plugin in order to work, especially if this functionality could be natively supported by {\cargo}.
+After gaining insight into {\cargo}'s internals during the development of \cmd{cargo-linkargs}, it was interesting to see if we could get this same functionality into {\cargo} itself, by implementing \cmd{cargo-rustc}.
+Even though \cmd{cargo-linkargs} worked great for its purpose, it was not very ergonomic for {\rg} to depend on a third-party plugin to work.
+Especially if {\cargo} could natively support this functionality.
 Not only would it benefit our project, it would also give many other {\rust} projects the ability to use {\cargo} for the entire compilation process.
 Since both {\rust} and {\cargo} are open source projects, it was quick to get in contact with the project maintainers about the issue, and eventually submit a patch with the new subcommand.
-After it was reviewed by one of the project maintainers, the patch was accepted and merged into {\cargo}'s code base, and the subcommand developed as part of our build system is now a part of {\rust}'s nightly builds.
+After it had been reviewed by one of the project maintainers, the patch was accepted and merged into {\cargo}'s code base.
+The subcommand developed as part of our build system is now a part of {\rust}'s nightly builds.
 
 \subsection{Final Library Build Artifacts}
 
@@ -262,6 +268,6 @@ The resulting files of compiling the libraries are presented in \autoref{fig:lib
 \end{figure}
 
 The figure shows that all of the libraries except for \lib{modules} consists of both a {\C} static archive (\format{*.a}) and a {\rust} library (\format{*.rlib}).
-The \lib{modules} library is a high level library that is built on top of {\emlib} and \lib{emdrv}.
-The rest of the libraries provides the {\rust} bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
-We also see the dependencies, denoted by the arrows, between the libraries generally flowing from the top level abstraction down to the lower level abstractions.
+The \lib{modules} library is a high level library that is built on top of the bindings for {\emlib} and {\emdrv}, and its implementation is described in \autoref{sec:rust-embedded-modules}.
+The rest of the libraries provides {\rust} bindings in the \format{*.rlib} part and the {\C} implementations in the \format{*.a} portion.
+We also see the dependencies, denoted by the arrows, between the libraries, generally flowing from the top level abstraction down to the lower level abstractions.
