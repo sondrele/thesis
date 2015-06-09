@@ -3,7 +3,7 @@
 \section{Project Evaluations}
 \label{sec:disc:project_evaluations}
 
-This section discusses the results that was gathered as part of the {\tracker} the Circle Game projects, and presented in \autoref{chap:results}.
+This section discusses the results that was gathered as part of the {\tracker} the {\cg} projects, and presented in \autoref{chap:results}.
 First we will look at the choice of projects and method of evaluation.
 Then we will discuss each of the separated metrics, energy efficiency, performance and code size in isolation, before we wrap up this section by discussing the current state of {\rust} programming on an embedded system in light of our results.
 
@@ -22,7 +22,7 @@ A third option could have been to develop a suite of micro benchmarks.
 This option was not chosen as we wanted to create \emph{larger} projects to stress the programmability and code organization of the platform.
 
 \subsection{Performance}
-In \autoref{sec:res:perf} we looked at the performance of the graphical game application, Circle Game.
+In \autoref{sec:res:perf} we looked at the performance of the graphical game application, {\cg}.
 It is evident, from our results, that the performance of the {\rust} version is comparable and even greater than that of equivalent {\C} code.
 Although a graphical game application and the \gls{fps} performance metric is not typical for the embedded processors targeted here, this qualitative result suggests that the abstractions provided by the {\rust} language are \emph{zero cost} when considering performance.
 
@@ -72,7 +72,7 @@ In addition, a more suitable example must be employed, where the actual code is 
 
 The results discussed here are positive for further exploration of {\rust} in the embedded domain.
 One critical task in an embedded system is to meet a strict deadline imposed by timely interrupts.
-Both the {\tracker} and Circle Game expose similar performance for both language implementations and this provides an important result.
+Both the {\tracker} and {\cg} expose similar performance for both language implementations and this provides an important result.
 
 On the other hand when we look at code size we see a larger challenge for the {\rust} language.
 The focus on \concept{Zero Cost Abstractions} seems not to take into account the size of the end binary.

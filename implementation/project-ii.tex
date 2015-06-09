@@ -14,7 +14,7 @@ The game is simple, but \gls{cpu} intensive, and was developed as a part of meas
 
 \subsubsection{Goal}
 
-The Circle Game application was developed to compare the performance between {\rust} and {\C}.
+The {\cg} application was developed to compare the performance between {\rust} and {\C}.
 It is not easy to give a performance-metric, and compare two languages directly against each other based on only one application like this.
 However, an application like this gives us a good indication of whether the two languages differ, or have roughly the same performance.
 
@@ -38,7 +38,7 @@ The result will be a number that represents how many iterations of the game's ma
     \hline
   \end{tabular}
 
-  \caption{Requirements for the Circle Game.}
+  \caption{Requirements for the {\cg}}
   \label{tab:project:ii:requirements}
 \end{table}
 
@@ -54,7 +54,7 @@ If the obstacle reaches the bottom of the screen without colliding with any of t
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{figures/circle-game.jpg}
-  \caption{Circle Game running on the {\DK} with the attached gamepad.}
+  \caption{{\cg} running on the {\DK} with the attached gamepad}
   \label{fig:circle_game}
 \end{figure}
 
@@ -94,6 +94,6 @@ extern fn SysTick_Handler() {
   FRAME_COUNT = 0;
 }
   \end{minted}
-  \caption{Pseudo code of the Circle Game.}
+  \caption{Pseudo code of the {\cg}}
   \label{lst:game_loop}
 \end{listing}
