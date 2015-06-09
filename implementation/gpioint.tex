@@ -10,7 +10,7 @@ The issue was discovered when annotating the \texttt{unsafe} blocks for referenc
 \subsection{Presenting the Problem}
 
 The \texttt{gpioint} driver lets the user register a callback function to be called when an interrupt occurs at a given \gls{gpio} pin.
-It is implemented with a global mutable list of 16 function pointers, a register function to assign functions to indices of the list corresponding to \gls{gpio} pins, and a dispatch mechanisms which calls the correct functions when an interrupt occurs.
+It is implemented with a global mutable list of 16 function pointers, a register function to assign functions to indices of the list corresponding to the \gls{gpio} pins, and a dispatch mechanisms which calls the correct functions when an interrupt occurs.
 The issue arises in the dispatch function in \autoref{lst:irq-dispatch:c}.
 
 \begin{listing}
@@ -29,7 +29,7 @@ static void GPIOINT_IRQDispatcher(uint32_t iflags) {
   }
 }
   \end{ccode}
-  \caption{GPIO Dispatcher from emlib}
+  \caption{GPIO Dispatcher from {\emlib}}
   \label{lst:irq-dispatch:c}
 \end{listing}
 
@@ -54,11 +54,11 @@ fn dispatcher(iflags: u32) {
   }
 }
   \end{rustcode}
-  \caption{GPIO Dispatcher naively ported to Rust}
+  \caption{GPIO Dispatcher naively ported to {\rust}}
   \label{lst:irq-dispatch:rust}
 \end{listing}
 
-A first take at porting the dispatcher function to Rust yields the code in \autoref{lst:irq-dispatch:rust}.
+A first take at porting the dispatcher function to {\rust} yields the code in \autoref{lst:irq-dispatch:rust}.
 It is quite easy to see that the global mutable state is read twice exposed by the compiler requirement to include the {\unsafe} keyword.
 This means that there is a possibility of the second reference to return a different value than the first.
 For instance the function \func{GPIOINT\_CallbackUnRegister(uin32\_t pin)} will set the function pointer in the array to \mem{0x0} for the specified pin.
@@ -118,7 +118,7 @@ GPIOINT_IRQDispatcher:
 
 At O1 the compiler has performed \gls{cse} to remove the duplicate load present in \autoref{lst:gpio:asm:O0}.
 This can be elimintated with the assumption that the \code{gpioCallbacks} will not be changed by external code.
-But as the Rust version in \autoref{lst:irq-dispatch:rust} suggests this code can lead to a \concept{data race} because it is referencing a global mutable variable.
+But as the {\rust} version in \autoref{lst:irq-dispatch:rust} suggests this code can lead to a \concept{data race} because it is referencing a global mutable variable.
 
 \subsection{Proposed solution}
 
@@ -164,5 +164,5 @@ GPIOINT_IRQDispatcher:
 \subsection{Discussion}
 
 The issue presented in this section is a minor one and will probably never cause a \func{HardFault} in a real world application.
-Nevertheless is serves as an example of how the {\unsafe} keyword in Rust makes the programmer think twice about code in these unsafe sections.
-It also points to the gains of using Rust to prototype subsets of an C library to see if issues with a more strict compiler will arise from the patterns and constructs used.
+Nevertheless is serves as an example of how the {\unsafe} keyword in {\rust} makes the programmer think twice about code in these unsafe sections.
+It also points to the gains of using {\rust} to prototype subsets of an C library to see if issues with a more strict compiler will arise from the patterns and constructs used.
