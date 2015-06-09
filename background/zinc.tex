@@ -11,7 +11,8 @@ One of {\zinc}'s main features is the ability to safely initialize a program's p
 This setup-routine guarantees that all the peripherals gets initialized correctly.
 This Platform Tree is realized with a {\rust} \emph{compiler plugin}, which means that {\zinc} can hook on to {\rustc}'s internal compilation routine, and verify the correctness of the platform specification that it is currently attempting to compile.
 
-An example program that demonstrates the Platform Tree is shown in \autoref{lst:platform_tree_example}, we have left out parts of the \code{clock} and \code{os} specifications to make the example more clear.
+An example program that demonstrates the Platform Tree is shown in \autoref{lst:platform_tree_example}.
+We have left out parts of the \code{clock} and \code{os} specifications to make the example more clear.
 We can see from this example that we define a platform for the LPC17 \gls{mcu}, and initialize the main \gls{mcu} clock, a Timer peripheral, and configure a \gls{gpio} pin as a LED.
 If {\zinc} notices that e.g. a LED and a Timer is configured to use the same \gls{mcu} pin, it will exit the compilation with an error message.
 In the \code{os} block we specify that we want access to the Timer as \code{timer} and the LED as \code{led1}, {\zinc} will handle the task of initializing the peripherals and pass them as arguments to the \code{run} function.
@@ -44,4 +45,3 @@ fn run(args: &pt::run_args) {
 
 Although the {\zinc} project did not end up as part of our platform, we have used it for inspiration during design and development.
 In \autoref{chap:discussion} we discuss the problem that arises with mutable aliases to hardware peripherals, and look at how {\zinc}'s approach of handling peripheral initialization can help to provide a safer abstraction layer over the hardware, with respect to our platform.
-

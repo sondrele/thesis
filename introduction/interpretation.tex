@@ -42,7 +42,7 @@ Compilers exploit this assumption and might remove redundant access to the same 
 In multi-threaded code with global mutable state this assumption does not hold.
 Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to make sure the compiler rereads the value in case it was updated.
 
-To program efficiently, both performance wise and concerning energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
+To program efficiently, both when it comes to performance and concerning energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
 These interrupts must execute fast and will require support in the language.
 
 In an embedded system, like the one considered in this thesis, a given portion of the memory space is used to represent hardware registers.
