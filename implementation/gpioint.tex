@@ -45,7 +45,6 @@ fn dispatcher(iflags: u32) {
     iflags &= !(1 << irq_idx);
     // Check if the interrupt has a callback
     if (unsafe { GPIO_CALLBACKS[irq_idx] }.is_some()) {
-
       // Window of opportunity
 
       // Unwrap the callback and call the function
