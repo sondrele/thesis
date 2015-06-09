@@ -3,7 +3,7 @@
 \section{Project Evaluations}
 \label{sec:disc:project_evaluations}
 
-This section discusses the results that was gathered as part of the Sensor Tracker the Circle Game projects, and presented in \autoref{chap:results}.
+This section discusses the results that was gathered as part of the {\tracker} the Circle Game projects, and presented in \autoref{chap:results}.
 First we will look at the choice of projects and method of evaluation.
 Then we will discuss each of the separated metrics, energy efficiency, performance and code size in isolation, before we wrap up this section by discussing the current state of {\rust} programming on an embedded system in light of our results.
 
@@ -39,7 +39,7 @@ This discussion should be read in light of the fact that the {\rust} compiler is
   These \emph{extra} functions, which are eliminated when optimized, makes the compiler produce substantially larger binaries without the optimizations.
 
 \item [Rust code can be significantly larger than C equivalents] \hfill \\
-  The optimized Sensor Tracker application written in {\rust} proved to be several times the size of the {\C} version.
+  The optimized {\tracker} application written in {\rust} proved to be several times the size of the {\C} version.
   This was further analyzed to reveal that the increase in size is due to three factors, reiterated here:
 \begin{itemize}
 \item The application code itself
@@ -55,7 +55,7 @@ This discussion should be read in light of the fact that the {\rust} compiler is
 
 \subsection{Energy}
 
-We must emphasis that energy consumption measurements presented in \autoref{sec:res:energy} are preliminary, and that the focus for the Sensor Tracker application was primarily to provide an application in this domain.
+We must emphasis that energy consumption measurements presented in \autoref{sec:res:energy} are preliminary, and that the focus for the {\tracker} application was primarily to provide an application in this domain.
 The main problem with reading to much into these results, is that the {\rust} and {\C} implementations share a substantial amount of the library code, which is written in {\C}.
 The application code here is just a thin wrapper around the libraries.
 When we dug deeper into the analysis of the application we found that most of the time, the application spends its time in a busy-wait state, waiting for sensor data to be available.
@@ -72,12 +72,12 @@ In addition, a more suitable example must be employed, where the actual code is 
 
 The results discussed here are positive for further exploration of {\rust} in the embedded domain.
 One critical task in an embedded system is to meet a strict deadline imposed by timely interrupts.
-Both the Sensor Tracker and Circle Game expose similar performance for both language implementations and this provides an important result.
+Both the {\tracker} and Circle Game expose similar performance for both language implementations and this provides an important result.
 
 On the other hand when we look at code size we see a larger challenge for the {\rust} language.
 The focus on \concept{Zero Cost Abstractions} seems not to take into account the size of the end binary.
 Especially not in the builds where optimizations are not applied.
 In a system where excess resources for storing code and data, this does not cause any problems, but this is not the case in an embedded system.
 By comparing the smallest processors of the EFM32 Product Familiy given in \autoref{sub:emf32} and the size of the debug builds presented in \autoref{sec:res:code-size}, we see that a debug build of the Minimal Main example will not fit in the smallest models.
-Further, the Sensor Tracker application will not fit on the any of the Tiny or Zero Geckos, as even the optimized binary is to large.
+Further, the {\tracker} application will not fit on the any of the Tiny or Zero Geckos, as even the optimized binary is to large.
 Not being able to debug an application on the actual target hardware can be a significant problem in development and testing stages, but also for tracing bugs in production systems.
