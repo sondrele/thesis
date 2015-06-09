@@ -5,7 +5,7 @@
 
 This section discusses the results that was gathered as part of the {\tracker} the {\cg} projects, and presented in \autoref{chap:results}.
 First we will look at the choice of projects and method of evaluation.
-Then we will discuss each of the separated metrics, energy efficiency, performance and code size in isolation, before we wrap up this section by discussing the current state of {\rust} programming on an embedded system in light of our results.
+Then we will discuss each of the separated metrics performance, energy efficiency, and code size in isolation, before we wrap up this section by discussing the current state of {\rust} programming on an embedded system in light of our results.
 
 \subsection{Projects and methods}
 
@@ -25,6 +25,21 @@ This option was not chosen as we wanted to create \emph{larger} projects to stre
 In \autoref{sec:res:perf} we looked at the performance of the graphical game application, {\cg}.
 It is evident, from our results, that the performance of the {\rust} version is comparable and even greater than that of equivalent {\C} code.
 Although a graphical game application and the \gls{fps} performance metric is not typical for the embedded processors targeted here, this qualitative result suggests that the abstractions provided by the {\rust} language are \emph{zero cost} when considering performance.
+
+\subsection{Energy}
+
+We must emphasis that energy consumption measurements presented in \autoref{sec:res:energy} are preliminary, and that the focus for the {\tracker} application was primarily to provide an application in this domain.
+The main problem with reading to much into these results, is that the {\rust} and {\C} implementations share a substantial amount of the library code, which is written in {\C}.
+The application code here is just a thin wrapper around the libraries.
+When we dug deeper into the analysis of the application we found that most of the time, the application spends its time in a busy-wait state, waiting for sensor data to be available.
+In these circumstances the difference between the two languages are not evident.
+
+From the results, we can deduce that the variance in the energy consumption in the tested applications are larger within the different levels of optimization in the C compiler, compared to the introduction of the Rust application layer.
+As we saw in \autoref{sec:res:energy:cache} the variance is more correlated to the cache hit ratio than what programming language we are using.
+This result at least points in the direction of the two language being equal in this domain.
+
+In order to evaluate the {\rust} language thoroughly in this domain, a larger portion of the code constituting the library must be written in {\rust}.
+In addition, a more suitable example must be employed, where the actual code is the dominant factor and not the busy-waits.
 
 \subsection{Code Size}
 
@@ -52,21 +67,6 @@ This discussion should be read in light of the fact that the {\rust} compiler is
   It is the size of the software libraries that in our results increases the size of the {\rust} binaries
 
 \end{description}
-
-\subsection{Energy}
-
-We must emphasis that energy consumption measurements presented in \autoref{sec:res:energy} are preliminary, and that the focus for the {\tracker} application was primarily to provide an application in this domain.
-The main problem with reading to much into these results, is that the {\rust} and {\C} implementations share a substantial amount of the library code, which is written in {\C}.
-The application code here is just a thin wrapper around the libraries.
-When we dug deeper into the analysis of the application we found that most of the time, the application spends its time in a busy-wait state, waiting for sensor data to be available.
-In these circumstances the difference between the two languages are not evident.
-
-From the results, we can deduce that the variance in the energy consumption in the tested applications are larger within the different levels of optimization in the C compiler, compared to the introduction of the Rust application layer.
-As we saw in \autoref{sec:res:energy:cache} the variance is more correlated to the cache hit ratio than what programming language we are using.
-This result at least points in the direction of the two language being equal in this domain.
-
-In order to evaluate the {\rust} language thoroughly in this domain, a larger portion of the code constituting the library must be written in {\rust}.
-In addition, a more suitable example must be employed, where the actual code is the dominant factor and not the busy-waits.
 
 \subsection{{\rust} in Embedded Systems}
 
