@@ -259,3 +259,21 @@ The figure shows that all of the libraries except for \lib{modules} consists of 
 The \lib{modules} library is a high level library that is built on top of {\emlib} and \lib{emdrv}.
 The rest of the libraries provides the {\rust} bindings in the \format{*.rlib} part and the C implementations in the \format{*.a} portion.
 We also see the dependencies, denoted by the arrows, between the libraries generally flowing from the top level abstraction down to the lower level abstractions.
+
+\subsection{Discussion}
+
+The final version of the build system for the {\rg} platform is as ergonomic as we set out to achieve.
+This results ensures that the platform is easily reusable by members of the {\rust} community in an familiar manner.
+
+However there are a few deficiencies in the current design.
+These are related to the discussion made in \autoref{sec:disc:rust_for_arm}, but are discussed here in the context of the build system.
+The {\rust} project is not targeting the bare-metal environment that we are considering in this thesis.
+As an result of this, we have to cross-compile each of the crates in \gls{rel} separately for the target architecture.
+This process requires us to create a separate project for each of the crates we are using.
+These project depends on the {\rust} source code, and this dependency is not managed directly by the package manager.
+This leads to duplicate copies of the {\rust} source code, one for each of the crates used in \gls{rel}.
+There have been discussion of providing an official crate for each of the crates in the standard library on crates.io, this would resolve this issue.
+
+The project layout for a {\rg} project is not identical to that of a ordinary {\rust} project.
+Both the target specification and the linker script must currently be present in the top level folder of the project.
+We would like to provide these as part of the platform in the future to make the project layout identical to ordinary projects, lowering the bar further for making use of the platform.
