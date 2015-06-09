@@ -5,7 +5,7 @@ A regular household contains embedded systems in devices like microwave ovens, d
 In a car you find embedded computers which are controlling the breaks of the car, the automatic windows, and navigation and entertainment systems.
 
 In recent years, a trend of devices called wearables are emerging, which also has an embedded computer at its core.
-The internet is growing, and according to Gartner\footnote{\url{http://www.gartner.com/newsroom/id/2905717}} the number of connected devices will increase form $\sim$5 billion in 2015 to $\sim$25 billion by 2020.
+The internet is growing, and according to Gartner \cite{web:gartner} the number of connected devices will increase form $\sim$5 billion in 2015 to $\sim$25 billion by 2020.
 A vast majority of this increase is due to the embedded computer systems known as the \gls{iot} \cite{Valhouli2010}.
 
 \subsection{Abstraction Level}
@@ -35,19 +35,19 @@ This programming model is successfull in these systems as the peripherals contro
 
 In embedded systems low level languages have been preferred.
 Traditionally a large portion of code bases consists of C, Assembly, and C++.
-As seen in \autoref{fig:vdc:langs} according to VDC Research \footnote{http://www.oracle.com/us/technologies/java/java-embedded-market-wp-2179018.pdf} the usage of C and assembly are on the way down in favor for higher level languages like C++, Java, and C\#.
+As seen in \autoref{fig:vdc:langs} according to VDC Research \cite{web:vdc} survey language used in embedded systems, the usage of C and assembly are on the way down in favor for higher level languages like C++, Java, and C\#.
 
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.5]{figures/plots/langs.png}
   \end{center}
-  \caption{Survey of language used on current project by VDC Research}
+  \caption{Survey of language used on current embedded system project by VDC Research}
   \label{fig:vdc:langs}
 \end{figure}
 
 The runtime system for \emph{managed} languages like Java, Python, and C\#, features automatic memory managements.
 This memory management lets the language ensure memory safety, but incurs a runtime cost and can make performance analysis non-deterministic.
-When these languages are used for bare-metal programming the memory management is usually altered \footnote{\url{https://gcc.gnu.org/java/papers/nosb.html}} \footnote{\url{http://janvitek.github.io/pubs/jtres09a.pdf}} \footnote{\url{http://en.wikipedia.org/wiki/.NET_Micro_Framework}}.
+When these languages are used for bare-metal programming the memory management is usually altered \cite{PetitBianco} \cite{Pizlo} \footnote{\url{http://en.wikipedia.org/wiki/.NET_Micro_Framework}}.
 
 \subsection{Benefits of the Rust language}
 The {\rust} programming langauge implements a novel approach to \emph{memory management} based on region based memory management from Cyclone \cite{Grossman2002,Swamy2006}.
