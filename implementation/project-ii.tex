@@ -15,15 +15,15 @@ The game is simple, but \gls{cpu} intensive, and was developed as a part of meas
 \subsubsection{Goal}
 
 The {\cg} application was developed to compare the performance between {\rust} and {\C}.
-It is not easy to give a performance-metric, and compare two languages directly against each other based on only one application like this.
-However, an application like this gives us a good indication of whether the two languages differ, or have roughly the same performance.
+It is not easy to give a performance metric, and compare two languages directly against each other based on only one application like this.
+However, an application like this gives us a good indication of whether the two languages differ or have roughly the same performance.
 
 \subsubsection{Requirements}
 
-The requirements that was made for the game are summarized in \autoref{tab:project:ii:requirements}.
-{\gi} and {\gii} sets the hardware requirements for the application, we chose to restrict it to the {\DK} because of its on-board \gls{lcd} screen and header pins.
+The requirements that were made for the game are summarized in \autoref{tab:project:ii:requirements}.
+{\gi} and {\gii} sets the hardware requirements for the application; we chose to restrict it to the {\DK} because of its on-board \gls{lcd} screen and header pins.
 The two modes mentioned in {\giii} was deemed necessary for testing purposes and for measuring performance, respectively.
-{\giv} specifies the performance-metric, \gls{fps} was chosen because it is an intuitive way of measuring performance.
+{\giv} specifies the performance metric, \gls{fps} was chosen because it is an intuitive way of measuring performance.
 The result will be a number that represents how many iterations of the game's main loop have been executed each second.
 
 \begin{table}[H]
@@ -46,12 +46,13 @@ The result will be a number that represents how many iterations of the game's ma
 
 The game was first written in {\C} by one of our supervisors as part of the TDT4258 \footnote{\url{http://www.ntnu.edu/studies/courses/TDT4258}} course at NTNU, and later ported by us to {\rust}.
 It is a simple game that consists of three components that are drawn to the screen; two circles and an obstacle.
-The two circles can be controlled with a gamepad which is connected to the {\DK}'s header pins, \autoref{fig:circle_game} shows a setup of the game.
-The obstacle is randomly generated and has either one or two gaps, it spawns on top of the screen, and is moved down one step for every iteration of the game loop.
+The two circles can be controlled with a gamepad that is connected to the {\DK}'s header pins, \autoref{fig:circle_game} shows a setup of the game.
+The obstacle is randomly generated and has either one or two gaps, it spawns on top of the screen and is moved down one step for every iteration of the game loop.
 The goal of the game is to avoid any collision between the circles and the obstacle.
-If the obstacle reaches the bottom of the screen without colliding with any of the circles the game score is increased, if any of the circles collide with the obstacle, the game is over and the score is reset to 0.
+If the obstacle reaches the bottom of the screen without colliding with any of the circles the game score is increased.
+However, if any of the circles collide with the obstacle, the game is over, and the score is reset to 0.
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.5\textwidth]{figures/circle-game.jpg}
   \caption{{\cg} running on the {\DK} with the attached gamepad}
@@ -64,11 +65,10 @@ We calculate the \gls{fps} for the game by increasing a counter for every iterat
 An interrupt is also set up to be triggered once every second, which consecutively updates the \gls{fps} and resets the counter.
 
 The game also has support for playing by itself.
-This mode is necessary because the optimized versions of the game runs with several hundreds of iterations each second, and it makes it easier to collect the results from the performance test.
+This mode is necessary because the optimized versions of the game run with several hundreds of iterations each second, and it makes it easier to collect the results from the performance test.
 
-
-\begin{listing}[H]
-  \begin{minted}{rust}
+\begin{listing}[ht]
+  \begin{rustcode}
 static mut FRAME_COUNT = 0;
 static mut LAST_FRAME_COUNT = 0;
 
@@ -93,7 +93,7 @@ extern fn SysTick_Handler() {
   LAST_FRAME_COUNT = FRAME_COUNT;
   FRAME_COUNT = 0;
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Pseudo code of the {\cg}}
   \label{lst:game_loop}
 \end{listing}
