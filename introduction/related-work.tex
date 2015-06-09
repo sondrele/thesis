@@ -79,7 +79,7 @@ This tool makes sharing and reusing libraries of code very easy.
 
 In this thesis we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
 The platform is described by \autoref{fig:rustygecko:all}.
-The blue colored sections describes the {\rust} modules that was developed/fitted for the platform, and the brown/yellow sections shows the base {\C} libraries that the platform utilizes.
+The blue colored sections describe the {\rust} modules that were developed/fitted for the platform, and the brown/yellow sections show the base {\C} libraries that the platform utilizes.
 The orange section denotes the build system.
 
 \begin{figure}[H]
@@ -91,14 +91,12 @@ The orange section denotes the build system.
 \end{figure}
 
 \autoref{fig:rustygecko:all} is described in a bottom-up perspective throughout \autoref{chap:impl}.
-% We describe the RustyGecko platform throughout \autoref{chap:impl} with a bottom-up view of \autoref{fig:rustygecko:all}.
+The \lib{startup} module deals with the minimal requirements for booting a {\rust} application on the \gls{mcu} and is described in \autoref{sec:impl:booting}.
+In \autoref{sec:rel} we define \gls{rel}, the subset of the {\rust} standard library which is applicable for embedded systems.
 
-From the bottom-up we describe the platform throughout \autoref{chap:impl}.
-The startup module deals with the minimal requirements for booting a {\rust} application on the \gls{mcu} and is described in \autoref{sec:impl:booting}.
-In \autoref{sec:rel} we define \gls{rel}, the subset of the standard library which is applicable for embedded systems.
-In the center part of the figure we find the the peripheral libraries for controlling both the \gls{mcu} and its connected devices, these are used in {\rust} through language bindings.
+In the center part of the figure we find the peripheral libraries for controlling both the \gls{mcu} and its connected devices, these are used in {\rust} through language bindings.
 The details of these libraries and implementations are given in \autoref{sub:interfacing_with_emlib}.
 In \autoref{sec:build_system} we take a detour and look at the building system used to support development on the {\rg} platform.
-Lastly, we consider some high level libraries and applications which we place in the Application Layer platform.
+Lastly, we consider some high-level libraries and applications that we place in the Application Layer platform.
 
 The {\rg} platform as a whole aims to bring the safety and high level abstractions of {\rust} to embedded computer systems.
