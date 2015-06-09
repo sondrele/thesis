@@ -1,4 +1,3 @@
-
 \subsection{Embedded Computer System}
 An \concept{embedded computer system} is a special purpose computer system where the computer is \emph{embedded} in the device it controls.
 These computers are much smaller than conventional server, desktop, and laptop computers, but are by far more numerous.
@@ -40,7 +39,7 @@ As seen in \autoref{fig:vdc:langs} according to VDC Research \footnote{http://ww
 
 The runtime system for \emph{managed} languages like Java, Python, and C\#, features automatic memory managements.
 This memory management lets the language ensure memory safety, but incurs a runtime cost and can make performance analysis non-deterministic.
-When these languages are used for bare-metal programming the memory management is usually altered \footnote{https://gcc.gnu.org/java/papers/nosb.html} \footnote{http://janvitek.github.io/pubs/jtres09a.pdf} \footnote{http://en.wikipedia.org/wiki/.NET_Micro_Framework}.
+When these languages are used for bare-metal programming the memory management is usually altered \footnote{\url{https://gcc.gnu.org/java/papers/nosb.html}} \footnote{\url{http://janvitek.github.io/pubs/jtres09a.pdf}} \footnote{\url{http://en.wikipedia.org/wiki/.NET_Micro_Framework}}.
 
 \subsubsection{Benefits of the Rust language}
 The {\rust} programming langauge implements a novel approach to \emph{memory management} based on region based memory management from Cyclone \cite{Grossman2002,Swamy2006}.
@@ -65,10 +64,24 @@ Throughout the work for this thesis we have both had a huge benefit of the openn
 One particularly good tool for sharing {\rust} is the \emph{Cargo} package manager.
 This tool makes sharing and reusing libraries of code very easy.
 
-
-
 \subsubsection{The RustyGecko Platform}
 
 In this thesis we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
-The platform consists of a subset of the {\rust} standard library (described in \autoref{sec:rel}) and a peripheral library for the \gls{mcu} (\autoref{sub:interfacing_with_emlib}).
-The platform aims to bring the safety and high level abstractions of {\rust} to embedded computer systems.
+The platform is described by \autoref{fig:rustygeck:all} with the blue colored sections describing the {\rust} modules developed/fitted for the platform, the brown/yellow shows the base {\C} libraries utilized and the red section denotes the build system.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics{figures/RustyGecko-all.png}
+  \end{center}
+  \caption{The contents of the RustyGecko platform}
+  \label{fig:rustygecko:all}
+\end{figure}
+
+From the bottom-up we describe the platform throughout \autoref{chap:impl}.
+The startup module deals with the minimal requirements for booting a {\rust} application on the \gls{mcu} and is described in \autoref{sec:impl:booting}.
+In \autoref{sec:rel} we define \gls{rel}, the subset of the standard library which is applicable for embedded systems.
+In the center part of the figure we find the the peripheral libraries for controlling both the \gls{mcu} and its connected devices, these are used in {\rust} through language bindings.
+The details of these libraries and implementations are given in \autoref{sub:interfacing_with_emlib}.
+In \autoref{sec:build_system} we take a detour and look at the building system used to support development on the {\rg} platform.
+Lastly, we consider some high level libraries and applications which we place in the Application Layer platform.
+
+The {\rg} platform as a whole aims to bring the safety and high level abstractions of {\rust} to embedded computer systems.
