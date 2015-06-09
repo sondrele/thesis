@@ -3,5 +3,46 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-\chapter{Future work}
+\section{The RustyGecko Platform}
+
+In this thesis we have presented the {\rg} platform for embedded programming using the {\rust} programming language.
+This platform consists of a subset of the {\rust} standard library and a binding library around peripheral libraries for the EFM32 series of \glspl{mcu}.
+
+We have explained that the platform makes use of many of the language and community features which comes with a modern programming language.
+From our measured results we showed that by using this {\rust} based platform, we can still make applications which perform equally well as the existing {\C} platform, based on performance and energy consumption metrics.
+Still, we did find evidence of the platform producing larger binaries, which makes {\rust} application more expensive, in terms of hardware costs, or rendering the platform useless for the most resource constrained applications.
+We have also shown that there does exist some obstacles for making use of the convenient ways of sharing code between projects, although the basic mechanisms are in place.
+
+\section{Requirements}
+
+In \autoref{chap:intro} we presented three requirements as interpreted from the Project Description for this thesis.
+Requirement \textbf{R1} is achieved through the presentation of the existing {\C} platform given in \autoref{chap:background} the comparison to the {\rust} platform in \autoref{chap:impl}.
+\autoref{sec:disc:lang-challenges} covered the language challenges discussed in \autoref{sec:intro:assignment}, as part of requirement \textbf{R1}, and shows that each challenge is considered in the {\rg} platform.
+We therefore conclude that these challenges are solved for using {\rust} in an embedded system.
+Further we consider the {\rg} platform to fulfill requirement \textbf{R2}.
+Throughout \autoref{chap:results} we presented our results of measuring the {\rg} platform and our evaluation of the measurements are given in \autoref{chap:discussion} to satisfy requirement \textbf{R3}.
+
+\section{Future work}
 \label{chap:future}
+
+As we presented in \autoref{sub:interfacing_with_emlib} the platform consists of partially finished bindings.
+An obvious extension to our project is to continue and finalize the binding libraries for the {\emlib}, {\emdrv} and {\cmsis} libraries.
+The foundations for these binding have been laid out, so the implementations here are not challenging, only time-consuming.
+An alternative approach is to use a bindings generator such as \lib{bindgen} \footnote{https://github.com/crabtw/rust-bindgen} to generate the binding automatically.
+The binding effort might be redundant altogether, as the {\rust} roadmap \footnote{https://internals.rust-lang.org/t/priorities-after-1-0/1901} states that the project wants to develop better integration with {\C}/{\Cpp} code.
+This might eventually lead to bindings like these being made obsolete, and that {\C} libraries can called into based on their header files, alone.
+
+In \autoref{sec:rust-embedded-modules} we looked at a library which provided higher level abstraction using the language features of {\rust}.
+
+The interrupt-driven programming model used to program embedded system did not prove to be as applicable to {\rust} as we had hoped.
+In \autoref{sec:impl:irq-closures} we looked at a technique for changing this model by using ownership rules similar to how concurrency is handled in {\rust}.
+This library has potential to provide a more idiomatic programming style to embedded programs in {\rust} and will make the platform more familiar to {\rust} developers.
+This library can be extended to control the ownership of \glspl{mmio} as discussed in \autoref{sec:ownership_allied_to_hardware}.
+
+In the \autoref{sec:disc:project_evaluations} we argued that in order to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform has to be implemented in {\rust}.
+On possible way to do this is to start this project from scratch by using the \lib{zinc.rs} framework and porting the actual implementations of the {\emlib} library to {\rust}.
+In doing so, the examples provided with {\emlib} can be used as a benchmark suite to compare the two platforms.
+This can both provide a better basis for evaluation, but can also, as we showed in \autoref{sec:porting-gpioint}, uncover bugs in the {\C} implementation of {\emlib}.
+These discoveries can help motivate the usage of {\rust} in this domain.
+Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, it is possible to do this the other way around.
+Therefore parts of the {\emlib} library can actually be replaced by an {\rust} implementation and still expose the same \gls{api} to the user.
