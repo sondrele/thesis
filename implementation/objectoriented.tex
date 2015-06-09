@@ -1,17 +1,18 @@
-\section{Object Oriented Embedded Programming}
+\section{Object-oriented Embedded Programming}
 \label{sec:impl:oo}
 
-The interface of many of the modules defined in {\emlib} resembles that of objects found in Object Oriented programming.
-This section looks at how Object Oriented programming can be used in conjunction with \gls{mmio} in embedded programming.
+The interface of many of the modules defined in {\emlib} resembles that of objects found in object-oriented programming.
+In its essence, object-oriented programming focuses on organizing a computer program by looking at the data the program operates on.
+This is done by grouping related data into objects and defining methods that operate on the data contained within the objects.
 
-In its essence, Object Oriented programming focuses on organizing a computer program by looking at the data the program operates on, grouping related data into objects and defining methods that operate on the data contained within the objects.
-The paradigm's essential concept can be applied to embedded {\C} programming even though the language itself does not directly define any language features to aid the design.
-In this section, we look at how control over the memory layout of objects and static dispatch, can be used to enable the Object Oriented paradigm in conjunction with \gls{mmio} in embedded programming.
+The paradigm's essential concept can be applied to embedded {\C} programming, even though the language itself does not directly define any language features to aid the design.
+In this section, we look at how control over the memory layout of objects, and static dispatch, can be used to enable the object-oriented paradigm in conjunction with \gls{mmio} in embedded programming.
+We use the memory layout of a memory-mapped \gls{adc} as an example to see how this peripheral can be represented as an object.
 
 Static dispatch, as opposed to dynamic dispatch, is the mechanism in which the function to be called can be decided statically by the compiler, and a \code{call} instruction to the function can be inserted into the code directly.
-Dynamic dispatch on the other hand requires runtime information which requires the call to be the function to be made though an level of indirection.
+Dynamic dispatch, on the other hand, requires extra runtime information about the function to be called, which adds an additional layer of indirection to the function call.
+% Dynamic dispatch, on the other hand, requires runtime information which requires the call to the function to be made through an extra layer of indirection.
 
-We look at the memory layout of a memory-mapped \gls{adc} and see how this can be represented as an object.
 
 \subsection{Memory Mapped I/O}
 \label{ssec:memory_mapped_io}
@@ -56,23 +57,24 @@ This means that writing to a pointer that points to this address will write to t
 
 \autoref{fig:back:memorymapped} shows a subsection of \gls{ram} that contains the \gls{adc} control register.
 Only the relevant registers for our discussion in included in the figure.
-It shows the control register to used when performing a single \gls{adc} conversion, note that it only includes the register needed for this kind of conversion.
-The CTRL register is used to initialize the hardware device before performing a conversion, the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
+It shows the control register that is used when performing a single \gls{adc} conversion.
+Note that it only includes the register needed for this kind of conversion.
+The CTRL register is used to initialize the hardware device before performing a conversion, and the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
 We see that the CTRL register is at offset \mem{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \mem{0x4} bytes.
-The two registers, SINGLECTRL and SINGLEDATA, are for initializing the single conversion and reading the results of a conversion, respectively.
+The two registers, SINGLECTRL and SINGLEDATA, are there for initializing the single conversion and read the results of a conversion, respectively.
 
 \subsection{Memory Layout of Objects}
 
-The traditional memory layout of an object in an object oriented language is an implementation detail.
-This is due to the fact that the fields of the object might have different sizes and optimizations can rearange the memory layout to optimize for size.
-The layout is aslo a implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with C's \gls{ffi}.
+The traditional memory layout of an object in an object-oriented language is an implementation detail.
+This is because the fields of the object might have different sizes, and optimizations can rearrange the memory layout to optimize for size.
+The layout is also an implementation detail of {\rust} for the same reasons, but by annotating a struct with \attrib{\#[repr(C)]}, it will ensure that it is compatible with {\C}'s \gls{ffi}.
 Objects in a language like {\Java} also includes a tag field at the base of the object as a reference to the class of the object in order to provide dynamic dispatch.
 
 \begin{listing}[H]
   \centering
-  \begin{minipage}{0.31\textwidth}
+  \begin{minipage}{0.26\textwidth}
   \begin{listing}
-    \begin{minted}{java}
+    \begin{javacode}
 class ADC {
   int CTRL;
   int CMD;
@@ -82,13 +84,13 @@ class ADC {
   int SINGLEDATA;
   // ...
 }
-    \end{minted}
+    \end{javacode}
   \end{listing}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.31\textwidth}
+  \begin{minipage}{0.27\textwidth}
   \begin{listing}
-    \begin{minted}{rust}
+    \begin{rustcode}
 #[repr(C)]
 struct ADC {
   CTRL: u32,
@@ -99,13 +101,13 @@ struct ADC {
   SINGLEDATA: u32,
   // ...
 }
-    \end{minted}
+    \end{rustcode}
   \end{listing}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.31\textwidth}
+  \begin{minipage}{0.33\textwidth}
   \begin{listing}
-    \begin{minted}{c}
+    \begin{ccode}
 typedef struct {
   uint32_t CTRL;
   uint32_t CMD;
@@ -115,20 +117,19 @@ typedef struct {
   uint32_t SINGLEDATA;
   // ...
 } ADC;
-    \end{minted}
+    \end{ccode}
   \end{listing}
   \end{minipage}
 
-  \caption{Definition of an \gls{adc} in Java, {\rust}, and C}
+  \caption{Definition of an \gls{adc} in {\Java}, {\rust}, and {\C}}
   \label{lst:back:adc-objects}
 \end{listing}
 
-
-In C, where classes and objects are not part of the language, structs are used to create the representations for objects.
-By using structs the programmer has full control over the layout of the object in memory.
-The Object Oriented concepts used for \gls{mmio} uses static dispatch and the structs does not include tag fields or references to virtual tables.
+In {\C}, where classes and objects are not part of the language, structs are used to create the representations for objects.
+By using structs, the programmer has full control over the layout of the object in memory.
+The object-oriented concepts used for \gls{mmio} uses static dispatch, and the structs do not include tag fields or references to virtual tables.
 \autoref{lst:back:adc-objects} shows how to define a {\Java} class, and {\rust} and {\C} structs for the \gls{adc} on the {\gecko}.
-The memory layout of these objects are given in \autoref{fig:back:memlayout}.
+The memory layout of these objects is given in \autoref{fig:back:memlayout}.
 
 \begin{figure}[H]
 
@@ -145,7 +146,7 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
       0x28&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-    \caption{Java}
+    \caption{{\Java}}
     \label{fig:back:memlayout:java}
   \end{subfigure}
   \hfill
@@ -175,7 +176,7 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
       0x24&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-        \caption{C}
+        \caption{{\C}}
     \label{fig:back:memlayout:c}
   \end{subfigure}
   \caption{Memory layout of objects}
@@ -183,38 +184,38 @@ The memory layout of these objects are given in \autoref{fig:back:memlayout}.
 
 \end{figure}
 
-By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout} we see that the memory layout of a struct defined in {\rust} and {\C} has same exact layout as the memory mapped control register of the \gls{adc}.
-This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object oriented pattern can be used to directly interface with the \gls{mmio}.
+By comparing \autoref{fig:back:memorymapped} and \autoref{fig:back:memlayout}, we see that the memory layout of a struct defined in {\rust} and {\C} has the exact same layout as the memory mapped control register of the \gls{adc}.
+This suggests that, if a pointer to the \gls{mmio} device is considered as a reference to an \gls{adc} object, the object-oriented pattern can be used to directly interface with the \gls{mmio}.
 
-The layout of the Java object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
+The layout of the {\Java} object in \autoref{fig:back:memlayout:java} could imply that the same analysis can be applied by adding an offset, equal to the size of the object tag, to the reference.
 This is not the case as this would map the object tag to the base address of the \gls{adc} minus 4 bytes.
-This location is, in the case of the {\gecko}, an unmapped memory section used to as padding between the \gls{adc} and the previous \gls{mmio}.
-Java uses this object tag to store a reference used to dynamicaly dispatch method calls to the object.
-And using the reference in place of a regular Java object would cause the the method dispatch mechanism to fail.
+This location is, in the case for the {\gecko}, an unmapped memory section used to add padding between the \gls{adc} and the previous \gls{mmio}.
+{\Java} uses this object tag to store a reference used to dynamically dispatch method calls to the object.
+Moreover, using the reference in place of a regular {\Java} object would cause the method dispatch mechanism to fail.
 
 \subsection{Adding Object Functionality}
 
-This sections shows how we add functionality called methods to the \gls{mmio} objects.
+This section shows how we add functionality called \emph{methods} to the \gls{mmio} objects.
 Both {\C} and {\rust} uses static dispatch.
-This ensures that {\C} and {\rust} provide the same Zero Cost Abstractions when interacting with the \gls{mmio}.
+This ensures that {\C} and {\rust} provide the same zero-cost abstractions when interacting with the \gls{mmio}.
 
 \subsubsection{Static Dispatch in C}
 
 Implementing objects with static dispatch is a straight forward process in {\C}.
-Here we define a function which takes a reference to the object as the first parameter.
-The function then uses the object reference in the same manner as the implicit \var{this} parameter in conventional object oriented languages such as {\Java}.
+Here, we define a function which takes a reference to the object as the first parameter.
+The function then uses the object reference in the same manner as the implicit \var{this} parameter in conventional object-oriented languages such as {\Java}.
 
 \begin{listing}[H]
   \centering
   \begin{minipage}{0.47\textwidth}
   \begin{listing}
-      \begin{minted}{c}
-// ADC Member function with explicit
-// object reference
+      \begin{ccode}
+// ADC Member function with
+// explicit object reference
 uint32_t ADC_DataSingleGet(
            ADC *const adc) {
-  // The adc pointer is used as
-  // a reference to the this object
+  // The adc pointer is used as a
+  // reference to the this object
   return adc.SINGLEDATA;
 }
 
@@ -227,35 +228,36 @@ void main() {
   // reference to the object
   ADC_DataSingleGet(&adc);
 }
-      \end{minted}
+      \end{ccode}
   \end{listing}
   \end{minipage}
   \hfill
   \begin{minipage}{0.47\textwidth}
   \begin{listing}
-      \begin{minted}{rust}
+      \begin{rustcode}
 impl Adc {
   // Rust lets the programmer
   // specify how to accept the
   // object when invoked with
   // the dot notation
-  pub fn data_single_get(&self) -> u32 {
-    // self now is a refence to the ADC MMIO
+  pub fn data_single_get(&self)
+  -> u32 { // self is a reference
+    // to the ADC MMIO
     self.SINGLEDATA
   }
 }
 
 fn main() {
-  // Instantiation of MMIOs
-  // is handled in the next section
+  // Instantiation of MMIOs is
+  // handled in the next section
   let adc = Adc;
   // The Rust compiler issues
   // a static call to the
-  // member method and passes
-  // in the reference to the MMIO
+  // member method and passes in
+  // the reference to the MMIO
   adc.data_single_get();
 }
-      \end{minted}
+      \end{rustcode}
   \end{listing}
   \end{minipage}
   \caption{Member methods for {\C} and {\rust}, respectively.}
@@ -263,23 +265,23 @@ fn main() {
 
 \end{listing}
 
-\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using an object oriented pattern.
-We use the \keyword{impl} block to define the same behavior in {\rust}, but the methods are called with the dot notation known from object oriented languages.
+\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using an object-oriented pattern.
+We use the \keyword{impl} block to define the same behavior in {\rust}, but the methods are called with the dot notation known from object-oriented languages.
 
 \subsection{Instantiating a MMIO object}
 
 Now that we have shown that \glspl{mmio} can be represented as objects defined by structs, we consider how to instantiate them.
-Usually an object in the object oriented paradigm is created with a constructor and deallocated with a destructor.
+Usually, an object in the object-oriented paradigm is created with a constructor and deallocated with a destructor.
 The constructor is responsible for allocating the object and initializing the fields with values.
 Analogously, the destructor is responsible for deallocating the object and any other member objects that it owns.
-\gls{mmio} devices have a fixed position in the memory and do not need to be allocated, they also generally do not have any owned members.
+\gls{mmio} devices have a fixed position in the memory and do not need to be allocated, and they also generally do not have any owned members.
 Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, but we still need to instantiate the variable that holds the reference to the \gls{mmio} and cast it to the desired type.
-\autoref{fig:oo:instantiate} show how to instantiate a \gls{mmio} as an object in both {\C} and {\rust}.
+\autoref{fig:oo:instantiate} shows how to instantiate a \gls{mmio} as an object in both {\C} and {\rust}.
 
 \begin{listing}[H]
-  \begin{minipage}{0.47\textwidth}
+  \begin{minipage}{0.46\textwidth}
   \begin{listing}
-    \begin{minted}{rust}
+    \begin{rustcode}
 const ADC0_BASE: *mut Adc
       = 0x40002000 as *mut Adc;
 
@@ -288,24 +290,24 @@ fn main() {
     ADC0_BASE.as_mut().unwrap()
   };
 }
-    \end{minted}
+    \end{rustcode}
     \caption{Rust}
   \end{listing}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.47\textwidth}
+  \begin{minipage}{0.45\textwidth}
   \begin{listing}
-    \begin{minted}{c}
+    \begin{ccode}
 #define ADC0_BASE 0x40002000
 
 void main() {
   ADC* adc0 = (ADC*)ADC0_BASE;
 }
-    \end{minted}
-    \caption{C}
+    \end{ccode}
+    \caption{{\C}}
   \end{listing}
   \end{minipage}
-  \caption{Instantiating a \glspl{mmio}}
+  \caption{Instantiating a \gls{mmio}}
   \label{fig:oo:instantiate}
 \end{listing}
 
