@@ -393,7 +393,7 @@ pub enum CCMode {
 \label{ssub:testing}
 
 Verification of correctness is an important part of all software, whether it is done manually or with an automated test framework.
-This section describes a small Unit test framework that was developed for testing the bindings for {\emlib}.
+This section describes a small unit test framework that was developed for testing the bindings for {\emlib}.
 
 \subsubsection{Why Unit testing}
 
@@ -402,7 +402,7 @@ This was provoked by the fact that testing software on an embedded system is a t
 More often than not you find yourself running the code in the debugger, inspecting the call stack and function arguments, to ensure that the bindings are calling the correct functions, with the correct arguments.
 The fact about arguments has a subtle point to it.
 
-We are working in two statically typed languages which leads the compiler to statically ensure that the correct types are passed around.
+We are working in two statically typed languages that lead the compiler to statically ensure that the correct types are passed around.
 However, there are no checks to ensure that the memory layout of the datatypes in {\C} and {\rust} match at the borders between the two languages.
 Currently, the {\rust} \gls{ffi} requires the programmer to redefine the {\C} datatypes in {\rust}, like structs and enums, in order to call into the {\C} functions that takes these datatypes as arguments.
 The process of verifying this manually proved to be both error prone and time consuming, which suggested the need for an automated system to verify the correctness of the bindings.

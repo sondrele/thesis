@@ -117,9 +117,10 @@ It is designed to integrate with other existing tools, like GNU Make, which has 
 When the transition to {\cargo} started, we focused on structuring the main library and its modules into the directory structure described in \autoref{ssub:project_structure}.
 By invoking the \cmd{cargo build --verbose} command, it was possible to see the output from what {\cargo} attempted to build when it failed, and then structure the project accordingly.
 
-A big priority was to to shrink the size of the makefiles that were in the project by making them a part of the standard build process for {\emlib} instead, doing this would help us get a long way of ensuring that the builds done by {\cargo} could be consistent across systems.
+A big priority was to to shrink the size of the makefiles that were in the project by making them a part of the standard build process for the {\rg} platform instead.
+Doing this would help us get a long way of ensuring that the builds done by {\cargo} could be consistent across systems.
 By defining a {\rust} build script and utilizing a {\rust} build-dependency called \prog{gcc}\footnote{\url{https://crates.io/crates/gcc}}, we were able to compile the {\C} sources from Silicon Labs' {\emlib} and link them with our bindings directly as part of the build process.
-Note that the \prog{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying C-compiler, in our case it is used to cross-compile with the {\armgcc} compiler.
+Note that the \prog{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying {\C}-compiler, in our case it is used to cross-compile with the {\armgcc} compiler.
 By removing the dependency of manually compiling the {\C} sources, it was easier to start to automatically fetch the other dependencies, like the {\core} and \lib{collections} libraries.
 
 Because this project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard {\rust} libraries that we wanted to utilize for the ARM Cortex-M3.
@@ -127,8 +128,6 @@ We could not utilize the pre-compiled libraries that are already included with {
 This problem was solved by implementing a new {\cargo} build-dependency, called \texttt{rust-src}\footnote{\url{https://github.com/sondrele/rust-src}}, whose purpose is to download the entire {\rust} source code that is compliant with the instance of {\rustc} that is \emph{currently} compiling the library.
 By making it a task for each build to fetch its own source code, we were guaranteed that the dependencies we used for the project would always compile, independent of the current instance of {\rustc} that was installed on the system.
 The crates that we have fetched from {\rust}'s standard library that make up what we call \gls{rel} are already described in \autoref{sec:rel}, but they are also shown in \autoref{tab:compiled_libraries} for the sake of completeness.
-% The crates\autoref{tab:compiled_libraries} summarizes the different crates that we have fetched from {\rust}'s standard library in order to use them with our project.
-% \todo{May not need this table here. Need to synchronize with the section that presents REL and such..}
 
 \begin{table}[ht]
 \begin{center}
@@ -148,21 +147,24 @@ The crates that we have fetched from {\rust}'s standard library that make up wha
 \end{center}
 \end{table}
 
-By design {\cargo} only supported passing two flags further on to {\rustc}, those were \flag{-L} and \flag{-l}, their purpose is to tell {\rustc} to link with an external library by looking in a directory (specified with the \flag{-L} flag), for a library with the specified name (specified with the \flag{-l} flag).
-The last step in the build process involved linking {\emlib} and the other libraries with an actual executable for the Cortex-M3.
+By design, {\cargo} only supported passing two flags further on to {\rustc}, those were \flag{-L} and \flag{-l}.
+The purpose of these flags is to tell {\rustc} to link with an external library by looking in a directory (specified with the \flag{-L} flag), for a library with the specified name (specified with the \flag{-l} flag).
+The last step in the build process involved linking the bindings and the other libraries with an actual executable for the Cortex-M3.
 This was not possible to do with {\cargo} since it required us to pass a couple of extra linker-flags further on to {\rustc}.
 The flags were needed by {\rustc} in order to tell it to link with an external library for a different architecture and to include a separate linker-script that took care of booting up the executable on this architecture.
 
 Another issue that was introduced by automatic compilation with {\cargo}, was how it structured the packages it compiled.
-When {\cargo} builds a project and its dependencies it structures all the generated metadata and the compiled libraries within a \dir{target} directory, and an extra filename gets appended to all of these libraries.
-This extra filename is part of a hash that is generated based on the code in the library, and ensures that each and every build is consistent and it resolves any problems that might arise if several dependencies within a project depend on different versions of the same library.
+When {\cargo} builds a project and its dependencies, it structures all the generated metadata and the compiled libraries within a \dir{target} directory, and an extra filename gets appended to all of these libraries.
+This extra filename is part of a hash that is generated based on the code in the library.
+It ensures that each and every build is consistent and it resolves any problems that might arise if several dependencies within a project depend on different versions of the same library.
 This works when {\cargo} handles the entire build process, but it our case, where we had to manually compile the final executable, it turned out to be a problem because the name of the library would change every time some of its content changed.
-We worked around this problem by modifying the build script to store the hash generated by {\cargo} for {\emlib} to a text file, every time the library was built, and then included it in the makefile for the project.
+We worked around this problem by modifying the build script to store the hash generated by {\cargo} for {\emlib} to a separate file, every time the library was built, and then included it in the makefile for the project.
 
 \subsection{Conditional linking with Cargo}
 
-The build process described in the previous section made it simpler to use third party libraries, but it did not solve all of our issues, the main problem that persisted was to have a good way of making {\emlib} itself, portable.
-With the setup that we had, it was easy to create new executables \emph{within} the project, but it was hard to create new executables that \emph{depended} on {\emlib}.
+The build process described in the previous section made it simpler to use third party libraries, but it did not solve all of our issues.
+The main problem that persisted was to have a good way of making the bindings themselves portable.
+With the setup that we had, it was easy to create new executables \emph{within} the project, but it was hard to create new executables that \emph{depended} on the bindings.
 Basically, because we had to work around {\cargo} in the final part of the build process, it also meant that \emph{every} project that wanted to depend on {\emlib} also had implement the same workarounds.
 Thus, we needed to solve the problem of knowing where {\cargo} would store the project metadata, and we needed a way to get {\cargo} to compile the final executables with the extra linker-arguments needed by {\rustc} in order to compile the binary for the Cortex-M3.
 
@@ -200,27 +202,28 @@ This flag was included for debugging purposes. \\
 
 
 In order to solve the problems we had with building the project, we created a new subcommand called \cmd{cargo-linkargs}\footnote{\url{https://github.com/RustyGecko/cargo-linkargs/}} that depends on {\cargo} itself.
-This subcommand was created specifically with {\emlib} in mind, and supports all the flags that the \cmd{cargo-build} command supports, including the flags shown in \autoref{tab:cargo_linkargs}.
-We got rid of the two problems we had with building {\emlib} once \cmd{cargo-linkargs} was working.
+This subcommand was created specifically with {\rg} in mind, and supports all the flags that the \cmd{cargo-build} command supports, including the flags shown in \autoref{tab:cargo_linkargs}.
+We got rid of the two problems we had with building the {\rg} platform once \cmd{cargo-linkargs} was working.
 The problem with resolving the location of generated metadata was solved implicitly just by utilizing {\cargo}, and the extra linker-arguments could easily be passed on to the invocation of \cmd{cargo-linkargs} via the project's makefile.
 
 \subsection{Continuous Integration}
 \label{ssub:continuous_integration}
 
 When we first started this project, {\rust} had reached a 1.0-alpha version.
-This meant that the programming language had reached a relatively stable state, but there was still big parts of the language and its standard libraries that was marked as unstable and up for review before the planned 1.0 release.
-The standard libraries, and third party {\rust} libraries that have evolved in the {\rust} community, have made little guarantee about their stability, and the \glspl{api} have been subject to change without much notice.
+This meant that the programming language had reached a relatively stable state, but there was still big parts of the language and its standard libraries that were marked as unstable and up for review before the planned 1.0 release.
+The standard libraries, and third-party {\rust} libraries that have evolved in the {\rust} community, have made small guarantees about their stability, and the \glspl{api} have been subject to change without much notice.
 
-Continuous Integration refers to the practice of testing the whole system \emph{continuously}, for every smaller change introduced to the code base, usually with some kind of automated test framework.
+Continuous Integration refers to the practice of testing the whole system \emph{continuously}, for every smaller change introduced to the code base, usually with an automated test framework.
 Continuous Integration is advantageous to normal regression testing because it can reduce the amount of code rework that is needed in later phases of development, as well as speed up overall development time  \cite{Orso2014}.
-Many {\rust} projects have utilized a continuous integration system called Travis CI\footnote{\url{https://travis-ci.com/}} for ensuring that the code in the project have been compatible with the nightly builds of {\rust}.
+Many {\rust} projects have utilized a continuous integration system called Travis CI\footnote{\url{https://travis-ci.com/}} for ensuring that the code in the project has been compatible with the nightly builds of {\rust}.
 By registering our projects with Travis CI, and a community-developed service called {\rust} CI\footnote{\url{http://rust-ci.org/}}, we had automatic, daily builds of our projects on a third-party server.
-Builds were triggered every time we released a change to the code on GitHub, and every time a new nightly release of {\rust} was published, and if a build failed we would get notified of the error.
-By making continuous integration part of the normal build routine and review-process for new project code, we had an extra step of verification that the project would build on other systems then the one it was developed on.
+Builds were triggered every time we released a change to the code on GitHub, and every time a new nightly release of {\rust} was published.
+And if a build failed we would get notified of the error.
+By making continuous integration part of the normal build routine and review process for new project code, we had an extra step of verification that the project would build on other systems then the one it was developed on.
 
-It is important to note that continuous integration only helped us to verify that the project could be \emph{built}, it could not help us to verify that the compiled code would actually \emph{work} for its target architecture.
-In order to verify that the code would work for on the Cortex-M3 we had to actually run in on one of the microcontrollers that we had a available for this project.
-An experimental process of testing and mocking the {\emlib} \gls{api} bindings is described in greater detail in \autoref{ssub:testing}.
+It is important to note that continuous integration only helped us to verify that the project could be \emph{built}, it could not help us to prove that the compiled code would actually \emph{work} for its target architecture.
+To verify that the code would work for the Cortex-M3, we had to run in on one of the \glspl{mcu} that we had available for this project.
+An experimental process of testing and mocking the {\rg} bindings is described in greater detail in \autoref{ssub:testing}.
 
 \subsection{Contributing to Cargo}
 \label{ssub:contributing_to_cargo}
