@@ -23,7 +23,15 @@ The EFM32 {\emlib} library used in this thesis is also a platform for {\C} progr
 In this thesis we use the words \emph{embedded} and \emph{bare-metal} interchangeably, to refer to execution of code directly on the hardware, without the abstraction of an \gls{os}.
 This is the only execution mode that we have targeted in this project.
 
-\subsection{Programming Languages}
+\subsection{Programming Model}
+A common programming model used in embedded systems is the \emph{Event-driven} programming model.
+In the this model the program is controlled by events which in turn triggers actions.
+Within an embedded system, these events are hardware interrupt and the actions are handler functions dispatched by the runtime system.
+A typical example of this event-action pair is interrupt given by pressing a button and the program turning on a \gls{LED}.
+Other events that triggers interrupt handlers in an embedded system is, timers, sensors with available data and communication peripherals ready to receive or send data.
+This programming model is successfull in these systems as the peripherals controlled by the \gls{mcu} usually requires time to perform its operation, and the asyncronous nature of the model lets the \gls{cpu} avoid the busy-waits implied by using a more synchronous model.
+
+\subsection{Programming Language}
 
 In embedded systems low level languages have been preferred.
 Traditionally a large portion of code bases consists of C, Assembly, and C++.
