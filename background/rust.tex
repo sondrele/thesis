@@ -423,7 +423,8 @@ The important part of this example is that we are keeping the same level of abst
 There is still one vital difference between the two examples.
 We can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate.
 However, we can end up with dangling pointers if we happen to have multiple references into our vector in {\Cpp}.
-This is the case because, when the vector grows and gets reallocated, references into the vector will not be updated to the newly allocated storage but will instead be dangling pointers into the now old and deallocated storage.
+This is the case because, when the vector grows and gets reallocated, references into the vector will not be updated to the newly allocated storage.
+These references will instead be dangling pointers into the now old and deallocated storage.
 In {\rust}'s case, all structures are allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
 References to such stack-allocated variables can be passed around and accessed, just like in {\Cpp},
 but {\rust} also introduces a set of rules that have to be followed to safely use these references.
