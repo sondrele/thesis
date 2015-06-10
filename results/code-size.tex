@@ -1,7 +1,8 @@
 \section{Code Size}
 \label{sec:res:code-size}
 
-This section looks at the size of the compiled object files for various {\rust} libraries and runnable programs.
+This section looks at the size of the compiled binaries for three {\rust} programs.
+These programs are the two projects, {\tracker} and {\cg}, and a Minimal Main program.
 A comparison between functionally equivalent programs in {\C} and {\rust} are provided.
 
 Code size is an important factor in an embedded system.
@@ -16,17 +17,14 @@ When putting embedded systems into production, the volume of microprocessors are
 And as the size of the flash correlates with the price of the microprocessors, being able to choose a smaller version can save large amounts of money.
 
 Each program was compiled with optimization levels O0, O1, O2 and O3, and the O0 level is compiled both with and without debugging symbols.
-Compiling the library results in a \file{lib*.rlib} file, which is an archive containing object files for the code contained in the library.
 Compiling executable programs results in an {\elf} binary file.
-The size is then calculated by executing the \emph{arm-none-eabi-size} program.
+The size was calculated by executing the \emph{arm-none-eabi-size} program.
 
 \subsection{Measuring Size}
 \label{sec:measure-size}
 
-The \emph{arm-none-eabi-size} program accepts an elf binary, an object file, or an archive as argument.
+The \emph{arm-none-eabi-size} program accepts an elf binary as argument.
 The program then reads the file and reports the size of the \elfsec{.text}, \elfsec{.data} and \elfsec{.bss} segments described in \autoref{sec:back:elf}.
-If the argument is an archive, the program will iterate through all the objects in the archive and report the size for each individual object file.
-When reporting the size of the archives, the sizes for all the objects files contained within the archive have been accumulated.
 
 \subsection{Parameters}
 \label{sec:size:params}
@@ -66,56 +64,13 @@ Each program in this section is compiled with 6 different settings as given by \
   \label{tab:size:settings}
 \end{table}
 
-Notice that for the 6th optimization setting, the underlying {\C} sources are compiled with the Os flag.
-For the rest of the settings, the same optimization level is used for both the {\rust} and the {\C} code.
-This 6th optimization setting is only used when compiling binaries.
+For each of the optimization levels the underlying {\C} sources are compiled at the same level as the {\rust} code.
+Notice that for the 6th optimization setting, the underlying {\C} sources are compiled with the Os flag, while the {\rust} sources are compiled at level 3.
 
-\subsection{Libraries}
+\subsection{Binary Sizes}
 
-We first look at the code size of the \gls{rel} libraries along with the \lib{cmsis} and \lib{startup} libraries.
-The \gls{rel} libraries, presented in \autoref{sec:rel}, all contain {\rust} code only, while the \lib{cmsis} and \lib{startup} libraries contain {\rust} binding code in addition to the actual {\C} implementation code compiled with \prog{gcc}.
-The same compiler options from \autoref{sec:size:params} are passed to the {\C} compiler.
-As the code size of libraries varies from a few bytes to 400KB, the results are presented in two separate figures.
-\autoref{fig:size:lib:small} shows the small libraries ranging from 4B to 3KB and \autoref{fig:size:lib:large} shows the large libraries in ranges 100KB to 400KB.
-
-The \prog{arm-none-eabi-size} makes the distinction between three of the {\elf} segments.
-Here, only the size for the \elfsec{.text} segment is shown in the graphs, as the \elfsec{.data} and \elfsec{.bss} are mostly non-existing.
-This is because there is not any static allocation in \gls{rel}, in fact, the only static allocation is of 8B in the \textbf{data} section of the \lib{startup} library.
-
-The bars for each library, from left to right, represent the sizes of programs compiled with different parameters as described in \autoref{tab:size:settings}.
-The general trend is that the code size decreases as the optimization level is increased.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.5]{results/plots/size/lib/small/size.png}
-  \end{center}
-  \caption{Code size for small Rust libraries}
-  \label{fig:size:lib:small}
-\end{figure}
-
-A notable result in \autoref{fig:size:lib:small} is the increase in code size for the \lib{startup} library when moving from O2 to O3.
-This increase of 500B is not due to the {\rust} code of the \lib{startup} library, but the \gls{cmsis} Cortex-M3 System Layer provided by Silicon Labs, which is written in {\C}.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[scale=0.5]{results/plots/size/lib/large/size.png}
-  \end{center}
-  \caption{Code size for large Rust libraries}
-  \label{fig:size:lib:large}
-\end{figure}
-
-From \autoref{fig:size:lib:large}, we see that the \lib{collection} library is the largest one at ~137 KB when optimized.
-
-%\todo{Move to discussion}
-%\autoref{fig:size:lib:large} shows that some of the central libraries in \gls{rel} are quite large.
-%An important point here is that, although the \lib{core} library by itself is over 100KB, when optimized for an actual program utilizing the library, it can be substantially smaller.
-%This is because of the fact that a library build must provide all the functionality of the source code, while an executable build can eliminate all the functionality of the library that is not used.
-
-\subsection{Executables}
-
-This subsection considers the code size of actual runnable programs.
-Functionally equivalent versions are written in both {\rust} and {\C}, and here we compare the size of the binaries produced at each optimization level presented in \autoref{tab:size:settings}.
-For the {\C} program, an additional optimization level, -Os, is given as the rightmost bar.
+This subsection considers the code size of programs.
+Functionally equivalent versions were written in both {\rust} and {\C}, and here we compare the size of the binaries produced at each optimization level presented in \autoref{tab:size:settings}.
 This level tells the compiler to optimize for code size.
 This option is not available for the {\rust} compiler, at time of writing.
 The first figure, \autoref{fig:size:bin:large}, in this section looks at the size of binaries generated for the two projects described in \autoref{sec:projects}.
@@ -132,7 +87,6 @@ The trend as seen for the Libraries are seen for the {\rust} programs; higher op
 Notice that we see that the O2 level provides a small size gain over the O3 version.
 
 The the Os {\C} level produces consistently the smallest binary.
-
 
 \autoref{fig:size:bin:small} shows the code size of a minimal program to boot the Gecko.
 Both implementations only contain an infinite loop and are evaluated to examine the overhead of the languages.
