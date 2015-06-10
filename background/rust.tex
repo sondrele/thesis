@@ -16,11 +16,11 @@ The body of the function contains an invocation of the \code{println!} macro\foo
 This macro has similar functionality to the {\C} \code{printf} function, but verifies the usage of the function at compile time.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 fn main() {
   println!("Hello, World!");
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Hello World written in {\rust}}
   \label{lst:rust:hello}
 \end{listing}
@@ -95,14 +95,14 @@ The example code in \autoref{lst:rust_variable_bindings} shows how to declare bo
 The example will not work because we attempt to change the value of an immutable variable.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 // bind the value `5' to the immutable variable `a'
 let a: i32 = 5;
 // bind the value `10' to the mutable variable `b'
 let mut b = 10;
 b = a; // change the value of `b'
 a = b; // <- compiler error: re-assignment of immutable variable `a'
-  \end{minted}
+  \end{rustcode}
   \caption{Variable bindings}
   \label{lst:rust_variable_bindings}
 \end{listing}
@@ -118,12 +118,12 @@ This makes the {\enum} a powerful feature of the language that can be used to de
 \autoref{lst:rust:option} shows the definition of one of {\rust}'s most commonly used types which are used extensively throughout its standard library and other third party libraries and applications.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-    pub enum Option<T> {
-      Some(T),
-      None,
-    }
-  \end{minted}
+  \begin{rustcode}
+pub enum Option<T> {
+  Some(T),
+  None,
+}
+  \end{rustcode}
   \caption{Definition of Option}
   \label{lst:rust:option}
 \end{listing}
@@ -147,18 +147,18 @@ Everything in {\rust} is \emph{private} by default, but the \code{pub} keywords 
 The \keyword{impl} keyword allows us to implement member functions for the \code{Book}, similar to class-declarations in {\Cpp} and other object-oriented languages.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-    pub struct Book {
-      pub name: String,
-      pub pages: u32,
-    }
+  \begin{rustcode}
+pub struct Book {
+  pub name: String,
+  pub pages: u32,
+}
 
-    impl Book {
-      pub fn info(&self) {
-        println!("{} has {} pages.", self.name, self.pages);
-      }
-    }
-  \end{minted}
+impl Book {
+  pub fn info(&self) {
+    println!("{} has {} pages.", self.name, self.pages);
+  }
+}
+  \end{rustcode}
   \caption{Struct definition and implementation}
   \label{lst:book_struct}
 \end{listing}
@@ -177,12 +177,12 @@ Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a fini
 They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-    pub struct Slice<T> {
-      pub data: *const T,
-      pub len: usize
-    }
-\end{minted}
+  \begin{rustcode}
+pub struct Slice<T> {
+  pub data: *const T,
+  pub len: usize
+}
+\end{rustcode}
 \caption{Slice representation}
 \label{lst:rust:slice}
 \end{listing}
@@ -202,12 +202,12 @@ A boxed value is simply a value that is stored on the heap, with its owning hand
 This structure implements the same operators that are otherwise associated with pointers, so they are semantically the same for this piece of code.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-    enum List<T> {
-      Cons(T, Box<List>),
-      Nil,
-    }
-  \end{minted}
+  \begin{rustcode}
+enum List<T> {
+  Cons(T, Box<List>),
+  Nil,
+}
+  \end{rustcode}
   \caption{Definition of Linked List}
   \label{lst:rust:list}
 \end{listing}
@@ -227,18 +227,18 @@ We can also see that both \code{Some} and \code{None}, i.e. all possible outcome
 % As the first pattern matches the value, the number \code{42} is bound to the variable number and the \code{println} function is executed.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-    // Bind the value `Some(42)' to the variable `num'
-    let num: Option<u32> = Some(42);
+  \begin{rustcode}
+// Bind the value `Some(42)' to the variable `num'
+let num: Option<u32> = Some(42);
 
-    match num {
-      // Bind the Option's enclosing value to the variable
-      // `number' and print its value
-      Some(number) => println!("{}", number),
-      // Otherwise do nothing
-      None => (),
-    }
-  \end{minted}
+match num {
+  // Bind the Option's enclosing value to the variable
+  // `number' and print its value
+  Some(number) => println!("{}", number),
+  // Otherwise do nothing
+  None => (),
+}
+  \end{rustcode}
   \caption{Matching an \code{Option}}
   \label{lst:rust:match}
 \end{listing}
@@ -251,14 +251,14 @@ The definition of one of {\rust}'s more integral traits is the \code{Iterator} t
 An iterator can be used to manipulate stream- or list-like data structures, where the trait implements functions like e.g. \code{map}, \code{zip}, and \code{filter}, which are modifier functions that are commonly found in functional programming languages.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-    pub trait Iterator {
-      type Item;
-      fn next(&mut self) -> Option<Self::Item>;
-      fn size_hint(&self) -> (usize, Option<usize) { ... }
-      // ...
-    }
-  \end{minted}
+  \begin{rustcode}
+pub trait Iterator {
+  type Item;
+  fn next(&mut self) -> Option<Self::Item>;
+  fn size_hint(&self) -> (usize, Option<usize) { ... }
+  // ...
+}
+  \end{rustcode}
   \caption{Definition of the Iterator trait}
   \label{lst:rust:iterator}
 \end{listing}
@@ -276,22 +276,20 @@ This code is de-sugared by {\rust} into the equivalent (simplified) code shown i
 \begin{listing}[!h]
 \begin{minipage}{0.45\textwidth}
   \begin{listing}[H]
-    \begin{minted}{rust}
+    \begin{rustcode}
 let values = vec![1, 2, 3];
 
 for x in values {
   println!("{}", x);
 }
-
-
-    \end{minted}
+    \end{rustcode}
     \caption{An iterator \code{for} loop}
     \label{lst:rust:for}
   \end{listing}
 \end{minipage}
 \begin{minipage}{0.45\textwidth}
   \begin{listing}[H]
-    \begin{minted}{rust}
+    \begin{rustcode}
 let mut it = values.into_iter();
 loop {
   match it.next() {
@@ -299,7 +297,7 @@ loop {
     None => break,
   }
 }
-    \end{minted}
+    \end{rustcode}
     \caption{{\rust}'s \code{for} loop de-sugared to a \code{loop}}
     \label{lst:rust:desugared-for}
   \end{listing}
@@ -312,13 +310,13 @@ loop {
 % The type is the base type for error handling.
 
 % \begin{listing}[H]
-%   \begin{minted}{rust}
+%   \begin{rustcode}
 %     #[must_use]
 %     pub enum Result<T, E> {
 %       Ok(T),
 %       Err(E),
 %     }
-% \end{minted}
+% \end{rustcode}
 % \caption{Definition of Result}
 % \label{lst:rust:result}
 % \end{listing}
@@ -334,7 +332,7 @@ Any freestanding variables that are defined in this environment are accessible t
 A closure can be used as an argument to another function, or be returned from a maker function.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 fn main() {
   let (nums, limit) = (vec![1, 2, 3, 4], 3);
   let filtered: Vec<&u32> = nums.iter()
@@ -342,7 +340,7 @@ fn main() {
                                 .collect();
   println!("{:?}", filtered); // prints: `[1, 2]'
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Using a closure to filter the entries of a vector.}
   \label{lst:closure:filter}
 \end{listing}
@@ -511,7 +509,7 @@ These two aspects of memory allocation and deallocation are combined into the co
 When a handle that \concept{owns} a reference to a data segment on the heap leaves its scope, {\rust} knows that it can safely free the memory that is referenced by it because it is the \concept{owning handle} to that memory.
 
 \begin{listing}[tb]
-\begin{minted}{c}
+\begin{rustcode}
 fn read_book(b: Book) {
   println!("You just read {} pages", b.pages);
 }
@@ -525,7 +523,7 @@ fn main() {
   // this makes it impossible to  read the book two times
   read_book(b); // <- compiler error: use of moved value: `b'
 }
-\end{minted}
+\end{rustcode}
 \caption{Example of an owned handle}
 \label{lst:owning_handle}
 \end{listing}
@@ -549,7 +547,7 @@ Here, the \func{read\_book} function is modified to accept a reference to a book
 Since the book's owning handle lives in the scope defined by the main function, the memory will be deallocated when the program exits.
 
 \begin{listing}[tb]
-\begin{minted}{c}
+\begin{rustcode}
 fn read_book(b: &Book) {
   println!("You just read {} pages", b.pages);
 }
@@ -563,7 +561,7 @@ fn main() {
   // still lives in the scope defined by the `main' function
   read_book(&b);
  }
-\end{minted}
+\end{rustcode}
 \caption{Example of borrowing}
 \label{lst:borrowing_handle}
 \end{listing}
@@ -673,14 +671,14 @@ We can see from this example that it is not allowed to return a reference to som
 This also tells us that using an unsafe block is not the same as disabling the compiler, it is merely a mechanism for the programmer to handle the safety of a program in the cases where the compiler is unable to.
 
 \begin{listing}[H]
-\begin{minted}{rust}
+\begin{rustcode}
 fn main() {
   let name = unsafe {
     let b = Book { name: "Gecko's".to_string(), pages: 150 };
     &b.name // <- compiler error: `b.name' does not live long enough
   };
 }
-\end{minted}
+\end{rustcode}
 \caption{Attempting to return an invalid reference from an \code{unsafe} block}
 \label{lst:unsafe_reference}
 \end{listing}

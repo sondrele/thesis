@@ -18,7 +18,7 @@ If {\zinc} notices that e.g. a LED and a Timer is configured to use the same \gl
 In the \code{os} block we specify that we want access to the Timer as \code{timer} and the LED as \code{led1}, {\zinc} will handle the task of initializing the peripherals and pass them as arguments to the \code{run} function.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 platformtree!(
   lpc17xx@mcu {
     clock { source = "main-oscillator"; /* ... */ }
@@ -38,7 +38,7 @@ fn run(args: &pt::run_args) {
   args.led1.set_low();
   args.timer.wait(1);
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Simplified example usage of Zinc's Platform Tree}
   \label{lst:platform_tree_example}
 \end{listing}

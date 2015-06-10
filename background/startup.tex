@@ -55,7 +55,7 @@ Copying the \elfsec{.data} section into \gls{ram} is handled by the \func{ResetH
 The function is the real entry point of the program and is executed when the \gls{cpu} receives the reset signal.
 
 \begin{listing}[H]
-\begin{minted}{c}
+\begin{ccode}
 // Variables set in linker script
 extern etext;      // address of .data segment in FLASH
 extern data_start; // start of .data segement in RAM
@@ -66,7 +66,7 @@ void ResetHandler() {
   }
   _start();
 }
-\end{minted}
+\end{ccode}
 \caption{The \gls{mcu} \code{ResetHandler}}
 \label{lst:reset-handler}
 \end{listing}
@@ -76,7 +76,7 @@ The \func{\_start} function finds the size of the \elfsec{.bss} section, which d
 It then calls on the \func{memset} function to zero out the \gls{ram}, before it goes on to call the {\main} function defined by the programmer.
 
 \begin{listing}[H]
-\begin{minted}{c}
+\begin{ccode}
 // Variables set in linker script
 bss_start; // start of .bss segment in RAM
 bss_end;   // end of .bss segment in RAM
@@ -85,7 +85,7 @@ void _start() {
   memset(bss_start, 0, bss_end - bss_start);
   main(); // User defined main function
 }
-\end{minted}
+\end{ccode}
 \caption{{\C} runtime start routine}
 \label{lst:start}
 \end{listing}

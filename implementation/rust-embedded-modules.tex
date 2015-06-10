@@ -79,16 +79,16 @@ const BTN: &'static Button = &GpioPin { port: Port::B, pin: 9 };
 const LED: &'static Led    = &GpioPin { port: Port::E, pin: 2 };
 
 fn main() {
-    // Initialize the underlying GPIO pins
-    BTN.init();
-    LED.init();
-    // Register a callback function for the button
-    BTN.on_click(blink_led);
-    loop {}
+  // Initialize the underlying GPIO pins
+  BTN.init();
+  LED.init();
+  // Register a callback function for the button
+  BTN.on_click(blink_led);
+  loop {}
 }
 // This function gets called when the button is pressed
 fn blink_led(_pin: u8) {
-    LED.toggle();
+  LED.toggle();
 }
   \end{rustcode}
   \caption{Example usage of \gls{rem}'s \gls{gpio} module.}
