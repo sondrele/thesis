@@ -3,7 +3,8 @@
 \label{sec:res:perf}
 
 This section describes the performance measurement of the system.
-The performance was measured by implementing the game application described in \autoref{sec:impl:project:ii} in both {\C} and {\rust} and recording a performance metric.
+The game application was implemented as described in \autoref{sec:impl:project:ii} in both {\C} and {\rust}.
+The performance was measured by recording a performance metric.
 The performance metric chosen for the evaluation is \gls{fps}.
 This metric measures the amount of work/second.
 The metric is simple and commonly used when measuring relative performance of realtime graphic applications.
@@ -11,7 +12,7 @@ The metric is simple and commonly used when measuring relative performance of re
 \subsection{Measurement Bias}
 \label{sec:perf:bias}
 
-When measuring performance one have to consider a number of biases that can and will occur while performing the measurement.
+When measuring performance, one has to consider a number of biases that can occur while performing the measurement.
 A bias is an arbitrary external noise that might distort the result of the measurements.
 Some of these biases can and should be eliminated before measuring, while others are harder or impossible to remove.
 
@@ -19,21 +20,21 @@ The following biases were found when analyzing the game application:
 \begin{description}
   \item [User Input] \hfill \\
 The game application was developed as a human playable game.
-When measuring performance deterministic results are preferable.
+When measuring performance, deterministic results are preferable.
 This bias was removed by implementing a simple artificial intelligence which emulates the user input.
 
   \item [Random Number Generator] \hfill \\
 A \gls{rng} is used to generate a stream of seemingly random numbers.
-To avoid performance impacts from the different \gls{rng} implementations for {\C} and {\rust} a simple deterministic \gls{rng} was implemented and used.
+To avoid performance impacts from the different \gls{rng} implementations for {\C} and {\rust,} a simple deterministic \gls{rng} was implemented and used.
 
   \item [Measurement Overhead] \hfill \\
 Often when measuring the performance of an application at a course granularity, the measurement itself is a bias.
 This is largely the case when measuring \gls{fps} as it adds profiling code to the actual application, thus affecting the performance of the application.
-In this experiment we are interested in the relative performance between {\C} code and {\rust} code.
-Therefore the added bias by the \gls{fps} measurement is acceptable as long as it is the same for both code bases.
+In this experiment, we are interested in the relative performance between {\C} code and {\rust} code.
+Therefore, the added bias by the \gls{fps} measurement is acceptable as long as it is the same for both code bases.
 
   \item [Optimization Characteristics] \hfill \\
-Various application performs different when subject to different optimizations.
+Various application perform differently when subjected to different optimizations.
 This fact leads to a trade-off when deciding the level of optimization to apply to the program.
 To account for this bias, we look at the performance metric for all optimization levels.
 \end{description}
@@ -45,7 +46,7 @@ To account for this bias, we look at the performance metric for all optimization
 \subsection{Results}
 \label{sec:perf:res}
 
-In this section the results obtained when measuring performance is presented.
+In this section, we present the results obtained when measuring performance.
 
 \begin{figure}[H]
   \begin{center}
