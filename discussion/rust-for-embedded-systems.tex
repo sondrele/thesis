@@ -61,7 +61,7 @@ Here, we revisit each challenge and discuss how they were solved for the {\rg} p
 \item [LC2 {\lcii}] \hfill \\
   Interrupt handlers must use the {\C} \gls{abi}, because the interrupts are dispatched from the {\C} runtime.
   This makes the code more verbose, but it is easily achievable in {\rust}.
-  As discussed in \autoref{sec:ownership_allied_to_hardware}, a downside to the interrupted programming model found in embedded programming for {\rust} is the reliance on global mutable state.
+  As discussed in \autoref{sec:avoiding_mutable_aliases_to_hardware}, a downside to the interrupted programming model found in embedded programming for {\rust} is the reliance on global mutable state.
   In these circumstances, the compiler is limited in its ability to statically verify safety because accesses to these variables must be contained inside {\unsafe} blocks.
 
 \item [LC3 {\lciii}] \hfill \\
