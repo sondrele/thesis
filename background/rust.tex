@@ -418,13 +418,15 @@ An important part of zero-cost abstractions is the ability to define new abstrac
 This is both important for performance, and for general purposes in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
 \autoref{fig:cpp_abstractions} shows how {\Cpp} places a vector of strings in memory.
 The main difference is that the vector itself is placed on the stack, and the string data is placed directly inside the memory block owned by the vector.
-The important part of this example is that we are keeping the same level of abstraction, but there are only two layers of indirection between the vector and the character data.
+The important part of this example is that we are exposing the same level of abstraction to the programmer, but there are only two layers of indirection between the vector and the character data.
 
-There is still one vital difference between the two examples.
-We can safely have multiple references to our vector in {\Java} without worrying about what would happen if its memory would grow and reallocate.
-However, we can end up with dangling pointers if we happen to have multiple references into our vector in {\Cpp}.
+There is still one vital difference between the two vector abstractions.
+We can safely have multiple references into our vector in {\Java} without worrying about what would happen if its reallocated.
+This happens when a vectors content grows over its capacity.
+However, we can end up with dangling pointers if we happen to have multiple references to our vector in {\Cpp}, and it grows and reallocates while we are holding such a reference.
 This is the case because, when the vector grows and gets reallocated, references into the vector will not be updated to the newly allocated storage.
 These references will instead be dangling pointers into the now old and deallocated storage.
+
 In {\rust}'s case, all structures are allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
 References to such stack-allocated variables can be passed around and accessed, just like in {\Cpp},
 but {\rust} also introduces a set of rules that have to be followed to safely use these references.
@@ -442,22 +444,42 @@ A {\rust} program will not successfully compile if the programmer fails to prope
 \subsection{Guaranteed memory safety}
 \label{sec:guaranteed_memory_safety}
 
-One of {\rust}'s biggest features is its ability to maintain full memory safety without sacrificing performance.
-The memory safety boils down to how {\rust} manages its variables and memory throughout the course of a program.
-{\rust} introduces a few concepts that are all centered around the \concept{ownership} of these variables and their \concept{lifetimes}, and how references to these variables can be \concept{borrowed}.
+One of {\rust}'s key features is its ability to maintain full memory safety without sacrificing performance.
+The memory safety boils down to how {\rust} manages variables and memory throughout the course of a program.
+{\rust} introduces a few concepts that are all centered around the \concept{ownership} of these variables, how references to these variables can be \concept{borrowed}, and their \concept{lifetimes}.
 These concepts are defined in {\rust}, but much of the inspiration behind those rules come from other type-safe languages, like {\lang{Haskell}} and {\lang{OCaml}}, and, in particular, {\lang{Cyclone}}'s \cite{Grossman2002,Swamy2006} region-based memory management.
-{\rust}'s ownership system is part of all the zero-cost abstractions mentioned in \autoref{chap:zero_cost_abstractions}, since all borrow-checking and ownership- and lifetime-analysis are done statically during compilation.
+They are defined here:
 
-\subsubsection{Ownership and Move Semantics}
-\label{sec:back:rust:own}
+\begin{description}
+\item [Ownership] \hfill \\
+  A value can only have one owner.
+  This ownership can be transfered to another owner.
+  The owner is responsible for deallocating the bound value.
 
+\item [Lifetime] \hfill \\
+  A lifetime is a static approximation of the span of execution during which the pointer is valid.
+  It always corresponds to some expression or block within the program.
+
+\item [Borrowing] \hfill \\
+  A value can be borrowed for a limited duration.
+  In this case the owner still retains ownership and cannot deallocate the value while it is borrowed.
+
+\end{description}
+
+The ownership system is one of the zero-cost abstractions in {\rust}.
+It can be considered zero-cost because all borrow-checking and ownership- and lifetime-analysis are done statically during compilation.
+This makes {\rust} interesting to consider in an embedded system, as it can provide memory management without the runtime cost of a garbage collector.
+
+\subsubsection{Definition of Memory Safety}
 To achieve full memory safety, we have to remove all forms for memory leaks and dangling pointers to invalid memory.
 This implies one \concept{memory deallocation} for every respective \concept{memory allocation}.
-Traditionally, when a programming language allocates memory for a variable, it will return a \emph{pointer} (or a \emph{handle}) and the number of bytes which is required to store the variable in memory.
-This handle is essentially an address to a record in memory, and it can either be up to the language or the programmer to make sure that this memory is intact.
-When the variable is no longer needed, the memory that is used by the handle can safely be deallocated.
 
-Modern programming languages, like {\Java} and {\lang{Python}}, typically achieves this with a Garbage Collector that runs while the program is being executed with the sole purpose of keeping the memory intact.
+%Traditionally, when a programming language allocates memory for a variable, it will return a \emph{pointer} (or a \emph{handle}) and the number of bytes which is required to store the variable in memory.
+%This handle is essentially an address to a record in memory, and it can either be up to the language or the programmer to make sure that this memory is intact.
+%When the variable is no longer needed, the memory that is used by the handle can safely be deallocated.
+
+\subsubsection{Automatic Memory Management}
+Modern programming languages, like {\Java} and {\lang{Python}}, typically achieves memory safety with a \emph{garbage collector} that runs while the program is being executed with the sole purpose of keeping the memory intact.
 A common implementation is a reference counted garbage collector \cite{Wilson1992} that keeps a count of the number of references to the variables and deallocates them when there are no valid references to them.
 The downside of such an approach to memory safety is the continuous use of resources it requires to keep track of all the references.
 The variables' reference counts must be altered every time they enter and leave a program scope.
@@ -470,16 +492,20 @@ The downside of such an approach is the requirement of halting the entire progra
 There are also many other techniques of garbage collection, which are often a variation of the ones already described.
 However, they are all problematic in resource constraint environments such as on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
 
+\subsubsection{Manual Memory Managment}
+
 Another approach to keeping track of the memory resources has been to give the programmer full control of every memory allocation and deallocation.
 This is the most common approach for systems programming languages like {\C} and {\Cpp}, where performance and predictability are important.
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
 Memory leaks like this will eventually lead a running program to crash due to the unavailability of extra resources.
 
-It is important to always remember to deallocate all memory referenced by a handle before the handle leaves its scope in the program.
+\subsubsection{Memory Managment with Ownership}
+
+%It is important to always remember to deallocate all memory referenced by a handle before the handle leaves its scope in the program.
 {\rust} operates differently from {\C} when it comes to freeing memory.
 Any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
-When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
+When the compiler sees that the variable (also called the \emph{owning handle}) for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
 These two aspects of memory allocation and deallocation are combined into the concept of \concept{ownership} that {\rust} incorporates.
 When a handle that \concept{owns} a reference to a data segment on the heap leaves its scope, {\rust} knows that it can safely free the memory that is referenced by it because it is the \concept{owning handle} to that memory.
@@ -514,7 +540,7 @@ The only way to continue using the handle in its original scope would have been 
 \subsubsection{Borrowing}
 \label{ssec:borrowing}
 
-\concept{Borrowing} is introduced as an alternative to moving the variable ownership across multiple scopes.
+\concept{Borrowing} is introduced as an alternative to moving the ownership of the value.
 {\rust} allows the programmer to \concept{lend} away access to handles by passing a reference to the variable around instead of the actual handle.
 Multiple \emph{references} can exist to the same place in memory, as long as there is only one \concept{owner} of the actual handle.
 A reference is denoted with an \code{\&} in front of the handle, which will tell {\rust} that we are working with a reference to the handle, or that we are borrowing the handle, to the end of the active scope.
@@ -545,67 +571,47 @@ fn main() {
 \subsubsection{Lifetimes}
 \label{ssec:lifetimes}
 
-{\rust} needs a way to ensure that the memory used by all borrowed references to a handle is intact, i.e. that the references do not point to any deallocated memory.
-{\rust} achieves this with a concept called \concept{lifetimes}, in which the compiler, with the help of \emph{lifetime specifiers}, can statically resolve any dangling pointers or \concept{use-after-free} issues introduced by the programmer.
-Consider the example shown in \autoref{lst:invalid_ref_c}, which shows a function in {\C} that returns a reference into a variable allocated in its own stackframe.
-When the function returns, the variable will be de-allocated, and the returned reference will point to invalid memory.
-The {\C} compiler is likely to issue a warning of such a serious mistake, but it will still compile the program.
-A similar implementation of \code{name\_as\_ref} in {\rust} is shown in \autoref{lst:invalid_ref_rust}, but this will issue a compilation error because we try to return a reference without a lifetime specifier.
+The {\rust} compiler will assign a \emph{lifetime} to every value in a program.
+This lifetime is used by the compiler to prevent problems like \emph{use-after-free} by failing the compilation process if such errors are discovered.
+The lifetimes are, for many uses cases, inserted automaticaly by the compiler.
+This is done with a process called \emph{lifetime elision}.
+\autoref{lst:block-lifetime} provides a lifetime analysis for a simple program.
 
-\begin{listing}[tb]
-\begin{minted}{c}
-char *name_as_ref() {
-    Book b = { .name = "Gecko's", .pages = 150 };
-    return &b.name;
-}
-
-int main() {
-  char *name = name_as_ref();
-}
-\end{minted}
-\caption{Returning an invalid reference in {\C}}
-\label{lst:invalid_ref_c}
-\end{listing}
-
-\begin{listing}[tb]
-\begin{minted}{rust}
-fn name_as_ref() -> &str { // <- compiler error: missing lifetime specifier
-    let b = Book { name: "Gecko's".to_string(), pages: 150 };
-    &b.name
-}
-
+\begin{listing}[H]
+  \begin{rustcode}
 fn main() {
-  let name = name_as_ref();
-}
-\end{minted}
-\caption{Attempting to return an invalid reference in {\rust}}
-\label{lst:invalid_ref_rust}
+  let a = 42;   // `a' is an owning handle to the value 42.
+  {
+    let b = &a; // `b' is a reference to `a', thus `a' is borrowed.
+  }             // The lifetime of the `b' reference ends here.
+}               // The owning handle `a' goes out of scope
+                // and deallocates the value 42.
+  \end{rustcode}
+  \caption{Lifetime analysis}
+  \label{lst:block-lifetime}
 \end{listing}
 
-An example of the same function, but with applied lifetime specifiers, is shown in \autoref{lst:valid_ref_rust}.
-We can see from this example that {\rust} requires us to annotate all references that are associated with the function's arguments and return values with a name.
-In this case, we have chosen the name \code{'a} for the lifetime specifier.
-The explicit name of the lifetime does not matter, what matters is that {\rust} forces us to allocate the book elsewhere so that it is alive in the stackframe that encloses the function call to \code{name\_as\_ref}.
-Note that this example just demonstrates what lifetime specifiers look like in {\rust} and shows one way the language can catch use-after free errors.
 
-Another thing to notice is that the usage of lifetime specifiers in this example is somewhat verbose.
-{\rust} will often let us elide the lifetimes associated with the variables completely, so we can usually get by without annotating the lifetimes like this.
-The reader is encouraged to see The Rust Programming Language Book \cite{web:rust_book} for an in-depth explanation of {\rust}'s ownership- and lifetime-system.
+In \autoref{lst:func-param-lifetime} we consider a function that takes a reference as a parameter.
+This shows how the compiler inferres a lifetime for the function parameter.
+In the comment on line 1 we have included the explicit \emph{lifetime specifier} as it would be inserted by the compiler.
 
-\begin{listing}[tb]
-\begin{minted}{rust}
-fn name_as_ref<'a>(b: &'a Book) -> &'a str {
-    &b.name
-}
-
+\begin{listing}[H]
+  \begin{rustcode}
+// foo<'a>(x: &'a u32) { // lifetime specifier inferred by the compiler
+fn foo(x: &u32) {
+} // The lifetime of the `x' reference ends here.
 fn main() {
-  let b = Book { name: "Gecko's".to_string(), pages: 150 };
-  let n = name_as_ref(&b); // no use-after-free error
-}
-\end{minted}
-\caption{Retuning a reference with correct use of lifetime elisions}
-\label{lst:valid_ref_rust}
+  let a = 42; // `a' is an owning handle to the value 42.
+  foo(&a);    // `a' is borrowed by the `foo' function.
+}             // The owning handle `a' goes out of scope
+              // and deallocates the value 42.
+  \end{rustcode}
+  \caption{Function with inferred lifetime specifier}
+  \label{lst:func-param-lifetime}
 \end{listing}
+
+The reader is encouraged to see the Rust Book \cite{web:rust_book} for a more in-depth explanation of ownership and lifetimes.
 
 \subsection{Concurrency Model} % (fold)
 \label{ssub:concurrency_model}
