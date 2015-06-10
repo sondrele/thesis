@@ -16,7 +16,7 @@ We have also shown that there does exist some obstacles for making use of the co
 \section{Requirements}
 
 In \autoref{chap:intro} we presented three requirements as interpreted from the Project Description for this thesis.
-Requirement \textbf{R1} is achieved through the presentation of the existing {\C} platform given in \autoref{chap:background} the comparison to the {\rust} platform in \autoref{chap:impl}.
+Requirement \textbf{R1} is achieved through the presentation of the existing {\C} platform, given in \autoref{chap:background}, in comparison to the {\rust} platform that was presented throughout the core chapters.
 \autoref{sec:disc:lang-challenges} covered the language challenges discussed in \autoref{sec:intro:assignment}, as part of requirement \textbf{R1}, and shows that each challenge is considered in the {\rg} platform.
 We therefore conclude that these challenges are solved for using {\rust} in an embedded system.
 Further we consider the {\rg} platform to fulfill requirement \textbf{R2}.
@@ -35,7 +35,7 @@ This might eventually lead to bindings like these being made obsolete, and that 
 In \autoref{sec:rust-embedded-modules} we looked at a library which provided higher level abstraction using the language features of {\rust}.
 
 The interrupt-driven programming model used to program embedded system did not prove to be as applicable to {\rust} as we had hoped.
-In \autoref{sec:impl:irq-closures} we looked at a technique for changing this model by using ownership rules similar to how concurrency is handled in {\rust}.
+In \autoref{sec:irq-closures} we looked at a technique for changing this model by using ownership rules similar to how concurrency is handled in {\rust}.
 This library has potential to provide a more idiomatic programming style to embedded programs in {\rust} and will make the platform more familiar to {\rust} developers.
 This library can be extended to control the ownership of \glspl{mmio} as discussed in \autoref{sec:ownership_allied_to_hardware}.
 
