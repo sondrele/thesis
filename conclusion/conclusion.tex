@@ -3,15 +3,31 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
+In this chapter we draw conclusions derived from the discussion of the {\rg} platform.
+We also look back at the requirements that was defined in \autoref{chap:intro} and give an evaluation of success for the project.
+Finally, we give our thoughts on further developments to improve the {\rg} platform, and suggest some changes that could make {\rust} more suited for embedded systems.
+
 \section{The RustyGecko Platform}
 
-In this thesis we have presented the {\rg} platform for embedded programming using the {\rust} programming language.
-This platform consists of a subset of the {\rust} standard library and a binding library around peripheral libraries for the EFM32 series of \glspl{mcu}.
+In this thesis, we have presented the {\rg} platform for embedded programming using the {\rust} programming language.
+This platform consists of a subset of the {\rust} standard library and a handful of libraries that defines bindings for the EFM32 peripheral \gls{api}.
+In total, we have been able to utilize many great aspects that surround the {\rust} programming language in the {\rg} platform.
 
-We have explained that the platform makes use of many of the language and community features which comes with a modern programming language.
-From our measured results we showed that by using this {\rust} based platform, we can still make applications which perform equally well as the existing {\C} platform, based on performance and energy consumption metrics.
-Still, we did find evidence of the platform producing larger binaries, which makes {\rust} application more expensive, in terms of hardware costs, or rendering the platform useless for the most resource constrained applications.
-We have also shown that there does exist some obstacles for making use of the convenient ways of sharing code between projects, although the basic mechanisms are in place.
+One of the tools we were able to incorporate is the {\cargo} package manager.
+This enabled us to give the {\rg} platform a modular design, which makes the different parts of the platform reusable as isolated units of code.
+However, the \gls{rsl} is an implied dependency for all standard {\rust} projects.
+Because of this, and given the current design of \gls{rsl}, it is hard for non-standard projects to utilize third-party libraries.
+
+{\rust} implements many interesting features, among these, is its ability to statically prevent data-races.
+We attempted to apply these concepts directly to the hardware peripherals but found the resulting programming model to be too limited.
+Instead, we propose to explore this idea further by considering a more dynamic approach as future work.
+
+From our measured results, we showed that on the {\rg} platform we can still make applications which perform as well as the existing {\C} platform.
+This conclusion is derived from our qualitative study of performance and energy consumption for the two applications that was developed on this platform.
+However, we did find indications that the platform produces larger binaries, which makes {\rust} applications more expensive in terms of hardware costs.
+The binaries are stored in flash memory and the size of this memory correlates with the cost of the microcontroller.
+The increased cost in hardware can be expensive for resource constrained applications which are shipped in the millions.
+This simple fact can turn out to be a deal-breaker for applications in the industry.
 
 \section{Requirements}
 
@@ -28,8 +44,8 @@ Throughout \autoref{chap:results} we presented our results of measuring the {\rg
 As we presented in \autoref{sub:interfacing_with_emlib} the platform consists of partially finished bindings.
 An obvious extension to our project is to continue and finalize the binding libraries for the {\emlib}, {\emdrv} and \gls{cmsis} libraries.
 The foundations for these binding have been laid out, so the implementations here are not challenging, only time-consuming.
-An alternative approach is to use a bindings generator such as \lib{bindgen} \footnote{https://github.com/crabtw/rust-bindgen} to generate the binding automatically.
-The binding effort might be redundant altogether, as the {\rust} roadmap \footnote{https://internals.rust-lang.org/t/priorities-after-1-0/1901} states that the project wants to develop better integration with {\C}/{\Cpp} code.
+An alternative approach is to use a bindings generator such as \lib{bindgen}\footnote{\url{https://crates.io/crates/bindgen}} to generate the binding automatically.
+The binding effort might be redundant altogether, as the {\rust} roadmap \cite{web:roadmap} states that the project wants to develop better integration with {\C}/{\Cpp} code.
 This might eventually lead to bindings like these being made obsolete, and that {\C} libraries can called into based on their header files, alone.
 
 In \autoref{sec:rust-embedded-modules} we looked at a library which provided higher level abstraction using the language features of {\rust}.
