@@ -17,7 +17,7 @@
   \chapter{#1}
   \label{chap:#2}
   \begin{center}
-    \includegraphics{figures/RustyGecko-#2}
+    \includegraphics[scale=0.8]{figures/RustyGecko-#2}
   \end{center}
   \hfill \break
   \hfill \break
@@ -26,9 +26,9 @@
 }
 
 \corechapter{Startup}{startup}{%
-  The startup module handles the process of starting an {\rust} application on the \gls{mcu}.
+  The startup module handles the process of starting a {\rust} application on the \gls{mcu}.
   This involves supporting some basic requirements for the language and setting up some important initialization of the processor.
-  This module is a foundation, but can be used in isolation to run a program on the \gls{mcu} without any more dependencies.
+  This module is a foundation for the {\rg} platform, but can be used in isolation to run a program on the \gls{mcu} without any dependencies.
 }
 \include{implementation/booting-rust}
 
