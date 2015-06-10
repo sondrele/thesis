@@ -1,10 +1,14 @@
 \section{Contributions}
 
-\newcommand{\cbuild}[0]{\textbf{C1}}
-\newcommand{\crustc}[0]{\textbf{C2}}
-\newcommand{\cmethods}[0]{\textbf{C3}}
-\newcommand{\cbugfix}[0]{\textbf{C4}}
-\newcommand{\ceval}[0]{\textbf{C5}}
+\newcommand{\crustygecko}[0]{\textbf{C1}}
+\newcommand{\cbuild}[0]{\textbf{C2}}
+\newcommand{\crustc}[0]{\textbf{C3}}
+\newcommand{\cmethods}[0]{\textbf{C4}}
+\newcommand{\cbugfix}[0]{\textbf{C5}}
+\newcommand{\ceval}[0]{\textbf{C6}}
+\newcommand{\csize}[0]{\textbf{C7}}
+
+
 
 The contributions of this thesis are given in \autoref{tab:contributions}.
 
@@ -13,19 +17,22 @@ The contributions of this thesis are given in \autoref{tab:contributions}.
   \begin{tabular}{r | l}
     \textbf{Contribution} & \textbf{Description} \\
     \hline
+    {\crustygecko} & The {\rg} platform \\
     {\cbuild} & Build process \\
     {\crustc} & The {\cargo} {\rustc} Subcommand \\
     {\cmethods} & Methods for using {\rust} abstractions \\
     {\cbugfix} & Minor bugfix in a Silicon Labs library \\
     {\ceval} & Evaluation of {\rust} for embedded system \\
+    {\csize} & Identifying binaries sizes as a problem \\
     \hline
   \end{tabular}
   \caption{Contributions of the Thesis}
   \label{tab:contributions}
 \end{table}
 
+The design and implementation of the {\rg} platform ({\crustygecko}), in addition to examples for using the platform.
 
-The implemented build process ({\cbuild}) is, to our knowledge, the first ergonomic build process using the {\rust} standard package manager, {\cargo},  for embedded systems.
+The implemented build process ({\cbuild}) is, to our knowledge, the first standard build process using the {\rust} package manager, {\cargo}, for embedded systems.
 Other projects have resorted to custom Makefiles to handle the build process and dependencies.
 
 In order to develop the build process ({\cbuild}), {\cargo} had to be modified.
@@ -36,4 +43,6 @@ These experimentations resulted in the a few successful and promising patterns (
 
 By porting a driver in one of Silicon Labs' software libraries from {\C} to {\rust}, a minor bug was found and reported with a suggested patch ({\cbugfix}) to fix the issue.
 
-At last the results reported and discussed in this thesis provides an evaluation ({\ceval}) of the {\rust} platform in an embedded system.
+The results reported and discussed in this thesis provides an evaluation ({\ceval}) of the {\rust} platform in an embedded system.
+
+Considering the evaluation ({\ceval}) we have identified the size of the binaries produced by {\rust} are to large for debugging a highly resource constrained embedded system ({\csize}).
