@@ -1,6 +1,6 @@
 % !TEX root = ../main.tex
 
-\section{Rust for ARM} % (fold)
+\section{Rust for Embedded Systems} % (fold)
 \label{sec:disc:rust_for_arm}
 % \todo{Mention this in discussion. Is there a better way of solving this? Currently it fetches a release tarball of the language. It fetches more than it needs to for each library, but it's quicker/easier than using e.g. git to do it. It does however take a little while to compile all the dependencies on smaller machines.}
 
@@ -9,6 +9,11 @@ We did, however, not know how easy it would be to get up and running with {\rust
 It took us less than one day to implement and execute a {\rust} blink-demo on the {\STK}.
 The {\rust} documentation was sufficient for figuring out how to define non-std {\rust} programs (i.e. the ones that are annotated with \texttt{\#[no\_std]}), and projects like \texttt{armboot} helped us build the project for the ARM architecture.
 {\rust}'s runtime is comparable to {\C}'s, because the startup routine in the two languages is the same, but {\rust}'s {\core} library is larger and provides more functionality than the {\C} standard library, which we consider to be an added bonus of {\rust}.
+
+\subsection{The Standard Library} % (fold)
+\label{sub:using_the_standard_library}
+
+% subsection using_the_standard_library (end)
 
 {\rust} has a rich standard library that offers a strong foundation for all the programs that want to depend on it.
 As we described in \autoref{ssub:rust:features}, the {\std} crate acts like an abstraction over all the different libraries in \gls{rsl} and the {\rustc} compiler is itself dependent on a couple of traits to be present in this module.
@@ -19,6 +24,8 @@ Currently, {\rust} does not have functionality to provide, or automatically comp
 Because our project targets an ARM processor architecture, we have to conditionally download and compile the libraries (like \lib{alloc} and \lib{collections}) that have functionality that we want to utilize, as described in \autoref{ssub:transitioning_to_cargo}.
 This is not necessarily a big problem in itself, as it does not complicate the process much more than the need to explicitly define the libraries as custom dependencies in the \texttt{Cargo.toml}.
 We do, however, think that the distinction between standard and non-standard programs make it considerably harder to enable us to use the great ecosystem that {\rust} is surrounded by.
+
+\subsection{Using and Distributing Libraries}
 
 We have described {\cargo} and its ability to manage package dependencies, and a package repository closely associated with {\cargo} is called \texttt{crates.io}\footnote{\url{https://crates.io}}.
 This repository stores, at the time of this writing, a couple of thousand different {\rust} crates, all made available for anyone who builds {\rust} programs with {\cargo}.
@@ -37,3 +44,47 @@ We have implemented a structure that is similar to \texttt{smallvec} as part of 
 This distinction between {\std} and \gls{rsl} feels somewhat contradictory to {\rust}'s focus on modularization and package distribution with {\cargo}.
 It also feels destructive for non-standard projects like ours, because we would either have to re-implement or modify the already existing projects in order to get them to work for our platform.
 We hope that it will get easier in time to define non-standard projects, while simultaneously being able to utilize many of the great open-source libraries that are already available.
+
+\subsection{Language Challenges}
+\label{sec:disc:lang-challenges}
+
+In \autoref{sec:intro:assignment} we identified six language challenges that must be considered when using a language in an embedded system.
+Here, we revisit each challenge and discuss how they were solved for the {\rg} platform.
+
+\begin{description}
+\item [LC1 {\lci}] \hfill \\
+  {\rust} exposes two \concept{intrinsics} for handling volatile read and write.
+  These makes the code more verbose compared to the mechanism in {\C}, where a variable is marked with the \code{volatile} keyword.
+  In {\rust}, the intrinsic functions must be used each time a variable is read or written.
+  This, however, gives the programmer more fine-grained control as a variable can be used both as volatile and non-volatile.
+
+\item [LC2 {\lcii}] \hfill \\
+  Interrupt handlers must use the {\C} \gls{abi}, because the interrupts are dispatched from the {\C} runtime.
+  This makes the code more verbose, but it is easily achievable in {\rust}.
+  As discussed in \autoref{sec:ownership_allied_to_hardware}, a downside to the interrupted programming model found in embedded programming for {\rust} is the reliance on global mutable state.
+  In these circumstances, the compiler is limited in its ability to statically verify safety because accesses to these variables must be contained inside {\unsafe} blocks.
+
+\item [LC3 {\lciii}] \hfill \\
+  In this thesis, we have only considered hardware devices as \glspl{mmio}.
+  As {\rust} supports raw pointers and allows the programmer to access arbitrary memory addresses and cast these as structs, the handling of hardware registers are equally practical in {\rust} as in {\C}.
+  Given a more mature embedded platform in {\rust}, we foresee that even more of the compile-time ownership analysis provided by the {\rust} compiler can be used to ensure safe interactions with hardware registers.
+
+\item [LC4 {\lciv}] \hfill \\
+  {\rust} (and {\C}) have, unlike many other programming languages, no life before the {\main} function.
+  In this statement lies the fact that in the global scope, one can only initialize objects which have constant initializers.
+  Therefore, all the initializers only contain constant data and they can be handled by the startup mechanisms described in \autoref{sec:back:startup}.
+  This implies that the static object construction problem is non-existent in {\rust} programs.
+
+\item [LC5 {\lcv}] \hfill \\
+  Dynamic allocation in {\rust} is implemented in the \lib{alloc} library.
+  We were easily able to include this functionality in \gls{rel}.
+  In \autoref{sec:res:heap}, we showed that the heap allocation in {\rust} and {\C} are identical.
+  This is due to the allocation algorithm in {\rust} being directly dependent on the \lib{newlib} \func{malloc} implementation, and therefore the memory fragmentation is equal to that of the existing {\C} platform.
+  Note that this does not hold true for the regular {\rust} platform because it uses a different allocation algorithm.
+
+\item [LC6 {\lcvi}] \hfill \\
+  When the {\rust} allocator runs out of memory, it will call a function which is defined in the \lib{alloc} library.
+  At the time of writing, this function does not provide any error handling, as it only calls a compiler intrinsic to abort the program.
+  This means that a {\rust} program, which runs out of memory, will not end up in an infinite error handling loop, but the program ends up with a HardFault.
+
+\end{description}

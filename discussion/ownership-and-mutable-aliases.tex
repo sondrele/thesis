@@ -1,6 +1,7 @@
 % !TEX root = ../main.tex
 
-\section{Applying Ownership to Hardware}
+% \section{Applying Ownership to Hardware}
+\section{Avoiding Mutable Aliases to Hardware}
 \label{sec:ownership_allied_to_hardware}
 
 The problem that arises with aliasing to mutable data \cite{web:problem_with_shared_mutability}, also known as shared mutable state, might not be obvious to everyone.
@@ -32,7 +33,7 @@ Effectively, a race condition has occurred where two different interrupt handler
 This might result in corrupted data to be sent over the \gls{usart}, so maybe the output is something like \texttt{0x111F1FFF} instead of the expected output \texttt{0x11111FFFF}.
 Even worse, the application at the receiving end of the \gls{usart} might end up with a program crash if it relies on the data to be delivered in a certain format.
 
-\subsection{Limitations with the Bindings}
+\subsection{Limitations with Our Approach}
 
 After the previous section, we are left with the following questions.
 Is there a way to apply {\rust}'s ownership-semantics directly to the hardware?
