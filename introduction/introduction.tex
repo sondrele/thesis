@@ -22,12 +22,12 @@ Like most programming languages, it aims to solve a few specific problems better
 Mainly, its goal is ``to design and implement a safe, concurrent, practical, static systems language'' \cite{web:rust_faq}.
 With these goals in mind, {\rust} focuses on being a memory safe language without sacrificing performance, and it implements a few paradigms in order to provide a solid concurrency model that is suited for many modern applications that run on the internet.
 
-C has become the industry standard for developing on embedded systems.
+{\C} has become the industry standard for developing on embedded systems.
 It is a small, low-level language, at least considering today's standards, that has been adapted to virtually every target platform that exists on the market.
 It is an easy language without many language constructs, which makes it easy to adapt it to different platforms.
 It also has a minimal runtime system and does not require an operating system in order to utilize the underlying hardware.
-{\rust} have adapted many of the features that are available in C.
-Among them are a minimal runtime, full control over the memory and a \gls{ffi} which is exactly the same as C's \cite{web:rust_once_run_everywhere}.
+{\rust} have adapted many of the features that are available in {\C}.
+Among them are a minimal runtime, full control over the memory and an opt-in \gls{abi} which is exactly the same as {\C}'s \cite{web:rust_once_run_everywhere}.
 
 Gradually, while the {\rust} programming language started to take shape, a few people in the community took a notice to {\rust}'s low level of implementation and how it could be a suitable programming language for embedded systems.
 Combined with its strong guarantees about memory safety, absence of data races, and other common errors like stack- and buffer-overflows, it makes for an interesting language to run on embedded systems.
