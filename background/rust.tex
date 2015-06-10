@@ -444,7 +444,7 @@ A {\rust} program will not successfully compile if the programmer fails to prope
 \subsection{Guaranteed memory safety}
 \label{sec:guaranteed_memory_safety}
 
-One of {\rust}'s most attractable feature is the ability to maintain full memory safety without sacrificing performance.
+One of {\rust}'s key features is its ability to maintain full memory safety without sacrificing performance.
 The memory safety boils down to how {\rust} manages variables and memory throughout the course of a program.
 {\rust} introduces a few concepts that are all centered around the \concept{ownership} of these variables, how references to these variables can be \concept{borrowed}, and their \concept{lifetimes}.
 These concepts are defined in {\rust}, but much of the inspiration behind those rules come from other type-safe languages, like {\lang{Haskell}} and {\lang{OCaml}}, and, in particular, {\lang{Cyclone}}'s \cite{Grossman2002,Swamy2006} region-based memory management.
@@ -458,7 +458,7 @@ They are defined here:
 
 \item [Lifetime] \hfill \\
   A lifetime is a static approximation of the span of execution during which the pointer is valid.
-  It always corresponds to some expression or block within the program \cite{web:rust_lifetime_guide}.
+  It always corresponds to some expression or block within the program.
 
 \item [Borrowing] \hfill \\
   A value can be borrowed for a limited duration.
@@ -466,8 +466,9 @@ They are defined here:
 
 \end{description}
 
-{\rust}'s ownership system is one of its zero-cost abstractions, since all borrow-checking and ownership- and lifetime-analysis are done statically during compilation.
-In this respect {\rust} is interesting to consider in an embedded system as it can provide memory management without the runtime cost of a garbage collector.
+The ownership system is one of the zero-cost abstractions in {\rust}.
+It can be considered zero-cost because all borrow-checking and ownership- and lifetime-analysis are done statically during compilation.
+This makes {\rust} interesting to consider in an embedded system, as it can provide memory management without the runtime cost of a garbage collector.
 
 \subsubsection{Definition of Memory Safety}
 To achieve full memory safety, we have to remove all forms for memory leaks and dangling pointers to invalid memory.
@@ -504,7 +505,7 @@ Memory leaks like this will eventually lead a running program to crash due to th
 {\rust} operates differently from {\C} when it comes to freeing memory.
 Any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
-When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
+When the compiler sees that the variable (also called the \emph{owning handle}) for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
 These two aspects of memory allocation and deallocation are combined into the concept of \concept{ownership} that {\rust} incorporates.
 When a handle that \concept{owns} a reference to a data segment on the heap leaves its scope, {\rust} knows that it can safely free the memory that is referenced by it because it is the \concept{owning handle} to that memory.
@@ -570,43 +571,47 @@ fn main() {
 \subsubsection{Lifetimes}
 \label{ssec:lifetimes}
 
-The {\rust} compiler will assign a \emph{lifetime} to every value in an program.
-This lifetime is used by the compiler to prevent problems like \emph{use-after-write} by failing the compilation process if such errors are discovered.
+The {\rust} compiler will assign a \emph{lifetime} to every value in a program.
+This lifetime is used by the compiler to prevent problems like \emph{use-after-free} by failing the compilation process if such errors are discovered.
 The lifetimes are, for many uses cases, inserted automaticaly by the compiler.
-This is done with a process called lifetime \emph{elision}.
-In \autoref{lst:block-lifetime} we see the lifetime annotated in the comments.
+This is done with a process called \emph{lifetime elision}.
+\autoref{lst:block-lifetime} provides a lifetime analysis for a simple program.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 fn main() {
   let a = 42;   // `a' is an owning handle to the value 42.
   {
     let b = &a; // `b' is a reference to `a', thus `a' is borrowed.
   }             // The lifetime of the `b' reference ends here.
-}               // Owning handle `a' goes out of scope and deallocates value 42.
-  \end{minted}
-  \caption{Block Lifetime}
+}               // The owning handle `a' goes out of scope
+                // and deallocates the value 42.
+  \end{rustcode}
+  \caption{Lifetime analysis}
   \label{lst:block-lifetime}
 \end{listing}
 
-Let us consider a function with a reference as a parameter as shown in \autoref{lst:func-param-lifetime}.
+
+In \autoref{lst:func-param-lifetime} we consider a function that takes a reference as a parameter.
+This shows how the compiler inferres a lifetime for the function parameter.
 In the comment on line 1 we have included the explicit \emph{lifetime specifier} as it would be inserted by the compiler.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
-// foo<'a>(x: &'a u32) { // lifetime specifier by compiler
+  \begin{rustcode}
+// foo<'a>(x: &'a u32) { // lifetime specifier inferred by the compiler
 fn foo(x: &u32) {
 } // The lifetime of the `x' reference ends here.
 fn main() {
   let a = 42; // `a' is an owning handle to the value 42.
-  foo(&a);    // `a' is borrowed by the foo function.
-}             // Owning handle `a' goes out of scope and deallocates value 42.
-  \end{minted}
-  \caption{Function Parameter Lifetime}
+  foo(&a);    // `a' is borrowed by the `foo' function.
+}             // The owning handle `a' goes out of scope
+              // and deallocates the value 42.
+  \end{rustcode}
+  \caption{Function with inferred lifetime specifier}
   \label{lst:func-param-lifetime}
 \end{listing}
 
-For a complete introduction to lifetimes we refer the reader to the lifetime chapter of the Rust book \cite{web:rust_book}.
+The reader is encouraged to see the Rust Book \cite{web:rust_book} for a more in-depth explanation of ownership and lifetimes.
 
 \subsection{Concurrency Model} % (fold)
 \label{ssub:concurrency_model}
