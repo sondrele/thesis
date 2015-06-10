@@ -36,7 +36,7 @@ Because {\rust} is a multi-paradigm language it offers a wider range of language
 
 The \gls{rsl} is included into all {\rust} programs and is an abstraction layer to write portable applications.
 The library is implemented as a facade, meaning that \gls{rsl} provides a thin wrapper which reexports a stable interface for libraries like \lib{alloc} (for memory allocation), \lib{collections} (general purpose data structures) and {\core} (described in the next section).
-Besides to providing the facade, \gls{rsl} defines platform abstractions like files, network protocols, and threading, all of which depends on an OS.
+In addition to providing the facade, \gls{rsl} defines platform abstractions like files, network protocols, and threading, all of which depends on an OS.
 This basic fact renders the \gls{rsl} unusable in an embedded system as these dependencies will not be met.
 It is possible to opt-out of using the library.
 
@@ -267,7 +267,8 @@ An iterator can be used to manipulate stream- or list-like data structures, wher
 \label{sec:rust:loops}
 
 {\rust} provides the two loop constructs known from {\C}, \code{for} and \code{while}, in addition to \code{loop} for infinite loops.
-The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages, instead, it operates on iterators.
+The \code{for} loop is not the conventional \code{for (initialize; condition; increment)} that is common in other languages.
+In {\rust} the \code{for} loop operates on iterators.
 \rust's \code{for} statement is merely syntactic sugar for a \code{loop} with an internal \code{match} around the iterator's \code{next()} function.
 \autoref{lst:rust:for} shows how a \code{for} loop is used to loop over a vector of numbers.
 This code is de-sugared by {\rust} into the equivalent (simplified) code shown in \autoref{lst:rust:desugared-for}.
@@ -412,7 +413,7 @@ If the nesting of objects is deep, it can result in many heap-lookups in order t
   \label{fig:java_abstractions}
 \end{figure}
 
-An important part of zero-cost abstractions is the ability to define new abstractions, like a vector, that optimizes away to the bare minimal.
+An important part of zero-cost abstractions is the ability to define new abstractions, like a vector, that optimizes away to the bare minimum.
 {\rust} introduces the same zero-cost abstractions that are present in {\Cpp}, among other programming languages.
 This is both important for performance, and for general purposes in order to have a deterministic and a common understanding of how the structures are laid out in the memory.
 \autoref{fig:cpp_abstractions} shows how {\Cpp} places a vector of strings in memory.
@@ -423,7 +424,9 @@ There is still one vital difference between the two vector abstractions.
 We can safely have multiple references into our vector in {\Java} without worrying about what would happen if its reallocated.
 This happens when a vectors content grows over its capacity.
 However, we can end up with dangling pointers if we happen to have multiple references to our vector in {\Cpp}, and it grows and reallocates while we are holding such a reference.
-\todo{Does this statement require further explanation? (i.e. explain why a reference to a stack-allocated vector in {\Cpp} can lead to a dangling pointer?}
+This is the case because, when the vector grows and gets reallocated, references into the vector will not be updated to the newly allocated storage.
+These references will instead be dangling pointers into the now old and deallocated storage.
+
 In {\rust}'s case, all structures are allocated directly on the stack, if not explicitly told otherwise, which generally allows for faster access of data.
 References to such stack-allocated variables can be passed around and accessed, just like in {\Cpp},
 but {\rust} also introduces a set of rules that have to be followed to safely use these references.
@@ -498,7 +501,8 @@ Memory leaks like this will eventually lead a running program to crash due to th
 \subsubsection{Memory Managment with Ownership}
 
 %It is important to always remember to deallocate all memory referenced by a handle before the handle leaves its scope in the program.
-{\rust} operates differently from {\C} when it comes to freeing memory, any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
+{\rust} operates differently from {\C} when it comes to freeing memory.
+Any variables holding a reference to stack- or heap-allocated memory will automatically be freed when it leaves the scope it lives in.
 This is done statically without any interference by the programmer.
 When the compiler sees that the owning handle for the allocated memory leaves its scope, it knows that it is also lost to the program, so it will insert a call to free the memory right after it becomes unreachable.
 This eliminates the need for the programmer to manually do the memory bookkeeping.
@@ -614,7 +618,7 @@ As already mentioned, {\rust}'s ownership system helps us to reason about the li
 This makes it possible to describe and utilize many powerful idioms and paradigms, and concurrency models that are based on these core features of the language.
 Thus, {\rust}'s way of providing concurrency is made possible because the ownership system guarantees that it will be safe.
 Indeed, the core concurrency functionality in {\rust} is merely an abstraction that is defined in the standard library, is is not a feature in the language itself.
-This is an important distinction, because it allows for any number of 3rd party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms that are provided as part of the standard library.
+This is an important distinction, because it allows for any number of third party concurrency libraries to evolve based on the same core principle of ownership, without being dependent on the concurrency idioms that are provided as part of the standard library.
 
 \subsection{Unsafe Code} % (fold)
 \label{ssub:unsafe_code}
@@ -639,10 +643,10 @@ When the compiler can no longer guarantee safety, it is up to the programmer to 
   \hline
   \raggedleft{Access and update static mutable variables} &
   Writing and reading to and from global state can lead to race conditions because every thread and scope in the program has direct access to these global variables at the same time. \\
-
+  \\
   \raggedleft{Dereference raw pointers} &
   There are no variable bindings between a raw pointer and the data it points to; thus the normal ownership rules provided by the borrow-checker does not apply to them. This means that {\rust} cannot resolve issues with race conditions or dangling pointers. \\
-
+  \\
   \raggedleft{Call unsafe functions, e.g. \\ \gls{ffi} or compiler intrinsics} &
   {\rust} can make no guarantees about the safety of {\unsafe} functions. If a \gls{ffi} function is called, we are leaving {\rust}'s scope and entering another language domain, and it is not possible for {\rust} to verify the safety of such code. \\
 

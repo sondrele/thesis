@@ -2,7 +2,7 @@
 \label{sec:impl:booting}
 
 The contents of this section explains how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
-The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization\footnote{This is in contrast to languages like {\Cpp} where objects can be initialized with statically called constructors, this must be handled by the startup process.} before the {\main} function.
+The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization\footnote{This is in contrast to languages like {\Cpp}, where objects can be initialized with statically called constructors. For such langauges, this must be handled by the startup process.} before the {\main} function.
 Therefore we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
 Silicon Labs' software suite provides the \func{ResetHandler} and linker script for the EFM32 microcontrollers.
 The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provided by the {\armgcc} toolchain, handles the setup in the \func{\_start} routine, as described in \autoref{sec:before-main}.
@@ -11,7 +11,8 @@ The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provi
 \label{ssec:minimal_rust_program_to_boot}
 
 There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in an embedded environment.
-Let us first revisit the canonical version from \autoref{sub:the_rust_programming_language} given in \autoref{lst:rust-hello-world}, we can see that all we have to define is the \code{main} function.
+Let us first revisit the canonical version from \autoref{sub:the_rust_programming_language} given in \autoref{lst:rust-hello-world}.
+We can see that all we have to define is the \code{main} function.
 
 \begin{listing}[H]
   \begin{rustcode}
@@ -23,7 +24,7 @@ fn main() {
   \label{lst:rust-hello-world}
 \end{listing}
 
-A {\rust} program will by default include \gls{rsl} automatically.
+A {\rust} program will by default include \glsdesc{rsl} automatically.
 As explained in \autoref{sec:rsl}, this library is not usable in an embedded program, and the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
 
 The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world}, does not print out the ``Hello, World!'' text because this would have required additional setup, and we are only concerned with the boot process in this example.
@@ -66,7 +67,8 @@ Therefore we have to tell the compiler that the program does not contain a {\mai
 
 The last three lines are a complication due to error handling in {\rust}.
 These functions are used by the core library, but implemented in the standard library.
-Since we are not using \gls{rsl} in this example we have to define the functions ourselves, the implementation here just ignores all error handling.
+Since we are not using \gls{rsl} in this example we have to define the functions ourselves.
+The implementation shown here just ignores all error handling.
 
 \subsection{Storage qualifiers}
 
@@ -92,9 +94,9 @@ In \autoref{lst:rust-static-init}, the three different types of declaring global
 {\rust} divides between two types of global declarations, constants and statics.
 
 A constant declaration, shown in lines 1 and 2 of \autoref{lst:rust-static-init}, represents a value.
-There is no need to allocate memory for globals declared as \code{const} as the values can be directly inserted where they are used by the compiler.
+There is no need to allocate memory for globals declared as \code{const}, as the values can be directly inserted where they are used by the compiler.
 
-The static globals are immutable by default but can be made mutable by the \code{mut} keyword.
+The static globals are immutable by default, but can be made mutable by the \code{mut} keyword.
 The variables on line 3 and 4 are declared to be \code{static}.
 As these are immutable, they are allocated in the read-only section called \elfsec{.text}.
 
@@ -154,7 +156,7 @@ void SysTick_Handler(void) { /* Handler code */ }
 \end{listing}
 
 Defining an interrupt handler in {\rust} is just as easy as in {\C} because of the focus on interoperability with {\C} code.
-In {\rust}, a function can easly be defined to use the {\C} \gls{abi} required to be called as an interrupt handler.
+In {\rust}, a function can easly be defined to use the {\C} \glsdesc{abi} required to be called as an interrupt handler.
 \autoref{lst:rust:irq} shows how to override the same \func{SysTick\_Handler} function in {\rust}.
 
 \begin{listing}[H]
