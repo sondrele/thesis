@@ -4,10 +4,8 @@
 
 This section describes the performance measurement of the system.
 The game application was implemented as described in \autoref{sec:impl:project:ii} in both {\C} and {\rust}.
-The performance was measured by recording a performance metric.
-The performance metric chosen for the evaluation is \gls{fps}.
-This metric measures the amount of work/second.
-The metric is simple and commonly used when measuring relative performance of realtime graphic applications.
+The performance was measured by recording \gls{fps} performance metric.
+This metric measures the amount of work/second, and it is simple and commonly used when measuring the relative performance of realtime graphic applications.
 
 \subsection{Measurement Bias}
 \label{sec:perf:bias}
@@ -29,12 +27,12 @@ To avoid performance impacts from the different \gls{rng} implementations for {\
 
   \item [Measurement Overhead] \hfill \\
 Often when measuring the performance of an application at a course granularity, the measurement itself is a bias.
-This is largely the case when measuring \gls{fps} as it adds profiling code to the actual application, thus affecting the performance of the application.
+This is largely the case when measuring \gls{fps}, as it adds profiling code to the actual application, thus affecting the performance of the application.
 In this experiment, we are interested in the relative performance between {\C} code and {\rust} code.
 Therefore, the added bias by the \gls{fps} measurement is acceptable as long as it is the same for both code bases.
 
   \item [Optimization Characteristics] \hfill \\
-Various application perform differently when subjected to different optimizations.
+Various applications perform differently when subjected to different optimizations.
 This fact leads to a trade-off when deciding the level of optimization to apply to the program.
 To account for this bias, we look at the performance metric for all optimization levels.
 \end{description}
@@ -57,9 +55,9 @@ In this section, we present the results obtained when measuring performance.
 \end{figure}
 
 \autoref{fig:perf:res} graphs the results for the performance measurements.
-The Y axis shows the number of Frames Per Seconds achieved by running the game on the optimization level given by the X axis.
+The Y-axis shows the number of Frames Per Seconds achieved by running the game on the optimization level given by the X axis.
 We see that the {\C} code is \~10x faster on O0 and O1, but {\rust} equates by providing a 1.07x speedup over {\C} at O2.
-C achieves best performance at level O2 while {\rust} is slightly faster on O3 compared to O2.
+C achieves the best performance at level O2 while {\rust} is slightly faster on O3 compared to O2.
 %The optimization Os for size is not available for {\rust} and is included for the discussion of size vs performance in \autoref{sec:res:size-v-perf}.
 %\todo{I'm thinking there will be a larger discussion taking all the results in consideration in the end of this chapter}
 

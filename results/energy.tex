@@ -6,14 +6,14 @@ The {\tracker} is an interrupt driven application and has two modes of operation
 It turns \emph{On} for each interrupt to perform the measurement and turns \emph{Off} when the measuring is complete.
 
 \subsection{Measuring}
-The measurement was performed with the \emph{Energy Profiler} application supplied by Silicon Labs in their \emph{Simplicity Studio} software suite.
+The measurement was performed with the \emph{Energy Profiler} application supplied by Silicon Labs as a part of their \emph{Simplicity Studio} software suite.
 The profiler measures on board current at a sample frequency of 6250Hz.
-Power, measured in J/s, is produced by the formula $P (J/s) = V*I $, where \emph{V} is voltage and \emph{I} is current.
+Power, measured in J/s, is given by the formula $P (J/s) = V*I $, where \emph{V} is voltage and \emph{I} is current.
 By accumulating the Power over time, we get the energy consumption given in \emph{Joule}.
 This metric is reported by the \emph{Energy Profiler}.
 
 Each measurement, called a \emph{run}, was gathered manually by executing the sample collection process (see \autoref{sec:project:i:sample-collection}) for 30s and recording the energy reported by the profiler.
-This was repeated 4 times for each data point and an average was calculated after removing the sample with the highest variance.
+This process was repeated four times for each data point, and an average was calculated after removing the sample with the highest variance.
 This process was introduced to remove human error from the manual collection.
 The number of collected and discarded samples were based upon the stability of the results, and the largest variance in the collected samples were 0.174\%.
 
@@ -21,7 +21,7 @@ The number of collected and discarded samples were based upon the stability of t
 
 The energy consumption was recorded for the {\tracker}, which was configured with different workloads.
 The workload is dependent on how many interrupts are trigger per run, and how much work is performed during each interrupt.
-To vary the workload, the number of triggered interrupts were varied by configuring the length of the interval between each interrupt, while the work was held constant for each interrupt.
+To vary the workload, the number of triggered interrupts were varied by configuring the length of the interval between each interrupt while the work was held constant for each interrupt.
 \autoref{tab:res:energy:parameters} gives the interrupt interval and the corresponding number of interrupts per \emph{run} used for the measurement.
 
 \begin{table}[H]
@@ -41,7 +41,7 @@ To vary the workload, the number of triggered interrupts were varied by configur
 \end{table}
 
 The measurement was performed at all the standard optimization levels provided by the compilers.
-This is done to remove the bias where different applications have better performance using different optimization levels.
+This was done to remove the bias where different applications have better performance using different optimization levels.
 As noted in \autoref{sec:res:code-size} these are \emph{O0}, \emph{O1}, \emph{O2}, \emph{O3} and \emph{Os} (only available for {\C}).
 As we will see in the results below, by including all the optimization levels, we uncovered another bias related to energy consumptions.
 The \emph{O0} levels were only evaluated with debugging symbols.
