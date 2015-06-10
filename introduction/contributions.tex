@@ -6,6 +6,9 @@
 \newcommand{\cmethods}[0]{\textbf{C4}}
 \newcommand{\cbugfix}[0]{\textbf{C5}}
 \newcommand{\ceval}[0]{\textbf{C6}}
+\newcommand{\csize}[0]{\textbf{C7}}
+
+
 
 The contributions of this thesis are given in \autoref{tab:contributions}.
 
@@ -20,6 +23,7 @@ The contributions of this thesis are given in \autoref{tab:contributions}.
     {\cmethods} & Methods for using {\rust} abstractions \\
     {\cbugfix} & Minor bugfix in a Silicon Labs library \\
     {\ceval} & Evaluation of {\rust} for embedded system \\
+    {\csize} & Identifying binaries sizes as a problem \\
     \hline
   \end{tabular}
   \caption{Contributions of the Thesis}
@@ -39,4 +43,6 @@ These experimentations resulted in the a few successful and promising patterns (
 
 By porting a driver in one of Silicon Labs' software libraries from {\C} to {\rust}, a minor bug was found and reported with a suggested patch ({\cbugfix}) to fix the issue.
 
-At last the results reported and discussed in this thesis provides an evaluation ({\ceval}) of the {\rust} platform in an embedded system.
+The results reported and discussed in this thesis provides an evaluation ({\ceval}) of the {\rust} platform in an embedded system.
+
+Considering the evaluation ({\ceval}) we have identified the size of the binaries produced by {\rust} are to large for debugging a highly resource constrained embedded system ({\csize}).
