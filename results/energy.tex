@@ -9,7 +9,7 @@ It turns \emph{On} for each interrupt to perform the measurement and turns \emph
 \subsection{Measuring}
 The measurement was performed with the \emph{Energy Profiler} application supplied by Silicon Labs as a part of their \emph{Simplicity Studio} software suite.
 The profiler measures on board current at a sample frequency of 6250Hz.
-Power, measured in J/s, is given by the formula $P (J/s) = V*I $, where \emph{V} is voltage and \emph{I} is current.
+Power, measured in Watt (J/s), is given by the formula $P (J/s) = V*I $, where \emph{V} is voltage and \emph{I} is current.
 By accumulating the Power over time, we get the energy consumption given in \emph{Joule}.
 This metric is reported by the \emph{Energy Profiler}.
 
@@ -117,10 +117,8 @@ When the initial results did not meet this expectation, we used the \emph{Energy
 
 \autoref{fig:res:energy:current} plots the current drawn by the {\gecko} while handling an interrupt and the idle state between interrupts.
 The first thing to notice about the plot is that the time it takes to handle an interrupt is constant for the various optimization levels.
-This contradicts our assumptions of the higher optimization levels producing faster interrupt handlers.
 The second point is the difference in current drawn by the {\gecko} while handling the interrupts.
-We can see the O3 level draws more current compared to the Os level.
-To explain this result we looked at the instruction cache hit ratio.
+We can see the O3 level draws more current compared to the Os level; we found the reason for this when we looked at the instruction cache hit ratio.
 
 \begin{table}[H]
   \centering
@@ -138,3 +136,4 @@ To explain this result we looked at the instruction cache hit ratio.
 \autoref{tab:res:energy:cache} shows the cache hit ratios recorded for binaries presented in \autoref{fig:res:energy:current}.
 We see that the cache hit ratio for the binary compiled with O3 has a hit ratio of $\sim$72\% while the Os level has as high as $\sim$99\%.
 The lower instruction cache hit ratio causes the {\gecko} to load instructions from flash more frequently and thus consumes more energy.
+This effect was not studied any closer, but can possibly be explained by the O3 level producing code which is to large for the instruction cache to contain.
