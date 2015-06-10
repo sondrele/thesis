@@ -1,7 +1,8 @@
 \section{Interpretation of Assignment}
 \label{sec:intro:assignment}
 
-The interpreted requirements from the Project Description is summarized in \autoref{tab:project-requirements}.
+In \autoref{tab:project-requirements} we presented our interpretation of the Project Description, boiled down to three requirements.
+From these requirements, we chose to design and implemented the {\rg} platform and measure applications written for it.
 
 \begin{table}[H]
   \centering
@@ -18,7 +19,7 @@ The interpreted requirements from the Project Description is summarized in \auto
 \end{table}
 
 Challenges related to \textbf{R1} was identified in an \emph{Kickoff} meeting with Silicon Labs and are given in \autoref{tab:lang-challenges}.
-These challenges are important to consider in order to provide an embedded platform in Rust.
+These challenges are important to consider to provide an embedded platform in Rust.
 
 \begin{table}[H]
   \centering
@@ -42,7 +43,7 @@ Compilers exploit this assumption and might remove redundant access to the same 
 In multi-threaded code with global mutable state, this assumption does not hold.
 Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to ensure the compiler rereads the value in case it has been updated.
 
-To program efficiently, both when it comes to performance and concerning energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
+To program efficiently, both when it comes to performance and energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
 These interrupts must execute quickly and will require support in the language.
 
 In an embedded system, like the one considered in this thesis, a given portion of the memory space is used to represent hardware registers.
@@ -53,11 +54,11 @@ These objects are constructed before the main entry point of the application.
 Thus, errors that occur while constructing these objects are challenging to handle.
 
 Allocation of heap memory is a convenient mechanism for creating data structures with dynamic size.
-In an embedded system with no excess memory, the performance of heap allocation, with respect to reuse of deallocated memory, is an important challenge (\textbf{LC5}).
+In an embedded system with no excess memory, the performance of heap allocation, with respect to the reuse of deallocated memory, is an important challenge (\textbf{LC5}).
 
 On a system with an \gls{os} and large memory hierarchy, a technique called swapping can be used when the number of heap allocations exceeds the capacity of the \gls{ram} storage.
-In an embedded system these facilities do not exist.
+In an embedded system, these facilities do not exist.
 When the application is out of memory, then there is no way to allocate more.
 A subtle problem identified here is that when the error has occurred, the mechanism handling this condition cannot allocate memory, as this will also fail and trigger the mechanism in an infinite loop (\textbf{LC6}).
 
-These language challenges are revisted as a part of the discussion of our platform in \autoref{sec:disc:lang-challenges}.
+These language challenges are revisited as a part of the discussion of our platform in \autoref{sec:disc:lang-challenges}.
