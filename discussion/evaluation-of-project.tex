@@ -53,6 +53,7 @@ This discussion should be read in light of the fact that the {\rust} compiler is
   As seen throughout all of our measurements in {\rust}, the unoptimized binaries are significantly larger than the optimized binaries.
   The cause for this seems to be that the many abstractions of the {\rust} language are implemented by adding levels of indirection through function calls, like the for loop described in \autoref{sec:rust:loops}.
   These \emph{extra} functions, which are eliminated when optimized, makes the compiler produce substantially larger binaries without the optimizations.
+  This shows that the \emph{zero-cost abstractions} of {\rust} are not \emph{zero-cost} when analysed from all angles.
 
 \item [Rust code can be significantly larger than C equivalents] \hfill \\
   The optimized {\tracker} application written in {\rust} proved to be several times the size of the {\C} version.
@@ -60,8 +61,10 @@ This discussion should be read in light of the fact that the {\rust} compiler is
 \begin{itemize}
 \item The application code itself
 \item The Rust Library
-\item {\rust} expection mechanism (unwind)\footnote{There is a proposal make this mechansim optional by a compiler flag.}
+\item {\rust} exception mechanism (unwind)}
 \end{itemize}
+There is a proposal make the exception mechanism optional by a compiler flag, this would provide a substatial reduction in code size.
+Even though it might be usefull to keep the mechanism in an production environment this reduction can be helpfull to reducing the size of debug binaries.
 
 \item [There is zero size overhead of using optimized Rust] \hfill \\
   The Minimal Main application shows that using {\rust} by itself does not incur an increase in size.
@@ -80,5 +83,5 @@ The focus on \concept{Zero Cost Abstractions} seems not to take into account the
 Especially not in the builds where optimizations are not applied.
 In a system where excess resources for storing code and data, this does not cause any problems, but this is not the case in an embedded system.
 By comparing the smallest processors of the EFM32 Product Familiy given in \autoref{sub:emf32} and the size of the debug builds presented in \autoref{sec:res:code-size}, we see that a debug build of the Minimal Main example will not fit in the smallest models.
-Further, the {\tracker} application will not fit on the any of the Tiny or Zero Geckos, as even the optimized binary is to large.
+%Further, the {\tracker} application will not fit on the any of the Tiny or Zero Geckos, as even the optimized binary is to large.
 Not being able to debug an application on the actual target hardware can be a significant problem in development and testing stages, but also for tracing bugs in production systems.
