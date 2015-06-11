@@ -46,9 +46,12 @@ The last sections in the chapter describes how we implemented and tested the lib
 
 
 \corechapter{Build System}{build}{%
-In this chapter we step out of the core software components of the {\rg} platform to present an external but highly important part of the {\rg} platform.
-The {\cargo} package manager is an integral part of the {\rust} ecosystem and facilitates sharing code libraries with ease.
+In this chapter we step out of the core software components of the {\rg} platform to present an external, but highly important, part of the platform.
+The {\cargo} package manager is an integral part of the {\rust} ecosystem and facilitates sharing code and libraries with ease.
+
 Throughout this chapter we look at how we evolved the build system over time and ultimately migrated the process over to {\cargo}.
+This includes managing project dependencies, and building \gls{rel} and {\emlib} for the ARM architecture.
+We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of {\rust}, and to make sure that the builds have been consistent across the systems it has been built on.
 }
 \include{implementation/building}
 
