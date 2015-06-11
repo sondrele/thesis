@@ -11,7 +11,7 @@ A vast majority of this increase is due to the embedded computer systems known a
 \subsection{Abstraction Level}
 In most computer systems, the hardware interaction and resource management is abstracted away with an \gls{os}.
 This abstraction layer makes it possible for the programmers of these systems to write portable programs built with higher level languages.
-The added complexities of using a high-level language are small enough compared to the added productivity and convenience for the programmer.
+The added oberheads of using a high-level language are small enough compared to the added productivity and convenience for the programmer.
 Some embedded systems are also based on an \gls{os}, projects like Raspberry PI\footnote{\url{https://www.raspberrypi.org/}} and Tessel\footnote{\url{https://tessel.io/}} employs reduced Linux versions to run Python and JavaScript respectively.
 
 In some embedded systems, these complexities that lead to lower performance and higher memory usage, makes it hard to benefit from an \gls{os}.
@@ -82,7 +82,7 @@ This tool makes sharing and reusing libraries of code very easy.
 In this thesis we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
 The platform is described by \autoref{fig:rustygecko:all}.
 The blue colored sections describe the {\rust} modules that were developed/fitted for the platform, and the brown/yellow sections show the base {\C} libraries that the platform utilizes.
-The orange section denotes the build system.
+The red section denotes the build system.
 
 \begin{figure}[H]
   \begin{center}
@@ -92,7 +92,7 @@ The orange section denotes the build system.
   \label{fig:rustygecko:all}
 \end{figure}
 
-The core chapters of this thesis described the contents of \autoref{fig:rustygecko:all} in a bottom-up perspective.
+\autoref{fig:rustygecko:all} is described in a bottom-up perspective throughout \autoref{chap:startup} to \autoref{chap:build} of this thesis.
 The \lib{startup} module deals with the minimal requirements for booting a {\rust} application on the \gls{mcu} and is described in \autoref{sec:impl:booting}.
 In \autoref{sec:rel} we define \gls{rel}, the subset of the {\rust} standard library which is applicable for embedded systems.
 

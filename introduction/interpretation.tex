@@ -41,7 +41,8 @@ These challenges are important to consider to provide an embedded platform in Ru
 In a regular program, the values of variables do not change without the program directly modifying the values.
 Compilers exploit this assumption and might remove redundant access to the same variables to improve performance.
 In multi-threaded code with global mutable state, this assumption does not hold.
-Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to ensure the compiler rereads the value in case it has been updated.
+Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to ensure the compiler genereates code to reread the value in case it was updated.
+
 
 To program efficiently, both when it comes to performance and energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
 These interrupts must execute quickly and will require support in the language.
