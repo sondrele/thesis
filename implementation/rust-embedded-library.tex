@@ -47,7 +47,7 @@ fn rust_reallocate(*mut u8, usize, usize, usize) -> *mut u8;
 
 The allocation library is by default dependent on \lib{libc}, but this dependency can be broken by supplying the \flag{--cfg feature="external\_funcs"} flag to the compilation process.
 When breaking this dependency, the allocation library requires the functions in \autoref{tab:alloc:external-funcs} to be defined elsewhere.
-Note that these functions map directly to the \code{alloc}, \code{dealloc}, and \code{realloc} functions, which are all part of {\newlib}.
+Note that these functions map directly to the \code{alloc}, \code{dealloc}, and \code{realloc} functions, which all are part of {\newlib}.
 This design makes it easy to include the {\lib{alloc}} library for new platforms like {\rg}.
 
 \section{The Collection Library}
