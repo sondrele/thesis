@@ -244,7 +244,7 @@ All these were formalized in one issue\footnote{\url{https://github.com/rust-lan
 This subcommand would have allowed for passing these flags on to {\rustc}, but with the restriction of only compiling a \emph{single} binary at a time.
 This means that only \emph{either} the library, a binary, an example or a test (or a package dependency), may be compiled with the extra flags, and \emph{not} the entire package.
 
-These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our bindings, can depend on it for completing the build.
+These rules are restrictive enough to get libraries to not depend on a set of extra flags, but loose enough so that specialized projects, like our \lib{bindings}, can depend on it for completing the build.
 Indeed, the functionality proposed with this subcommand would be enough to cover all the cases that we solved with our implementation of \cmd{cargo-linkargs}.
 
 After gaining insight into {\cargo}'s internals during the development of \cmd{cargo-linkargs}, it was interesting to see if we could get this same functionality into {\cargo} itself, by implementing \cmd{cargo-rustc}.
