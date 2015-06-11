@@ -8,18 +8,16 @@
   \end{center}
   \hfill \break
   \hfill \break
-  \hfill \break
 #3
 }
 
 \corechapter{Startup}{startup}{%
 The \lib{startup} module handles the process of starting a {\rust} application on the \glsdesc{mcu}.
-% This involves supporting some basic requirements for the language and setting up some important initialization of the processor.
 This module is a foundation for the {\rg} platform, but it can be used in isolation to run a program on the \gls{mcu} without any dependencies.
 
-This chapter describes two important parts of a {\rust} program that needs to be configured correctly in order for the language to be functional with the {\gecko}.
+This chapter describes two important parts of a {\rust} program that needs to be configured correctly for the language to be functional with the {\gecko}.
 First, we describe how a {\rust} program can be configured to be an executable for the {\gecko}.
-In the end of this chapter we describe how we get hardware interrupts to trigger interrupt handlers implemented in {\rust}.
+At the end of this chapter we describe how we get hardware interrupts to trigger interrupt handlers implemented in {\rust}.
 }
 \include{implementation/booting-rust}
 
@@ -29,7 +27,7 @@ This module builds on the foundation laid out by the startup module and is used 
 
 This chapter starts with presenting the parts of \gls{rcl} that needs to be configured in order for the library to work for a new platform.
 We then move over to describe the standard {\rust} libraries that provides heap allocation and dynamically allocated structures.
-At the end of this chapter we present the \gls{rel}.
+At the end of this, chapter we present a full overview over \gls{rel}.
 }
 \include{implementation/rust-embedded-library}
 
@@ -49,22 +47,24 @@ The last sections in the chapter describes how we implemented and tested the lib
 In this chapter we step out of the core software components of the {\rg} platform to present an external, but highly important, part of the platform.
 The {\cargo} package manager is an integral part of the {\rust} ecosystem and facilitates sharing code and libraries with ease.
 
-Throughout this chapter we look at how we evolved the build system over time and ultimately migrated the process over to {\cargo}.
+Throughout this chapter, we look at how we evolved the build system over time and ultimately migrated the process over to {\cargo}.
 This includes managing project dependencies, and building \gls{rel} and {\emlib} for the ARM architecture.
 We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of {\rust}, and to make sure that the builds have been consistent across the systems it has been built on.
 }
 \include{implementation/building}
 
 \corechapter{Application Layer}{app}{%
-In the \lib{Application Layer} module of the {\rg} platform we find the application level libraries and actual executable programs.
-As part of this chapter we have included some experimental libraries developed to explore the language facilities of the {\rust} programming language in an embedded system.
-We also look at two projects developed for providing a qualitative study of the platform.
+The \lib{Application Layer} is the top module of the {\rg} platform.
+This module represents all higher-level libraries and executables built on top of the \lib{bindings} module and the \glsdesc{rel}.
 
-All of the programs and libraries presented in this section builds upon the foundation provided by the lower levels of the {\rg} platform.
-None of these components are mandatory when using the platform, and when writing an application using this platform that code itself is considered part of this layer.
-The components in the following section represent example applications and possible future extentions to the base {\rg} platform as given by the previous sections.
+Throughout this thesis, we have worked on many different project ideas that depends on the work that is presented in the previous chapters.
+A collection of the more interesting of these projects is presented in this chapter.
+First, we describe a library that was ported from {\C} to {\rust}, this shows how {\rust}'s concept of \emph{unsafe} can guide the programmer to write more secure code.
+In \autoref{sec:irq-closures}, we describe a library that provides a {\rust}-idiomatic way to handle interrupts, which is motivated by wanting to provide a safer way of interacting with the \gls{mcu} peripherals.
+In \autoref{sec:rust-embedded-modules} we apply {\rust}'s trait system to the hardware peripherals in order to build a higher-level \gls{api} than {\emlib}.
+In the last section, we describe the two applications which was developed for evaluating the {\rg} platform.
 }
-\include{implementation/irq-closures}
 \include{implementation/gpioint}
+\include{implementation/irq-closures}
 \include{implementation/rust-embedded-modules}
 \include{implementation/projects}
