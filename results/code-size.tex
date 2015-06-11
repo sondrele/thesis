@@ -14,16 +14,16 @@ This limits the code size even further.
 
 Another concern that makes code size a priority in embedded system is price.
 When putting embedded systems into production, the volume of microprocessors are usually large.
-And as the size of the flash correlates with the price of the microprocessors, being able to choose a smaller version can save large amounts of money.
+Moreover, as the size of the flash correlates with the price of the microprocessors, being able to choose a smaller version can save large amounts of money.
 
-Each program was compiled with optimization levels O0, O1, O2 and O3, and the O0 level is compiled both with and without debugging symbols.
+Each program was compiled with optimization levels O0, O1, O2, and O3, and the O0 level was compiled both with and without debugging symbols.
 Compiling executable programs results in an {\elf} binary file.
-The size was calculated by executing the \emph{arm-none-eabi-size} program.
+The size was calculated by executing the \prog{arm-none-eabi-size} program.
 
 \subsection{Measuring Size}
 \label{sec:measure-size}
 
-The \emph{arm-none-eabi-size} program accepts an elf binary as argument.
+The \prog{arm-none-eabi-size} program accepts an {\elf} binary as argument.
 The program then reads the file and reports the size of the \elfsec{.text}, \elfsec{.data} and \elfsec{.bss} segments described in \autoref{sec:back:elf}.
 
 \subsection{Parameters}
@@ -37,26 +37,26 @@ The parameters used are shown in \autoref{tab:size:params} with their effects.
 
     \textbf{Parameter} & \textbf{Values} & \textbf{Effect} \\
     \hline
-    debug & true, false & sets the \textbf{-g} flag on the compilers  \\
-    debug-assertions & true, false & a way to remove assertion statements \\
-    opt-level & 0, 1, 2, 3 & sets the optimization flag on the compilers \\
-    lto & true, false & sets the Link Time Optimization flag on the linker \\
+    \flag{debug} & true, false & Sets the \textbf{-g} flag on the compilers  \\
+    \flag{debug-assertions} & true, false & A way to remove assertion statements \\
+    \flag{opt-level} & 0, 1, 2, 3 & Sets the optimization flag on the compilers \\
+    \flag{lto} & true, false & Sets the \gls{lto} flag on the linker \\
     \hline
   \end{tabular}
-  \caption{Cargo.toml parameters and their effects}
+  \caption{\file{Cargo.toml} parameters and their effects}
   \label{tab:size:params}
 \end{table}
 
-Each program in this section is compiled with 6 different settings as given by \autoref{tab:size:settings}.
+Each program in this section is compiled with 6 different settings, as given by \autoref{tab:size:settings}.
 \begin{table}[H]
   \centering
   \begin{tabular}{l|l|l|l|l|l|l}
-    & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} \\
+    \textbf{Parameter} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} \\
     \hline
-    debug            & true  & false & false & false & false & false \\
-    debug-assertions & true  & false & false & false & false & false \\
-    opt-level        & 0     & 0     & 1     & 2     & 3     & 3     \\
-    lto              & false & true  & true  & true  & true  & true  \\
+    \flag{debug}            & true  & false & false & false & false & false \\
+    \flag{debug-assertions} & true  & false & false & false & false & false \\
+    \flag{opt-level}        & 0     & 0     & 1     & 2     & 3     & 3     \\
+    \flag{lto}              & false & true  & true  & true  & true  & true  \\
     (c code Os)      & false & false & false & false & false & true \\
     \hline
   \end{tabular}
@@ -65,31 +65,29 @@ Each program in this section is compiled with 6 different settings as given by \
 \end{table}
 
 For each of the optimization levels the underlying {\C} sources are compiled at the same level as the {\rust} code.
-Notice that for the 6th optimization setting, the underlying {\C} sources are compiled with the Os flag, while the {\rust} sources are compiled at level 3.
+Notice that for the 6th optimization setting, the underlying {\C} sources are compiled with the Os flag, while the {\rust} sources are compiled at O3.
 
 \subsection{Binary Sizes}
 
 This subsection considers the code size of programs.
 Functionally equivalent versions were written in both {\rust} and {\C}, and here we compare the size of the binaries produced at each optimization level presented in \autoref{tab:size:settings}.
-This level tells the compiler to optimize for code size.
-This option is not available for the {\rust} compiler, at time of writing.
-The first figure, \autoref{fig:size:bin:large}, in this section looks at the size of binaries generated for the two projects described in \autoref{sec:projects}.
+\autoref{fig:size:bin:large} presents the sizes of the generated binaries for the two projects described in \autoref{sec:impl:projects}.
 
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.5]{results/plots/size/bin/large/size.png}
   \end{center}
-  \caption{Code size for Project binaries}
+  \caption{Code size for project binaries}
   \label{fig:size:bin:large}
 \end{figure}
 
-The trend seen here is for; higher optimizations levels provides a smaller binary.
-Notice that we see that the O2 level provides a small size gain over the O3 version.
 
-The the Os {\C} level produces consistently the smallest binary.
+We see here that the largest variation is between unoptimized and optimized {\rust} code.
+The sizes varies less for the other optimization levels.
+Notice that the O2 level provides a smaller binary than the O3 version, and that the Os level consistently produces the smallest binaries.
 
-\autoref{fig:size:bin:small} shows the code size of a minimal program to boot the Gecko.
-Both implementations only contain an infinite loop and are evaluated to examine the overhead of the languages.
+\autoref{fig:size:bin:small} shows the code size of a minimal program to boot the {\gecko}.
+Both implementations contains only an infinite loop, and we evaluate these to examine the overhead of the languages.
 
 \begin{figure}[H]
   \begin{center}
@@ -100,33 +98,35 @@ Both implementations only contain an infinite loop and are evaluated to examine 
 \end{figure}
 
 As explained in \autoref{sec:impl:booting}, {\rust} does not require any additional initialization or setup compared to {\C}.
-This is evident in \autoref{fig:size:bin:small}, where the binaries are the same size when applying optimizations.
-The debug and unoptimized {\rust} build is 10x larger compared to the optimized version.
+This is evident in \autoref{fig:size:bin:small}, where the binaries are the same size when optimizations have been applied.
+The debug and unoptimized {\rust} build is 10x larger than the optimized version.
 
 To explain this increase in size, we look at the \emph{zero-cost abstractions} provided by {\rust}.
-Some of these abstractions are built with numerous function invocations to handle complex use patterns.
-To be able to debug these abstractions, it is important that the compiler keep all these functions in the unoptimized builds.
-When one of these abstractions are used in the code (e.g. a \code{for} loop), most of these funtions becomes superfluous, and can after \gls{dce} of the unused patterns be trivially inlined.
+Some of these abstractions are built with numerous function invocations to handle complex use-patterns.
+To be able to debug these abstractions, it is important that the compiler keeps all these functions in the unoptimized binary.
+When one of these abstractions are used in the code (e.g. a \code{for} loop) most of these funtions becomes superfluous, and be inlined after applying \gls{dce}.
 
 \autoref{tab:size:c-vs-rust} compares the size of the smallest {\C} and {\rust} binaries for each of the evaluated programs.
 The number reported is generated by dividing the size of the {\rust} binary by the size of the {\C} binary, giving the factor of which the {\rust} version is larger than the {\C} version.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{|c|c|c|}
-    \hline
-    {\cg} & {\tracker} & Minimal Main \\
-    \hline
-    1.22x & 2.20x & 1.03x \\
+  \begin{tabular}{c|c}
+
+    \textbf{Program} & \textbf{Relative Size} \\
+
+    {\cg} & 1.22x \\
+    {\tracker} & 2.20x \\
+    \texttt{MinimalMain}     & 1.00x \\
     \hline
   \end{tabular}
   \caption{{\rust} code size relative to {\C}}
   \label{tab:size:c-vs-rust}
 \end{table}
 
-We see from \autoref{tab:size:c-vs-rust} that both the {\cg} and the Minimal Main  {\rust} binaries come quite close to the {\C} binaries in size.
-
-In \autoref{tab:size:breakdown}, we break down the size of the optimized build of the {\tracker} to see which portions of the {\rust} code makes the binary size increase.
+We see from \autoref{tab:size:c-vs-rust} that the {\cg} binary comes quite close to the {\C} binaries in size.
+The {\rust} \texttt{MinimalMain} shows no increase over the {\C} binary.
+In \autoref{tab:size:breakdown}, we break down the size of the optimized binary of the {\tracker} to see which portions of the {\rust} code makes the binary size increase.
 
 \begin{table}[H]
   \centering
@@ -142,11 +142,11 @@ In \autoref{tab:size:breakdown}, we break down the size of the optimized build o
     \textbf{unwind}       & 0    & 3820 & N/A  \\
     \hline
   \end{tabular}
-  \caption{Break down of binary sizes for {\tracker} application}
+  \caption{Breakdown of binary sizes for the {\tracker} application}
   \label{tab:size:breakdown}
 \end{table}
 
-In \autoref{tab:size:breakdown} we see that there are three major non-constant contributors\footnote{The \textbf{system} section increased with $\sim$2x, but this section will remain constant as the complexity of the application increases.} to the increased size for the {\rust} binary:
+In \autoref{tab:size:breakdown}, we see that there are three major non-constant contributors\footnote{The \textbf{system} section increased with $\sim$2x, but this section will remain constant as the complexity of the application increases.} to the increased size for the {\rust} binary:
 
 \begin{itemize}
 \item The application
@@ -155,7 +155,8 @@ In \autoref{tab:size:breakdown} we see that there are three major non-constant c
 \end{itemize}
 
 We see that the \lib{newlib} implementation is reduced in the {\rust} binary.
-This is due to the \gls{rel} library implementing some of the same functionality as \lib{newlib}, thus the this part of the \lib{newlib} is not included.
+This is due to the \gls{rel} library implementing some of the same functionality as \lib{newlib}.
+Thus, this part of \lib{newlib} is not included.
 
 %\subsection{Discussion}
 
