@@ -6,7 +6,7 @@ Here we will consider an issue which arose when applying the pattern used when p
 The issue is present in the {\C} code as well, but the requirements of the safe subset of {\rust} exposes it.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 const ADC0_BASE: *mut Adc = 0x40002000 as *mut Adc;
 
 fn new_adc0() -> &'static mut Adc {
@@ -16,7 +16,7 @@ fn main() {
   let mut adc0_alias1 = new_adc0();
   let mut adc0_alias2 = new_adc0();
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Creating mutable aliases}
   \label{lst:oo:aliasing-mutability}
 \end{listing}
@@ -36,7 +36,7 @@ These objects are passed to the {\main} function as parameters, and the programm
 This prevents the programmer from creating mutable aliases to the \glspl{mmio}.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 platform_tree!(
   timer { timer@1 { counter = 25; divisor = 4; } }
   os { single_task { loop = "run"; args = { timer = &timer; } } }
@@ -45,7 +45,7 @@ platform_tree!(
 fn run(args: &pt::run_args) {
   // args.timer holds a reference to the timer MMIO
 }
-  \end{minted}
+  \end{rustcode}
   \caption{}
   \label{lst:zinc:platformtree}
 \end{listing}
@@ -54,7 +54,7 @@ Although this prevents the mutable aliasing problem on initialization it require
 Considering a simple example of initializing and using a \gls{adc} in \autoref{lst:zinc:irq} we see, as described in \autoref{sec:irq:motivation}, the reference to the \gls{adc} must be bleed to the global scope in order to be used in the interrupt handler.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 platform_tree!(
   adc { mode: single }
 );
@@ -70,7 +70,7 @@ pub extern fn ADC0_IRQHandler() {
     // ADC0 hold a reference to the ADC MMIO
   }
 }
-  \end{minted}
+  \end{rustcode}
   \caption{}
   \label{lst:zinc:irq}
 \end{listing}
@@ -81,7 +81,7 @@ In \autoref{sec:irq-closures} we explored a technique to employ closures to crea
 By considering \autoref{lst:oo:closure} we see that the issue with mutable aliases are avoided entirely by employing closures to handle the interrupt.
 
 \begin{listing}[H]
-  \begin{minted}{rust}
+  \begin{rustcode}
 platform_tree!(
   adc { mode: single }
 );
@@ -91,7 +91,7 @@ fn run(args: &pt::run_args) {
     // use sample
   });
 }
-  \end{minted}
+  \end{rustcode}
   \caption{Using Zinc and Closures to initialize and use \gls{adc}}
   \label{lst:oo:closure}
 \end{listing}

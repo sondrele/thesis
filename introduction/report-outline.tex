@@ -1,23 +1,27 @@
 \section{Report Outline}
 
-\newcommand{\outlineref}[1]{\autoref{#1} \nameref{#1}}
+\newcommand{\outlineref}[1]{\textbf{\autoref{#1} \nameref{#1}}}
 
-\paragraph{\outlineref{chap:intro}} introduces and gives motivation for using {\rust} in an embedded system.
+\outlineref{chap:intro} introduces and gives motivation for using {\rust} in an embedded system.
 The interpretation of the assignment and an outline of the project is presented along with a summary of the contributions of the project.
 
-\paragraph{\outlineref{chap:background}} provides background material for the rest of the thesis.
+\outlineref{chap:background} provides background material for the rest of the thesis.
 The Rust programming language is introduced along with the bundled package manager, {\cargo}.
 Further, the existing hardware platform, EFM32, and software libraries used for developing embedded applications are presented.
 
-\paragraph{\outlineref{chap:impl}} looks at the components developed to provide the {\rust} platform.
-As most of these components are largely orthogonal to each other, each are described in a separate section followed by a small discussion, where applicable.
-In addition, the two projects developed to evaluate the platform in \autoref{chap:results} is described.
+\outlineref{chap:startup} presents what happens in order for a {\rust} program to start executing on the \gls{mcu}.
 
-\paragraph{\outlineref{chap:results}} presents how the platform was evaluated and the results from the evaluation.
+\outlineref{chap:rel} gives an overview over the {\rust} standard library for embedded systems.
+
+\outlineref{chap:bindings} goes into detail on the bindings developed for the peripheral libraries used to control the \gls{mcu}.
+
+\outlineref{chap:build} looks at the build system used to build application for the {\rg} platform.
+
+\outlineref{chap:app} present some high level libraries and some application build on the core {\rg} functionality.
+
+\outlineref{chap:results} present how the platform was evaluated and the results from the evaluation.
 The platform was evaluated by considering \emph{code size}, \emph{performance} and \emph{energy efficiency}.
 
-\paragraph{\outlineref{chap:discussion}} provides a discussion of the platform and the results presented in \autoref{chap:results}.
+\outlineref{chap:discussion} provides a discussion of the platform and the results presented in \autoref{chap:results}.
 
-\paragraph{\outlineref{chap:conclusion}} presents a conclusion based on the state of the platform and the results.
-
-\paragraph{\outlineref{chap:future}} outlines possible extensions and suggests further work based on this project.
+\outlineref{chap:conclusion} presents a conclusion based on the discussion of the platform and outlines possible extensions and suggests further work based on this project.

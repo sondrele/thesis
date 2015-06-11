@@ -14,7 +14,7 @@ These are libraries written specifically for the EFM32's (or the Cortex-M's) to 
     \hline
     CMSIS & The Cortex-M \gls{hal} & ARM \\
     {\emlib} & The Energy Micro Peripheral Support library & Silicon Labs \\
-    {\emdrvs} & The Energy Micro energyAware Drivers & Silicon Labs \\
+    {\emdrv} & The Energy Micro energyAware Drivers & Silicon Labs \\
     {\newlib} & {\C} library for embedded systems & GNU ARM Toolchain \\
     \hline
   \end{tabular}
@@ -44,36 +44,36 @@ The library functions are exposed in three different API patterns, either as sta
 Examples of these patterns are shown for the \code{timer} in \autoref{lst:back:lib:timer}, the \code{RTC} in \autoref{lst:back:lib:rtc}, and the \code{gpio} module in \autoref{lst:back:lib:gpio}.
 
 \begin{listing}[H]
-  \begin{minted}{c}
+  \begin{ccode}
 void TIMER_Init(TIMER_TypeDef *timer,
                 const TIMER_Init_TypeDef *init);
 void TIMER_Enable(TIMER_TypeDef *timer, bool enable);
 void TIMER_TopGet(TIMER_TypeDef *timer);
 void TIMER_TopSet(TIMER_TypeDef *timer, uint32_t val);
-  \end{minted}
+  \end{ccode}
   \caption{Timer module configured in {\C} Object Oriented fashion}
   \label{lst:back:lib:timer}
 \end{listing}
 
 \begin{listing}[H]
-  \begin{minted}{c}
+  \begin{ccode}
 void RTC_Init(const RTC_Init_TypeDef *init);
 void RTC_Enable(bool enable);
 uint32_t RTC_CompareGet(unsinged int comp);
 void RTC_CompareSet(unsigned int comp, uint32_t value);
-  \end{minted}
+  \end{ccode}
   \caption{RTC module treated as a Singleton object}
   \label{lst:back:lib:rtc}
 \end{listing}
 
 \begin{listing}[H]
-  \begin{minted}{c}
+  \begin{ccode}
 void GPIO_PinModeSet(GPIO_Port_TypeDef port, unsigned int pin,
                      GPIO_Mode_TypeDef mode, unsigned int out);
 void GPIO_PinOutSet(GPIO_Port_TypeDef port, unsigned int pin);
 unsigned int GPIO_PinOutGet(GPIO_Port_TypeDef port,
                             unsigned int pin);
-  \end{minted}
+  \end{ccode}
   \caption{Standalone functions to configure the GPIO}
   \label{lst:back:lib:gpio}
 \end{listing}
@@ -91,5 +91,4 @@ Examples of modules that have their own drivers are the flash memory, which feat
 Most notably, this library defines heap memory management facilities through \func{malloc}, \func{realloc} and \func{free}.
 These base functions are needed in order to compile both {\emlib} and {\emdrv}, and {\rust}'s \lib{alloc} library.
 The functions in newlib are used directly by the {\C} libraries, or in {\rust} through \gls{rcl}, which exposes the memory management symbols mentioned above.
-This library is distributed as a part of the GNU ARM Toolchain \footnote{\url{https://launchpad.net/gcc-arm-embedded}}.
-% which is described in \autoref{}
+This library is distributed as a part of the GNU ARM Toolchain \cite{web:arm_toolchain}, which is a {\C} compiler targeting the ARM architecture.

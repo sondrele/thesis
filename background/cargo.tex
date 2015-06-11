@@ -126,7 +126,7 @@ Consider the example shown in \autoref{lst:rust_features} and its output shown i
 From this example we can see that the definition of the \func{num} function will be different based on the feature flag that is passed to {\cargo}.
 
 \begin{listing}[H]
-\begin{minted}{rust}
+\begin{rustcode}
 // src/main.rs
 #[cfg(feature = "one")]
 fn num() -> u32 { 1 }
@@ -137,7 +137,7 @@ fn num() -> u32 { 2 }
 fn main() {
     println!("num() + num() = {}", num() + num())
 }
-\end{minted}
+\end{rustcode}
 \caption{Example usage of features}
 \label{lst:rust_features}
 \end{listing}

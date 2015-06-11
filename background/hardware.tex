@@ -9,7 +9,7 @@ The following sections present the EFM32 family of microcontrollers and a couple
 
 ARM Cortex-M is a family of 32-bit RISC processor cores, which is intended to be used by applications that require low cost and energy-usage.
 These factors are crucial in modern systems and applications where energy efficiency is of great importance.
-For example, with the \gls{iot} \cite{Valhouli2010}, it is predicted that tens of billions of devices will be connected to the Internet in the future, ranging from Super Computers down to small embedded devices that might be used to power up and control everything from cars to light bulbs via the Internet.
+For example, with the \gls{iot} \cite{Valhouli2010}, where it is predicted that tens of billions of devices will be connected to the Internet in the future, ranging from Super Computers down to small embedded devices that might be used to power up and control everything from cars to light bulbs via the Internet.
 The different processor cores of the Cortex-M family are summarized in \autoref{tab:cortex_m}.
 
 \begin{table}[h]
@@ -62,10 +62,10 @@ The peripherals then have the opportunity to wake up the processor on different 
 
 \subsection{Evaluation boards}
 
-Silicon Labs provides a wide range of development-kits and -boards that are targeted for general development and testing of applications based on the EFM32's.
+Silicon Labs provides a wide range of development-kits and -boards that are targeted for general development and testing of applications based on the EFM32 series.
 Two of these boards are available with the {\gecko}, and we have used both of them in this project.
 The simplest of the two is the \chip{Giant Gecko} Starter Kit, which is depicted in \autoref{fig:efm32gg-stk3700}.
-This board contains a few LEDs and buttons, a couple of sensors to demonstrate a wide range of use-cases, and a segment LCD display.
+This board contains a few LEDs and buttons, a couple of sensors to demonstrate a wide range of use-cases, and a segment \gls{lcd} display.
 It also includes an expansion header that can be used to connect with third party devices and peripherals, and a JLink debug interface over USB.
 
 \begin{figure}[H]
@@ -79,8 +79,9 @@ It also includes an expansion header that can be used to connect with third part
 As shown in \autoref{fig:efm32gg-dk3750}, the Giant Gecko Development Kit is a more complex board.
 It features a TFT touch Display, which is a prototyping board that exposes all the \gls{mcu} pins on headers.
 The \gls{mcu} itself is also soldered on a pluggable board, which makes the development kit a suitable system for testing a wide range of different applications.
-In addition to the two mentioned boards, we have also used the Biometrix-EXP Evaluation board, which features a handful of additional sensors.
-The Biometrix-EXP Evaluation board is shown in \autoref{fig:biometric-exp} and connects directly with the Expansion Header available on the Starter Kit.
+In addition to the two mentioned boards, we have also used the Biometric-EXP Evaluation board.
+This board was used to provide additional sensors to the {\tracker} application.
+The Biometric-EXP Evaluation board is shown in \autoref{fig:biometric-exp} and connects directly with the Expansion Header available on the Starter Kit.
 
 \begin{figure}[H]
   \begin{center}
@@ -106,10 +107,10 @@ The original device-names are shortened in order to simplify reading.
   \begin{tabular}{l|l|l}
     \textbf{Product Name} & \textbf{Description} & \textbf{Short name} \\
     \hline
-    EFM32GG & The Giant Gecko Microcontroller & \gecko \\
-    EFM32GG-STK3700 & Giant Gecko Starter Kit & \texttt{STK} \\
-    EFM32GG-DK3750 & Giant Gecko Development Kit & \texttt{DK} \\
-    BIOMETRIC-EXP-EVB & Biometric Sensor Expansion Board & \texttt{BIO-EXP} \\
+    EFM32GG990 & The Giant Gecko Microcontroller & \gecko \\
+    EFM32GG-STK3700 & Giant Gecko Starter Kit & {\STK} \\
+    EFM32GG-DK3750 & Giant Gecko Development Kit & {\DK} \\
+    BIOMETRIC-EXP-EVB & Biometric Sensor Expansion Board & {\BIO} \\
     \hline
   \end{tabular}
   \caption{Hardware devices}
@@ -120,7 +121,8 @@ The original device-names are shortened in order to simplify reading.
 \label{sub:peripherals}
 
 \autoref{fig:efm32gg990_block_diagram} shows a block diagram of the Giant Gecko.
-The Cortex-M3 and its memory can be found in the upper left corner, it is evident from the diagram that the \gls{mcu} is connected to all other peripherals over a 32-bit bus.
+The Cortex-M3 and its memory can be found in the upper left corner.
+It is evident from the diagram that the \gls{mcu} is connected to all other peripherals over a 32-bit bus.
 This section will briefly introduce the peripherals that are relevant in this project.
 We will describe what they can be used for and why they are important, but we will not go into detail on how they work.
 These details can be found in the Giant Gecko reference manual \cite{Labs}.

@@ -1,6 +1,8 @@
 \section{Interpretation of Assignment}
+\label{sec:intro:assignment}
 
-The interpreted requirements from the Project Description is summarized in \autoref{tab:project-requirements}.
+In \autoref{tab:project-requirements} we presented our interpretation of the Project Description.
+From these requirements, we chose to design and implemented the {\rg} platform and measure applications written for it.
 
 \begin{table}[H]
   \centering
@@ -17,7 +19,7 @@ The interpreted requirements from the Project Description is summarized in \auto
 \end{table}
 
 Challenges related to \textbf{R1} was identified in an \emph{Kickoff} meeting with Silicon Labs and are given in \autoref{tab:lang-challenges}.
-These challenge are important to consider in order to provide an embedded platform in Rust.
+These challenges are important to consider to provide an embedded platform in Rust.
 
 \begin{table}[H]
   \centering
@@ -36,26 +38,28 @@ These challenge are important to consider in order to provide an embedded platfo
   \label{tab:lang-challenges}
 \end{table}
 
-In a regular program the values of variables do not change without the program directly modifying the values.
+In a regular program, the values of variables do not change without the program directly modifying the values.
 Compilers exploit this assumption and might remove redundant access to the same variables to improve performance.
-In multi-threaded code with global mutable state this assumption does not hold.
-Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to make sure the compiler rereads the value in case it was updated.
+In multi-threaded code with global mutable state, this assumption does not hold.
+Access to these variables must be marked as \concept{volatile} (\textbf{LC1}) to ensure the compiler genereates code to reread the value in case it was updated.
 
-To program efficiently, both performance wise and concerning energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
-These interrupts must execute fast and will require support in the language.
+
+To program efficiently, both when it comes to performance and energy, embedded system makes extensive use of interrupts (\textbf{LC2}).
+These interrupts must execute quickly and will require support in the language.
 
 In an embedded system, like the one considered in this thesis, a given portion of the memory space is used to represent hardware registers.
 The language needs a facility to read and write these registers (\textbf{LC3}).
 
 Some languages allow object construction of statically allocated objects (\textbf{LC4}).
 These objects are constructed before the main entry point of the application.
-Thus, errors occurring while constructing these objects are challenging to handle.
+Thus, errors that occur while constructing these objects are challenging to handle.
 
 Allocation of heap memory is a convenient mechanism for creating data structures with dynamic size.
-In an embedded system with no excess memory, the performance of heap allocation with respect to reuse of deallocated memory is an important challenge (\textbf{LC5}).
+In an embedded system with no excess memory, the performance of heap allocation, with respect to the reuse of deallocated memory, is an important challenge (\textbf{LC5}).
 
-On a system with a \gls{os} and large memory hierarchy a technique called swapping can be used when the number of heap allocations exceeds the capacity of the \gls{ram} storage.
-In an embedded system these facilities does not exist, when the application is out of memory, then there is no way to allocate more.
-A subtle problem here is that when the error has occurred, the mechanism handling this condition cannot allocate memory as this will also fail and trigger the mechanism in an infinite loop (\textbf{LC6}).
+On a system with an \gls{os} and large memory hierarchy, a technique called swapping can be used when the number of heap allocations exceeds the capacity of the \gls{ram} storage.
+In an embedded system, these facilities do not exist.
+When the application is out of memory, then there is no way to allocate more.
+A subtle problem identified here is that when the error has occurred, the mechanism handling this condition cannot allocate memory, as this will also fail and trigger the mechanism in an infinite loop (\textbf{LC6}).
 
-These language challenges are revisted as a part of the discussion of our platform in \autoref{sec:disc:language-challenges}.
+These language challenges are revisited as a part of the discussion of our platform in \autoref{sec:disc:lang-challenges}.

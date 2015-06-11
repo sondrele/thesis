@@ -1,9 +1,9 @@
 \section{Project Outline}
 \label{sec:project-outline}
 
-In this section we break down the project into five phases.
-\autoref{tab:meth:phases} presents each of the phases with their primary goals, the rest of this section describes each phase in more detail.
-In addition to the main phases in the project, the build system has evolved continously.
+In this section, we break down the project into five phases.
+\autoref{tab:meth:phases} presents each of the phases with their primary goals, and the rest of this section will describe how each phase was carried out, in more detail.
+In addition to the main phases of the project, the build system has evolved continuously.
 
 \begin{table}[H]
   \centering
@@ -29,9 +29,9 @@ Secondly, the milestone of running the first {\rust} application on the \gls{mcu
 \subsection{Phase 2 - Platform Design}
 
 After the initial compilation process was in place, the focus shifted towards developing the platform for writing larger applications.
-Throughout this phase we developed the support libraries for the MCU, which are described in \autoref{sec:rel} and \autoref{sub:interfacing_with_emlib}.
+Throughout this phase, we developed the support libraries for the MCU, which are described in \autoref{sec:rel} and \autoref{sub:interfacing_with_emlib}.
 Early in this phase, technical challenges guided the choice of which part of the platform to develop.
-The platform evovled continouosly during the development phase.
+The platform evolved continuously during the development phase.
 
 \subsection{Phase 3 - Development}
 \label{sec:projects}
@@ -44,30 +44,29 @@ The two complementary projects in \autoref{tab:meth:projects} were specified and
   \begin{tabular}{l|l|l}
     & \textbf{Name} & \textbf{Emphasis} \\
     \hline
-    Project I & Sensor Tracker & Energy Efficiency \\
-    Project II & Classic Game & Performance \\
+    Project I & {\tracker} & Energy Efficiency \\
+    Project II & {\cg} & Performance \\
     \hline
   \end{tabular}
   \caption{Projects developed in development phase}
   \label{tab:meth:projects}
 \end{table}
 
-Both of the projects were implemented in {\rust}, using the platform developed for this thesis, and in {\C}, using the libraries provided by Silicon Labs.
+Both of these projects were implemented in {\rust}, using the platform developed for this thesis, and in {\C}, using the libraries provided by Silicon Labs.
 
 \subsection{Phase 4 - Measurement}
 During the measurement phase, the platform was evaluated based on the following metrics:
 
 \begin{itemize}
   \item Performance
-  \item Code Size
   \item Energy Consumption
+  \item Code Size
 \end{itemize}
 
-The results from the evaluation are presented and compared with the existing {\C} platform in \autoref{chap:results}.
+The results of the evaluation are presented and compared with the existing {\C} platform in \autoref{chap:results}.
 
 \subsection{Phase 5 - Evaluation}
 
-
-Throughout this phase we investigated the results that was gathered in the previous phase.
-These results provided a basis for a discussion of the project as whole was conducted and is presented in \autoref{chap:discussion}.
-In this dicussion we look at the viability of using {\rust} in an embedded system and present our thoughts and experiences obtained during the work for this thesis.
+Throughout this phase, we investigated the results that were gathered in the previous phase.
+These results provided a basis for a discussion of the project as a whole, which is presented in \autoref{chap:discussion}.
+In this discussion, we look at the viability of using {\rust} in an embedded system and present the thoughts we had, and the experiences we made, during the work for this thesis.
