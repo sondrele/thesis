@@ -3,13 +3,13 @@
 \section{Avoiding Mutable Aliases to Hardware}
 \label{sec:avoiding_mutable_aliases_to_hardware}
 
-The problem that arises with aliasing to mutable data \cite{web:problem_with_shared_mutability}, also known as shared mutable state, might not be obvious to everyone.
+The problem that arises with aliasing to mutable data \cite{web:problem_with_shared_mutability}, also known as shared mutable state, are not always obvious.
 This is, however, often the root to problems like data races and other write-after-write issues.
 One of the initial problems that we wanted to investigate during this project was to see if we could apply {\rust}'s ownership-semantics directly to hardware.
 As described in \autoref{sec:impl:oo}, ARM \glspl{mcu}, like the EFM32 that we have targeted in this project, often comes bundled with a wide range of memory-mapped hardware peripherals.
 Obscure problems can occur if these peripherals are accessed from \emph{different} parts of a program \emph{at the same time}.
 The section below describes a detailed example of how this can happen.
-Further on in this section, we look towards {\rust} to see if it is possible to gain assistance from some of the language features to prevent this issue.
+Further on in this section, we look towards {\rust} to see if it is possible to gain assistance from some of the language features to prevent this issue statically.
 
 \subsection{Identifying the Problem}
 
