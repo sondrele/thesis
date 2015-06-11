@@ -2,11 +2,28 @@
 \section{Performance}
 \label{sec:res:perf}
 
-This section describes the performance measurement of the system.
+This section describes the performance measurement of the system performed on the {\DK}.
 The performance was measured by implementing the game application described in \autoref{sec:impl:project:ii} in both {\C} and {\rust} and recording a performance metric.
 The performance metric chosen for the evaluation is \gls{fps}.
 This metric measures the amount of work/second.
 The metric is simple and commonly used when measuring relative performance of realtime graphic applications.
+
+\subsection{Measurement}
+The measurement was done by executing the application on a {\DK} board and visually recording the on screen \gls{fps}, as seen in \autoref{fig:res:fps}.
+The recorded number was gathered by letting the application run past the initialization loop and waiting for the metric to stabilize.
+When the \gls{fps} was stable, the lowest and the highest number reached within a 5 second time-period was sampled.
+The mean of the two samples is presented in the results below.
+The largest variance in the presented samples were 5 \gls{fps}.
+This process was repeated on two different {\DK} boards.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{figures/game-fps}
+  \end{center}
+  \caption{The on screen \gls{fps} on the {\DK}}
+  \label{fig:res:fps}
+\end{figure}
+
 
 \subsection{Measurement Bias}
 \label{sec:perf:bias}
