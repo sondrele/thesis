@@ -173,8 +173,7 @@ Instead, the library offers higher-level structures as an abstraction between th
 
 The \code{slice} type is simply a view into an array, and it is represented by a pointer and a length, as shown in \autoref{lst:rust:slice}.
 The length is used to determine how many elements the slice represents.
-Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a finite array with type \code{T}.'
-They are a fundamental type that abstracts away the underlying block of data references by its internal pointer.
+Slice syntax is denoted by \code{\&[T]}, which reads like `a slice of a finite array with type \code{T}.'
 
 \begin{listing}[H]
   \begin{rustcode}
@@ -187,10 +186,8 @@ pub struct Slice<T> {
 \label{lst:rust:slice}
 \end{listing}
 
-An example of a common slice type in {\rust} is the \keyword{str} type, which can either be a statically allocated string defined as a literal or a borrowed reference into another string.
-The representation of the string type is closely related to slices, as a string slice denoted as \code{\&str} is equivalent to a UTF-8 encoded slice of bytes, denoted as \code{\&[u8]}.
-It is important to note that an arbitrary slice of bytes is not necessarily a valid string.
-% The \keyword{str} type differs from a \code{cstring} because it is guaranteed to be valid UTF-8, and it is \emph{not} null terminated.
+An example of a common slice type in {\rust} is the \keyword{&str} type, which has the representation \code{&[u8]}.
+The string type augments the byte slice with UTF-8 encoding.
 
 \subsubsection{Boxed values}
 
