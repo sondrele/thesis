@@ -8,12 +8,21 @@ The performance was measured by recording \gls{fps} performance metric.
 This metric measures the amount of work/second, and it is simple and commonly used when measuring the relative performance of realtime graphic applications.
 
 \subsection{Measurement}
-The measurement was done by executing the application on a {\DK} board and visually recording the on screen \gls{fps}.
+The measurement was done by executing the application on a {\DK} board and visually recording the on screen \gls{fps}, as seen in \autoref{fig:res:fps}.
 The recorded number was gathered by letting the application run past the initialization loop and waiting for the metric to stabilize.
 When the \gls{fps} was stable, the lowest and the highest number reached within a 5 second time-period was sampled.
 The mean of the two samples is presented in the results below.
 The largest variance in the presented samples were 5 \gls{fps}.
 This process was repeated on two different {\DK} boards.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{figures/game-fps}
+  \end{center}
+  \caption{The on screen \gls{fps} on the {\DK}}
+  \label{fig:res:fps}
+\end{figure}
+
 
 \subsection{Measurement Bias}
 \label{sec:perf:bias}

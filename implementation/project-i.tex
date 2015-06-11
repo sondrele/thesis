@@ -121,14 +121,14 @@ The \gls{adc} is used to convert the internal temperature to a digital value, wh
 
 We use a PC to interface with the {\gecko} over \gls{usart} when the application is in Transfer mode, and the application can then be controlled via a \gls{cli}.
 We have used a USB cable with an FTDI chip\footnote{Future Technology Devices International provides chips for serial to USB conversion} to connect with a \gls{usart} on the {\STK}.
-\autoref{fig:project:i:connect} shows how the RX (green) and the TX (white) wires are configured.
+\autoref{fig:project:i:connect} shows how the RX (green), the TX (white), and Ground (black) wires are connected.
 The application can then be interacted with, with a terminal application like \prog{picocom}\footnote{\prog{picocom} is a serial terminal commonly found in many Unix-like systems}.
 Connecting to the device with baudrate 9600 and error correction set to 8-1 (the defaults of \prog{picocom}) will provide access to the {\tracker} \gls{cli}.
 
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.3]{figures/project-i-connect.png}
+    \includegraphics[width=\textwidth]{figures/project-i-connect.jpg}
   \end{center}
   \caption{Connecting to the {\STK}}
   \label{fig:project:i:connect}
@@ -143,20 +143,12 @@ The command is terminated with a carriage return (i.e. the ASCII symbol \texttt{
 All non-conforming commands are ignored by the application.
 The \emph{n} parameter is used to select one of the sensors that was presented in \autoref{tab:project:i:sensors}.
 Every time a conforming command is sent to the application, it will respond over \gls{usart} with all the data that have been collected by the selected sensor.
-A screenshot over how program interaction with the {\tracker} looks like is shown in \autoref{lst:project:i:sample-run}.
+A screenshot over how program interaction with the {\tracker} looks like is shown in \autoref{fig:project:i:sample-run}.
 
-\begin{listing}[H]
-  \begin{minted}{bash}
-> r 3 // non-conformant command ignored
-> r 0 // read Internal Temperature sensor
--- insert data here --
-> r 0 // read Internal Temperature sensor
--- insert data here --
-> r 1 // read Humidity Relative sensor
--- insert data here --
-> // prompt ready for next command
-  \end{minted}
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/sensortracker-cli}
+  \end{center}
   \caption{Example run of Command Line Interface}
   \label{lst:project:i:sample-run}
-\end{listing}
-
+\end{figure}
