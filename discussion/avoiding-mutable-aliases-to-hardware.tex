@@ -64,7 +64,7 @@ An immediate proposal to fix some of the flaws in this design is:
     \item Modify the bindings that write to (i.e. mutates) the peripheral control registers to require a \emph{mutable reference} to the respective peripheral.
 \end{enumerate}
 
-By implementing 1) across the bindings-library, we will enforce the programmer to wrap every piece of code that is used to instantiate access to a peripheral with an \code{unsafe} block.
+By implementing 1) across the \lib{bindings} library, we will enforce the programmer to wrap every piece of code that is used to instantiate access to a peripheral with an \code{unsafe} block.
 This does not solve any problems directly, but it provokes the programmer to take extra caution when using the library, by taking on the responsibility of analyzing where there is a chance for mutable aliasing to occur.
 This additional caution to unsafe code has, as we described in \autoref{sec:porting-gpioint}, already helped us uncover a bug in \lib{emdrv}.
 If we implement 2) across the library, {\rust}'s borrow-checker will be able to help us discover potential data races within a code block, but it will not be able to assist us across different execution contexts.
