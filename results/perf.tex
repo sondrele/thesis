@@ -68,14 +68,15 @@ An example of these abstractions is the \code{Iterator}-based \code{for} loop, w
 The poor performance for the O3 optimization level for the {\C} was unexpected.
 To further investigate this issue, we first considered the instruction cache hit ratio for the O3 and O2 binaries.
 We did not find an explanation in the results, as the hit ratios were close to equal.
+
 The optimization levels considered here, defines a set of individual optimizations which can be activated or deactivated by passing flags to the compiler.
-We next looked at the change in performance due to each individual optimization flag in the set difference of $O3-O2$.
-By adding each flag one-by-one from the set difference to an O2 base build, we managed to identify the source of the performance degradation.
+Next we, looked at the change in performance due to each individual optimization flag in the set difference of $O3-O2$.
+By adding each flag, one-by-one, from the set difference to an O2 base build, we managed to identify the source of the performance degradation.
 The source was the \flag{-ftree-loop-distribute-patterns} flag.
 This flag is used to collect common initializations of variables from different loop iterations and substitute these initializations with library routines like \lib{memset}.
-We refer the reader to the \prog{gcc} documentation for further explanation of the flag.
+We refer the reader to the \prog{gcc} documentation \cite{web:gcc} for further explanation of the flag.
 The {\cg} application contains a fair amount of loops with initialization code, so if this optimization for our use-case is degrading the performance, it is quite natural for the overall performance to take a big hit.
-For completeness; the performance of an O3 build without the mentioned flag is equal in performance to the O2 build for our application.
+For completeness; the performance of an O3 binary without the mentioned flag is equal in performance to the O2 binary for this application.
 
 
 %The optimization Os for size is not available for {\rust} and is included for the discussion of size vs performance in \autoref{sec:res:size-v-perf}.
