@@ -26,9 +26,9 @@ Note that acquiring two handles to the same peripheral will not necessarily caus
 This problem can be demonstrated with an example.
 Let us say that we have a program in which we have configured two interrupts, \texttt{I1} and \texttt{I2}, to be triggered at differently timed intervals in the program.
 In the interrupt handler for \texttt{I1} we initiate a data transfer of \texttt{0x1111} over the \gls{usart}, and we initiate a data transfer of \texttt{0xFFFF} in the interrupt handler for \texttt{I2}.
-Now, what happens if the \texttt{I2} interrupt occurs while the interrupt handler for \texttt{I1} is executing?
+Now, consider what happens if the \texttt{I2} interrupt occurs while the interrupt handler for \texttt{I1} is executing.
 If \texttt{I2} has higher priority than \texttt{I1}, the execution will change scope to \texttt{I2}'s interrupt handler, and a new \gls{usart} transfer will be initiated.
-Effectively, a race condition has occurred where two different interrupt handlers have acquired a handle to the same peripheral, and both are using this peripheral to transfer data at the same time.
+Effectively, a race-condition has occurred where two different execution contexts have acquired a handle to the same peripheral, and both are using this peripheral to transfer data at the same time.
 This might result in corrupted data to be sent over the \gls{usart}, so maybe the output is something like \texttt{0x111F1FFF} instead of the expected output \texttt{0x11111FFFF}.
 Even worse, the application at the receiving end of the \gls{usart} might end up with a program crash if it relies on the data to be delivered in a certain format.
 
@@ -41,7 +41,7 @@ As it turns out, there is no easy or straightforward way to do this, at least no
 
 Our approach to define a software library for the {\gecko} has been to utilize what \emph{already} exists.
 We decided to write {\rust}-bindings for {\emlib} because it would get the project up and running fairly quickly.
-Another reason for not porting {\emlib} was the possibility to update the bindings to depend on new revisions of {\emlib} without having to define any new logic.
+% Another reason for not porting {\emlib} was the possibility to update the bindings to depend on new revisions of {\emlib} without having to define any new logic.
 This choice also meant that we were able to quickly use a wide range of peripherals and implement a couple of projects to test {\rust} in an embedded setting.
 It turns out, however, that this approach has introduced a few limitations to our system:
 
@@ -59,7 +59,7 @@ An immediate proposal to fix some of the flaws in this design is:
 
 \begin{enumerate}[\hspace{13pt}1)]
     \item Mark the {\rust}-bindings that instantiate and return a handle to a peripheral as \texttt{unsafe}.
-    The other bindings do not need to be marked as unsafe because we trust them.
+    % The other bindings do not need to be marked as unsafe because we trust them.
 
     \item Modify the bindings that write to (i.e. mutates) the peripheral control registers to require a \emph{mutable reference} to the respective peripheral.
 \end{enumerate}
@@ -67,7 +67,7 @@ An immediate proposal to fix some of the flaws in this design is:
 By implementing 1) across the bindings-library, we will enforce the programmer to wrap every piece of code that is used to instantiate access to a peripheral with an \code{unsafe} block.
 This does not solve any problems directly, but it provokes the programmer to take extra caution when using the library, by taking on the responsibility of analyzing where there is a chance for mutable aliasing to occur.
 This additional caution to unsafe code has, as we described in \autoref{sec:porting-gpioint}, already helped us uncover a bug in \lib{emdrv}.
-If we implement 2) across the library, {\rust}'s borrow-checker will be able to help us discover potential data races within a code block, but it will not be able to assist us across different interrupt handlers.
+If we implement 2) across the library, {\rust}'s borrow-checker will be able to help us discover potential data races within a code block, but it will not be able to assist us across different execution contexts.
 
 Another attempt would be to hide the hardware initialization process from the programmer and let it be completed automatically by the compiler, similar to what {\zinc} does, as described in \autoref{sec:zinc}.
 {\zinc} uses the Platform Tree to specify the hardware, which does the process of initializing the peripherals and saves them into a \code{run\_args} structure that acts as their owner.
@@ -81,31 +81,32 @@ This approach of initialization has two advantages:
 Point 1) is indeed a very interesting feature of {\zinc}, but it does not help us solve the problem that we are discussing in this section.
 Point 2) can help us ensure that all peripheral access goes through the \code{run\_args} structure.
 However, this structure is only passed to the program's main loop, which has a different environment than the scopes that are defined by the interrupt handlers.
-Thus, we can defer our primary problem to be that {\rust} cannot statically reason about the peripherals' ownership because they are accessed from different program scopes.
+However, this structure is only passed to the program's main loop, which has a different execution context than the interrupt handlers.
+Thus, we can defer our primary problem to be that {\rust} cannot statically reason about the peripherals' ownership because they are accessed from different execution contexts.
 
 \subsection{Alternative Approaches}
 
-The weaknesses that we have described throughout this section are partly introduced in the border between {\rust} and {\C}.
+The weaknesses that we have described throughout this section are partly introduced at the border between {\rust} and {\C}.
 However, the main problem with data races that can occur in interrupt handlers are present in both languages.
 Thus, there is no obvious way that {\rust}'s ownership semantics can be used \emph{directly} to discover and prevent data races across interrupt handlers.
-This is because the part of the program that is currently executing is put on hold in favor of the interrupt handler, and the new execution scope defines a different program environment.
+This is because the part of the program that is currently executing is put on hold in favor of the interrupt handler, and the new interrupt defines a different execution context.
 This makes it impossible to keep program state consistent between the various handlers unless it is kept in global variables.
-There are, of course, other approaches to this problem other than to rely on the compiler to prevent the data races.
 
+There are, of course, other approaches to this problem other than to rely on the compiler to prevent the data races.
 One way to try and \emph{prevent} this problem during or after implementation can be to \emph{test} the program for errors that happen due to simultaneously occurring interrupts.
 There are several different approaches to how this can be done \cite{Higashi2010,Regehr2005}, but this has not been in the scope of this thesis.
 
 Another approach can be to treat this as a concurrency problem that we can try to solve \emph{dynamically} instead of \emph{statically}.
 We can consider the problem that we have described throughout this section to be an application-dependent issue.
 Because of this, we can argue that it is not the right decision to solve this issue as part a low-level library like {\emlib} and its bindings.
-Instead, we can define an auxiliary library that can be implemented to handle the problem in an opinionated fashion, which might apply to a lot of different applications, but not to all.
+Instead, we can define an auxiliary library that can solve this problem with an opinionated approach, which might apply to a lot of different applications, but not to all.
 
 In \autoref{sec:irq-closures}, we described the implementation of a library that takes on the task of hiding the various interrupt handlers and instead expose interrupts through \emph{closures} that can be registered at runtime.
 It is possible to extend this library to make it \emph{safe} to dispatch new interrupts at runtime.
 E.g. by identifying the different possibilities of states the program can be in at the time of an interrupt, as well as the various actions that can be done depending on this state.
 The library can then provide routines to either \emph{lock} the access to a peripheral during an interrupt or provide \emph{channels} that can be used to communicate directly with the peripheral in a safe manner.
-Note that this is not an issue that can only be solved with {\rust} (it can be implemented in any language), but {\rust} might prove to be exceptionally well-suited for the task.
+Note that this is not an issue that can only be solved with {\rust}, it can be implemented in any language, but {\rust} might prove to be exceptionally well-suited for the task.
 As we described in \autoref{ssub:concurrency_model}, {\rust} was specifically developed to be a good foundation for modern applications that require concurrency.
 Additionally, it becomes evident that {\rust}'s notion of ownership was the key to make it both safe and efficient to implement different concurrency-paradigms.
-Unfortunately, we have not had enough time to look into the details of how this library can be expanded to handle this problem.
+Unfortunately, due to time restrictions, we could not look into the details of how this library can be expanded to handle this problem.
 Instead, we propose it as part of the future work, described in \autoref{chap:future}.

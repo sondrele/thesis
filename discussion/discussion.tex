@@ -3,11 +3,11 @@
 \chapter{Discussion}
 \label{chap:discussion}
 
-This project has covered a lot of implementation involved with {\rust} and {\C} for the {\gecko}, as well as presenting the ecosystem for building and distributing packages written in {\rust}.
-In this section, we look at how well the current state of {\rust} is suited for bare-metal development on embedded systems.
+This project has covered a lot of implementation-level details involved with applying {\rust} to an embedded system, as well as presenting the ecosystem for building and distributing packages written in {\rust}.
+In this chapter, we look at how well the current state of {\rust} is suited for bare-metal development on embedded systems.
 Additionally, we revisit the language challenges that was first identified in \autoref{sec:intro:assignment} and discuss how they were solved for the {\rg} platform.
-In \autoref{sec:avoiding_mutable_aliases_to_hardware} we investigate if it is possible to apply {\rust}'s ownership-semantics directly to hardware to avoid mutable aliasing to peripherals.
-Towards the end of this section we, we evaluate and discuss the results that were gathered as part of the {\tracker} and the {\cg} applications.
+In \autoref{sec:avoiding_mutable_aliases_to_hardware} we discuss our investigation of the possibility of applying {\rust}'s ownership-semantics directly to hardware to avoid mutable aliasing to the peripherals.
+Towards the end of this chapter, we evaluate and discuss the results that were gathered as part of the {\tracker} and the {\cg} applications.
 
 \include*{discussion/rust-for-embedded-systems}
 \include*{discussion/avoiding-mutable-aliases-to-hardware}
