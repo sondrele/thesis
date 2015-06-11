@@ -274,18 +274,20 @@ We also see the dependencies, denoted by the arrows, between the libraries, gene
 
 \subsection{Discussion}
 
-The final version of the build system for the {\rg} platform is as ergonomic as we set out to achieve.
-This results ensures that the platform is easily reusable by members of the {\rust} community in an familiar manner.
-
-However there are a few deficiencies in the current design.
+The final version of the build system for the {\rg} platform is as standardized as we set out to achieve.
+This achievement ensures that the platform is easily reusable for anyone that is familiar with the standard {\cargo} build process.
+However, there are a few deficiencies in the current design.
 These are related to the discussion made in \autoref{sec:disc:rust_for_arm}, but are discussed here in the context of the build system.
-The {\rust} project is not targeting the bare-metal environment that we are considering in this thesis.
-As an result of this, we have to cross-compile each of the crates in \gls{rel} separately for the target architecture.
-This process requires us to create a separate project for each of the crates we are using.
-These project depends on the {\rust} source code, and this dependency is not managed directly by the package manager.
-This leads to duplicate copies of the {\rust} source code, one for each of the crates used in \gls{rel}.
-There have been discussion of providing an official crate for each of the crates in the standard library on crates.io, this would resolve this issue.
 
-The project layout for a {\rg} project is not identical to that of a ordinary {\rust} project.
-Both the target specification and the linker script must currently be present in the top level folder of the project.
-We would like to provide these as part of the platform in the future to make the project layout identical to ordinary projects, lowering the bar further for making use of the platform.
+The {\rust} project is, at the time of writing, not directly targeting the bare-metal environment that we are considering in this thesis.
+As a result of this, we have to cross-compile each of the crates in \gls{rel} separately for the ARM architecture.
+This process requires us to create a separate proxy project for each of the libraries that we are using.
+These proxies depends on the {\rust} source code to be downloaded with the \lib{rust-src} project, as described in \autoref{ssub:transitioning_to_cargo}.
+This leads to duplicate copies of the {\rust} source code, one for \emph{each} of the crates used in \gls{rel}.
+Another problem with this, is the slight increase in build time introduced because the same source code is downloaded multiple times.
+There have, however, been discussion of providing an official crate for each of the libraries in \gls{rsl} available on {\cargo}'s package repository, which would resolve this issue.
+
+The project layout for a {\rg} project is not identical to that of an ordinary {\rust} project.
+Both the ARM \emph{target specification} and the \emph{linker script} must currently be present in the top level directory for every project targeting {\rg}.
+We would like to provide these as part of the platform in the future, to make the project layout identical to that of ordinary projects.
+This would further lower the bar for making use of the platform in new projects.
