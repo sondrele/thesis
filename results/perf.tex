@@ -7,6 +7,14 @@ The game application was implemented as described in \autoref{sec:impl:project:i
 The performance was measured by recording \gls{fps} performance metric.
 This metric measures the amount of work/second, and it is simple and commonly used when measuring the relative performance of realtime graphic applications.
 
+\subsection{Measurement}
+The measurement was done by executing the application on a {\DK} board and visually recording the on screen \gls{fps}.
+The recorded number was gathered by letting the application run past the initialization loop and waiting for the metric to stabilize.
+When the \gls{fps} was stable, the lowest and the highest number reached within a 5 second time-period was sampled.
+The mean of the two samples is presented in the results below.
+The largest variance in the presented samples were 5 \gls{fps}.
+This process was repeated on two different {\DK} boards.
+
 \subsection{Measurement Bias}
 \label{sec:perf:bias}
 
@@ -37,10 +45,6 @@ This fact leads to a trade-off when deciding the level of optimization to apply 
 To account for this bias, we look at the performance metric for all optimization levels.
 \end{description}
 
-\begin{description}
-    \item[]
-\end{description}
-
 \subsection{Results}
 \label{sec:perf:res}
 
@@ -50,7 +54,7 @@ In this section, we present the results obtained when measuring performance.
   \begin{center}
     \includegraphics[scale=0.5]{results/plots/perf/perf.png}
   \end{center}
-  \caption{Frame/Second achieved by {\C} and {\rust} code.}
+  \caption{Frame/Second achieved by {\rust} and {\C} code.}
   \label{fig:perf:res}
 \end{figure}
 
@@ -58,8 +62,20 @@ In this section, we present the results obtained when measuring performance.
 The Y-axis shows the number of Frames Per Seconds achieved by running the game on the optimization level given by the X axis.
 We see that the {\C} code is \~10x faster on O0 and O1, but {\rust} equates by providing a 1.07x speedup over {\C} at O2.
 C achieves the best performance at level O2 while {\rust} is slightly faster on O3 compared to O2.
+Our brief analysis of this suggests that some of the high-level abstractions in {\rust} are fairly inefficient without optimizations.
+An example of these abstractions is the \code{Iterator}-based \code{for} loop, which is used extensively throughout the {\cg} application.
 
-
+The poor performance for the O3 optimization level for the {\C} was unexpected.
+To further investigate this issue, we first considered the instruction cache hit ratio for the O3 and O2 binaries.
+We did not find an explanation in the results, as the hit ratios were close to equal.
+The optimization levels considered here, defines a set of individual optimizations which can be activated or deactivated by passing flags to the compiler.
+We next looked at the change in performance due to each individual optimization flag in the set difference of $O3-O2$.
+By adding each flag one-by-one from the set difference to an O2 base build, we managed to identify the source of the performance degradation.
+The source was the \flag{-ftree-loop-distribute-patterns} flag.
+This flag is used to collect common initializations of variables from different loop iterations and substitute these initializations with library routines like \lib{memset}.
+We refer the reader to the \prog{gcc} documentation for further explanation of the flag.
+The {\cg} application contains a fair amount of loops with initialization code, so if this optimization for our use-case is degrading the performance, it is quite natural for the overall performance to take a big hit.
+For completeness; the performance of an O3 build without the mentioned flag is equal in performance to the O2 build for our application.
 
 
 %The optimization Os for size is not available for {\rust} and is included for the discussion of size vs performance in \autoref{sec:res:size-v-perf}.
