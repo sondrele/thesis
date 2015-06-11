@@ -1,7 +1,5 @@
 % !TEX root = ../main.tex
 
-\autoref{chap:results}.
-
 \newcommand{\corechapter}[3]{
   \chapter{#1}
   \label{chap:#2}
@@ -15,9 +13,13 @@
 }
 
 \corechapter{Startup}{startup}{%
-The startup module handles the process of starting a {\rust} application on the \glsdesc{mcu}.
-This involves supporting some basic requirements for the language and setting up some important initialization of the processor.
-This module is a foundation for the {\rg} platform, but can be used in isolation to run a program on the \gls{mcu} without any dependencies.
+The \lib{startup} module handles the process of starting a {\rust} application on the \glsdesc{mcu}.
+% This involves supporting some basic requirements for the language and setting up some important initialization of the processor.
+This module is a foundation for the {\rg} platform, but it can be used in isolation to run a program on the \gls{mcu} without any dependencies.
+
+This chapter describes two important parts of a {\rust} program that needs to be configured correctly in order for the language to be functional with the {\gecko}.
+First, we describe how a {\rust} program can be configured to be an executable for the {\gecko}.
+In the end of this chapter we describe how we get hardware interrupts to trigger interrupt handlers implemented in {\rust}.
 }
 \include{implementation/booting-rust}
 
