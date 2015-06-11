@@ -1,17 +1,6 @@
-%\chapter{Implementation}
-%\label{chap:impl}
+% !TEX root = ../main.tex
 
-%The implementation chapter describes various software components both developed and fitted to create a framework for programming in Rust for an Embedded system.
-%The last sections dives into two projects which were developed in order to drive the deveopment of the framework and to provide a basis to evaluate the platform in the next chapter.
-
-%We start in \autoref{sec:impl:booting} by describing the startup process of a Rust program on a Microcontroller.
-%Secondly we define the parts of the Rust standard library \gls{rel} which are applicable for an embedded system.
-%In \autoref{sec:impl:oo} we look at the how and why the Object Oriented paradigm can be applied to hardware devices.
-%\autoref{sub:interfacing_with_emlib} goes on to describe the hardware specific bindings developed for controlling the Peripherals of the Microcontroller.
-%In \autoref{sec:build_system} we take a look at the evolution of the building system from a traditional \file{Makefile} to the integration with the {\rust} package manager {\cargo}.
-%The next two sections \autoref{sec:irq-closures} and \autoref{sec:rust-embedded-modules} explores a few experimentation with creating higher level abstractions for the lower level Peripheral libraries.
-%\autoref{sec:porting-gpioint} looks at a case study of porting a GPIO driver from {\C} to {\rust}.
-%The last section \autoref{sec:impl:projects} gives an overview over the implementation of the projects used to evaluate the programmability and certain metrics presented in \autoref{chap:results}.
+\autoref{chap:results}.
 
 \newcommand{\corechapter}[3]{
   \chapter{#1}
@@ -26,42 +15,46 @@
 }
 
 \corechapter{Startup}{startup}{%
-  The startup module handles the process of starting a {\rust} application on the \gls{mcu}.
-  This involves supporting some basic requirements for the language and setting up some important initialization of the processor.
-  This module is a foundation for the {\rg} platform, but can be used in isolation to run a program on the \gls{mcu} without any dependencies.
+The startup module handles the process of starting a {\rust} application on the \glsdesc{mcu}.
+This involves supporting some basic requirements for the language and setting up some important initialization of the processor.
+This module is a foundation for the {\rg} platform, but can be used in isolation to run a program on the \gls{mcu} without any dependencies.
 }
 \include{implementation/booting-rust}
 
 \corechapter{Rust Embedded Library}{rel}{%
-  The \gls{rel} module defines the subset of the standard {\rust} library which is applicable for embedded applications.
-  This module builds on the foundation layed out by the startup module and is used by the Bindings and Application Layer modules of the {\rg} platform.
+The \glsdesc{rel} module defines the subset of the standard {\rust} library which is applicable for embedded applications.
+This module builds on the foundation laid out by the startup module and is used by the \lib{bindings} and \lib{Application Layer} modules of the {\rg} platform.
+
+This chapter starts with presenting the parts of \gls{rcl} that needs to be configured in order for the library to work for a new platform.
+We then move over to describe the standard {\rust} libraries that provides heap allocation and dynamically allocated structures.
+At the end of this chapter we present the \gls{rel}.
 }
 \include{implementation/rust-embedded-library}
 
 
 \corechapter{Binding Libraries}{bindings}{%
-  The Bindings module includes the peripheral libraries provided by the \gls{mcu} vendor SiliconLabs, and the architecture designer ARM.
-  In order to make use of these libraries in {\rust} we developed binding libraries to expose the underlying {\C} implementation to the {\rust} language.
+The \lib{bindings} module includes the peripheral libraries provided by the \gls{mcu} vendor Silicon Labs, and the architecture designer ARM.
+In order to make use of these libraries in {\rust}, we developed binding libraries to expose the underlying {\C} implementation to the {\rust} language.
 }
 \include{implementation/objectoriented}
 \include{implementation/interfacing_with_emlib}
 
 
 \corechapter{Build System}{build}{%
-  In this chapter we step out of the core software components of the {\rg} platform to present an external but highly important part of the {\rg} platform.
-  The {\cargo} package manager is an integral part of the {\rust} ecosystem and facilitates sharing code libraries with ease.
-  Throughout this chapter we look at how we evolved the build system over time and ultimately migrated the process over to {\cargo}.
+In this chapter we step out of the core software components of the {\rg} platform to present an external but highly important part of the {\rg} platform.
+The {\cargo} package manager is an integral part of the {\rust} ecosystem and facilitates sharing code libraries with ease.
+Throughout this chapter we look at how we evolved the build system over time and ultimately migrated the process over to {\cargo}.
 }
 \include{implementation/building}
 
 \corechapter{Application Layer}{app}{%
-  In the Application Layer module of the {\rg} platform we find the application level libraries and actual executable programs.
-  As part of this chapter we have included some experimental libraries developed to explore the language facilities of the {\rust} programming language in an embedded system.
-  We also look at two projects developed for providing a qualitative study of the platform.
+In the \lib{Application Layer} module of the {\rg} platform we find the application level libraries and actual executable programs.
+As part of this chapter we have included some experimental libraries developed to explore the language facilities of the {\rust} programming language in an embedded system.
+We also look at two projects developed for providing a qualitative study of the platform.
 
-  All of the programs and libraries presented in this section builds upon the foundation provided by the lower levels of the {\rg} platform.
-  None of these components are mandatory when using the platform, and when writing an application using this platform that code itself is considered part of this layer.
-  The components in the following section represent example applications and possible future extentions to the base {\rg} platform as given by the previous sections.
+All of the programs and libraries presented in this section builds upon the foundation provided by the lower levels of the {\rg} platform.
+None of these components are mandatory when using the platform, and when writing an application using this platform that code itself is considered part of this layer.
+The components in the following section represent example applications and possible future extentions to the base {\rg} platform as given by the previous sections.
 }
 \include{implementation/irq-closures}
 \include{implementation/gpioint}
