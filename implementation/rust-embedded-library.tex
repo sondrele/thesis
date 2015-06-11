@@ -24,7 +24,7 @@ The memory management functions given in \autoref{tab:core:definitions} are prov
 These functions provide the basic memory management that is needed in order to utilize the parts of \gls{rsl} that defines dynamically allocated data structures.
 
 \concept{Panicking} is {\rust}'s way of unwinding the currently executing thread, ultimately resulting in the thread being terminated.
-A panic in {\rust} can happen when e.g. an array is indexed out of bounds, which causes the \code{rust\_begin\_unwind} function to be called.
+A panic in {\rust} can happen, e.g. when an array is indexed out of bounds, which causes the \code{rust\_begin\_unwind} function to be called.
 The \code{rust\_begin\_unwind} is also defined in \lib{startup}, but the implementation is only an infinite loop to aid debugging.
 In contrast, the definition of \code{rust\_begin\_unwind} given in \gls{rsl} will abort the program and print an error message.
 
@@ -47,7 +47,7 @@ fn rust_reallocate(*mut u8, usize, usize, usize) -> *mut u8;
 
 The allocation library is by default dependent on \lib{libc}, but this dependency can be broken by supplying the \flag{--cfg feature="external\_funcs"} flag to the compilation process.
 When breaking this dependency, the allocation library requires the functions in \autoref{tab:alloc:external-funcs} to be defined elsewhere.
-Note that these functions map directly to the \code{alloc}, \code{dealloc}, and \code{realloc} functions, which are all part of \lib{libc} and {\newlib}.
+Note that these functions map directly to the \code{alloc}, \code{dealloc}, and \code{realloc} functions, which are all part of {\newlib}.
 This design makes it easy to include the {\lib{alloc}} library for new platforms like {\rg}.
 
 \section{The Collection Library}
@@ -74,5 +74,5 @@ We have composed these libraries into what we refer to as the \gls{rel}, and the
 \end{figure}
 
 It is important to note that \gls{rel} is just a way to provide a well-defined definition of the {\rust} language for an embedded system.
-\gls{rel} is, unlike \gls{rsl}, not built as a facade, it is not \emph{implemented} by us at all.
-However, the libraries that make up \gls{rel} needs to be conditionally compiled for the Cortex-M3 architecture, and this described in \autoref{sec:build_system}.
+\gls{rel} is, unlike \gls{rsl}, not built as a facade, it is nothing but a collection of freestanding {\rust} libraries that are suited for an embedded system.
+However, the libraries that make up \gls{rel} needs to be conditionally compiled for the Cortex-M3 architecture, and this is described in \autoref{chap:build}.
