@@ -37,6 +37,9 @@ At the end of this chapter we present the \gls{rel}.
 \corechapter{Binding Libraries}{bindings}{%
 The \lib{bindings} module includes the peripheral libraries provided by the \gls{mcu} vendor Silicon Labs, and the architecture designer ARM.
 In order to make use of these libraries in {\rust}, we developed binding libraries to expose the underlying {\C} implementation to the {\rust} language.
+
+We start this chapter with a section that maps the object-oriented paradigm to hardware peripherals, this lays a foundation for how we think about the hardware throughout this thesis.
+The last sections in the chapter describes how we implemented and tested the library bindings.
 }
 \include{implementation/objectoriented}
 \include{implementation/interfacing_with_emlib}
