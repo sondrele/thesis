@@ -274,7 +274,7 @@ In {\rust} the \code{for} loop operates on iterators.
 This code is de-sugared by {\rust} into the equivalent (simplified) code shown in \autoref{lst:rust:desugared-for}.
 
 \begin{listing}[!h]
-\begin{minipage}{0.45\textwidth}
+\begin{minipage}{0.4\textwidth}
   \begin{listing}[H]
     \begin{rustcode}
 let values = vec![1, 2, 3];
@@ -287,7 +287,8 @@ for x in values {
     \label{lst:rust:for}
   \end{listing}
 \end{minipage}
-\begin{minipage}{0.45\textwidth}
+\hfill
+\begin{minipage}{0.5\textwidth}
   \begin{listing}[H]
     \begin{rustcode}
 let mut it = values.into_iter();

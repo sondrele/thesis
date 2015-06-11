@@ -3,7 +3,7 @@
 \section{Library Bindings}
 \label{sub:interfacing_with_emlib}
 
-This section describes the different \emph{bindings}-libraries that was developed as part of the {\rg} platform.
+This section describes the different \lib{bindings} libraries that was developed as part of the {\rg} platform.
 The \gls{ffi} available in {\rust} has been used to interface with Silicon Labs' suite of {\C} libraries used to control the {\gecko}.
 This way, we have been able to create wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
 These wrappers are called language bindings.
@@ -349,7 +349,7 @@ If we compare the call-stacks between calling the \code{timer0.int\_enable} func
 These are simple wrappers that require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one or two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
 However, this overhead can be removed completely by optimizing the code during compilation so that the {\C} code can be called with no overhead \cite{web:rust_once_run_everywhere}.
 The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial function inlining, as the only contents of the wrapper is a call to the actual function.
-Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will inline the {\C} implementation into the code for the \code{timer0.int\_enable} function in {\rust}.
+Additionally, by enabling \gls{lto} during the compilations, LLVM will inline the {\C} implementation into the code for the \code{timer0.int\_enable} function in {\rust}.
 This results in the same performance and similar call-stacks for both {\C} and {\rust}.
 This is a working example of one of {\rust}'s many zero-cost abstractions.
 
