@@ -58,11 +58,11 @@ The \lib{Application Layer} is the top module of the {\rg} platform.
 This module represents all higher-level libraries and executables built on top of the \lib{bindings} module and the \glsdesc{rel}.
 
 Throughout this thesis, we have worked on many different project ideas that build upon the work presented in the previous chapters.
-A collection of the more interesting of these projects is presented in this chapter.
-First, we describe a library that was ported from {\C} to {\rust}, this shows how {\rust}'s concept of \emph{unsafe} can guide the programmer to write more secure code.
-In \autoref{sec:irq-closures}, we describe a library that provides a {\rust}-idiomatic way to handle interrupts, which is motivated by wanting to provide a safer way of interacting with the \gls{mcu} peripherals.
-In \autoref{sec:rust-embedded-modules} we apply {\rust}'s trait system to the hardware peripherals in order to build a higher-level \gls{api} than {\emlib}.
-In the last section, we describe the two applications which was developed for evaluating the {\rg} platform.
+A collection of the more interesting projects are presented in this chapter.
+First, we describe a library that was ported from {\C} to {\rust}, which shows how {\rust}'s concept of \emph{unsafe} can guide the programmer to write more secure code.
+In \autoref{sec:irq-closures}, we describe a library that provides a {\rust}-idiomatic way to handle interrupts, which is motivated by the desire to provide a safer way of interacting with the \gls{mcu} peripherals.
+In \autoref{sec:rust-embedded-modules}, we apply {\rust}'s trait system to the hardware peripherals in order to build a higher-level \gls{api} than {\emlib}.
+In the last section, we describe the two applications that were developed for evaluating the {\rg} platform.
 }
 \include{implementation/gpioint}
 \include{implementation/irq-closures}
