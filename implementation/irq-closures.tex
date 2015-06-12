@@ -86,10 +86,10 @@ The closure is passed as an argument to the \code{on\_single} method on the \gls
 
 \subsection{Implementation}
 
-This section looks at how we built an abstraction exposing the behavior that was presented in the previous section.
-The implementation shows how we can the {\unsafe} keyword to build a this safe abstraction.
+This section looks at how we built an abstraction for exposing the behavior that was presented in the previous section.
+The implementation shows how we can use the {\unsafe} keyword to build this safe abstraction.
 As we desribed in \autoref{ssub:unsafe_code}, by using this keyword we take on the responsibility of ensuring that our code satisfies the invariants the compilers safety analysis is built on.
-Because of this, we include a discussion of what makes the building blocks we use here {\unsafe} and how we can verify that final abstraction is safe to use.
+Because of this, we include a discussion of what makes the building blocks we use here {\unsafe} and how we can verify that the final abstraction is safe to use.
 
 The process of handling an interrupt was described in \autoref{sec:impl:handling-interrupts}.
 In short, a public function with a specific name handles the corresponding interrupt.
