@@ -11,12 +11,12 @@
 #3
 }
 
-\corechapter{Startup}{startup}{%
+\corechapter{Startup for Rust}{startup}{%
 The \lib{startup} module handles the process of starting a {\rust} application on the \glsdesc{mcu}.
 This module is a foundation for the {\rg} platform, but it can be used in isolation to run a program on the \gls{mcu} without any dependencies.
 
 This chapter describes two important parts of a {\rust} program that needs to be configured correctly for the language to be functional with the {\gecko}.
-First, we describe how a {\rust} program can be configured to be an executable for the {\gecko}.
+First, we describe how we configured a {\rust} program to become an executable for the {\gecko}.
 At the end of this chapter we describe how we get hardware interrupts to trigger interrupt handlers implemented in {\rust}.
 }
 \include{implementation/booting-rust}
@@ -27,7 +27,7 @@ This module builds on the foundation laid out by the startup module and is used 
 
 This chapter starts with presenting the parts of \gls{rcl} that needs to be configured in order for the library to work for a new platform.
 We then move over to describe the standard {\rust} libraries that provides heap allocation and dynamically allocated structures.
-At the end of this, chapter we present a full overview over \gls{rel}.
+At the end of this chapter, we present our definition of the \gls{rel}.
 }
 \include{implementation/rust-embedded-library}
 
