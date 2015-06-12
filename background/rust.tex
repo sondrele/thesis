@@ -637,7 +637,7 @@ The ability to define new abstractions with efficient implementations is an impo
 Sometimes, this means that the underlying code needs direct memory access and the ability to dereference raw pointers or call into external libraries.
 For these tasks, {\rust} provides the keyword {\unsafe}.
 It is important to note that this {\unsafe} keyword is introduced to \emph{keep} {\rust}'s semantics about memory safety.
-When the compiler can no longer guarantee safety, it is up to the programmer to tell the compiler that the code inside the {\unsafe} block is indeed safe.
+The programmer is responsible for maintaining the safe invariants of the compiler when using a {\unsafe} block.
 
 \begin{table}[ht]
 \begin{center}
@@ -669,7 +669,7 @@ It is important to note that {\rust}'s borrow-checker is still active \emph{acro
 The borrow-checker can never be disabled, but for certain operations it will simply not work.
 \autoref{lst:unsafe_reference} demonstrates this with the same example that was used in \autoref{ssec:lifetimes}.
 We can see from this example that it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues.
-This also tells us that using an unsafe block is not the same as disabling the compiler, it is merely a mechanism for the programmer to handle the safety of a program in the cases where the compiler is unable to.
+This also tells us that using an unsafe block is not the same as disabling the compiler, it is merely a mechanism for the programmer to take responsibility for the safety of part of the program in the cases where the compiler is unable to.
 
 \begin{listing}[H]
 \begin{rustcode}
