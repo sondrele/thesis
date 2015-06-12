@@ -351,7 +351,7 @@ However, this overhead can be removed completely by optimizing the code during c
 The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial function inlining, as the only contents of the wrapper is a call to the actual function.
 Additionally, by enabling \gls{lto} during the compilations, LLVM will inline the {\C} implementation into the code for the \code{timer0.int\_enable} function in {\rust}.
 This results in the same performance and similar call-stacks for both {\C} and {\rust}.
-This is a working example of one of {\rust}'s many zero-cost abstractions, enabled through the interoptability with {\C} \gls{abi} and exploiting features given by LLVM.
+This is a working example of one of {\rust}'s many zero-cost abstractions, enabled through the interoptability with the {\C} \gls{abi} and exploiting features given by LLVM.
 
 \subsection{Naming Conventions}
 
