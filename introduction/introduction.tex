@@ -5,9 +5,9 @@
 
 Embedded computer systems constitute a vast majority of the computers we use today.
 These systems are not as visible as desktop and laptop systems, and they have different requirements when it comes to their programmers and the languages they use.
-Applications written for these computers control the hardware more directly; thus the language requires low-level control.
+Applications written for these computers control the hardware more directly, thus, the language requires low-level control.
 Modern compiler infrastructures have made great advances in recent years.
-These advances enables high-level abstraction to \emph{not} come at the cost of not providing the low-level control needed in these applications.
+These advances enable high-level abstraction to avoid coming at the cost of not providing the low-level control needed in these applications.
 The {\rust} programming language is one example of a language built on such an infrastructure, and it targets this combination of abstractions and low-level control.
 In the years to come, many of these computer systems will be connected to the Internet to facilitate the \glsdesc{iot}.
 This development will expose more programmers to embedded systems.
@@ -20,17 +20,17 @@ Introducing {\rust} to these systems is potentially beneficial if applications c
 {\rust} is a new programming language that reached a stable 1.0 in May 2015.
 Like most programming languages, it aims to solve a few specific problems better than other languages.
 Mainly, its goal is ``to design and implement a safe, concurrent, practical, static systems language'' \cite{web:rust_faq}.
-With these goals in mind, {\rust} focuses on being a memory safe language without sacrificing performance
-The language implements a few paradigms to provide a solid concurrency model that is suited for many modern applications that run on the internet.
+With these goals in mind, {\rust} focuses on being a memory safe language without sacrificing performance.
+The language implements a few paradigms to provide a solid concurrency model that is suited for many modern applications that run on the Internet.
 
 {\C} has become the industry standard for developing on embedded systems.
 It is a small, low-level language, at least considering today's standards, that has been adapted to virtually every target platform that exists on the market.
-It is an easy language without many language constructs, which makes it easy to adapt it to different platforms.
+It is an easy language without many language constructs, which makes it easy to adapt to different platforms.
 It also has a minimal runtime system and does not require an operating system to utilize the underlying hardware.
-{\rust} have adapted many of the features that are available in {\C}.
-Among them are a minimal runtime, full control over the memory and an opt-in \gls{abi} which is exactly the same as {\C}'s \cite{web:rust_once_run_everywhere}.
+{\rust} has adapted many of the features that are available in {\C}.
+Among them are a minimal runtime, full control over the memory and an opt-in \gls{abi}, which is exactly the same as {\C}'s \cite{web:rust_once_run_everywhere}.
 
-Gradually, while the {\rust} programming language started to take shape, a few people in the community took a notice to {\rust}'s low level of implementation and how it could be a suitable programming language for embedded systems.
+Gradually, while the {\rust} programming language started to take shape, a few people in the community took notice to {\rust}'s low level of implementation and how it could be a suitable programming language for embedded systems.
 Combined with its strong guarantees about memory safety, absence of data races, and other common errors like stack- and buffer-overflows, it makes for an interesting language to run on embedded systems.
 Early projects that experimented with running {\rust} bare-metal on ARM microcontrollers had to do a few workarounds in order to make it work.
 As the language is implemented in the open, with great influence from the community, it is now easy to rely on only the core functionality of the language that is platform independent.
@@ -38,9 +38,10 @@ As the language is implemented in the open, with great influence from the commun
 The purpose of this project has been to try and give a rough comparison of {\rust} and {\C} on a bare-metal system.
 In the process of doing this, we decided that the EFM32 microcontrollers from Silicon Labs would be well suited for the task.
 This platform gives us a couple of metrics where we can compare the two languages.
-Mainly, we want to compare the performance of the two languages against each other on a small system with limited computing power
-In addition we want to compare energy consumption of programs written in the two languages.
-Typically, the two problems go hand-in-hand; the best way to save power is to shut down the hardware, and in order to shut down the processor, the programs need to finish quickly - basically, executing as few instructions as possible.
+Mainly, we want to compare the performance of the two languages against each other on a small system with limited computing power.
+In addition, we want to compare energy consumption of programs written in the two languages.
+Typically, the two problems go hand-in-hand, and the best way to save power is to shut down the hardware.
+In order to shut down the processor, the programs need to finish quickly - basically, executing as few instructions as possible.
 {\rust} claims to provide zero-cost abstractions, meaning that its high-level abstractions do not come at the cost of performance and program overhead.
 This claim is especially important to verify in an embedded system where excess resources are limited.
 
