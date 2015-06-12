@@ -3,24 +3,25 @@
 \frontchapter{Abstract}
 \label{chap:abstract}
 
-Embedded computer system are an invisible, ever-growing, part of our lives.
-Through market trends like the \glsdesc{iot} these computers are brought to new domains which increases the already high constraints on these system.
-These constrained systems sets different requirements to the tools used to develop software compared to the conventional systems found in mobile, desktop, and server computers.
+Embedded computer systems are an invisible, ever-growing, part of our lives.
+Through market trends, like the \glsdesc{iot}, these computers are brought to new domains.
+These constrained systems sets different requirements to the tools used to develop software, compared to the conventional systems found in mobile, desktop, and server computers.
 
 In recent decades, the number of programming languages has flourished on conventional computer systems.
-The traditional categorization of \emph{high-level langauges} have shifted from the static, hardware platform agnostic, days of C, to the dynamic, highly managed, runtime systems of JavaScript and the likes.
-The safety mechanisms provided by these high-level langauges comes at a cost of the low-level control found in the now called \emph{low-level languages}.
+The traditional categorization of \emph{high-level langauges} have shifted from static and hardware platform-agnostic languages like C, to the dynamic and highly managed languages like JavaScript.
+The safety mechanisms provided by these new high-level langauges comes at a cost of the low-level control found in the now called \emph{low-level languages}.
 
 Rust is an emerging programming language which has a new take on this trade-off between control and safety.
-The language takes a static approach for guaranteeing the safety which a high-level language needs to ensure with dynamic checking.
-To hold this guarantee while providing high performance and low-level control, Rust provides a \emph{safe} subset which the compiler proves to be safe and a break-out mechanisms for the programmer to use a super-set where the programmer is required to uphold the compilers safety invariants.
+This language takes a static approach for guaranteeing the safety, which a high-level language needs to ensure with dynamic checking.
 
-In this thesis we present our experiments and evaluations of bringing Rust to an embedded computer system.
+In this thesis, we present our experiments and evaluations of bringing Rust to an embedded computer system.
 We describe the design and implementation of our \emhp{bare-metal} platform called {\rg}, which encompasses libraries for controlling the hardware device.
-On this platform we developed and evaluated several programs and abstract libraries.
+On this platform, we developed and evaluated several programs and abstract libraries.
 
-To support our platform we have developed and present an extension to the Cargo package manager.
-This extensions facilitates building Rust applications for non-standard targets and was ultimately contributed back to the Cargo project.
+To support our platform, we have developed and presented an extension to the Rust standard package manager, which facilitates building Rust applications for non-standard targets.
+The extension was ultimately contributed back to the package manager project.
 
-We evaluate the platform based on performance, energy consumption, and code size and compare these results with the existing C platform for the target chip.
-Our evaluation shows that Rust performs equally well when regarding performance and energy consumption, but we find the code size to increase especially when building the applications for debugging.
+We have evaluated the platform based on performance, energy consumption, and code size.
+These results where compared to the existing C platform for the target chip, the ARM Cortex-M3 based EFM32GG called Giant Gecko.
+Our evaluation shows that Rust performs equally well when regarding performance and energy consumption.
+However, we find that the code size can increase substantially, especially when building the applications in debugging mode.
