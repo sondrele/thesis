@@ -22,11 +22,11 @@ At the end of this chapter we describe how we get hardware interrupts to trigger
 \include{implementation/booting-rust}
 
 \corechapter{Rust Embedded Library}{rel}{%
-The \glsdesc{rel} module defines the subset of the standard {\rust} library which is applicable for embedded applications.
+The \glsdesc{rel} module defines the subset of the standard {\rust} library that is applicable for embedded applications.
 This module builds on the foundation laid out by the startup module and is used by the \lib{bindings} and \lib{Application Layer} modules of the {\rg} platform.
 
 This chapter starts with presenting the parts of \gls{rcl} that needs to be configured in order for the library to work for a new platform.
-We then move over to describe the standard {\rust} libraries that provides heap allocation and dynamically allocated structures.
+We then move over to describe the standard {\rust} libraries that provide heap allocation and dynamically allocated structures.
 At the end of this chapter, we present our definition of the \gls{rel}.
 }
 \include{implementation/rust-embedded-library}
@@ -36,20 +36,20 @@ At the end of this chapter, we present our definition of the \gls{rel}.
 The \lib{bindings} module includes the peripheral libraries provided by the \gls{mcu} vendor Silicon Labs, and the architecture designer ARM.
 In order to make use of these libraries in {\rust}, we developed binding libraries to expose the underlying {\C} implementation to the {\rust} language.
 
-We start this chapter with a section that maps the object-oriented paradigm to hardware peripherals, this lays a foundation for how we think about the hardware throughout this thesis.
-Throughout the last section in the chapter we describe how we structured, implemented, and tested the library bindings.
+We start this chapter with a section that maps the object-oriented paradigm to hardware peripherals, which lays a foundation for how we think about the hardware throughout this thesis.
+In the last section of this chapter, we describe how we structured, implemented, and tested the library bindings.
 }
 \include{implementation/objectoriented}
 \include{implementation/interfacing_with_emlib}
 
 
 \corechapter{Build System}{build}{%
-In this chapter we step out of the core software components of the {\rg} platform to present an external, but highly important, part of the platform.
+In this chapter, we step out of the core software components of the {\rg} platform to present an external, but highly important, part of the platform.
 The {\cargo} package manager is an integral part of the {\rust} ecosystem and facilitates sharing code and libraries with ease.
 
 Throughout this chapter, we look at how we evolved the build system over time and ultimately migrated the process over to {\cargo}.
-This includes managing project dependencies, and building \gls{rel} and the \lib{bindings} modules for the ARM architecture.
-We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of {\rust}, and to make sure that the builds have been consistent across the systems it has been built on.
+This includes managing project dependencies and building \gls{rel} and the \lib{bindings} modules for the ARM architecture.
+We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of {\rust}, and to ensure that the builds have been consistent across the systems it has been built on.
 }
 \include{implementation/building}
 
