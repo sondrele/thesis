@@ -260,6 +260,7 @@ TIMER_Init(TIMER0, &timerInit);
 
 First, an initialization structure for the Timer module is acquired, and this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 The next lines enable interrupts for the Timer, and the \gls{nvic} interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
+Note this function is called implicitly by the runtime as \autoref{sec:impl:handling-interrupts} describes.
 All this function does is to clear the interrupt signal and toggle the value of a LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
 Interrupts like this are an important part of programming the {\gecko}.
