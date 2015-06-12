@@ -676,6 +676,9 @@ This also tells us that using an unsafe block is not the same as disabling the c
 fn main() {
   let name = unsafe {
     let b = Book { name: "Gecko's".to_string(), pages: 150 };
+    // If the last statement in a block does not contain a `;'
+    // then the block is turned into a expression which
+    // evaluates to value of this statement
     &b.name // <- compiler error: `b.name' does not live long enough
   };
 }
