@@ -58,7 +58,6 @@ This means that writing to a pointer that points to this address will write to t
 \autoref{fig:back:memorymapped} shows a subsection of \gls{ram} that contains the \gls{adc} control register.
 Only the relevant registers for our discussion in included in the figure.
 It shows the control register that is used when performing a single \gls{adc} conversion.
-Note that it only includes the register needed for this kind of conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, and the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
 We see that the CTRL register is at offset \mem{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \mem{0x4} bytes.
 The two registers, SINGLECTRL and SINGLEDATA, are there for initializing the single conversion and read the results of a conversion, respectively.
