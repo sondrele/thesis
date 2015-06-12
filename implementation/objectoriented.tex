@@ -88,6 +88,22 @@ class ADC {
   \end{listing}
   \end{minipage}
   \hfill
+  \begin{minipage}{0.33\textwidth}
+  \begin{listing}
+    \begin{ccode}
+typedef struct {
+  uint32_t CTRL;
+  uint32_t CMD;
+  // ...
+  uint32_t SINGLECTRL;
+  // ...
+  uint32_t SINGLEDATA;
+  // ...
+} ADC;
+    \end{ccode}
+  \end{listing}
+  \end{minipage}
+  \hfill
   \begin{minipage}{0.27\textwidth}
   \begin{listing}
     \begin{rustcode}
@@ -102,22 +118,6 @@ struct ADC {
   // ...
 }
     \end{rustcode}
-  \end{listing}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{0.33\textwidth}
-  \begin{listing}
-    \begin{ccode}
-typedef struct {
-  uint32_t CTRL;
-  uint32_t CMD;
-  // ...
-  uint32_t SINGLECTRL;
-  // ...
-  uint32_t SINGLEDATA;
-  // ...
-} ADC;
-    \end{ccode}
   \end{listing}
   \end{minipage}
 
@@ -161,9 +161,11 @@ The memory layout of these objects is given in \autoref{fig:back:memlayout}.
       0x24&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-    \caption{\rust}
-    \label{fig:back:memlayout:rust}
+        \caption{{\C}}
+    \label{fig:back:memlayout:c}
   \end{subfigure}
+  \caption{Memory layout of objects}
+  \label{fig:back:memlayout}
   \hfill
   \begin{subfigure}{0.31\textwidth}
     \begin{tabular}{|l|l|}
@@ -176,11 +178,9 @@ The memory layout of these objects is given in \autoref{fig:back:memlayout}.
       0x24&SINGLEDATA\\ \hline
       ...&...        \\ \hline
     \end{tabular}
-        \caption{{\C}}
-    \label{fig:back:memlayout:c}
+    \caption{\rust}
+    \label{fig:back:memlayout:rust}
   \end{subfigure}
-  \caption{Memory layout of objects}
-  \label{fig:back:memlayout}
 
 \end{figure}
 
@@ -279,6 +279,19 @@ Therefore the constructor-destructor pattern is not applicable for \gls{mmio}s, 
 \autoref{fig:oo:instantiate} shows how to instantiate a \gls{mmio} as an object in both {\C} and {\rust}.
 
 \begin{listing}[H]
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+  \begin{listing}
+    \begin{ccode}
+#define ADC0_BASE 0x40002000
+
+void main() {
+  ADC* adc0 = (ADC*)ADC0_BASE;
+}
+    \end{ccode}
+    \caption{{\C}}
+  \end{listing}
+  \end{minipage}
   \begin{minipage}{0.46\textwidth}
   \begin{listing}
     \begin{rustcode}
@@ -292,19 +305,6 @@ fn main() {
 }
     \end{rustcode}
     \caption{Rust}
-  \end{listing}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{0.45\textwidth}
-  \begin{listing}
-    \begin{ccode}
-#define ADC0_BASE 0x40002000
-
-void main() {
-  ADC* adc0 = (ADC*)ADC0_BASE;
-}
-    \end{ccode}
-    \caption{{\C}}
   \end{listing}
   \end{minipage}
   \caption{Instantiating a \gls{mmio}}
