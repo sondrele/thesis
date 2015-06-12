@@ -669,7 +669,7 @@ It is important to note that {\rust}'s borrow-checker is still active \emph{acro
 The borrow-checker can never be disabled, but for certain operations it will simply not work.
 \autoref{lst:unsafe_reference} demonstrates this with the same example that was used in \autoref{ssec:lifetimes}.
 We can see from this example that it is not allowed to return a reference to something that is allocated \emph{within} an unsafe block, as this can result in use-after-free issues.
-This also tells us that using an unsafe block is not the same as disabling all the checks in the compiler, it is merely a mechanism for the programmer to take responsibility for the safety of part of the program in the cases where the compiler is unable to.
+This also tells us that using an unsafe block is not the same as disabling all the checks in the compiler, it is merely a mechanism for the programmer to take responsibility for safety in the parts of the program where the compiler is unable to.
 
 \begin{listing}[H]
 \begin{rustcode}
