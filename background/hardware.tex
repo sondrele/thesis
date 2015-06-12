@@ -141,7 +141,7 @@ Different areas of use can be e.g. reading and writing to SD memory cards or tra
 Peripherals like the \gls{usart} and the \gls{uart} can be used in combination with \gls{dma}, which is useful for energy constrained applications.
 This combination makes it possible to implement applications that can gather data from a range of external sensors, and transfer or store it to other peripherals with minimal interaction from the \gls{cpu}.
 
-\gls{gpio} is used for pin configuration and manipulation of the \gls{cpu} pins, and it is often used to configure the pins that are required by other peripherals.
+\gls{gpio} is used for pin configuration and manipulation of the \gls{mcu} pins, and it is often used to configure the pins that are required by other peripherals.
 Simple Push Buttons and LEDs are configured with the \gls{gpio}, and e.g. the \gls{usart} needs to have configured at least two \gls{gpio} pins for both receiving and transmitting data.
 
 Many applications are used to gather data by measuring different sensors and signals.
