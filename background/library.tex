@@ -41,18 +41,18 @@ It provides a thin layer of abstraction over each of the peripherals' registers,
 
 The \gls{api} is divided into separate files that define interfaces for modules such as \gls{adc}, \gls{dac}, Timer, and \gls{dma}, and it provides functions to easily control sleep modes and interrupt handlers.
 The library functions are exposed in three different API patterns, either as standalone utility methods, singleton object methods, or {\C} object oriented fashion.
-Examples of these patterns are shown for the \code{timer} in \autoref{lst:back:lib:timer}, the \code{RTC} in \autoref{lst:back:lib:rtc}, and the \code{gpio} module in \autoref{lst:back:lib:gpio}.
+Examples of these patterns are shown for the \code{gpio} module in \autoref{lst:back:lib:gpio}, the \code{RTC} in \autoref{lst:back:lib:rtc}, and the \code{timer} in \autoref{lst:back:lib:timer}.
 
 \begin{listing}[H]
   \begin{ccode}
-void TIMER_Init(TIMER_TypeDef *timer,
-                const TIMER_Init_TypeDef *init);
-void TIMER_Enable(TIMER_TypeDef *timer, bool enable);
-void TIMER_TopGet(TIMER_TypeDef *timer);
-void TIMER_TopSet(TIMER_TypeDef *timer, uint32_t val);
+void GPIO_PinModeSet(GPIO_Port_TypeDef port, unsigned int pin,
+                     GPIO_Mode_TypeDef mode, unsigned int out);
+void GPIO_PinOutSet(GPIO_Port_TypeDef port, unsigned int pin);
+unsigned int GPIO_PinOutGet(GPIO_Port_TypeDef port,
+                            unsigned int pin);
   \end{ccode}
-  \caption{Timer module configured in {\C} Object Oriented fashion}
-  \label{lst:back:lib:timer}
+  \caption{Standalone functions to configure the GPIO}
+  \label{lst:back:lib:gpio}
 \end{listing}
 
 \begin{listing}[H]
@@ -68,14 +68,14 @@ void RTC_CompareSet(unsigned int comp, uint32_t value);
 
 \begin{listing}[H]
   \begin{ccode}
-void GPIO_PinModeSet(GPIO_Port_TypeDef port, unsigned int pin,
-                     GPIO_Mode_TypeDef mode, unsigned int out);
-void GPIO_PinOutSet(GPIO_Port_TypeDef port, unsigned int pin);
-unsigned int GPIO_PinOutGet(GPIO_Port_TypeDef port,
-                            unsigned int pin);
+void TIMER_Init(TIMER_TypeDef *timer,
+                const TIMER_Init_TypeDef *init);
+void TIMER_Enable(TIMER_TypeDef *timer, bool enable);
+void TIMER_TopGet(TIMER_TypeDef *timer);
+void TIMER_TopSet(TIMER_TypeDef *timer, uint32_t val);
   \end{ccode}
-  \caption{Standalone functions to configure the GPIO}
-  \label{lst:back:lib:gpio}
+  \caption{Timer module configured in {\C} Object Oriented fashion}
+  \label{lst:back:lib:timer}
 \end{listing}
 
 \subsection{Emdrv}
