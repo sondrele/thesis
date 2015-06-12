@@ -158,7 +158,7 @@ void SysTick_Handler(void) { /* Handler code */ }
 \end{listing}
 
 Defining an interrupt handler in {\rust} is just as easy as in {\C} because of the focus on interoperability with {\C} code.
-In {\rust}, a function can easly be defined to use the {\C} \glsdesc{abi} required to be called as an interrupt handler.
+In {\rust}, a function can easily be defined to use the {\C} \glsdesc{abi} required to be called as an interrupt handler.
 \autoref{lst:rust:irq} shows how to override the same \func{SysTick\_Handler} function in {\rust}.
 
 \begin{listing}[H]
