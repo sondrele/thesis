@@ -677,7 +677,7 @@ fn main() {
   let name = unsafe {
     let b = Book { name: "Gecko's".to_string(), pages: 150 };
     // If the last statement in a block does not contain a `;'
-    // then the block is turned into a expression that
+    // then the block is turned into an expression that
     // evaluates to the value of this statement
     &b.name // <- compiler error: `b.name' does not live long enough
   };
