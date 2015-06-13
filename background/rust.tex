@@ -455,7 +455,7 @@ They are defined here:
 \begin{description}
 \item [Ownership] \hfill \\
   A value can only have one owning handle at any given moment.
-  This ownership can be transfered to another owner.
+  This ownership can be transferred to another owner.
   The owner is responsible for deallocating the bound value.
 
 \item [Lifetime] \hfill \\
@@ -491,14 +491,14 @@ The downside of such an approach is the requirement of halting the entire progra
 There are also many other techniques of garbage collection, which are often a variation of the ones already described.
 However, they are all problematic in resource constraint environments such as on a small embedded device, or in real-time systems where the unpredictability of program execution introduced by a garbage collector is unacceptable.
 
-\subsubsection{Manual Memory Managment}
+\subsubsection{Manual Memory Management}
 
 Another approach to keeping track of the memory resources has been to give the programmer full control of every memory allocation and deallocation.
 This is the most common approach for systems programming languages like {\C} and {\Cpp}, where performance and predictability are important.
 However, it is easier to make the error of referencing invalid memory, or forgetting to free up memory that might lead the program to use all available resources over time.
 Memory leaks like this will eventually lead a running program to crash due to the unavailability of extra resources.
 
-\subsubsection{Memory Managment with Ownership}
+\subsubsection{Memory Management with Ownership}
 
 %It is important to always remember to deallocate all memory referenced by a handle before the handle leaves its scope in the program.
 {\rust} operates differently from {\C} when it comes to freeing memory.
@@ -572,7 +572,7 @@ fn main() {
 
 The {\rust} compiler will assign a \emph{lifetime} to every value in a program.
 This lifetime is used by the compiler to prevent problems like \emph{use-after-free} by failing the compilation process if such errors are discovered.
-The lifetimes are, for many uses cases, inserted automaticaly by the compiler.
+The lifetimes are, for many uses cases, inserted automatically by the compiler.
 This is done with a process called \emph{lifetime elision}.
 \autoref{lst:block-lifetime} provides a lifetime analysis for a simple program.
 
@@ -592,7 +592,7 @@ fn main() {
 
 
 In \autoref{lst:func-param-lifetime} we consider a function that takes a reference as a parameter.
-This shows how the compiler inferres a lifetime for the function parameter.
+This shows how the compiler infers a lifetime for the function parameter.
 In the comment on line 1 we have included the explicit \emph{lifetime specifier} (\code{'a}) as it would be inserted by the compiler.
 
 \begin{listing}[H]

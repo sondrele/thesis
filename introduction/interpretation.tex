@@ -57,9 +57,9 @@ Thus, errors that occur while constructing these objects are challenging to hand
 Allocation of heap memory is a convenient mechanism for creating data structures with dynamic size.
 In an embedded system with no excess memory, the performance of heap allocation, with respect to the reuse of deallocated memory, is an important challenge (\textbf{LC5}).
 
-On a system with an \gls{os} and large memory hierarchy, a technique called swapping can be used when the number of heap allocations exceeds the capacity of the \gls{ram} storage.
+On a system with an \gls{os} and large memory hierarchy, a technique called swapping can be used when the number of heap allocations exceed the capacity of the \gls{ram} storage.
 In an embedded system, these facilities do not exist.
-When the application is out of memory, then there is no way to allocate more.
+When the application is out of memory, there is no way to allocate more.
 A subtle problem identified here is that when the error has occurred, the mechanism handling this condition cannot allocate memory, as this will also fail and trigger the mechanism in an infinite loop (\textbf{LC6}).
 
 These language challenges are revisited as a part of the discussion of our platform in \autoref{sec:disc:lang-challenges}.
