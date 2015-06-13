@@ -40,6 +40,10 @@ In addition to providing the facade, \gls{rsl} defines platform abstractions lik
 This basic fact renders the \gls{rsl} unusable in an embedded system as these dependencies will not be met.
 It is possible to opt-out of using the library.
 
+It is important to note that there is a distinction between the actual software component called {\std}, and the library we refer to as \gls{rsl}.
+The \gls{rsl} encompasses the library as a whole, i.e. \lib{collection} is a part of \gls{rsl}.
+On the other hand {\std} is just the actual software component, i.e. \lib{collection} is not a part of {\std}, even though it is reexported by {\std}.
+
 \subsubsection{The Rust Core Library}
 \label{sec:rcl}
 
