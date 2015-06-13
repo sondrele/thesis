@@ -57,12 +57,15 @@ An alternative approach is to use a bindings generator such as \lib{bindgen}\foo
 The binding effort might be redundant altogether, as the {\rust} roadmap \cite{web:roadmap} states that the project wants to develop better integration with {\C}/{\Cpp} code.
 This might eventually lead to bindings like these being made obsolete, and that {\C} libraries can called into based on their header files, alone.
 
+As discussed in \autoref{sec:disc:rust_for_arm}, we found the current basis for writing reusable libraries to be limiting for our platform.
+We leave it as future work to go into detail on ways to solve this problem, by either applying a different approach or to modify the blocking obstacle in the \lib{std} crate.
+
 In \autoref{sec:rust-embedded-modules} we looked at a library which provided higher level abstraction using the language features of {\rust}.
 
 The interrupt-driven programming model used to program embedded system did not prove to be as applicable to {\rust} as we had hoped.
 In \autoref{sec:irq-closures} we looked at a technique for changing this model by using ownership rules similar to how concurrency is handled in {\rust}.
 This library has potential to provide a more idiomatic programming style to embedded programs in {\rust} and will make the platform more familiar to {\rust} developers.
-This library can be extended to control the ownership of \glspl{mmio} as discussed in \autoref{sec:ownership_allied_to_hardware}.
+This library can be extended to control the ownership of \glspl{mmio} as discussed in \autoref{sec:avoiding_mutable_aliases_to_hardware}.
 
 In the \autoref{sec:disc:project_evaluations} we argued that in order to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform has to be implemented in {\rust}.
 On possible way to do this is to start this project from scratch by using the \lib{zinc.rs} framework and porting the actual implementations of the {\emlib} library to {\rust}.
@@ -71,3 +74,6 @@ This can both provide a better basis for evaluation, but can also, as we showed 
 These discoveries can help motivate the usage of {\rust} in this domain.
 Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, it is possible to do this the other way around.
 Therefore parts of the {\emlib} library can actually be replaced by an {\rust} implementation and still expose the same \gls{api} to the user.
+
+An aspect that we did not go into in this project is {\rust}'s ability to, by using traits, redefine the semantics when using values.
+This concept can possibly be applied to remove the verbosity of the volatile loads and store operations discussed in \autoref{sec:disc:lang-challenges}.

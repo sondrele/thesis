@@ -3,7 +3,7 @@
 \section{Library Bindings}
 \label{sub:interfacing_with_emlib}
 
-This section describes the different \emph{bindings}-libraries that was developed as part of the {\rg} platform.
+This section describes the different \lib{bindings} libraries that was developed as part of the {\rg} platform.
 The \gls{ffi} available in {\rust} has been used to interface with Silicon Labs' suite of {\C} libraries used to control the {\gecko}.
 This way, we have been able to create wrappers around the \gls{api} for the different peripherals that we have used in the project, without porting the core logic itself.
 These wrappers are called language bindings.
@@ -28,9 +28,7 @@ Most of the examples uses one or several IRQ handlers for the peripheral binding
 
 \subsubsection{Emlib}
 
-The priority, when we first set out to make the bindings for {\emlib}, was to define a viable platform to write rust applications with, which we could use to evaluate the language on the embedded system.
-It has not been a priority of this project to fully support all of the {\gecko}'s peripherals or provide bindings for the entire {\emlib}.
-The bindings have been developed because we have needed functionality from the peripherals, not the other way around.
+The priority, when we first set out to make the bindings for {\emlib}, was to define a viable platform to write {\rust} applications with, which we could use to evaluate the language on the embedded system.
 \autoref{tab:emlib_peripheral_bindings} summarizes some modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
 A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}, these are either written from scratch, or directly ported from {\emlib}'s examples.
 
@@ -260,6 +258,7 @@ TIMER_Init(TIMER0, &timerInit);
 
 First, an initialization structure for the Timer module is acquired, and this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 The next lines enable interrupts for the Timer, and the \gls{nvic} interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
+Note that this function is called implicitly by the runtime as \autoref{sec:impl:handling-interrupts} describes.
 All this function does is to clear the interrupt signal and toggle the value of a LED.
 We can imagine an application where the Timer is configured to trigger an interrupt every minute to toggle the LED, and in between the interrupts the \gls{mcu} can be put to sleep in order to save power.
 Interrupts like this are an important part of programming the {\gecko}.
@@ -349,9 +348,9 @@ If we compare the call-stacks between calling the \code{timer0.int\_enable} func
 These are simple wrappers that require extra unconditional jumps in the code, and performance-wise it is a very unnecessary overhead to have one or two extra stack frames allocated for \emph{every} function call through the \gls{ffi}.
 However, this overhead can be removed completely by optimizing the code during compilation so that the {\C} code can be called with no overhead \cite{web:rust_once_run_everywhere}.
 The extra function call due to the static inline wrapper on the {\C} side of the interface will be removed by a trivial function inlining, as the only contents of the wrapper is a call to the actual function.
-Additionally, by enabling \concept{link-time-optimizations} during the compilations, LLVM will inline the {\C} implementation into the code for the \code{timer0.int\_enable} function in {\rust}.
+Additionally, by enabling \gls{lto} during the compilations, LLVM will inline the {\C} implementation into the code for the \code{timer0.int\_enable} function in {\rust}.
 This results in the same performance and similar call-stacks for both {\C} and {\rust}.
-This is a working example of one of {\rust}'s many zero-cost abstractions.
+This is a working example of one of {\rust}'s many zero-cost abstractions, enabled through the interoperability with the {\C} \gls{abi} and exploiting features given by LLVM.
 
 \subsection{Naming Conventions}
 

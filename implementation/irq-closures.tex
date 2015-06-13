@@ -86,7 +86,10 @@ The closure is passed as an argument to the \code{on\_single} method on the \gls
 
 \subsection{Implementation}
 
-This section looks at how we can achieve the same behavior as was presented in the previous section.
+This section looks at how we built an abstraction for exposing the behavior that was presented in the previous section.
+The implementation shows how we can use the {\unsafe} keyword to build this safe abstraction.
+As we desribed in \autoref{ssub:unsafe_code}, by using this keyword we take on the responsibility of ensuring that our code satisfies the invariants the compilers safety analysis is built on.
+Because of this, we include a discussion of what makes the building blocks we use here {\unsafe} and how we can verify that the final abstraction is safe to use.
 
 The process of handling an interrupt was described in \autoref{sec:impl:handling-interrupts}.
 In short, a public function with a specific name handles the corresponding interrupt.
@@ -213,6 +216,7 @@ Dereferencing the \code{func} pointer is considered unsafe because it might poin
 %The public interface \code{register} and \code{dispatch} looks up the global \code{HUB} and calls the corresponding function on the \code{Hub} object.
 
 \autoref{lst:adc-abstraction} implements the interface that was presented in \autoref{lst:irq:local} for the \gls{adc}, by utilizing the \code{register} and \code{dispatch} functions from \autoref{lst:reg-disp}.
+Notice that the implementation detail of the {\unsafe} blocks in the \func{register} and \func{dispatch} functions does not affect the user of the abstraction.
 
 % And finally the interface used in \autoref{lst:irq:local} is created using the utilities \texttt{register} and \texttt{dispatch}.
 
@@ -279,7 +283,7 @@ We have left out the implementation of the event hub in this section, in order t
 
 The method for handling interrupts with closures discussed in this section provides a nice facility to use idioms that are common in {\rust} code.
 They proved a means to avoid explicit use of {\unsafe} \code{static mut} variables and, as we showed in \autoref{lst:adc-abstraction}, let us build higher level abstractions.
-We revisit this section as part of a larger discussion concerning \emph{ownership to hardware} in \autoref{sec:ownership_allied_to_hardware}.
+We revisit this section as part of a larger discussion concerning \emph{ownership to hardware} in \autoref{sec:avoiding_mutable_aliases_to_hardware}.
 
 %The changes in \autoref{lst:irq:closure} compared to the \autoref{lst:irq:local} is the callsite of registering the cloures where it is passed inside of a owning Box pointer. \todo{We should be able to pass it by value as std::thread::spawn does}
 %The other more significant change is the creation and registration of the \texttt{hub} variable, it is also stored in the global variable defined in \autoref{lst:struct:Hub}.

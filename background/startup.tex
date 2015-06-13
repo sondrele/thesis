@@ -1,4 +1,4 @@
-\section{Startup}
+\section{Microcontroller Startup}
 \label{sec:back:startup}
 
 This section describes the process of starting a program on an embedded system.
@@ -52,6 +52,7 @@ All zero-initialized data is represented by the \elfsec{.bss} section in the {\e
 A portion of \gls{ram} corresponding to the size of the \elfsec{.bss} section must be set to zero.
 
 Copying the \elfsec{.data} section into \gls{ram} is handled by the \func{ResetHandler} function shown in \autoref{lst:reset-handler}.
+Before the \gls{ram} is initialized, the \code{ResetHandler} calls a \code{SystemInit} routine, which can be used to set up the external \gls{ram} for the {\gecko}.
 The function is the real entry point of the program and is executed when the \gls{cpu} receives the reset signal.
 
 \begin{listing}[H]
@@ -61,6 +62,7 @@ extern etext;      // address of .data segment in FLASH
 extern data_start; // start of .data segement in RAM
 extern data_end;   // end of .data segment in RAM
 void ResetHandler() {
+  SystemInit();
   for (i=0; i<data_end - data_start; i++){
     RAM[data_start + i] = FLASH[etext+i];
   }
