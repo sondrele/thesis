@@ -78,7 +78,7 @@ One implementation detail here is the imagined \code{CircularBuffer} type.
 The type is based on the same principle as the {\rust} standard library \code{channel} type, which provides a facility for interprocess communication.
 The channel has one \textit{read end} and one \textit{write end} enabling the producing process to send a stream of messages to the consuming process.
 This is required for the \gls{adc} callback to be able to write to the buffer while the main function retains ownership of the buffer.
-In the example the \code{in} function creates the \textit{write end} of the circlar buffer.
+In the example the \code{in} function creates the \textit{write end} of the circular buffer.
 
 The core of this example is the line \code{adc.on\_single(move |sample| ch.send(sample));}.
 This creates a closure that takes ownership over the \textit{write end} for the circular buffer.

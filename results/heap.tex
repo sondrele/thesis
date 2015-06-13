@@ -2,7 +2,7 @@
 \label{sec:res:heap}
 In this section we consider a small experiment to investigate possible differences in heap fragmentation caused by dynamic allocation in {\C} and {\rust}.
 We do know, from reading the source code of the library, that the heap allocation in {\rust} builds upon the same functionality as the allocation in {\C}.
-However, we want to verify and show this explicilty.
+However, we want to verify and show this explicitly.
 The conducted experiment is a simple program that \textbf{1)} allocates 128 objects on the heap, \textbf{2)} replaces one object picked at random, and \textbf{3)} repeats step \textbf{2)} 1024 times.
 The objects are of the three sizes given in \autoref{tab:heap:objects}.
 
@@ -24,7 +24,7 @@ The heap allocation pattern was recorded after the first phase of the program, a
 The figure shows a 4KB subsection of the heap with normalized addressing to the first allocated object to aid the comparison.
 Each line represents 64B of memory.
 
-We see that the initial allocation pattern is alternating between these three object sizes, and the white spaces inbetween are padding.
+We see that the initial allocation pattern is alternating between these three object sizes, and the white spaces in between are padding.
 These are due to alignment rules of the allocator.
 The objects are created in the same order in both {\C} and {\rust} and we see that the allocation patterns are identical.
 
