@@ -13,9 +13,10 @@ The following sections explain the process of defining and implementing the \gls
 \label{ssub:the_bindings_library}
 
 In \autoref{sec:back:lib} we presented the three libraries that we have created partially binding support for; \gls{cmsis}, {\emlib} and {\emdrv}.
-Here, we will take a closer look at which modules from these libraries that we have written bindings for, and the reasoning for choosing each one.
+Here, we will take a closer look at which modules from these libraries that we have written bindings for, and our reasoning for choosing each one.
 
-We have also written many example applications in {\rust} that utilize the bindings for many of the {\gecko}'s peripherals, these examples have been a driving factor for defining new bindings.
+We have also written many example applications in {\rust} that utilize the bindings for many of the {\gecko}'s peripherals.
+These examples have been a driving factor for defining new bindings.
 As an example, if we were to need some functionality for the \gls{adc}, we would define these bindings alongside the development of the examples.
 In this way, the bindings have been defined incrementally during the development of either the examples that demonstrate our libraries, or the applications described in \autoref{sec:impl:project:i} and \autoref{sec:impl:project:ii}.
 
@@ -23,14 +24,15 @@ In this way, the bindings have been defined incrementally during the development
 \label{sub:cmsis_bindings}
 
 Interrupt support through \gls{nvic} was the only interesting part of the \gls{cmsis} library that we have written bindings for.
-Most of the examples uses one or several IRQ handlers for the peripheral bindings that they demonstrate.
+Most of the examples use one or several \gls{irq} handlers for the peripheral bindings that they demonstrate.
 \gls{nvic} provides utility functions for enabling and disabling the interrupt handling mechanisms of the Cortex-M3 processor.
 
 \subsubsection{Emlib}
 
-The priority, when we first set out to make the bindings for {\emlib}, was to define a viable platform to write {\rust} applications with, which we could use to evaluate the language on the embedded system.
+When we first set out to make the bindings for {\emlib}, our priority was to define a viable platform for writing rust applications, which we could use to evaluate the language on the embedded system.
 \autoref{tab:emlib_peripheral_bindings} summarizes some modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
-A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}, these are either written from scratch, or directly ported from {\emlib}'s examples.
+A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}.
+These are either written from scratch, or directly ported from {\emlib}'s examples.
 
 \begin{table}[H]
   \centering
@@ -42,43 +44,48 @@ The \gls{cmu} provides functions to manage the different clocks and oscillators 
 This module is necessary in order to configure the clocks that are required by other peripherals to function. \\
 
 \prog{dma}     &
-We wanted to use \gls{dma} for the {\prog{sensor-tracker}} application because it can be used to transfer data without using the \gls{cpu}. \\
+We wanted to try to use \gls{dma} for the {\tracker} application because it can be used to transfer data without using the \gls{cpu}.
+This device was also used for our experiments with higher-level abstractions in \autoref{sec:rust-embedded-modules}. \\
 
 \prog{ebi}     &
-The \gls{ebi} is used to memory map external devices connected to bus to the {\gecko}, this simplifies the process of writing data to e.g. the \gls{lcd} on the {\chip{DK}}. \\
+The \gls{ebi} is used to memory map external devices connected to bus on the {\gecko}.
+This simplifies the process of writing data to e.g. the \gls{lcd} on the {\chip{DK}}. \\
 
 \prog{emu}     &
 The \gls{emu} module controls the different energy modes on the {\gecko}.
 We needed this functionality for the {\prog{sensor-tracker}} application. \\
 
 \prog{gpio}    &
-The \gls{gpio} was one of the first modules to be ported, it is used extensively throughout the bindings and in the applications. \\
+The \gls{gpio} was one of the first modules to be ported.
+It is used extensively throughout the bindings and in the applications. \\
 
 \prog{lesense} &
-The \gls{lesense} can be configured to automatically collect data from multiple sensors, we needed this for the {\prog{sensor-tracker}}. \\
+The \gls{lesense} can be configured to automatically collect data from multiple sensors, which we needed for the a initial version of the {\tracker}. \\
 
 \prog{acmp}    &
-The \gls{acmp} was ported alongside \gls{lesense}, it is used to compare two analog signals and tell which one is greater. \\
+The \gls{acmp} was ported alongside \gls{lesense}, and is used to compare two analog signals and tell which one is greater. \\
 
 \prog{adc}     &
-The \gls{adc} was needed by the {\prog{sensor-tracker}}, it has been used to get the internal temperature of the \gls{cpu}. \\
+The \gls{adc} was needed by the {\prog{sensor-tracker}}, and has been used to get the internal temperature of the \gls{cpu}. \\
 
 \prog{usart}   &
 Primarily we wanted the \gls{usart} for easy debugging and I/O from a computer. \\
 
 \prog{leuart}  &
 The \gls{leuart} was ported a while after the \gls{usart}.
-It has the same functionality, but it works with a lower-frequency clock and at requires less energy than the \gls{usart}. \\
+It has the same functionality, but it works with a lower-frequency clock and requires less energy than the \gls{usart}. \\
 
 \prog{i2c}     &
 The \gls{i2c} protocol has many of the same use cases as the different \gls{uart} types, but it works at lower energy levels.
 It is used by the {\prog{sensor-tracker}}. \\
 
 \prog{rtc}     &
-The \gls{rtc} was an easy module to write bindings for, it is used in several examples for timing purposes, as well as in the {\prog{sensor-tracker}}. \\
+The \gls{rtc} was an easy module to write bindings for.
+It is used in several examples for timing purposes, as well as in the {\tracker}. \\
 
 \prog{timer}   &
-The Timer was one of the first modules to be ported, it worked as a proof-of-concept for the design of the bindings, as described earlier in this section. \\
+The Timer was one of the first modules to be ported.
+It worked as a proof-of-concept for the design of the bindings, as described later in this section. \\
 
     \hline
   \end{tabular}
@@ -178,8 +185,10 @@ A complete overview of the progress of binding {\emlib} is given in \autoref{tab
 \label{sub:emdrv_bindings}
 
 As with {\emlib}, it was not a goal to fully support all available peripheral drivers that are available in \prog{emdrv}.
-The drivers that we have partially implemented bindings for are summarized in \autoref{tab:emdrv_bindings}, they are not that hard to grasp or use since they are all fairly small.
-The project includes two examples that demonstrate how to use the flash driver, they are summarized in \autoref{tab:emdrv_examples}.
+The drivers that we have partially implemented bindings for are summarized in \autoref{tab:emdrv_bindings}.
+They are not that hard to grasp or use since they are all fairly small.
+The project includes two examples that demonstrate how to use the flash driver
+The examples are summarized in \autoref{tab:emdrv_examples}.
 
 \begin{table}[H]
   \centering
@@ -191,15 +200,16 @@ The project includes two examples that demonstrate how to use the flash driver, 
 This binding only exports one function to return a standard \emph{\gls{dma} Descriptor} which is used to initiate a \gls{dma} transfer. \\
 
 \prog{flash}  &
-The flash driver adds an abstraction layer over a flash memory, it exposes functions to \emph{initialize}, \emph{read}, \emph{write} and get the \emph{device info}.
+The flash driver adds an abstraction layer over a flash memory, and exposes functions to \emph{initialize}, \emph{read}, \emph{write} and get the \emph{device info}.
 The Driver is used by the {\prog{sensor-tracker}}. \\
 
 \prog{gpioint}  &
-This driver is ported from {\C} to {\rust}, the implementation differs slightly between the two versions, but the functionality is the same.
+This driver is ported from {\C} to {\rust}. The implementation differs slightly between the two versions, but the functionality is the same.
 The reasoning for porting this driver is described in \autoref{sec:porting-gpioint}. \\
 
 \prog{i2c}  &
-This driver is used by the {\prog{sensor-tracker}} application, it exposes functions to initialize a commonly used \gls{i2c} data transfer configuration. \\
+This driver is used by the {\prog{sensor-tracker}} application.
+It exposes functions to initialize a commonly used \gls{i2c} data transfer configuration. \\
 
 \prog{tft}  &
 This binding exposes one function to initialize the TFT screen on the {\chip{DK}}.
@@ -237,7 +247,8 @@ When the user presses a button the {\chip{STK}} will initiate a transfer that re
 
 The {\emlib} module for controlling the \code{Timer} peripheral \cite{an0014_timer} works as a good example to demonstrate what the {\rust} bindings look like.
 The module is fairly small, it mostly exposes functions to set up and initialize four different timers that can be used for up, down, up/down, and input- and output-capture.
-The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}, note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
+The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}.
+Note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
 
 \begin{listing}[h]
 \begin{ccode}
@@ -256,7 +267,8 @@ TIMER_Init(TIMER0, &timerInit);
 \label{lst:timer_program_c}
 \end{listing}
 
-First, an initialization structure for the Timer module is acquired, and this structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
+First, an initialization structure for the Timer module is acquired.
+This structure has fields to configure many different properties of the Timer, in the same way as described in \autoref{ssec:memory_mapped_io}.
 The next lines enable interrupts for the Timer, and the \gls{nvic} interrupt vector is set up to call the function shown in \autoref{lst:timer_interrupt_handler} every time an interrupt it triggered by the Timer.
 Note that this function is called implicitly by the runtime as \autoref{sec:impl:handling-interrupts} describes.
 All this function does is to clear the interrupt signal and toggle the value of a LED.
@@ -415,11 +427,12 @@ In order to do this, we made a framework that could replace {\emlib}'s code with
 The implemented framework is a small test runner that utilizes CMock\footnote{\url{http://www.throwtheswitch.org/}\label{foot:throw}} and Unity\footref{foot:throw}, for mocking and assertions, respectively.
 Given a {\C} header file, the CMock library generates an \emph{mock} implementation of the interface for the module.
 The test code is then compiled by linking to the mock implementation instead of the library, {\emlib} in our case.
-In the test case, the mock can be configured to verify that our bindings, are using the mock as expected.
+In the test case, the mock can be configured to verify that our bindings are using the mock as expected.
 All of the unit tests were compiled into a binary that was executed on the {\gecko}, which reported back via \gls{usart} whether the tests failed or ran successfully.
-In addition an easy to assess feedback was given by one LED lit for faliure and two LED lit for success.
+In addition, an easy to assess feedback was given by one LED lit for failure and two LED lit for success.
 
-An example of what the testing looks like is shown in \autoref{lst:test:adc}, it shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
+An example of what the testing looks like is shown in \autoref{lst:test:adc}.
+It shows a test case that is used to verify that the \texttt{ADC\_Init} function is called with a default argument.
 
 \begin{listing}[H]
   \centering
@@ -461,7 +474,7 @@ void adc_expect_init_called_with_default() {
 When using mocking in unit tests, the workflow for the user seems reversed compared to standard unit tests.
 First, you set up the expected results by calling the \texttt{ADC\_Init\_Expect} function on the mock, as shown in \autoref{lst:test:adc:c}.
 This method is called through \gls{ffi} right at the top of the test case in \autoref{lst:test:adc:rust}.
-Then after the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
+Then, after the expected result is set up, the test case goes on to create an \gls{adc} object by using the {\rust} bindings, and calls the \texttt{init} function that causes the \gls{ffi} library bindings to be executed.
 When the test returns, the test runner is responsible for calling a \texttt{Verify} function on the mock object.
 This function causes the program to fail and report its status over \gls{usart} if the expected result was not met.
 
@@ -483,7 +496,8 @@ The stippled vertical line shows the separation between {\rust} and {\C} code, a
 The {\rust} programming language contains a testing framework within the standard library.
 The reasons for not using it to test the bindings is that we needed to run the tests on the {\gecko}.
 The rationale for this is that the tests are mostly checking that the datatypes used on the {\rust} and {\C} side of the bindings are compatible.
-Therefore we need to use the proper compilers and compile the test targets for the ARM platform, verifying that the platform-specific \prog{gcc} and {\rustc} have compatible types does not help in respect to this.
+Therefore we need to use the proper compilers and compile the test targets for the ARM platform.
+Verifying that the platform-specific \prog{gcc} and {\rustc} have compatible types does not help in respect to this.
 Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s own {\std} library, which renders the framework unusable for our embedded platform.
 
 % Consequently, {\rust}'s standard testing framework is rendered unusable for our embedded platform because it relies heavily on the {\rust}'s own {\std} library.
@@ -494,9 +508,9 @@ Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s o
 
 Writing the bindings for the different peripherals was a tedious work, that required careful review of the {\emlib} source code in order to correctly port enum- and struct-definitions from {\C} to {\rust}.
 Additionally, we had to redefine many constants, like the names of memory-mapped register bit-fields like the ones presented earlier in \autoref{fig:back:memorymapped}, or values calculated from various {\C} macros defined in header files that are used throughout the library.
-We had to retrieve the value of the constants by debugging the source code and explicitly look up the value of these constants if they were only implicitly defined in the header files.
+If they were only implicitly defined in the header files, we had to retrieve the value of the constants by debugging the source code and explicitly look up the value of these constants.
 
-Since we have constrained our library to only support the Giant Gecko devices, we chose to manually write the bindings for the library, instead of generating the bindings through some kind of automated process.
+Since we have constrained our library to only support the Giant Gecko devices, we chose to manually write the bindings for the library instead of generating the bindings through some kind of automated process.
 There were already a couple of tools available for generating such {\C}-bindings automatically, that could possibly have made the process quicker.
 However, we chose not to utilize such tools because of the reasons described below.
 
@@ -506,7 +520,8 @@ However, we chose not to utilize such tools because of the reasons described bel
 
     \item It was an advantage to depend on as few third party tools as possible, since both {\rust} and all available libraries would be unstable until the 1.0 release of the language.
 
-    \item We wanted to keep the naming convention of our bindings as similar to {\emlib} as possible, this would not have been easy to keep consistent with an automated process, partly because there are exceptions where these conventions do not fully hold.
+    \item We wanted to keep the naming convention of our bindings as similar to {\emlib} as possible.
+    This would not have been easy to keep consistent with an automated process, partly because there are exceptions where these conventions do not fully hold.
     It is however an interesting problem that would have a higher priority if the library were ever to support more than one EFM32 device.
 
     \item We could focus on writing bindings for smaller parts of each module separately when we first needed them, which would split the work into smaller work-packages.

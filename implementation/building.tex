@@ -45,7 +45,7 @@ The three steps of this build routine is listed in \autoref{tab:build-steps}.
     \textbf{2)} Cross-compile \gls{rcl} for ARM with {\rustc}. &
     Static {\rust} crate. \\
 
-    \textbf{3)} Build the {\rust} bindings and the executable, and link it with the static libraries, generated from \textbf{1)} and \textbf{2)}, with the linker script. &
+    \textbf{3)} Build the {\rust} bindings and the executable, link it with the static libraries, generated from \textbf{1)} and \textbf{2)}, with the linker script. &
     Executable {\elf} file for the Cortex-M3. \\
 
     \hline
@@ -69,7 +69,8 @@ While this approach worked, it was far from optimal for a number of reasons:
     Ensuring that versions of {\rustc} and the {\rust} source code stayed up to date across different systems was not easy.
     \item Compiling and ensuring that all dependencies were consistent across builds and systems for the bindings were a tedious task.
     A lot of the troubles concerning this came back to the point above.
-    \item Linking dependencies with the library required each system to have set up several different \$PATHS to point to the right directories, what worked for one developer on one system might not have worked for different developer on another system.
+    \item Linking dependencies with the library required each system to have set up several different \$PATHS to point to the right directories.
+    What worked for one developer on one system might not work for a different developer on another system.
     \item The {\cargo} package manager was developed for exactly these purposes among others.
 \end{itemize}
 
@@ -81,7 +82,8 @@ By invoking the \cmd{cargo build --verbose} command, it was possible to see the 
 A big priority was to to shrink the size of the makefiles that were in the project by making them a part of the standard build process for the {\rg} platform instead.
 Doing this would help us get a long way of ensuring that the builds done by {\cargo} could be consistent across systems.
 By defining a {\rust} build script and utilizing a {\rust} build-dependency called \prog{gcc}\footnote{\url{https://crates.io/crates/gcc}}, we were able to compile the {\C} sources from Silicon Labs' {\emlib} and link them with our bindings directly as part of the build process.
-Note that the \prog{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying {\C}-compiler, in our case it is used to cross-compile with the {\armgcc} compiler.
+Note that the \prog{gcc} build-dependency is used as a shell to merely \emph{invoke} the underlying {\C}-compiler.
+In our case it is used to cross-compile with the {\armgcc} compiler.
 By removing the dependency of manually compiling the {\C} sources, it was easier to start to automatically fetch the other dependencies, like the {\core} and \lib{collections} libraries.
 
 Because this project is for a different processor architecture than the system that it is built on, we had to conditionally cross-compile all the standard {\rust} libraries that we wanted to utilize for the ARM Cortex-M3.
@@ -108,8 +110,8 @@ The crates that we have fetched from {\rust}'s standard library that make up wha
 \end{center}
 \end{table}
 
-By design, {\cargo} only supported passing two flags further on to {\rustc}, those were \flag{-L} and \flag{-l}.
-The purpose of these flags is to tell {\rustc} to link with an external library by looking in a directory (specified with the \flag{-L} flag), for a library with the specified name (specified with the \flag{-l} flag).
+By design, {\cargo} only supported passing two flags further on to {\rustc}; \flag{-L} and \flag{-l}.
+The purpose of these flags is to tell {\rustc} to link with an external library, by looking in a directory (specified with the \flag{-L} flag), for a library with the specified name (specified with the \flag{-l} flag).
 The last step in the build process involved linking the bindings and the other libraries with an actual executable for the Cortex-M3.
 This was not possible to do with {\cargo} since it required us to pass a couple of extra linker-flags further on to {\rustc}.
 The flags were needed by {\rustc} in order to tell it to link with an external library for a different architecture and to include a separate linker-script that took care of booting up the executable on this architecture.
@@ -118,7 +120,8 @@ Another issue that was introduced by automatic compilation with {\cargo}, was ho
 When {\cargo} builds a project and its dependencies, it structures all the generated metadata and the compiled libraries within a \dir{target} directory, and an extra filename gets appended to all of these libraries.
 This extra filename is part of a hash that is generated based on the code in the library.
 It ensures that each and every build is consistent and it resolves any problems that might arise if several dependencies within a project depend on different versions of the same library.
-This works when {\cargo} handles the entire build process, but it our case, where we had to manually compile the final executable, it turned out to be a problem because the name of the library would change every time some of its content changed.
+This works when {\cargo} handles the entire build process.
+In it our case, where we had to manually compile the final executable, it turned out to be a problem because the name of the library would change every time some of its content changed.
 We worked around this problem by modifying the build script to store the hash generated by {\cargo} for {\emlib} to a separate file, every time the library was built, and then included it in the makefile for the project.
 
 \section{Conditional linking with Cargo}
@@ -127,7 +130,7 @@ The build process described in the previous section made it simpler to use third
 The main problem that persisted was to have a good way of making the bindings themselves portable.
 With the setup that we had, it was easy to create new executables \emph{within} the project, but it was hard to create new executables that \emph{depended} on the bindings.
 Basically, because we had to work around {\cargo} in the final part of the build process, it also meant that \emph{every} project that wanted to depend on {\emlib} also had implement the same workarounds.
-Thus, we needed to solve the problem of knowing where {\cargo} would store the project metadata, and we needed a way to get {\cargo} to compile the final executables with the extra linker-arguments needed by {\rustc} in order to compile the binary for the Cortex-M3.
+Thus, we needed to solve the problem of knowing where {\cargo} would store the project metadata, and a way to get {\cargo} to compile the final executables with the extra linker-arguments needed by {\rustc} in order to compile the binary for the Cortex-M3.
 
 {\cargo} does not have much documentation over how its internal works, or how to interfere with the build process, but the documentation does mention that {\cargo} can be extended with additional \emph{plugins}.
 If {\cargo} is to be invoked with a command that it does not have by default, it will query the system for this command.
@@ -196,7 +199,7 @@ The reasoning for not allowing arbitrary flags to be passed down is described in
 
 A compilation can go awry very quickly if it is up to the package \emph{author} what flags should be passed to {\rustc}.
 Instead, it should be up to the \emph{user} of the package.
-This would have given the author the ability to set the restriction for a library, and limit the possibilities of what a user could have done with it.
+This will give the author the ability to set a restriction for the library, and limit the possibilities of what a user can do with it.
 Different systems do not necessarily support all flags and possibilities.
 Thus, if a package dependency says that it is to be built in a particular way, it might not work on the system it is being built for.
 
@@ -212,7 +215,7 @@ After gaining insight into {\cargo}'s internals during the development of \cmd{c
 Even though \cmd{cargo-linkargs} worked great for its purpose, it was not very ergonomic for {\rg} to depend on a third-party plugin to work.
 Especially if {\cargo} could natively support this functionality.
 Not only would it benefit our project, it would also give many other {\rust} projects the ability to use {\cargo} for the entire compilation process.
-Since both {\rust} and {\cargo} are open source projects, it was quick to get in contact with the project maintainers about the issue, and eventually submit a patch with the new subcommand.
+Since both {\rust} and {\cargo} are open source projects, it was easy to get in contact with the project maintainers about the issue, and eventually submit a patch with the new subcommand.
 After it had been reviewed by one of the project maintainers, the patch was accepted and merged into {\cargo}'s code base.
 The subcommand developed as part of our build system is now a part of {\rust}'s nightly builds.
 

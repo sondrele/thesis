@@ -60,7 +60,7 @@ Only the relevant registers for our discussion in included in the figure.
 It shows the control register that is used when performing a single \gls{adc} conversion.
 The CTRL register is used to initialize the hardware device before performing a conversion, and the CMD register is used to issue direct commands to the device like \emph{stop} and \emph{start}.
 We see that the CTRL register is at offset \mem{0x0} from the base address of the \gls{adc} and that the CMD register is at an offset of \mem{0x4} bytes.
-The two registers, SINGLECTRL and SINGLEDATA, are there for initializing the single conversion and read the results of a conversion, respectively.
+The two registers, SINGLECTRL and SINGLEDATA, are in order to initialize the single conversion and read the results of a conversion, respectively.
 
 \subsection{Memory Layout of Objects}
 
@@ -264,7 +264,7 @@ fn main() {
 
 \end{listing}
 
-\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register as a member method using an object-oriented pattern.
+\autoref{lst:back:adc:get} shows how to define a getter function for the \gls{adc} single conversion register, as a member method using an object-oriented pattern.
 We use the \keyword{impl} block to define the same behavior in {\rust}, but the methods are called with the dot notation known from object-oriented languages.
 
 \subsection{Instantiating a MMIO object}
