@@ -136,7 +136,7 @@ The \code{Option} type \emph{can} be used to encode the same programming pattern
 The \emph{null-pointer dereference} problem caused by using this pattern is called the \emph{billion dollar bug} by its inventor Tony Hoare.
 For this reason, \emph{safe} {\rust} does not allow for them to be used at all.
 In order to use a potential pointer which is contained within a \code{Option}, the programmer \emph{must} unwrap the value and explicitly handle the case when the \code{Option} holds the value \code{None}.
-If it holds the value \code{Some} the programmer is guaranteed by {\rust}'s memory safety guarantees, discussed later in this section, that pointer is valid and safe to use.
+If it holds the value \code{Some}, the programmer is guaranteed by {\rust}'s memory safety guarantees, discussed later in this section, that the pointer is valid and safe to use.
 Even though the \code{Option} can be used analogous to a {\C} pointer, it is important to note their differences.
 It acts more like a wrapper around a potential value, where its internal value is not \emph{directly} accessible, which forces the programmer to handle the cases where it can be \code{None}.
 The usage of {\enum} types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
