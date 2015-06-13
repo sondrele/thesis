@@ -32,6 +32,9 @@ An alternative approach is to use a bindings generator such as \lib{bindgen} \fo
 The binding effort might be redundant altogether, as the {\rust} roadmap \footnote{https://internals.rust-lang.org/t/priorities-after-1-0/1901} states that the project wants to develop better integration with {\C}/{\Cpp} code.
 This might eventually lead to bindings like these being made obsolete, and that {\C} libraries can called into based on their header files, alone.
 
+As discussed in \autoref{sec:disc:rust_for_arm}, we found the current basis for writing reusable libraries to be limiting for our platform.
+We leave it as future work to go into detail on ways to solve this problem, by either applying a different approach or to modify the blocking obstacle in the \lib{std} crate.
+
 In \autoref{sec:rust-embedded-modules} we looked at a library which provided higher level abstraction using the language features of {\rust}.
 
 The interrupt-driven programming model used to program embedded system did not prove to be as applicable to {\rust} as we had hoped.
@@ -47,6 +50,5 @@ These discoveries can help motivate the usage of {\rust} in this domain.
 Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, it is possible to do this the other way around.
 Therefore parts of the {\emlib} library can actually be replaced by an {\rust} implementation and still expose the same \gls{api} to the user.
 
-% LC1:
-  % An aspect that we did not go into in this project, is {\rust}'s ability to, by using traits, redefine the semantics when using values.
-  % This concept can be applied to remove the verbosity of these operations.
+An aspect that we did not go into in this project is {\rust}'s ability to, by using traits, redefine the semantics when using values.
+This concept can possibly be applied to remove the verbosity of the volatile loads and store operations discussed in \autoref{sec:disc:lang-challenges}.

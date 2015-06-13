@@ -4,11 +4,11 @@
 \label{sec:disc:rust_for_arm}
 % \todo{Mention this in discussion. Is there a better way of solving this? Currently it fetches a release tarball of the language. It fetches more than it needs to for each library, but it's quicker/easier than using e.g. git to do it. It does however take a little while to compile all the dependencies on smaller machines.}
 
-Before we started on this thesis, we were already aware that there were a couple of other projects that were running {\rust} bare-metal on ARM \glspl{mcu}.
-We did, however, not know how easy it would be to get up and running with {\rust} on the EFM32.
+Prior to beginning this thesis, we were already aware that there were a couple of other projects that were running {\rust} bare-metal on ARM \glspl{mcu}.
+We did not, however, know how easy it would be to get up and running with {\rust} on the EFM32.
 It took us less than one day to implement and execute a {\rust} blink-demo on the {\STK}.
 The {\rust} documentation was sufficient for figuring out how to define non-std {\rust} programs (i.e. the ones that are annotated with \texttt{\#[no\_std]}), and projects like \texttt{armboot} helped us build the project for the ARM architecture.
-{\rust}'s runtime is comparable to {\C}'s, because the startup requirements in the two languages is the same, but {\rust}'s {\core} library is larger and provides more functionality than the {\C} standard library, which we consider to be an added bonus of {\rust}.
+{\rust}'s runtime is comparable to {\C}'s because the startup requirements in the two languages are the same, but {\rust}'s {\core} library is larger and provides more functionality than the {\C} standard library, which we consider to be an added bonus of {\rust}.
 
 \subsection{The Standard Library} % (fold)
 \label{sub:using_the_standard_library}

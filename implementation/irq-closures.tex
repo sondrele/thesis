@@ -78,7 +78,7 @@ One implementation detail here is the imagined \code{CircularBuffer} type.
 The type is based on the same principle as the {\rust} standard library \code{channel} type, which provides a facility for interprocess communication.
 The channel has one \textit{read end} and one \textit{write end} enabling the producing process to send a stream of messages to the consuming process.
 This is required for the \gls{adc} callback to be able to write to the buffer while the main function retains ownership of the buffer.
-In the example the \code{in} function creates the \textit{write end} of the circlar buffer.
+In the example the \code{in} function creates the \textit{write end} of the circular buffer.
 
 The core of this example is the line \code{adc.on\_single(move |sample| ch.send(sample));}.
 This creates a closure that takes ownership over the \textit{write end} for the circular buffer.
@@ -86,7 +86,10 @@ The closure is passed as an argument to the \code{on\_single} method on the \gls
 
 \subsection{Implementation}
 
-This section looks at how we can achieve the same behavior as was presented in the previous section.
+This section looks at how we built an abstraction for exposing the behavior that was presented in the previous section.
+The implementation shows how we can use the {\unsafe} keyword to build this safe abstraction.
+As we desribed in \autoref{ssub:unsafe_code}, by using this keyword we take on the responsibility of ensuring that our code satisfies the invariants the compilers safety analysis is built on.
+Because of this, we include a discussion of what makes the building blocks we use here {\unsafe} and how we can verify that the final abstraction is safe to use.
 
 The process of handling an interrupt was described in \autoref{sec:impl:handling-interrupts}.
 In short, a public function with a specific name handles the corresponding interrupt.
@@ -213,6 +216,7 @@ Dereferencing the \code{func} pointer is considered unsafe because it might poin
 %The public interface \code{register} and \code{dispatch} looks up the global \code{HUB} and calls the corresponding function on the \code{Hub} object.
 
 \autoref{lst:adc-abstraction} implements the interface that was presented in \autoref{lst:irq:local} for the \gls{adc}, by utilizing the \code{register} and \code{dispatch} functions from \autoref{lst:reg-disp}.
+Notice that the implementation detail of the {\unsafe} blocks in the \func{register} and \func{dispatch} functions does not affect the user of the abstraction.
 
 % And finally the interface used in \autoref{lst:irq:local} is created using the utilities \texttt{register} and \texttt{dispatch}.
 

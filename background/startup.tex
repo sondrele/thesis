@@ -1,4 +1,4 @@
-\section{Startup}
+\section{Microcontroller Startup}
 \label{sec:back:startup}
 
 This section describes the process of starting a program on an embedded system.
@@ -39,7 +39,7 @@ The \elfsec{.text} section contains the program code and any read-only data defi
 Strings are, for instance, stored in the \elfsec{.text} section as read-only.
 The \elfsec{.data} section contains the values for non-zero initialized data.
 The \elfsec{.bss} section is a logical section so it is not really stored in the file.
-The header specfies the size of the \elfsec{.bss} section, which describes the size of the zero-initialized data in the program.
+The header specifies the size of the \elfsec{.bss} section, which describes the size of the zero-initialized data in the program.
 
 \subsection{Before main}
 \label{sec:before-main}
@@ -59,7 +59,7 @@ The function is the real entry point of the program and is executed when the \gl
 \begin{ccode}
 // Variables set in linker script
 extern etext;      // address of .data segment in FLASH
-extern data_start; // start of .data segement in RAM
+extern data_start; // start of .data segment in RAM
 extern data_end;   // end of .data segment in RAM
 void ResetHandler() {
   SystemInit();
