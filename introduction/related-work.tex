@@ -2,16 +2,16 @@
 An \concept{embedded computer system} is a special purpose computer system where the computer is \emph{embedded} in the device it controls.
 These computers are much smaller than a conventional server, desktop, and laptop computer, but are by far more numerous.
 A regular household contains embedded systems in devices like microwave ovens, dishwashers, and alarm systems.
-In a car, one finds embedded computers that are controlling the breaks of the car, the automatic windows, and navigation and entertainment systems.
+In a car, one finds embedded computers that are controlling the brakes of the car, the automatic windows, and navigation and entertainment systems.
 
 In recent years, a trend of devices called wearables are emerging, which also has an embedded computer at its core.
-The internet is growing, and according to Gartner \cite{web:gartner} the number of connected devices will increase from $\sim$5 billion in 2015 to $\sim$25 billion by 2020.
+The Internet is growing, and according to Gartner \cite{web:gartner} the number of connected devices will increase from $\sim$5 billion in 2015 to $\sim$25 billion by 2020.
 A vast majority of this increase is due to the embedded computer systems known as the \gls{iot} \cite{Valhouli2010}.
 
 \subsection{Abstraction Level}
 In most computer systems, the hardware interaction and resource management is abstracted away with an \gls{os}.
 This abstraction layer makes it possible for the programmers of these systems to write portable programs built with higher level languages.
-The added oberheads of using a high-level language are small enough compared to the added productivity and convenience for the programmer.
+The added overheads of using a high-level language are small enough compared to the added productivity and convenience for the programmer.
 Some embedded systems are also based on an \gls{os}, projects like Raspberry PI\footnote{\url{https://www.raspberrypi.org/}} and Tessel\footnote{\url{https://tessel.io/}} employs reduced Linux versions to run Python and JavaScript respectively.
 
 In some embedded systems, these complexities that lead to lower performance and higher memory usage, makes it hard to benefit from an \gls{os}.
@@ -26,11 +26,11 @@ This is the only execution mode that we have targeted in this project.
 \subsection{Programming Model}
 
 A common programming model used in embedded systems is the \emph{Event-driven} programming model.
-In this model, the program is controlled by events which in turn triggers actions to be executed.
+In this model, the program is controlled by events which triggers actions to be executed.
 Within an embedded system, these events are \emph{hardware interrupts}, and the actions are \emph{handler functions}.
 A typical example of this event-action pair is the interrupt that is issued by pressing a button and the action of turning on a LED.
 
-Other events that triggers interrupt handlers to be executed in an embedded system is timers, sensors with available data, and communication peripherals ready to receive or send data.
+Other events that trigger interrupt handlers to be executed in an embedded system is timers, sensors with available data, and communication peripherals ready to receive or send data.
 This programming model is successful in these systems because the peripherals controlled by the \gls{mcu} usually requires time to perform its operation.
 The asynchronous nature of the model lets the \gls{cpu} avoid the busy-waits that are implied when using a more synchronous model.
 
@@ -79,9 +79,9 @@ This tool makes sharing and reusing libraries of code very easy.
 
 \subsection{The RustyGecko Platform}
 
-In this thesis we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
+In this thesis, we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
 The platform is described by \autoref{fig:rustygecko:all}.
-The blue colored sections describe the {\rust} modules that were developed/fitted for the platform, and the brown/yellow sections show the base {\C} libraries that the platform utilizes.
+The blue colored sections describe the {\rust} modules that were developed or fitted for the platform, and the brown yellow sections show the base {\C} libraries that the platform utilizes.
 The red section denotes the build system.
 
 \begin{figure}[H]
@@ -94,11 +94,11 @@ The red section denotes the build system.
 
 \autoref{fig:rustygecko:all} is described in a bottom-up perspective throughout \autoref{chap:startup} to \autoref{chap:build} of this thesis.
 The \lib{startup} module deals with the minimal requirements for booting a {\rust} application on the \gls{mcu} and is described in \autoref{sec:impl:booting}.
-In \autoref{sec:rel} we define \gls{rel}, the subset of the {\rust} standard library which is applicable for embedded systems.
+In \autoref{sec:rel}, we define \gls{rel}, the subset of the {\rust} standard library that is applicable for embedded systems.
 
-In the center part of the figure we find the peripheral libraries for controlling both the \gls{mcu} and its connected devices, these are used in {\rust} through language bindings.
+In the center part of the figure, we find the peripheral libraries for controlling both the \gls{mcu} and its connected devices, and these are used in {\rust} through language bindings.
 The details of these libraries and implementations are given in \autoref{sub:interfacing_with_emlib}.
-In \autoref{chap:build} we take a detour and look at the building system used to support development on the {\rg} platform.
+In \autoref{chap:build}, we take a detour and look at the building system used to support development on the {\rg} platform.
 Lastly, we consider some high-level libraries and applications that we place in the Application Layer platform.
 
 The {\rg} platform as a whole aims to bring the safety and high-level abstractions of {\rust} to embedded computer systems.
