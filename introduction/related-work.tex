@@ -53,7 +53,7 @@ The runtime system for \emph{managed} languages like {\Java}, \lang{Python}, and
 This memory management lets the language ensure memory safety, but incurs a runtime cost and can make performance analysis non-deterministic.
 When these languages are used for bare-metal programming, the memory management is usually altered \cite{PetitBianco} \cite{Pizlo} \footnote{\url{http://en.wikipedia.org/wiki/.NET_Micro_Framework}}.
 
-\subsection{Benefits of the Rust language}
+\section{Benefits of the Rust language}
 The {\rust} programming language implements a novel approach to \emph{memory management} based on region based memory management from \lang{Cyclone} \cite{Grossman2002,Swamy2006}.
 This kind of memory management substitutes the runtime checks, performed by an automatic memory manager, with static analysis performed by the compiler.
 This approach lets the {\rust} language ensure memory safety without the runtime cost of automatic memory management.
@@ -77,7 +77,7 @@ Throughout the work for this thesis, we have both had a huge benefit of the open
 One particularly good tool for sharing and building {\rust} projects is the {\cargo} package manager.
 This tool makes sharing and reusing libraries of code very easy.
 
-\subsection{The RustyGecko Platform}
+\section{The RustyGecko Platform}
 
 In this thesis, we develop and evaluate the \textbf{RustyGecko} platform, a bare-metal platform for {\rust} on the EFM32 series of \glspl{mcu}.
 The platform is described by \autoref{fig:rustygecko:all}.
