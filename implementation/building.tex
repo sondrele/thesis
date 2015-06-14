@@ -6,7 +6,7 @@
 When the project first started out it was based upon the \texttt{armboot}\footnote{\url{https://github.com/neykov/armboot/}} project available on GitHub.
 \texttt{armboot} is a small template project for running {\rust} bare-metal on a STM32 ARM \glspl{mcu}.
 These are, similarly with the EFM32 series, also based on the Cortex-M series of ARM processor cores.
-We looked at \texttt{armboot}'s Makefile to figure out what flags to pass to {\rustc} in order to  cross-compile {\rust} programs for the ARM architecture.
+We looked at \texttt{armboot}'s Makefile to figure out what flags to pass to {\rustc} in order to cross-compile {\rust} programs for the ARM architecture.
 
 \begin{table}[H]
   \centering
@@ -75,7 +75,7 @@ While this approach worked, it was far from optimal for a number of reasons:
 \end{itemize}
 
 As already described, {\cargo} is a tool that provides many operations to build {\rust} projects that have a certain project structure.
-It is designed to integrate with other existing tools, like GNU Make, which has been important in  building this project.
+It is designed to integrate with other existing tools, like GNU Make, which has been important in building this project.
 When the transition to {\cargo} started, we focused on structuring the main library and its modules into the directory structure described in \autoref{ssub:project_structure}.
 By invoking the \cmd{cargo build --verbose} command, it was possible to see the output from what {\cargo} attempted to build when it failed, and then structure the project accordingly.
 
