@@ -70,7 +70,7 @@ In \autoref{lst:irq:local} we present an example implementation using a closure 
 The global state is now replaced with a buffer that is owned by the \code{main} function stack frame.
 In this discussion, we consider the main stack frame, the stack frame for the \code{main} function, to be a special frame.
 This comes from the fact that the \code{main} function contains an infinite loop causing it to never terminate, and the frame will not get deallocated.
-On an embedded system, this is true as long as a fatal error does not occur.
+On a bare-metal system, this is true as long as a fatal error does not occur.
 So we can rely on variables owned by the main stack frame to live for the duration of the application.
 This ensures that the \code{buffer}, for practical purposes, has the same lifetime as the \code{BUFFER} from \autoref{lst:irq:global}, but because the variable is not a \code{static mut}, it lets the programmer avoid {\unsafe} blocks and let the compiler ensure safety.
 

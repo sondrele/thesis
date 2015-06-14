@@ -72,6 +72,6 @@ We have composed these libraries into what we refer to as the \gls{rel}, and the
   \label{fig:rust:rel}
 \end{figure}
 
-It is important to note that \gls{rel} is just a way to provide a well-defined definition of the {\rust} language for an embedded system.
-\gls{rel} is, unlike \gls{rsl}, not built as a facade, it is nothing but a collection of freestanding {\rust} libraries that are suited for an embedded system.
+It is important to note that \gls{rel} is just a way to provide a well-defined definition of the {\rust} language for a bare-metal system.
+\gls{rel} is, unlike \gls{rsl}, not built as a facade, it is nothing but a collection of freestanding {\rust} libraries that are suited for a bare-metal system.
 However, the libraries that make up \gls{rel} needs to be conditionally compiled for the Cortex-M3 architecture, and this is described in \autoref{chap:build}.

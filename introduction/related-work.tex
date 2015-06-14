@@ -20,7 +20,7 @@ These languages must provide the low-level control that is needed by the program
 A well-known project running without an \gls{os} is the electronic prototyping platform Arduino\footnote{\url{http://www.arduino.cc/}}.
 The EFM32 {\emlib} library used in this thesis is also a platform for {\C} programming without an \gls{os}.
 
-In this thesis we use the words \emph{embedded} and \emph{bare-metal} interchangeably, to refer to execution of code directly on the hardware, without the abstraction of an \gls{os}.
+In this thesis we use \emph{bare-metal} to refer to execution of code directly on the hardware, without the abstraction of an \gls{os}.
 This is the only execution mode that we have targeted in this project.
 
 \subsection{Programming Model}
@@ -94,11 +94,11 @@ The red section denotes the build system.
 
 \autoref{fig:rustygecko:all} is described in a bottom-up perspective throughout \autoref{chap:startup} to \autoref{chap:build} of this thesis.
 The \lib{startup} module deals with the minimal requirements for booting a {\rust} application on the \gls{mcu} and is described in \autoref{sec:impl:booting}.
-In \autoref{sec:rel}, we define \gls{rel}, the subset of the {\rust} standard library that is applicable for embedded systems.
+In \autoref{sec:rel}, we define \gls{rel}, the subset of the {\rust} standard library that is applicable for bare-metal systems.
 
 In the center part of the figure, we find the peripheral libraries for controlling both the \gls{mcu} and its connected devices, and these are used in {\rust} through language bindings.
 The details of these libraries and implementations are given in \autoref{sub:interfacing_with_emlib}.
 In \autoref{chap:build}, we take a detour and look at the building system used to support development on the {\rg} platform.
 Lastly, we consider some high-level libraries and applications that we place in the Application Layer platform.
 
-The {\rg} platform as a whole aims to bring the safety and high-level abstractions of {\rust} to embedded computer systems.
+The {\rg} platform as a whole aims to bring the safety and high-level abstractions of {\rust} to bare-metal computer systems.
