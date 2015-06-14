@@ -33,8 +33,9 @@ When we first set out to make the bindings for {\emlib}, our priority was to def
 \autoref{tab:emlib_peripheral_bindings} summarizes some modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
 A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}.
 These are either written from scratch, or directly ported from {\emlib}'s examples.
+A complete overview of the progress of binding {\emlib} is given in \autoref{tab:emlib:progress}.
 
-\begin{table}[H]
+\begin{table}[!ht]
   \centering
   \begin{tabular}{r|p{10cm}}
     \textbf{Module} & \textbf{Purpose} \\
@@ -95,7 +96,7 @@ It worked as a proof-of-concept for the design of the bindings, as described lat
 \end{table}
 
 
-\begin{table}[H]
+\begin{table}[!ht]
   \centering
   \begin{tabular}{r|p{8cm}|c}
     \textbf{Example} & \textbf{Purpose} & \textbf{Ported} \\
@@ -140,13 +141,11 @@ Demonstrates dynamically allocated strings and vectors from the \lib{collections
   \label{tab:emlib_examples}
 \end{table}
 
-A complete overview of the progress of binding {\emlib} is given in \autoref{tab:emlib:progress}.
-
 \newcommand{\low}{\cellcolor{red!25}}
 \newcommand{\medium}{\cellcolor{yellow!25}}
 \newcommand{\high}{\cellcolor{green!25}}
 
-\begin{table}[H]
+\begin{table}[!ht]
   \centering
   \begin{tabular}{l | l | l | r | l | l | l | r }
     \textbf{Module} & \textbf{\#C} & \textbf{\#R} & \textbf{Ported} & \textbf{Module} & \textbf{\#C} & \textbf{\#R} & \textbf{Ported} \\
@@ -180,6 +179,9 @@ A complete overview of the progress of binding {\emlib} is given in \autoref{tab
   \label{tab:emlib:progress}
 \end{table}
 
+\hfill \break
+\hfill \break
+\hfill \break
 
 \subsubsection{Emdrv}
 \label{sub:emdrv_bindings}
