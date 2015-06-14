@@ -184,7 +184,7 @@ The \code{Slice} type is simply a view into an array, and it is represented by a
 \code{Slices} like the arrays comes with bounds checking, although this can be circumvented for performance reasons.
 The length is used to determine how many elements the slice represents.
 Note that the representation given here is internal to the compiler and the length property is not directly accessible.
-Slice syntax is denoted by \code{\&[T]}, which reads like `a reference to a finite array with type \code{T}.'
+Slice syntax is denoted by \code{\&[T]}, which reads like `a slice of a finite array with type \code{T}.'
 
 \begin{listing}[H]
   \begin{rustcode}
