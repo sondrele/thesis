@@ -86,8 +86,6 @@ static     RUST_STATIC_ZERO: u32 = 0;     // .text
 static     RUST_STATIC: u32 = 0xDEAD;     // .text
 static mut RUST_STATIC_MUT_ZERO: u32 = 0; // .bss
 static mut RUST_STATIC_MUT: u32 = 0xBEEF; // .data
-
-pub extern fn main() { /* Use the variables */ }
 \end{rustcode}
 \caption{{\rust} static initialization}
 \label{lst:rust-static-init}
@@ -124,9 +122,7 @@ This is due to the inclusion of the \lib{startup} library.
 #![feature(no_std)]
 extern crate startup;
 
-fn main() {
-  loop {}
-}
+fn main() { loop {} }
   \end{rustcode}
   \caption{Bare-metal Hello World bootstrapped with the \lib{startup} library}
   \label{lst:embedded-rust-bootstrapped}
