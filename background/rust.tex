@@ -115,7 +115,8 @@ We can see from the example that \code{a} is defined as a 32-bit integer with th
 An {\enum} in {\rust} (otherwise known as a sum type, or a tagged union, from type theory), is a data structure that is used to hold only one out of a small set of possible values.
 \rust's {\enum} construct is a class of \emph{algebraic data types} that are common in functional programming languages, which means that its actual type is formed by combining other types together.
 This makes the {\enum} a powerful feature of the language that can be used to deterministically limit the set of possible outcomes for a type.
-\autoref{lst:rust:option} shows the definition of one of {\rust}'s most commonly used types which are used extensively throughout its standard library and other third party libraries and applications.
+\autoref{lst:rust:option} shows the definition of \code{Option}, taken from the standard library.
+This type is one of {\rust}'s most commonly used types and is used extensively throughout its standard library and other third party libraries and applications.
 
 \begin{listing}[H]
   \begin{rustcode}
@@ -129,11 +130,15 @@ pub enum Option<T> {
 \end{listing}
 
 Every \code{Option} variable is an {\enum} that can either have the algebraic value \code{Some} or the \emph{named value} \code{None}.
-If the variable is \code{Some}, the definition also says that it needs to contain another type \code{T}.
-This is also an example of generics in {\rust}, as \code{T} can be anything, e.g. an integer, a string, or a user defined type.
-The \code{Option} type is analogous with a normal {\C} pointer value, which either has the value 0, or \code{null} (analogous to \code{None}), or a value that points to a structure at a place in memory (analogous to \code{Some}).
-Even though the \code{Option} is analogous to a {\C} pointer, it is important to note their differences.
-It acts more like a wrapper around a potential value, where its internal value is not \emph{directly} accessible, which encourages the programmer to handle the cases where it might be \code{None}.
+If the variable is \code{Some}, the definition also says that it needs to contain a value of type \code{T}.
+This \code{T} can be anything and is how {\rust} defines a generic type.
+The \code{Option} type \emph{can} be used to encode the same programming pattern as \emph{pointers with a sentinel value of 0} (e.g. 0 for representing no value or the end of a datastructure), but in a fundamentaly safer way.
+The \emph{null-pointer dereference} problem caused by using this pattern is called the \emph{billion dollar bug} by its inventor Tony Hoare.
+For this reason, \emph{safe} {\rust} does not allow for them to be used at all.
+In order to use a potential pointer which is contained within a \code{Option}, the programmer \emph{must} unwrap the value and explicitly handle the case when the \code{Option} holds the value \code{None}.
+If it holds the value \code{Some}, the programmer is guaranteed by {\rust}'s memory safety guarantees, discussed later in this section, that the pointer is valid and safe to use.
+Even though the \code{Option} can be used analogous to a {\C} pointer, it is important to note their differences.
+It acts more like a wrapper around a potential value, where its internal value is not \emph{directly} accessible, which forces the programmer to handle the cases where it can be \code{None}.
 The usage of {\enum} types described in this section become very expressive in combination with \keyword{match} expressions, as discussed in \autoref{sub:pattern_matching}.
 
 \subsubsection{Structs}
