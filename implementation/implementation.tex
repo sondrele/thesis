@@ -19,7 +19,7 @@ This chapter describes two important parts of a {\rust} program that needs to be
 First, we describe how we configured a {\rust} program to become an executable for the {\gecko}.
 At the end of this chapter we describe how we get hardware interrupts to trigger interrupt handlers implemented in {\rust}.
 }
-\include{implementation/booting-rust}
+\include*{implementation/booting-rust}
 
 \corechapter{Rust Embedded Library}{rel}{%
 The \glsdesc{rel} module defines the subset of the standard {\rust} library that is applicable for embedded applications.
@@ -29,7 +29,7 @@ This chapter starts with presenting the parts of \gls{rcl} that needs to be conf
 We then move over to describe the standard {\rust} libraries that provide heap allocation and dynamically allocated structures.
 At the end of this chapter, we present our definition of the \gls{rel}.
 }
-\include{implementation/rust-embedded-library}
+\include*{implementation/rust-embedded-library}
 
 
 \corechapter{Binding Libraries}{bindings}{%
@@ -39,8 +39,8 @@ In order to make use of these libraries in {\rust}, we developed binding librari
 We start this chapter with a section that maps the object-oriented paradigm to hardware peripherals, which lays a foundation for how we think about the hardware throughout this thesis.
 In the last section of this chapter, we describe how we structured, implemented, and tested the library bindings.
 }
-\include{implementation/objectoriented}
-\include{implementation/interfacing_with_emlib}
+\include*{implementation/objectoriented}
+\include*{implementation/interfacing_with_emlib}
 
 
 \corechapter{Build System}{build}{%
@@ -51,7 +51,7 @@ Throughout this chapter, we look at how we evolved the build system over time an
 This includes managing project dependencies and building \gls{rel} and the \lib{bindings} modules for the ARM architecture.
 We have also utilized a continuous integration system that has helped us to keep the project up to date with the nightly builds of {\rust}, and to ensure that the builds have been consistent across the systems it has been built on.
 }
-\include{implementation/building}
+\include*{implementation/building}
 
 \corechapter{Application Layer}{app}{%
 The \lib{Application Layer} is the top module of the {\rg} platform.
@@ -64,7 +64,7 @@ In \autoref{sec:irq-closures}, we describe a library that provides a {\rust}-idi
 In \autoref{sec:rust-embedded-modules}, we apply {\rust}'s trait system to the hardware peripherals in order to build a higher-level \gls{api} than {\emlib}.
 In the last section, we describe the two applications that were developed for evaluating the {\rg} platform.
 }
-\include{implementation/gpioint}
-\include{implementation/irq-closures}
-\include{implementation/rust-embedded-modules}
-\include{implementation/projects}
+\include*{implementation/gpioint}
+\include*{implementation/irq-closures}
+\include*{implementation/rust-embedded-modules}
+\include*{implementation/projects}
