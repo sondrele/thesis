@@ -9,7 +9,7 @@ Finally, we give our thoughts on further developments to improve the {\rg} platf
 
 \section{The RustyGecko Platform}
 
-In this thesis, we have presented the {\rg} platform for embedded programming by using the {\rust} programming language.
+In this thesis, we have presented the {\rg} platform for programming an embedded system by using the {\rust} programming language.
 This platform consists of a subset of the {\rust} standard library and a handful of libraries that define bindings for the EFM32 peripheral \gls{api}.
 In total, we have been able to utilize many great aspects that surround the {\rust} programming language in the {\rg} platform.
 
@@ -29,29 +29,26 @@ The binaries are stored in flash memory and the size of this memory correlates w
 The increased cost in hardware can be expensive for resource constrained applications, which are shipped in the millions.
 This, consequently, can turn out to be a hindrance for applications in the industry.
 
-% \section{Requirements}
+\section{Requirements}
 
-% In \autoref{chap:intro}, we presented three requirements as interpreted from the Project Description for this thesis.
-% In this section, we summarize how these requirements were fulfilled.
+In \autoref{chap:intro}, we presented three requirements as interpreted from the Project Description for this thesis.
+In this section, we show how each of these requirements were fulfilled.
 
-% \begin{description}
-%     \item[R1] - {{\reqi}} \hfill \\
-%     In \autoref{chap:intro} we identified six language challenges that was important to solve to get {\rust} to work on an embedded system.
-%     These challenges were all successfully executed throughout the implementation of the {\rg} platform and the individual projects that was built on top of the platform.
-%     How they were solved is discussed in \autoref{sec:disc:lang-challenges}.
+\begin{description}
+    \item[R1] - {{\reqi}} \hfill \\
+    We identified six language challenges that was important to solve to get {\rust} to work on an embedded system.
+    These challenges were all handled in the implementation of the {\rg} platform.
 
-%     \item[R2] - {{\reqii}} \hfill \\
-%     In \autoref{chap:background} we presented ARM's \gls{cmsis} and Silicon Labs' software suite.
-%     These two libraries
+  \item[R2] - {{\reqii}} \hfill \\
+    We consider the {\rg} platform to fulfill this requirement.
+    The prototype provides the same functionality as the existing {\C} platform in principal, and needs only be fleshed out to have full support.
 
-%     This requirement is achieved though the presentation of the existing {\C} platform, given in \autoref{chap:background}, in comparison to the {\rust} platform that was presented throughout the core chapters.
-%     We therefore conclude that these challenges are solved for using {\rust} in an embedded system.
+    \item[R3] - {{\reqiii}} \hfill \\
+    Throughout \autoref{chap:results} we presented our results of measuring the {\rg} platform and our evaluation of the measurements are given in \autoref{chap:discussion} to satisfy this requirement.
+\end{description}
 
-%     Further we consider the {\rg} platform to fulfill requirement \textbf{R2}.
-
-%     \item[R3] - {{\reqiii}} \hfill \\
-%     Throughout \autoref{chap:results} we presented our results of measuring the {\rg} platform and our evaluation of the measurements are given in \autoref{chap:discussion} to satisfy requirement \textbf{R3}.
-% \end{description}
+Based on these requirements and their solutions we consider the project as a whole to solve the problems deduced from the Project Description.
+This conclusion leads us to further conclude that the project was successful.
 
 \section{Future Work}
 \label{chap:future}
@@ -65,7 +62,7 @@ In this section, we suggest some of these projects as future work, as well as su
   An obvious extension to our project is to continue and finalize the binding libraries for the {\emlib}, {\emdrv} and \gls{cmsis} libraries.
   The foundations for these bindings have been laid out, so the implementations here are not challenging, only time-consuming.
   An alternative approach is to use a bindings generator, such as \lib{bindgen}\footnote{\url{https://crates.io/crates/bindgen}}, to generate the bindings automatically.
-  The binding effort might be redundant altogether, as the {\rust} roadmap states that the project wants to develop better integration with {\C} and {\Cpp} code \cite{web:roadmap}.
+  Note that the binding effort might be redundant altogether, as the {\rust} roadmap states that the project wants to develop better integration with {\C} and {\Cpp} code \cite{web:roadmap}.
   This might eventually lead to bindings like these being made obsolete and that {\C} libraries can be called into based on their header files alone.
 
 \item[Trait-based Peripheral Access] \hfill \\
@@ -91,12 +88,14 @@ In this section, we suggest some of these projects as future work, as well as su
   We chose to base the {\rg} platform on the software libraries that were already available for the {\gecko}.
   This enabled us to quickly shape the platform and explore many different project ideas.
   However, we argued in \autoref{sec:disc:project_evaluations} that to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform has to be implemented in {\rust}.
-
-  A new direction for the platform can be to contribute with a {\gecko}-specification to the {\zinc} project, and porting the actual implementations of the {\emlib} library to {\rust}.
+  A new direction for the platform can be to adapt the {\zinc} project for the {\gecko}, and to port the actual implementations of the {\emlib} library to {\rust}.
   This approach can provide a better basis for an evaluation of {\rust}.
   It is also possible that {\rust}'s \code{unsafe}-semantics can help to uncover more bugs in the {\C}-implementation of {\emlib}.
-  Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, but it can be interesting to do this the other way around.
-  Thus, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user.
+
+\item[Using Rust at the library layer] \hfill \\
+  Throughout this thesis we have only worked with the {\rust} language at the application layer language and binding to {\C} for library support.
+  It can be interesting to do this the other way around.
+  Concretely, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user and be callable from a {\C} application.
+
 
 \end{description}
-
