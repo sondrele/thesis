@@ -5,11 +5,11 @@
 
 In this chapter, we draw conclusions derived from the discussion of the {\rg} platform.
 We also look back at the requirements that were defined in \autoref{chap:intro}, and give an evaluation of the project's success.
-Finally, we give our thoughts on further developments to improve the {\rg} platform, and suggest some changes that could make {\rust} more suited for embedded systems.
+Finally, we give our thoughts on further developments to improve the {\rg} platform, and suggest some changes that could make {\rust} more suited for bare-metal systems.
 
 \section{The RustyGecko Platform}
 
-In this thesis, we have presented the {\rg} platform for programming an embedded system by using the {\rust} programming language.
+In this thesis, we have presented the {\rg} platform for programming a bare-metal system by using the {\rust} programming language.
 This platform consists of a subset of the {\rust} standard library and a handful of libraries that define bindings for the EFM32 peripheral \gls{api}.
 In total, we have been able to utilize many great aspects that surround the {\rust} programming language in the {\rg} platform.
 
@@ -36,7 +36,7 @@ In this section, we describe how each of these requirements were fulfilled.
 
 \begin{description}
     \item[R1] - {{\reqi}} \hfill \\
-    We identified six language challenges that was important to solve to get {\rust} to work on an embedded system.
+    We identified six language challenges that was important to solve to get {\rust} to work on a bare-metal system.
     These challenges were all handled in the implementation of the {\rg} platform.
 
   \item[R2] - {{\reqii}} \hfill \\

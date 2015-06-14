@@ -29,7 +29,7 @@ Most of the examples use one or several \gls{irq} handlers for the peripheral bi
 
 \subsubsection{Emlib}
 
-When we first set out to make the bindings for {\emlib}, our priority was to define a viable platform for writing rust applications, which we could use to evaluate the language on the embedded system.
+When we first set out to make the bindings for {\emlib}, our priority was to define a viable platform for writing rust applications, which we could use to evaluate the language on the bare-metal system.
 \autoref{tab:emlib_peripheral_bindings} summarizes some modules from {\emlib} that we have written bindings for, and why we wanted these bindings.
 A list of examples that demonstrates how the bindings work is shown in \autoref{tab:emlib_examples}.
 These are either written from scratch, or directly ported from {\emlib}'s examples.
@@ -498,7 +498,7 @@ The reasons for not using it to test the bindings is that we needed to run the t
 The rationale for this is that the tests are mostly checking that the datatypes used on the {\rust} and {\C} side of the bindings are compatible.
 Therefore we need to use the proper compilers and compile the test targets for the ARM platform.
 Verifying that the platform-specific \prog{gcc} and {\rustc} have compatible types does not help in respect to this.
-Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s own {\std} library, which renders the framework unusable for our embedded platform.
+Consequently, {\rust}'s standard testing framework relies heavily on {\rust}'s own {\std} library, which renders the framework unusable for our bare-metal platform.
 
 % Consequently, {\rust}'s standard testing framework is rendered unusable for our embedded platform because it relies heavily on the {\rust}'s own {\std} library.
 
