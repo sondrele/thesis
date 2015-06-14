@@ -68,46 +68,35 @@ In this section, we suggest some of these projects as future work, as well as su
   The binding effort might be redundant altogether, as the {\rust} roadmap states that the project wants to develop better integration with {\C} and {\Cpp} code \cite{web:roadmap}.
   This might eventually lead to bindings like these being made obsolete and that {\C} libraries can be called into based on their header files alone.
 
+\item[Trait-based Peripheral Access] \hfill \\
+  An aspect that we did not go into in this project is {\rust}'s ability to, by using traits, redefine the semantics when using values.
+  This concept can possibly be applied to remove the verbosity of the volatile loads and store of peripheral control register operations, as discussed in \autoref{sec:disc:lang-challenges}.
+
 \item[The Standard Library] \hfill \\
   As discussed in \autoref{sec:disc:rust_for_arm}, we found the current basis for writing reusable libraries to be limiting for our platform.
   One of the major problems is the interoperability between standard and non-standard libraries, which limits the amount of third-party libraries that can be utilized for the {\rg} platform.
   We leave it as future work to go into detail on ways to solve this problem, by either applying a different approach or to modify the blocking obstacle in the \lib{std} crate.
 
 \item[\glsdesc{rel}] \hfill \\
-  In \autoref{sec:rust-embedded-modules}, we looked at a library that provided higher-level abstractions using the language features of {\rust}.
+  In \autoref{sec:rust-embedded-modules}, we looked at a library that provided higher-level abstractions by using the language features of {\rust}.
   This library can be further developed to include better initialization procedures for the peripherals, as in {\zinc}, and extended to provide abstractions for more peripherals.
 
 \item[Safe Access to Hardware] \hfill \\
   The interrupt-driven programming model that is used to programming of embedded systems did not prove to be as applicable to {\rust} and its ownership-semantics as we had hoped.
-  % It will be interesting to see if it is possible to apply a more dynamic approach to en ensure safe access to hardware peripherals.
-  {\rust}'s ownership system helps to rule out data races in programs \cite{web:rust_book}, and
-  we believe that the ownership system can be utilized in a new framework, based on the one that was described in \autoref{sec:irq-closures}, for initializing and dispatching interrupts
-
-  The interrupt-driven programming model used to program embedded system did not prove to be as applicable to {\rust} as we had hoped.
-  In \autoref{sec:irq-closures} we looked at a technique for changing this model by using ownership rules similar to how concurrency is handled in {\rust}.
-  This library has potential to provide a more idiomatic programming style to embedded programs in {\rust} and will make the platform more familiar to {\rust} developers.
-  This library can be extended to control the ownership of \glspl{mmio} as discussed in \autoref{sec:avoiding_mutable_aliases_to_hardware}.
+  {\rust}'s ownership system helps to rule out data races in programs \cite{web:rust_book}.
+  We believe that the ownership system can be utilized in a new framework, based on the one that was described in \autoref{sec:irq-closures} and further discussed in \autoref{sec:avoiding_mutable_aliases_to_hardware}, for initializing and dispatching interrupts.
+  It will be interesting to see if {\rust}'s ownership-semantics can help to apply a more dynamic approach to this framework, in order to ensure safe access to hardware peripherals.
 
 \item[Rust-only Solution] \hfill \\
   We chose to base the {\rg} platform on the software libraries that were already available for the {\gecko}.
-  This enabled us to explore many different project ideas that was based on our platform.
-  However, we would like to further continue {\rg}'s development with a {\rust}-only solution.
-  The border between {\rust} and {\C} have introduced a few problems, that most significantly conflicts with {\rust}'s ownership system.
-  A new direction for the platform can either be to contribute with a {\gecko}-specification to the {\zinc} project, or develop an entirely new platform from scratch with the focus on safe hardware access.
+  This enabled us to quickly shape the platform and explore many different project ideas.
+  However, we argued in \autoref{sec:disc:project_evaluations} that to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform has to be implemented in {\rust}.
+
+  A new direction for the platform can be to contribute with a {\gecko}-specification to the {\zinc} project, and porting the actual implementations of the {\emlib} library to {\rust}.
+  This approach can provide a better basis for an evaluation of {\rust}.
+  It is also possible that {\rust}'s \code{unsafe}-semantics can help to uncover more bugs in the {\C}-implementation of {\emlib}.
+  Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, but it can be interesting to do this the other way around.
+  Thus, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user.
 
 \end{description}
 
-
-
-
-
-In the \autoref{sec:disc:project_evaluations} we argued that in order to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform has to be implemented in {\rust}.
-On possible way to do this is to start this project from scratch by using the \lib{zinc.rs} framework and porting the actual implementations of the {\emlib} library to {\rust}.
-In doing so, the examples provided with {\emlib} can be used as a benchmark suite to compare the two platforms.
-This can both provide a better basis for evaluation, but can also, as we showed in \autoref{sec:porting-gpioint}, uncover bugs in the {\C} implementation of {\emlib}.
-These discoveries can help motivate the usage of {\rust} in this domain.
-Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, it is possible to do this the other way around.
-Therefore parts of the {\emlib} library can actually be replaced by an {\rust} implementation and still expose the same \gls{api} to the user.
-
-An aspect that we did not go into in this project is {\rust}'s ability to, by using traits, redefine the semantics when using values.
-This concept can possibly be applied to remove the verbosity of the volatile loads and store operations discussed in \autoref{sec:disc:lang-challenges}.
