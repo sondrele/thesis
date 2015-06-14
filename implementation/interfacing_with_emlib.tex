@@ -437,7 +437,7 @@ It shows a test case that is used to verify that the \texttt{ADC\_Init} function
 \begin{listing}[H]
   \centering
   \begin{minipage}{\textwidth}
-  \begin{listing}
+  \begin{listing}[H]
     \begin{rustcode}
 fn test_init_called_with_default() {
   // FFI call to the C function below
@@ -454,7 +454,7 @@ fn test_init_called_with_default() {
   \end{minipage}
 
   \begin{minipage}{\textwidth}
-  \begin{listing}
+  \begin{listing}[H]
     \begin{ccode}
 void adc_expect_init_called_with_default() {
   static ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
