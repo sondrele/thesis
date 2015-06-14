@@ -65,7 +65,7 @@ This is done by defining the {\main} function to be a publicly exported symbol d
 The second change is to ensure that the function is callable by a {\C} function.
 \code{extern} makes this possible by making the function use the {\C} \gls{abi}.
 The last thing is to disable the {\rust} name mangling so that the {\C} code can refer to the function by the unmangled name {\main}.
-Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
+Now that the {\main} function is altered to be callable by {\C}, the function does not resemble the function the {\rust} compiler expects to find.
 Therefore we have to tell the compiler that the program does not contain a {\main} function, hence the \attrib{\#\![no\_main]} on line 3.
 
 The last three lines are a complication due to error handling in {\rust}.
