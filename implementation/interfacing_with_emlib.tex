@@ -252,7 +252,7 @@ The module is fairly small, it mostly exposes functions to set up and initialize
 The program shown in \autoref{lst:timer_program_c} is an example of initializing the \code{Timer0} peripheral on the {\gecko}.
 Note that this is not a complete working example, it only shows the most important parts required to use the Timer module.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{ccode}
 // Select TIMER0 parameters
 TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
@@ -278,7 +278,7 @@ We can imagine an application where the Timer is configured to trigger an interr
 Interrupts like this are an important part of programming the {\gecko}.
 They can be used for an asynchronous programming model where the application is defined by the code in the different interrupt handlers, and like in the example above, the \gls{mcu} can be put to sleep in between interrupts.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{ccode}
 void TIMER0_IRQHandler(void) {
   // Clear flag for TIMER0 overflow interrupt
@@ -298,7 +298,7 @@ For example, the \func{enable\_irq} function is part of the \code{nvic} module.
 This modularization of peripherals can help to make the code less verbose by partially including modules.
 It is also worth to notice the difference between how the \code{Timer0} structure can be treated like an object with its own member methods in {\rust}, instead of being passed as the first parameter to every function that requires it, like in {\C}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{rustcode}
 // Select TIMER0 parameters
 let timer_init = Default::default();
@@ -325,7 +325,7 @@ Since it is not possible to include {\C} header files directly in {\rust}, we ha
 As an example, the \func{TIMER\_IntEnable} function is defined as \code{static inline} in \file{em\_timer.h}.
 In order to call this function through the {\C} \gls{abi} in {\rust}, we had to expose it through the file \file{timer.c}, as shown in \autoref{lst:exposing_static_inline}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{ccode}
 #include "en_timer.h"
 
@@ -342,7 +342,7 @@ In the {\rust} module definition of Timer, the function has to be made available
 As described in \autoref{ssub:unsafe_code}, every function available through the \gls{ffi} are considered {\unsafe} because {\rust} knows nothing about the function, other than its parameters and its return value.
 Thus, in order to make it practical to use the library in a seemingly safe manner, we wrap the calls to the foreign functions in an {\unsafe} block in the respective function defined in {\rust}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{rustcode}
 impl Timer {
   pub fn int_enable(&self, flags: u32) {
@@ -372,7 +372,7 @@ We have tried to keep \emlib's naming convention across the layer of bindings.
 This makes it easy for anyone reading either the {\C}- or the {\rust}-code to translate and understand the code between the two languages.
 Since every constant, enum-field, or struct-name is directly accessible by name in {\C}, if the corresponding header file is included, it is important that names of such fields can be separated from each other and do not cause a naming collision.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{ccode}
 typedef enum {
   timerCCModeOff     = _TIMER_CC_CTRL_MODE_OFF,
@@ -390,7 +390,7 @@ From each field in the enum we can extract 1) its module name \file{timer}, 2) i
 \autoref{lst:enum_naming_rust} shows the enum ported to {\rust}, where both the module name and the typedef name has been left out, and only the field names have remained.
 However, the naming convention remains the same when the fields are used, e.g. the expression ``\code{let mode = timer::CCMode::Capture;}'' in {\rust} shows the similarity with the equivalent expression in C: ``\code{int mode = timerCCModeCapture;}''.
 
-\begin{listing}[h]
+\begin{listing}[ht]
 \begin{rustcode}
 pub enum CCMode {
   Off     = _TIMER_CC_CTRL_MODE_OFF,
