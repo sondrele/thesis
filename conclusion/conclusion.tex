@@ -9,7 +9,7 @@ Finally, we give our thoughts on further developments to improve the {\rg} platf
 
 \section{The RustyGecko Platform}
 
-In this thesis, we have presented the {\rg} platform for embedded programming by using the {\rust} programming language.
+In this thesis, we have presented the {\rg} platform for programming an embedded system by using the {\rust} programming language.
 This platform consists of a subset of the {\rust} standard library and a handful of libraries that define bindings for the EFM32 peripheral \gls{api}.
 In total, we have been able to utilize many great aspects that surround the {\rust} programming language in the {\rg} platform.
 
@@ -95,6 +95,7 @@ In this section, we suggest some of these projects as future work, as well as su
 \item[Using Rust at the library layer] \hfill \\
   Throughout this thesis we have only worked with the {\rust} language at the application layer language and binding to {\C} for library support.
   It can be interesting to do this the other way around.
-  Thus concretly, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user.
+  Concretely, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user and be callable from a {\C} application.
+
 
 \end{description}
