@@ -1,0 +1,27 @@
+% !TEX root = ../main.tex
+
+\chapter{Sammendrag}
+\label{chap:sammendrag}
+
+Innvevde datasystemer blir gradvis en større del av vår hverdag.
+Disse datamaskinene må stadig tilpasse seg nye domener, slik som \emph{tingenes internett}.
+Sammenlignet med andre konvensjonelle datasystemer (mobile-, personlige-, og tjeneste-systemer), er mange begrensninger i disse systemene som setter krav til hvilke utviklingsverktøy som kan brukes.
+
+I nyere tid har det kommet mange nye programmeringsspråk som er tilrettelagt for konvensjonelle datasystemer.
+Kategoriseringen av \emph{høyere-nivå programmeringsspråk} har endret seg i løpet av de siste tiårene, fra å handle om statiske, maskinvare-agnostiske språk som C, til å dreie seg om dynamiske språk med kjøre-tidssytemer, slik som JavaScript.
+Sikkerhetsmekanismene som er tilgjengelige i disse høyere-nivå språkene kommer ofte på bekostning av lav-nivå kontroll, som er tilgjengelig i \emph{lav-nivå programmeringsspråk}.
+
+Rust er et nytt og voksende programmeringsspråk, som gjør et forsøk på å skape et nytt kompromiss mellom kontroll og sikkerhet.
+Dette språket kan garantere sikkerhet ved statisk analyse, som i andre høyere-nivå språk blir løst dynamisk.
+
+I denne avhandlingen presenterer vi vår metode for å benytte Rust i et innvevd datasystem, og en evaluering av denne.
+Vi beskriver designet og implementasjonen av vår operativsystemløse plattform kalt {\rg}, som omfatter biblioteker for å kontrollere maskinvaren.
+Vi vister i tilleg flere programmer og abstrakte biblioteker som er blitt bygget på denne plattformen.
+
+For å støtte plattformen har vi også implementert og presentert en utvidelse til Rust sin standard pakkebehandler.
+Denne utvidelsen gjør det enklere å bygge Rust-applikasjoner for ikke-standard plattformer, og har også blitt inkludert i det opprinnelige prosjektet som utvikler pakkebehandleren.
+
+Vi har evaluert plattformen basert på ytelse, energieffektivitet og kodestørrelse, ved bruk av en ARM Cortex-M3-basert EFM32-brikke kalt Giant Gecko.
+Disse resultatene har blitt sammenlignet med den allerede eksisterende C plattformen.
+Våre evalueringer viser at Rust har tilsvarende ytelse og energieffektivitet som C.
+Vi har imidlertid oppdaget at kodestørrelsen kan øke betraktelig, særlig for applikasjoner som er bygget for feilsøking.

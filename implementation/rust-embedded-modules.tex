@@ -9,7 +9,7 @@ This section describes a separate project, which we refer to as \gls{rem}.
 We have looked to other projects like {\zinc}, \texttt{arduino}, and ARM \texttt{mbed} for inspiration to this library.
 The peripheral abstractions that have been implemented as part of \gls{rem} are still in very early development, and most of them are not yet general enough to be adapted to all new projects.
 
-\subsection{Usart}
+\subsection{USART}
 \label{ssub:usart}
 
 The \gls{usart} have many different use-cases.
@@ -47,7 +47,7 @@ fn main() {
   }
 }
   \end{rustcode}
-  \caption{Example usage of \gls{rem}'s \gls{usart} module.}
+  \caption{Example usage of \gls{rem}'s \gls{usart} module}
   \label{lst:usart_abstraction}
 \end{listing}
 
@@ -91,7 +91,7 @@ fn blink_led(_pin: u8) {
   LED.toggle();
 }
   \end{rustcode}
-  \caption{Example usage of \gls{rem}'s \gls{gpio} module.}
+  \caption{Example usage of \gls{rem}'s \gls{gpio} module}
   \label{lst:gpio_abstraction}
 \end{listing}
 
@@ -164,7 +164,7 @@ impl Dma {
 \autoref{lst:using:dma} shows an example of using the \gls{dma} abstraction to transfer samples from the \gls{adc} to \gls{ram}.
 The \func{start\_basic} function relies on the two traits to set up the hardware specifiers with the low-level \gls{api}.
 Both the \code{Readable} and \code{Writable} traits are implemented for the memory buffer.
-In this use case, the type of the \code{dst} parameter in the \func{start\_basic} funciton ensures that the correct implementation is chosen.
+In this use case, the type of the \code{dst} parameter in the \func{start\_basic} function ensures that the correct implementation is chosen.
 
 The \gls{dma} abstraction described here is only implemented for the simplest \gls{dma} transfers from the {\emlib} \gls{dma} \gls{api}.
 The {\emlib} \gls{api} provides more complex facilities (e.g. scatter-gather) which can cause the interfaces to change if they are to be supported.

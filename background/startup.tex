@@ -1,7 +1,7 @@
-\section{Startup}
+\section{Microcontroller Startup}
 \label{sec:back:startup}
 
-This section describes the process of starting a program on an embedded system.
+This section describes the process of starting a program on a bare-metal system.
 The {\main} function is typically considered as the starting point of a program.
 While this can be true from the programmer's point of view, in this section, it is evident that that is not usually the case.
 This section will present the reader with what occurs prior to the program reaching the \code{main} function.
@@ -39,7 +39,7 @@ The \elfsec{.text} section contains the program code and any read-only data defi
 Strings are, for instance, stored in the \elfsec{.text} section as read-only.
 The \elfsec{.data} section contains the values for non-zero initialized data.
 The \elfsec{.bss} section is a logical section so it is not really stored in the file.
-The header specfies the size of the \elfsec{.bss} section, which describes the size of the zero-initialized data in the program.
+The header specifies the size of the \elfsec{.bss} section, which describes the size of the zero-initialized data in the program.
 
 \subsection{Before main}
 \label{sec:before-main}
@@ -52,15 +52,17 @@ All zero-initialized data is represented by the \elfsec{.bss} section in the {\e
 A portion of \gls{ram} corresponding to the size of the \elfsec{.bss} section must be set to zero.
 
 Copying the \elfsec{.data} section into \gls{ram} is handled by the \func{ResetHandler} function shown in \autoref{lst:reset-handler}.
+Before the \gls{ram} is initialized, the \code{ResetHandler} calls a \code{SystemInit} routine, which can be used to set up the external \gls{ram} for the {\gecko}.
 The function is the real entry point of the program and is executed when the \gls{cpu} receives the reset signal.
 
 \begin{listing}[H]
 \begin{ccode}
 // Variables set in linker script
 extern etext;      // address of .data segment in FLASH
-extern data_start; // start of .data segement in RAM
+extern data_start; // start of .data segment in RAM
 extern data_end;   // end of .data segment in RAM
 void ResetHandler() {
+  SystemInit();
   for (i=0; i<data_end - data_start; i++){
     RAM[data_start + i] = FLASH[etext+i];
   }

@@ -9,9 +9,20 @@
 %\renewcommand\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
 %\renewcommand\thesubsubsection{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
 
-\newcommand{\frontchapter}[1]{
-    \setcounter{chapter}{0}
-    \setcounter{section}{0}
-    \chapter*{#1}
-    \addcontentsline{toc}{chapter}{#1}
-}
+% \newcommand{\frontchapter}[1]{
+%     \setcounter{chapter}{1}
+%     \setcounter{section}{1}
+%     \chapter*{#1}
+%     \addcontentsline{toc}{chapter}{#1}
+% }
+
+\newcommand{\reqi}{Identify and describe the requirements for a bare-metal platform in {\rust}}
+\newcommand{\reqii}{Prototype a bare-metal software platform for {\rust} on the EFM32}
+\newcommand{\reqiii}{Evaluate code size, performance and energy consumption}
+
+\newcommand{\lci}{Volatile read and write}
+\newcommand{\lcii}{Handling interrupts}
+\newcommand{\lciii}{Reading and writing hardware registers}
+\newcommand{\lciv}{Static object construction}
+\newcommand{\lcv}{Heap allocation}
+\newcommand{\lcvi}{Error handling without allocation}

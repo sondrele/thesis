@@ -22,7 +22,7 @@ The contributions of this thesis are given in \autoref{tab:contributions}.
     {\crustc} & The {\cargo} {\rustc} Subcommand \\
     {\cmethods} & Methods for using {\rust} abstractions \\
     {\cbugfix} & Minor bugfix in a Silicon Labs library \\
-    {\ceval} & Evaluation of {\rust} for embedded system \\
+    {\ceval} & Evaluation of {\rust} for a bare-metal system \\
     {\csize} & Identifying binaries sizes as a problem \\
     \hline
   \end{tabular}
@@ -32,17 +32,17 @@ The contributions of this thesis are given in \autoref{tab:contributions}.
 
 The design and implementation of the {\rg} platform ({\crustygecko}), in addition to examples for using the platform.
 
-The implemented build process ({\cbuild}) is, to our knowledge, the first standard build process using the {\rust} package manager, {\cargo}, for embedded systems.
+The implemented build process ({\cbuild}) is, to our knowledge, the first standard build process using the {\rust} package manager, {\cargo}, for bare-metal systems.
 Other projects have resorted to custom Makefiles to handle the build process and dependencies.
 
 In order to develop the build process ({\cbuild}), {\cargo} had to be modified.
 This resulted in implementing and contributing the subcommand ({\crustc}) to the {\cargo} package manager.
 
-Throughout the development phase of the project, the high-level abstractions of {\rust} were tested out in an embedded environment.
+Throughout the development phase of the project, the high-level abstractions of {\rust} were tested out in a bare-metal environment.
 These experimentations resulted in a few successful and promising patterns ({\cmethods}).
 
 By porting a driver in one of Silicon Labs' software libraries from {\C} to {\rust}, a minor bug was found and reported with a suggested patch ({\cbugfix}) to fix the issue.
 
-The results reported and discussed in this thesis provides an evaluation ({\ceval}) of the {\rust} platform in an embedded system.
+The results reported and discussed in this thesis provides an evaluation ({\ceval}) of the {\rust} platform in a bare-metal system.
 
-Considering the evaluation ({\ceval}) we have identified the size of the binaries produced by {\rust} are to large for debugging a highly resource constrained embedded system ({\csize}).
+Considering the evaluation ({\ceval}), we have identified the size of the binaries produced by {\rust} are large for debugging a highly resource constrained embedded system ({\csize}).

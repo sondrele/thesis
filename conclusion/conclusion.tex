@@ -3,46 +3,99 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
+In this chapter, we draw conclusions derived from the discussion of the {\rg} platform.
+We also look back at the requirements that were defined in \autoref{chap:intro}, and give an evaluation of the project's success.
+Finally, we give our thoughts on further developments to improve the {\rg} platform, and suggest some changes that could make {\rust} more suited for bare-metal systems.
+
 \section{The RustyGecko Platform}
 
-In this thesis we have presented the {\rg} platform for embedded programming using the {\rust} programming language.
-This platform consists of a subset of the {\rust} standard library and a binding library around peripheral libraries for the EFM32 series of \glspl{mcu}.
+In this thesis, we have presented the {\rg} platform for programming a bare-metal system by using the {\rust} programming language.
+This platform consists of a subset of the {\rust} standard library and a handful of libraries that define bindings for the EFM32 peripheral \gls{api}.
+In total, we have been able to utilize many great aspects that surround the {\rust} programming language in the {\rg} platform.
 
-We have explained that the platform makes use of many of the language and community features which comes with a modern programming language.
-From our measured results we showed that by using this {\rust} based platform, we can still make applications which perform equally well as the existing {\C} platform, based on performance and energy consumption metrics.
-Still, we did find evidence of the platform producing larger binaries, which makes {\rust} application more expensive, in terms of hardware costs, or rendering the platform useless for the most resource constrained applications.
-We have also shown that there does exist some obstacles for making use of the convenient ways of sharing code between projects, although the basic mechanisms are in place.
+One of the tools we were able to incorporate is the {\cargo} package manager.
+This enabled us to give the {\rg} platform a modular design, which makes the different parts of the platform reusable as isolated units of code.
+However, the \gls{rsl} is an implied dependency for all standard {\rust} projects.
+Because of this, and given the current design of \gls{rsl}, it is hard for non-standard projects to utilize third-party libraries.
+
+{\rust} implements many interesting features, among these are its ability to statically prevent data-races.
+We attempted to apply these concepts directly to the hardware peripherals but found the resulting programming model to be too limited.
+Instead, we propose to explore this idea further by considering a more dynamic approach for future work.
+
+From our measured results, we showed that on the {\rg} platform, we can still make applications that perform as well as the existing {\C} platform.
+This conclusion is derived from our qualitative study of performance and energy consumption for the two applications that was developed on this platform.
+However, we did find indications that the platform produces larger binaries, which make {\rust} applications more expensive in terms of hardware costs.
+The binaries are stored in flash memory and the size of this memory correlates with the cost of the microcontroller.
+The increased cost in hardware can be expensive for resource constrained applications, which are shipped in the millions.
+This, consequently, can turn out to be a hindrance for applications in the industry.
 
 \section{Requirements}
 
-In \autoref{chap:intro} we presented three requirements as interpreted from the Project Description for this thesis.
-Requirement \textbf{R1} is achieved through the presentation of the existing {\C} platform, given in \autoref{chap:background}, in comparison to the {\rust} platform that was presented throughout the core chapters.
-\autoref{sec:disc:lang-challenges} covered the language challenges discussed in \autoref{sec:intro:assignment}, as part of requirement \textbf{R1}, and shows that each challenge is considered in the {\rg} platform.
-We therefore conclude that these challenges are solved for using {\rust} in an embedded system.
-Further we consider the {\rg} platform to fulfill requirement \textbf{R2}.
-Throughout \autoref{chap:results} we presented our results of measuring the {\rg} platform and our evaluation of the measurements are given in \autoref{chap:discussion} to satisfy requirement \textbf{R3}.
+In \autoref{chap:intro}, we presented three requirements as interpreted from the Project Description for this thesis.
+In this section, we describe how each of these requirements were fulfilled.
 
-\section{Future work}
+\begin{description}
+    \item[R1] - {{\reqi}} \hfill \\
+    We identified six language challenges that was important to solve to get {\rust} to work on a bare-metal system.
+    These challenges were all handled in the implementation of the {\rg} platform.
+
+  \item[R2] - {{\reqii}} \hfill \\
+    We consider the {\rg} platform to fulfill this requirement.
+    The prototype provides the same functionality as the existing {\C} platform in principal, and needs only be fleshed out to have full support.
+
+    \item[R3] - {{\reqiii}} \hfill \\
+    Throughout \autoref{chap:results}, we presented our results of measuring the {\rg} platform, and our evaluation of the measurements are given in \autoref{chap:discussion} to satisfy this requirement.
+\end{description}
+
+Based on these requirements and their solutions, we consider the project as a whole to solve the problems deduced from the Project Description.
+This conclusion leads us to further conclude that the project was successful.
+
+\section{Future Work}
 \label{chap:future}
 
-As we presented in \autoref{sub:interfacing_with_emlib} the platform consists of partially finished bindings.
-An obvious extension to our project is to continue and finalize the binding libraries for the {\emlib}, {\emdrv} and \gls{cmsis} libraries.
-The foundations for these binding have been laid out, so the implementations here are not challenging, only time-consuming.
-An alternative approach is to use a bindings generator such as \lib{bindgen} \footnote{https://github.com/crabtw/rust-bindgen} to generate the binding automatically.
-The binding effort might be redundant altogether, as the {\rust} roadmap \footnote{https://internals.rust-lang.org/t/priorities-after-1-0/1901} states that the project wants to develop better integration with {\C}/{\Cpp} code.
-This might eventually lead to bindings like these being made obsolete, and that {\C} libraries can called into based on their header files, alone.
+We have worked on many different projects on the {\rg} platform throughout this thesis.
+In this section, we suggest some of these projects as future work.
+We also suggest some new project ideas based on our experiences during the development of the {\rg} platform.
 
-In \autoref{sec:rust-embedded-modules} we looked at a library which provided higher level abstraction using the language features of {\rust}.
+\begin{description}
+\item[Bindings] \hfill \\
+  As we presented in \autoref{sub:interfacing_with_emlib}, the {\rg} platform consists of partially finished bindings.
+  An obvious extension to our project is to continue and finalize the binding libraries for the {\emlib}, {\emdrv} and \gls{cmsis} libraries.
+  The foundations for these bindings have been laid out, so the implementations here are not challenging, only time-consuming.
+  An alternative approach is to use a bindings generator, such as \lib{bindgen}\footnote{\url{https://crates.io/crates/bindgen}}, to generate the bindings automatically.
+  Note that the binding effort might be redundant altogether, as the {\rust} roadmap states that the project wants to develop better integration with {\C} and {\Cpp} code \cite{web:roadmap}.
+  This might eventually lead to bindings like these being made obsolete and that {\C} libraries can be called into based on their header files alone.
 
-The interrupt-driven programming model used to program embedded system did not prove to be as applicable to {\rust} as we had hoped.
-In \autoref{sec:irq-closures} we looked at a technique for changing this model by using ownership rules similar to how concurrency is handled in {\rust}.
-This library has potential to provide a more idiomatic programming style to embedded programs in {\rust} and will make the platform more familiar to {\rust} developers.
-This library can be extended to control the ownership of \glspl{mmio} as discussed in \autoref{sec:ownership_allied_to_hardware}.
+\item[Trait-based Peripheral Access] \hfill \\
+  An aspect that we did not go into in this project is {\rust}'s ability to, by using traits, redefine the semantics when using values.
+  This concept can possibly be applied to remove the verbosity of the volatile loads and store of peripheral control register operations, as discussed in \autoref{sec:disc:lang-challenges}.
 
-In the \autoref{sec:disc:project_evaluations} we argued that in order to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform has to be implemented in {\rust}.
-On possible way to do this is to start this project from scratch by using the \lib{zinc.rs} framework and porting the actual implementations of the {\emlib} library to {\rust}.
-In doing so, the examples provided with {\emlib} can be used as a benchmark suite to compare the two platforms.
-This can both provide a better basis for evaluation, but can also, as we showed in \autoref{sec:porting-gpioint}, uncover bugs in the {\C} implementation of {\emlib}.
-These discoveries can help motivate the usage of {\rust} in this domain.
-Throughout this thesis we have only worked with the {\rust} language as the application layer language and binding to {\C}, it is possible to do this the other way around.
-Therefore parts of the {\emlib} library can actually be replaced by an {\rust} implementation and still expose the same \gls{api} to the user.
+\item[The Standard Library] \hfill \\
+  As discussed in \autoref{sec:disc:rust_for_arm}, we found the current basis for writing reusable libraries to be limiting for our platform.
+  One of the major problems is the interoperability between standard and non-standard libraries, which limits the amount of third-party libraries that can be utilized for the {\rg} platform.
+  We leave it as future work to go into detail on ways to solve this problem, by either applying a different approach or to modify the blocking obstacle in the \lib{std} crate.
+
+\item[\glsdesc{rel}] \hfill \\
+  In \autoref{sec:rust-embedded-modules}, we looked at a library that provided higher-level abstractions by using the language features of {\rust}.
+  This library can be further developed to include better initialization procedures for the peripherals, as in {\zinc}, and extended to provide abstractions for more peripherals.
+
+\item[Safe Access to Hardware] \hfill \\
+  The interrupt-driven programming model that is used to programming of embedded systems did not prove to be as applicable to {\rust} and its ownership-semantics as we had hoped.
+  {\rust}'s ownership system helps to rule out data races in programs \cite{web:rust_book}.
+  We believe that the ownership system can be utilized in a new framework, based on the one that was described in \autoref{sec:irq-closures} and further discussed in \autoref{sec:avoiding_mutable_aliases_to_hardware}, for initializing and dispatching interrupts.
+  It will be interesting to see if {\rust}'s ownership-semantics can help to apply a more dynamic approach to this framework, in order to ensure safe access to hardware peripherals.
+
+\item[Using Rust at the Library Layer] \hfill \\
+  Throughout this thesis, we have only worked with the {\rust} language at the application layer language and binding to {\C} for library support.
+  It can be interesting to do this the other way around.
+  Concretely, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user and be callable from a {\C} application.
+
+\item[Rust-only Solution] \hfill \\
+  We chose to base the {\rg} platform on the software libraries that were already available for the {\gecko}.
+  This enabled us to quickly shape the platform and explore many different project ideas.
+  However, we argued in \autoref{sec:disc:project_evaluations} that to make a more thoroughly comparison of the {\C} and {\rust} languages in this domain, more of the platform have to be implemented in {\rust}.
+  A new direction for the platform can be to adapt the {\zinc} project for the {\gecko}, and to port the actual implementations of the {\emlib} library to {\rust}.
+  This approach can provide a better basis for an evaluation of {\rust}.
+  It is also possible that {\rust}'s \code{unsafe}-semantics can help to uncover more bugs in the {\C}-implementation of {\emlib}.
+
+\end{description}

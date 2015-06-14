@@ -2,15 +2,18 @@
 \label{sec:impl:booting}
 
 The contents of this section explains how the startup process described in \autoref{sec:back:startup} is implemented for a {\rust} program.
-The process for {\rust} is identical to the process in {\C} due to the fact that {\rust} only allows constant initialization\footnote{This is in contrast to languages like {\Cpp}, where objects can be initialized with statically called constructors. For such langauges, this must be handled by the startup process.} before the {\main} function.
-Therefore we are able to reuse standard runtime components that are available for {\C} embedded toolchains.
-Silicon Labs' software suite provides the \func{ResetHandler} and linker script for the EFM32 microcontrollers.
-The \func{\_mainCRTStartup} function defined in the {\C} runtime, which is provided by the {\armgcc} toolchain, handles the setup in the \func{\_start} routine, as described in \autoref{sec:before-main}.
+The process for {\rust} is identical to the process in {\C} because {\rust} only allows \emph{constant initialization} before the {\main} function.
+Therefore, we are able to reuse standard runtime components that are available in the {\C} embedded toolchain.
+
+Silicon Labs' software suite provides the \func{ResetHandler} and a linker script for the EFM32 microcontrollers.
+The linker script defines the memory layout for the {\gecko}, and this is initialized when the \file{elf} binary is flashed to the \gls{mcu}.
+The {\armgcc} toolchain provides an implementation of the \texttt{\_start} routine that is defined in the {\C} runtime.
+This routine is called from the {\code{ResetHandler}}, as described in \autoref{sec:back:startup}, which in turn calls into the \code{main} function defined in the {\rust} executable.
 
 \subsection{Minimal Rust program to boot}
 \label{ssec:minimal_rust_program_to_boot}
 
-There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in an embedded environment.
+There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in a bare-metal environment.
 Let us first revisit the canonical version from \autoref{sub:the_rust_programming_language} given in \autoref{lst:rust-hello-world}.
 We can see that all we have to define is the \code{main} function.
 
@@ -25,9 +28,9 @@ fn main() {
 \end{listing}
 
 A {\rust} program will by default include \glsdesc{rsl} automatically.
-As explained in \autoref{sec:rsl}, this library is not usable in an embedded program, and the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
+As explained in \autoref{sec:rsl}, this library is not usable in a bare-metal program, and the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
 
-The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world}, does not print out the ``Hello, World!'' text because this would have required additional setup, and we are only concerned with the boot process in this example.
+The bare-metal `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world}, does not print out the ``Hello, World!'' text because this would have required additional setup, and we are only concerned with the boot process in this example.
 In addition to removing the \gls{rsl}, the {\main} function is \emph{exported} to be callable from the {\C} runtime.
 
 \begin{listing}[H]
@@ -51,7 +54,7 @@ pub extern fn main() {
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"] fn panic_fmt() -> ! { loop {} }
 \end{rustcode}
-\caption{Embedded `Hello World' in {\rust}.}
+\caption{Bare-metal `Hello World' in {\rust}.}
 \label{lst:embedded-rust-hello-world}
 \end{listing}
 
@@ -61,9 +64,9 @@ Firstly, we must guarantee that the function can be called by the \func{\_start}
 This is done by defining the {\main} function to be a publicly exported symbol denoted by \code{pub extern}.
 The second change is to ensure that the function is callable by a {\C} function.
 \code{extern} makes this possible by making the function use the {\C} \gls{abi}.
-The last thing is to disable the {\rust} name mangling so that the {\C} code can refere to the function by the unmangled name {\main}.
+The last thing is to disable the {\rust} name mangling so that the {\C} code can refer to the function by the unmangled name {\main}.
 Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
-Therefore we have to tell the compiler that the program does not contain a {\main} function, but that this is ok, hence the \attrib{\#\![no\_main]} on line 3.
+Therefore we have to tell the compiler that the program does not contain a {\main} function, hence the \attrib{\#\![no\_main]} on line 3.
 
 The last three lines are a complication due to error handling in {\rust}.
 These functions are used by the core library, but implemented in the standard library.
@@ -72,7 +75,7 @@ The implementation shown here just ignores all error handling.
 
 \subsection{Storage qualifiers}
 
-As described in \autoref{sec:back:startup} the startup procedure initializes all global variables.
+As described in \autoref{sec:back:startup}, the startup procedure initializes all global variables.
 In this section we look at how each storage qualifier,  applicable to global variables in {\rust}, map to different sections of the {\elf} binary.
 
 \begin{listing}[H]
@@ -125,12 +128,11 @@ fn main() {
   loop {}
 }
   \end{rustcode}
-  \caption{Embedded Hello World bootstrapped with the \lib{startup} library}
+  \caption{Bare-metal Hello World bootstrapped with the \lib{startup} library}
   \label{lst:embedded-rust-bootstrapped}
 \end{listing}
 
-\subsection{Handling Interrupts in Rust}
-% \todo{This sections might be moved}
+\section{Handling Interrupts in Rust}
 \label{sec:impl:handling-interrupts}
 
 Interrupts are an integral part of embedded programs, and having a native way of handling the interrupts provides a great benefit and flexibility for a programming language.
@@ -156,7 +158,7 @@ void SysTick_Handler(void) { /* Handler code */ }
 \end{listing}
 
 Defining an interrupt handler in {\rust} is just as easy as in {\C} because of the focus on interoperability with {\C} code.
-In {\rust}, a function can easly be defined to use the {\C} \glsdesc{abi} required to be called as an interrupt handler.
+In {\rust}, a function can easily be defined to use the {\C} \glsdesc{abi} required to be called as an interrupt handler.
 \autoref{lst:rust:irq} shows how to override the same \func{SysTick\_Handler} function in {\rust}.
 
 \begin{listing}[H]

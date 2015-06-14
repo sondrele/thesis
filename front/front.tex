@@ -11,6 +11,7 @@
 \include{front/problem}
 
 \include{front/abstract}
+\include{front/sammendrag}
 
 \tableofcontents
 \clearpage
@@ -21,7 +22,11 @@
 \listoffigures
 \clearpage
 
-\frontchapter{List of Abbreviations}
+\listoflistings
+\addcontentsline{toc}{chapter}{List of Listings}
+\clearpage
+
+\chapter{List of Abbreviations}
 \printglossary[type=\acronymtype]
 \clearpage
 
@@ -31,5 +36,3 @@
 \renewcommand{\chapterautorefname}{Chapter}
 \let\subsectionautorefname\sectionautorefname
 \let\subsubsectionautorefname\sectionautorefname
-
-\listoftodos
