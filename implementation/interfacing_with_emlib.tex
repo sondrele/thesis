@@ -77,7 +77,7 @@ Demonstrates dynamically allocated strings and vectors from the \lib{collections
     \hline
   \end{tabular}
 
-  \caption{Examples that demonstrates how the bindings work.}
+  \caption{Examples that demonstrates how the bindings work}
   \label{tab:emlib_examples}
 \end{table}
 
@@ -140,7 +140,7 @@ It worked as a proof-of-concept for the design of the bindings, as described lat
     \hline
   \end{tabular}
 
-  \caption{Peripheral bindings for {\emlib}.}
+  \caption{Peripheral bindings for {\emlib}}
   \label{tab:emlib_peripheral_bindings}
 \end{table}
 
@@ -207,7 +207,7 @@ When the user presses a button the {\chip{STK}} will initiate a transfer that re
     \hline
   \end{tabular}
 
-  \caption{Examples that demonstrate how to use the flash bindings.}
+  \caption{Examples that demonstrate how to use the flash bindings}
   \label{tab:emdrv_examples}
 \end{table}
 
@@ -242,7 +242,7 @@ It is used in the \prog{circle-game}. \\
     \hline
   \end{tabular}
 
-  \caption{Driver bindings for \prog{emdrv}.}
+  \caption{Driver bindings for \prog{emdrv}}
   \label{tab:emdrv_bindings}
 \end{table}
 
@@ -335,7 +335,7 @@ void STATIC_INLINE_TIMER_IntEnable(TIMER_TypeDef *timer,
   TIMER_IntEnable(timer, flags);
 }
 \end{ccode}
-\caption{Exposing a \code{static inline} function to {\rust}.}
+\caption{Exposing a \code{static inline} function to {\rust}}
 \label{lst:exposing_static_inline}
 \end{listing}
 
@@ -355,7 +355,7 @@ extern {
   fn STATIC_INLINE_TIMER_IntEnable(timer: &Timer, flags: u32);
 }
 \end{rustcode}
-\caption{Defining and using a function through the {\rust} \gls{ffi}.}
+\caption{Defining and using a function through the {\rust} \gls{ffi}}
 \label{lst:rust_ffi_example}
 \end{listing}
 
@@ -381,7 +381,7 @@ typedef enum {
   // ...
 } TIMER_CCMode_TypeDef;
 \end{ccode}
-\caption{Part of a Timer enum defined in {\C}.}
+\caption{Part of a Timer enum defined in {\C}}
 \label{lst:enum_naming_c}
 \end{listing}
 
@@ -399,7 +399,7 @@ pub enum CCMode {
   // ...
 }
 \end{rustcode}
-\caption{The enum ported to {\rust}.}
+\caption{The enum ported to {\rust}}
 \label{lst:enum_naming_rust}
 \end{listing}
 

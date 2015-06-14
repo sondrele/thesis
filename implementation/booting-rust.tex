@@ -23,7 +23,7 @@ fn main() {
   println!("Hello, World!");
 }
   \end{rustcode}
-  \caption{Standard `Hello World' in {\rust}.}
+  \caption{Standard `Hello World' in {\rust}}
   \label{lst:rust-hello-world}
 \end{listing}
 
@@ -54,7 +54,7 @@ pub extern fn main() {
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"] fn panic_fmt() -> ! { loop {} }
 \end{rustcode}
-\caption{Bare-metal `Hello World' in {\rust}.}
+\caption{Bare-metal `Hello World' in {\rust}}
 \label{lst:embedded-rust-hello-world}
 \end{listing}
 
@@ -89,7 +89,7 @@ static mut RUST_STATIC_MUT: u32 = 0xBEEF; // .data
 
 pub extern fn main() { /* Use the variables */ }
 \end{rustcode}
-\caption{{\rust} static initialization.}
+\caption{{\rust} static initialization}
 \label{lst:rust-static-init}
 \end{listing}
 
@@ -153,7 +153,7 @@ This function will then be called when these interrupts occur.
   \begin{ccode}
 void SysTick_Handler(void) { /* Handler code */ }
   \end{ccode}
-  \caption{Defining the SysTick Interrupt Handler in {\C}.}
+  \caption{Defining the SysTick Interrupt Handler in {\C}}
   \label{lst:c:irq}
 \end{listing}
 
@@ -165,6 +165,6 @@ In {\rust}, a function can easily be defined to use the {\C} \glsdesc{abi} requi
   \begin{rustcode}
 #[no_mangle] pub extern fn SysTick_Handlder() { /* Handler code */ }
   \end{rustcode}
-  \caption{SysTick Interrupt Handler in {\rust}.}
+  \caption{SysTick Interrupt Handler in {\rust}}
   \label{lst:rust:irq}
 \end{listing}
