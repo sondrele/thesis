@@ -200,7 +200,7 @@ The \code{Cons} is a name given by us, just like the name \code{List}.
 One important thing to notice in this example is the usage of a \code{Box<...>} instead of the mentioned pointer.
 As discussed earlier, {\rust} provides abstractions on top of its raw pointers, and the \code{Box} is an example of this in action.
 A boxed value is simply a value that is stored on the heap, with its owning handle stored in a \code{Box} structure.
-The \code{Box} pointers are managed by {/rust}'s ownership mechanisms (described in \autoref{sec:guaranteed_memory_safety}).
+The \code{Box} pointers are managed by {\rust}'s ownership mechanisms (described in \autoref{sec:guaranteed_memory_safety}).
 They are, unlike raw pointers, guaranteed to be \emph{safe} to use.
 This structure implements the same operators that are otherwise associated with pointers, so they are semantically the same for this piece of code.
 
