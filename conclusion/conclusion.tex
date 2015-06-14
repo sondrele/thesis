@@ -65,7 +65,7 @@ In this section, we suggest some of these projects as future work, as well as su
   An obvious extension to our project is to continue and finalize the binding libraries for the {\emlib}, {\emdrv} and \gls{cmsis} libraries.
   The foundations for these bindings have been laid out, so the implementations here are not challenging, only time-consuming.
   An alternative approach is to use a bindings generator, such as \lib{bindgen}\footnote{\url{https://crates.io/crates/bindgen}}, to generate the bindings automatically.
-  The binding effort might be redundant altogether, as the {\rust} roadmap states that the project wants to develop better integration with {\C} and {\Cpp} code \cite{web:roadmap}.
+  Note that the binding effort might be redundant altogether, as the {\rust} roadmap states that the project wants to develop better integration with {\C} and {\Cpp} code \cite{web:roadmap}.
   This might eventually lead to bindings like these being made obsolete and that {\C} libraries can be called into based on their header files alone.
 
 \item[Trait-based Peripheral Access] \hfill \\
@@ -99,4 +99,3 @@ In this section, we suggest some of these projects as future work, as well as su
   Thus, parts of the {\emlib} library can be replaced with a {\rust} implementation and still expose the same \gls{api} to the user.
 
 \end{description}
-
