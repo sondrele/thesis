@@ -37,7 +37,7 @@ Because {\rust} is a multi-paradigm language it offers a wider range of language
 The \gls{rsl} is included into all {\rust} programs and is an abstraction layer to write portable applications.
 The library consists of a collection of \gls{os} dependent implementations and a facade.
 The facede provides a thin wrapper which reexports a stable interface for libraries like \lib{alloc} (for memory allocation), \lib{collections} (general purpose data structures), and {\core} (described in the next section).
-This \gls{os} dependent implementations renders the \gls{rsl} unusable in a bare-metal system as this dependency will not be met.
+These \gls{os} dependent implementations renders the \gls{rsl} unusable in a bare-metal system, as this dependency will not be met.
 It is, however, possible to opt-out of using the library.
 
 It is important to note that there is a distinction between the actual software component called {\std}, and the library we refer to as \gls{rsl}.
