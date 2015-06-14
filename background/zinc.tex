@@ -4,7 +4,7 @@
 \label{sec:zinc}
 
 The {\zinc} \cite{web:zinc} project tries to write a complete ARM stack, similar to that of \gls{cmsis}, but written completely in {\rust} and assembly, and with no interference of {\C}.
-{\zinc} is an attempt at applying {\rust}'s safety features to embedded programming, but it is still in early development.
+{\zinc} is an attempt at applying {\rust}'s safety features to bare-metal systems, but it is still in early development.
 The project have primarily focused on supporting two different ARM development boards, the EFM32 are not part of these.
 
 One of {\zinc}'s main features is the ability to safely initialize a program's peripherals with a \emph{Platform Tree} specification, which has the ability to statically catch any mis-configured \gls{mcu} pins or peripherals during compilation.

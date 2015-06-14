@@ -21,7 +21,6 @@ These definitions are given in \autoref{tab:core:definitions}.
 \end{table}
 
 The memory management functions given in \autoref{tab:core:definitions} are provided by \lib{newlib} and are exposed through the \lib{startup} library described in \autoref{sec:startup}.
-These functions provide the basic memory management that is needed in order to utilize the parts of \gls{rsl} that defines dynamically allocated data structures.
 
 \concept{Panicking} is {\rust}'s way of unwinding the currently executing thread, ultimately resulting in the thread being terminated.
 A panic in {\rust} can happen, e.g. when an array is indexed out of bounds, which causes the \code{rust\_begin\_unwind} function to be called.
@@ -73,6 +72,6 @@ We have composed these libraries into what we refer to as the \gls{rel}, and the
   \label{fig:rust:rel}
 \end{figure}
 
-It is important to note that \gls{rel} is just a way to provide a well-defined definition of the {\rust} language for an embedded system.
-\gls{rel} is, unlike \gls{rsl}, not built as a facade, it is nothing but a collection of freestanding {\rust} libraries that are suited for an embedded system.
+It is important to note that \gls{rel} is just a way to provide a well-defined definition of the {\rust} language for a bare-metal system.
+\gls{rel} is, unlike \gls{rsl}, not built as a facade, it is nothing but a collection of freestanding {\rust} libraries that are suited for a bare-metal system.
 However, the libraries that make up \gls{rel} needs to be conditionally compiled for the Cortex-M3 architecture, and this is described in \autoref{chap:build}.

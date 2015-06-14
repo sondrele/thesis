@@ -7,7 +7,7 @@
 Prior to beginning this thesis, we were already aware that there were a couple of other projects that were running {\rust} bare-metal on ARM \glspl{mcu}.
 We did not, however, know how easy it would be to get up and running with {\rust} on the EFM32.
 It took us less than one day to implement and execute a {\rust} blink-demo on the {\STK}.
-The {\rust} documentation was sufficient for figuring out how to define non-std {\rust} programs (i.e. the ones that are annotated with \texttt{\#[no\_std]}), and projects like \texttt{armboot} helped us build the project for the ARM architecture.
+The {\rust} documentation was sufficient for figuring out how to define {\rust} programs without using \gls{rsl} (i.e. the ones that are annotated with \texttt{\#[no\_std]}), and projects like \texttt{armboot} helped us build the project for the ARM architecture.
 {\rust}'s runtime is comparable to {\C}'s because the startup requirements in the two languages are the same, but {\rust}'s {\core} library is larger and provides more functionality than the {\C} standard library, which we consider to be an added bonus of {\rust}.
 
 \subsection{The Standard Library} % (fold)
@@ -53,7 +53,7 @@ We hope that it will get easier in time to define non-standard projects, while s
 \subsection{Language Challenges}
 \label{sec:disc:lang-challenges}
 
-In \autoref{sec:intro:assignment} we identified six language challenges that must be considered when using a language in an embedded system.
+In \autoref{sec:intro:assignment} we identified six language challenges that must be considered when using a language in a bare-metal system.
 Here, we revisit each challenge and discuss how they were solved for the {\rg} platform.
 
 \begin{description}
@@ -72,7 +72,7 @@ Here, we revisit each challenge and discuss how they were solved for the {\rg} p
 \item [LC3] - {\lciii} \hfill \\
   In this thesis, we have only considered hardware devices as \glspl{mmio}.
   As {\rust} supports raw pointers and allows the programmer to access arbitrary memory addresses and cast these as structs, the handling of hardware registers are equally practical in {\rust} as in {\C}.
-  Given a more mature embedded platform in {\rust}, we foresee that even more of the compile-time ownership analysis provided by the {\rust} compiler can be used to ensure safer interactions with hardware registers.
+  Given a more mature bare-metal platform in {\rust}, we foresee that even more of the compile-time ownership analysis provided by the {\rust} compiler can be used to ensure safer interactions with hardware registers.
 
 \item [LC4] - {\lciv} \hfill \\
   {\rust} (and {\C}) have, unlike many other programming languages, no life before the {\main} function.

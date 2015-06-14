@@ -42,7 +42,7 @@ As it turns out, there is no easy or straightforward way to do this, at least no
 Our approach to define a software library for the {\gecko} has been to utilize what \emph{already} exists.
 We decided to write {\rust}-bindings for {\emlib} because it would get the project up and running fairly quickly.
 % Another reason for not porting {\emlib} was the possibility to update the bindings to depend on new revisions of {\emlib} without having to define any new logic.
-This choice also meant that we were able to quickly use a wide range of peripherals and implement a couple of projects to test {\rust} in an embedded setting.
+This choice also meant that we were able to quickly use a wide range of peripherals and implement a couple of projects to test {\rust} in a bare-metal setting.
 It turns out, however, that this approach has introduced a few limitations to our system:
 
 \begin{enumerate}[\hspace{13pt}1)]

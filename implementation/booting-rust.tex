@@ -13,7 +13,7 @@ This routine is called from the {\code{ResetHandler}}, as described in \autoref{
 \subsection{Minimal Rust program to boot}
 \label{ssec:minimal_rust_program_to_boot}
 
-There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in an embedded environment.
+There are a few modification which have to be applied to the default `Hello World' program in order to get it to boot in a bare-metal environment.
 Let us first revisit the canonical version from \autoref{sub:the_rust_programming_language} given in \autoref{lst:rust-hello-world}.
 We can see that all we have to define is the \code{main} function.
 
@@ -28,9 +28,9 @@ fn main() {
 \end{listing}
 
 A {\rust} program will by default include \glsdesc{rsl} automatically.
-As explained in \autoref{sec:rsl}, this library is not usable in an embedded program, and the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
+As explained in \autoref{sec:rsl}, this library is not usable in a bare-metal program, and the changes to the `Hello World' program mostly deals with removing the \gls{rsl}.
 
-The embedded `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world}, does not print out the ``Hello, World!'' text because this would have required additional setup, and we are only concerned with the boot process in this example.
+The bare-metal `Hello World' program, as given in \autoref{lst:embedded-rust-hello-world}, does not print out the ``Hello, World!'' text because this would have required additional setup, and we are only concerned with the boot process in this example.
 In addition to removing the \gls{rsl}, the {\main} function is \emph{exported} to be callable from the {\C} runtime.
 
 \begin{listing}[H]
@@ -54,7 +54,7 @@ pub extern fn main() {
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"] fn panic_fmt() -> ! { loop {} }
 \end{rustcode}
-\caption{Embedded `Hello World' in {\rust}.}
+\caption{Bare-metal `Hello World' in {\rust}.}
 \label{lst:embedded-rust-hello-world}
 \end{listing}
 
@@ -128,7 +128,7 @@ fn main() {
   loop {}
 }
   \end{rustcode}
-  \caption{Embedded Hello World bootstrapped with the \lib{startup} library}
+  \caption{Bare-metal Hello World bootstrapped with the \lib{startup} library}
   \label{lst:embedded-rust-bootstrapped}
 \end{listing}
 
