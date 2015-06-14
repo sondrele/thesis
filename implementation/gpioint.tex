@@ -13,7 +13,7 @@ The \texttt{gpioint} driver lets the user register a callback function to be cal
 It is implemented with a global mutable list of 16 function pointers, a register function to assign functions to indices of the list corresponding to the \gls{gpio} pins, and a dispatch mechanisms which calls the correct functions when an interrupt occurs.
 The issue arises in the dispatch function in \autoref{lst:irq-dispatch:c}.
 
-\begin{listing}
+\begin{listing}[ht]
   \begin{ccode}
 static void GPIOINT_IRQDispatcher(uint32_t iflags) {
   while(iflags) {
@@ -33,7 +33,7 @@ static void GPIOINT_IRQDispatcher(uint32_t iflags) {
   \label{lst:irq-dispatch:c}
 \end{listing}
 
-\begin{listing}
+\begin{listing}[ht]
   \begin{rustcode}
 static mut GPIO_CALLBACKS: [Option<Fn(u8)>; 16] = [None; 16];
 

@@ -133,6 +133,16 @@ Both traits defined in \autoref{lst:dma:traits} requires the same set of methods
 These methods are required by the underlying \gls{dma} implementation and are described in the {\emlib} documentation for \gls{dma} \cite{Dma2004}.
 As mentioned, both traits can be applicable for some peripherals, and this demonstrates {\rust}'s facility to do method resolution when a type implements multiple traits that can result in function name collisions.
 
+\autoref{lst:using:dma} shows an example of using the \gls{dma} abstraction to transfer samples from the \gls{adc} to \gls{ram}.
+The \func{start\_basic} function relies on the two traits to set up the hardware specifiers with the low-level \gls{api}.
+Both the \code{Readable} and \code{Writable} traits are implemented for the memory buffer.
+In this use case, the type of the \code{dst} parameter in the \func{start\_basic} function ensures that the correct implementation is chosen.
+
+The \gls{dma} abstraction described here is only implemented for the simplest \gls{dma} transfers from the {\emlib} \gls{dma} \gls{api}.
+The {\emlib} \gls{api} provides more complex facilities (e.g. scatter-gather) which can cause the interfaces to change if they are to be supported.
+However, there exists facilities for registering closures to handle reactivation of long running \gls{dma} transfers; the closure will be called on the interrupt signal given by the \gls{dma} controller when the transfer is finished.
+This facilitates a programming model which is similar to the one presented in \autoref{sec:irq-closures}.
+
 \begin{listing}[H]
   \begin{rustcode}
 // Create a static RAM buffer
@@ -160,13 +170,3 @@ impl Dma {
   \caption{DMA transfer utilizing the trait abstractions}
   \label{lst:using:dma}
 \end{listing}
-
-\autoref{lst:using:dma} shows an example of using the \gls{dma} abstraction to transfer samples from the \gls{adc} to \gls{ram}.
-The \func{start\_basic} function relies on the two traits to set up the hardware specifiers with the low-level \gls{api}.
-Both the \code{Readable} and \code{Writable} traits are implemented for the memory buffer.
-In this use case, the type of the \code{dst} parameter in the \func{start\_basic} function ensures that the correct implementation is chosen.
-
-The \gls{dma} abstraction described here is only implemented for the simplest \gls{dma} transfers from the {\emlib} \gls{dma} \gls{api}.
-The {\emlib} \gls{api} provides more complex facilities (e.g. scatter-gather) which can cause the interfaces to change if they are to be supported.
-However, there exists facilities for registering closures to handle reactivation of long running \gls{dma} transfers; the closure will be called on the interrupt signal given by the \gls{dma} controller when the transfer is finished.
-This facilitates a programming model which is similar to the one presented in \autoref{sec:irq-closures}.

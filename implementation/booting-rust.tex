@@ -23,7 +23,7 @@ fn main() {
   println!("Hello, World!");
 }
   \end{rustcode}
-  \caption{Standard `Hello World' in {\rust}.}
+  \caption{Standard `Hello World' in {\rust}}
   \label{lst:rust-hello-world}
 \end{listing}
 
@@ -54,7 +54,7 @@ pub extern fn main() {
 #[lang="eh_personality"] extern fn eh_personality() {}
 #[lang="panic_fmt"] fn panic_fmt() -> ! { loop {} }
 \end{rustcode}
-\caption{Bare-metal `Hello World' in {\rust}.}
+\caption{Bare-metal `Hello World' in {\rust}}
 \label{lst:embedded-rust-hello-world}
 \end{listing}
 
@@ -65,7 +65,7 @@ This is done by defining the {\main} function to be a publicly exported symbol d
 The second change is to ensure that the function is callable by a {\C} function.
 \code{extern} makes this possible by making the function use the {\C} \gls{abi}.
 The last thing is to disable the {\rust} name mangling so that the {\C} code can refer to the function by the unmangled name {\main}.
-Now that the {\main} function is altered to be callable by C, the function does not resemble the function the rust compiler expects to find.
+Now that the {\main} function is altered to be callable by {\C}, the function does not resemble the function the {\rust} compiler expects to find.
 Therefore we have to tell the compiler that the program does not contain a {\main} function, hence the \attrib{\#\![no\_main]} on line 3.
 
 The last three lines are a complication due to error handling in {\rust}.
@@ -89,7 +89,7 @@ static mut RUST_STATIC_MUT: u32 = 0xBEEF; // .data
 
 pub extern fn main() { /* Use the variables */ }
 \end{rustcode}
-\caption{{\rust} static initialization.}
+\caption{{\rust} static initialization}
 \label{lst:rust-static-init}
 \end{listing}
 
@@ -153,7 +153,7 @@ This function will then be called when these interrupts occur.
   \begin{ccode}
 void SysTick_Handler(void) { /* Handler code */ }
   \end{ccode}
-  \caption{Defining the SysTick Interrupt Handler in {\C}.}
+  \caption{Defining the SysTick Interrupt Handler in {\C}}
   \label{lst:c:irq}
 \end{listing}
 
@@ -165,6 +165,6 @@ In {\rust}, a function can easily be defined to use the {\C} \glsdesc{abi} requi
   \begin{rustcode}
 #[no_mangle] pub extern fn SysTick_Handlder() { /* Handler code */ }
   \end{rustcode}
-  \caption{SysTick Interrupt Handler in {\rust}.}
+  \caption{SysTick Interrupt Handler in {\rust}}
   \label{lst:rust:irq}
 \end{listing}

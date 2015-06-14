@@ -63,14 +63,14 @@ In this section, we present the results obtained when measuring performance.
   \begin{center}
     \includegraphics[scale=0.5]{results/plots/perf/perf.png}
   \end{center}
-  \caption{Frame/Second achieved by {\rust} and {\C} code.}
+  \caption{Frame/Second achieved by {\rust} and {\C} code}
   \label{fig:perf:res}
 \end{figure}
 
 \autoref{fig:perf:res} graphs the results for the performance measurements.
 The Y-axis shows the number of Frames Per Seconds achieved by running the game on the optimization level given by the X axis.
 We see that the {\C} code is \~10x faster on O0 and O1, but {\rust} equates by providing a 1.07x speedup over {\C} at O2.
-C achieves the best performance at level O2 while {\rust} is slightly faster on O3 compared to O2.
+{\C} achieves the best performance at level O2 while {\rust} is slightly faster on O3 compared to O2.
 Our brief analysis of this suggests that some of the high-level abstractions in {\rust} are fairly inefficient without optimizations.
 An example of these abstractions is the \code{Iterator}-based \code{for} loop, which is used extensively throughout the {\cg} application.
 
