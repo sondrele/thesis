@@ -3,24 +3,24 @@
 \chapter{Sammendrag}
 \label{chap:sammendrag}
 
-Innvevde datasystemer blir i gradvis større grad en del av hverdagen vår.
-Disse datamaskinene blir stadig tilpasset til nye domener, slik som f.eks. tingenes internett.
-Det er mange begrensninger i disse systemene som setter krav til utviklings-verktøyene som må tas i bruk, sammenlignet med andre konvensjonelle datasystemer som mobile-, personlige- og tjeneste-maskiner.
+Innvevde datasystemer blir gradvis en større del av hverdagen vår.
+Disse datamaskinene må stadig tilpasse seg til nye domener, slik som f.eks. tingenes internett.
+Det er mange begrensninger i disse systemene som setter krav til utviklings-verktøyene som kan brukes, sammenlignet med andre konvensjonelle datasystemer som mobile-, personlige- og tjeneste-maskiner.
 
 I nyere tider har det blomstret med nye programmeringsspråk tilrettelagt for konvensjonelle datasystemer.
-Tradisjonelt sett, så har kategoriseringen av \emph{høyere-nivå programmeringsspråk} endret seg fra å være statiske, maskinvare-agnostiske språk som C, til å dreie seg om dynamisk håndterbare språk som JavaScript.
-Sikkerhetsmekanismene som er tilgjengelige i disse høyere-nivå språkene kommer ofte på bekostning av lav-nivå kontroll som ellers er tilgjengelige i \emph{lav-nivå programmeringsspråk}.
+Tradisjonelt sett, så har kategoriseringen av \emph{høyere-nivå programmeringsspråk} endret seg fra å være statiske, maskinvare-agnostiske språk som C, til å dreie seg om dynamiske språk med kjøretidssytem som JavaScript.
+Sikkerhetsmekanismene som er tilgjengelige i disse høyere-nivå språkene kommer ofte på bekostning av lav-nivå kontroll som er tilgjengelige i \emph{lav-nivå programmeringsspråk}.
 
 Rust er nytt og voksende programmingsspråk som gjør et nytt forsøk på å kompromisset mellom kontroll og sikkerhet.
 Dette språket kan garantere sikkerhet ved statisk analyse, som ellers løses dynamisk i andre høyere-nivå språk.
 
-I denne avhandlingen presanterer vi våre forsøk og evalueringer på å bringe Rust til et innvevd datasystem.
+I denne avhandlingen presenterer vi våre forsøk og evalueringer på å bringe Rust til et innvevd datasystem.
 Vi beskriver designet og implementasjonen av vår operativsystemløse platform kalt {\rg}, som også omfatter biblioteker for å kontrollere maskinvaren.
 Vi har utviklet flere programmer og abstrakte biblioteker som bygger på denne platformen.
 
-For å styrke platformen, så har vi også implementert og presantert en utvidelse til Rust sin standard pakke-behandler, som gjør det enklere å bygge Rust-applikasjoner for ikke-standard platformer.
-Denne utvidelsen har også blitt bidratt tilbake til pakkebehandlerens prosjekt.
+For å støtte platformen, så har vi også implementert og presentert en utvidelse til Rust sin standard pakke-behandler, som gjør det enklere å bygge Rust-applikasjoner for ikke-standard platformer.
+Denne utvidelsen har også blitt bidratt tilbake til prosjektet som utvikler pakkebehandleren..
 
 Vi har evaluert plattformen basert på ytelse, energieffektivitet og kodestørrelse.
-Disse resultatene har blitt sammenlignet mot den allerede eksisterende C platt-formen, på en ARM Cortex-M3-basert EFM32-brikke kalt Giant Gecko.
+Disse resultatene har blitt sammenlignet med den allerede eksisterende C platt-formen, på en ARM Cortex-M3-basert EFM32-brikke kalt Giant Gecko.
 Våre evalueringer viser at Rust har tilsvarende ytelse og energieffektivitet, men vi har oppdaget at kodestørrelsen kan øke betraktelig, særlig for applikasjoner som er bygget for feilsøking.
