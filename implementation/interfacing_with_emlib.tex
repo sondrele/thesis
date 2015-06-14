@@ -53,7 +53,7 @@ This simplifies the process of writing data to e.g. the \gls{lcd} on the {\chip{
 
 \prog{emu}     &
 The \gls{emu} module controls the different energy modes on the {\gecko}.
-We needed this functionality for the {\prog{sensor-tracker}} application. \\
+We needed this functionality for the {\tracker} application. \\
 
 \prog{gpio}    &
 The \gls{gpio} was one of the first modules to be ported.
@@ -66,7 +66,7 @@ The \gls{lesense} can be configured to automatically collect data from multiple 
 The \gls{acmp} was ported alongside \gls{lesense}, and is used to compare two analog signals and tell which one is greater. \\
 
 \prog{adc}     &
-The \gls{adc} was needed by the {\prog{sensor-tracker}}, and has been used to get the internal temperature of the \gls{cpu}. \\
+The \gls{adc} was needed by the {\tracker}, and has been used to get the internal temperature of the \gls{cpu}. \\
 
 \prog{usart}   &
 Primarily we wanted the \gls{usart} for easy debugging and I/O from a computer. \\
@@ -77,7 +77,7 @@ It has the same functionality, but it works with a lower-frequency clock and req
 
 \prog{i2c}     &
 The \gls{i2c} protocol has many of the same use cases as the different \gls{uart} types, but it works at lower energy levels.
-It is used by the {\prog{sensor-tracker}}. \\
+It is used by the {\tracker}. \\
 
 \prog{rtc}     &
 The \gls{rtc} was an easy module to write bindings for.
@@ -201,19 +201,19 @@ This binding only exports one function to return a standard \emph{\gls{dma} Desc
 
 \prog{flash}  &
 The flash driver adds an abstraction layer over a flash memory, and exposes functions to \emph{initialize}, \emph{read}, \emph{write} and get the \emph{device info}.
-The Driver is used by the {\prog{sensor-tracker}}. \\
+The Driver is used by the {\tracker}. \\
 
 \prog{gpioint}  &
 This driver is ported from {\C} to {\rust}. The implementation differs slightly between the two versions, but the functionality is the same.
 The reasoning for porting this driver is described in \autoref{sec:porting-gpioint}. \\
 
 \prog{i2c}  &
-This driver is used by the {\prog{sensor-tracker}} application.
+This driver is used by the {\tracker} application.
 It exposes functions to initialize a commonly used \gls{i2c} data transfer configuration. \\
 
 \prog{tft}  &
 This binding exposes one function to initialize the TFT screen on the {\chip{DK}}.
-It is used in the \prog{circle-game}. \\
+It is used in the {\cg}. \\
 
     \hline
   \end{tabular}
